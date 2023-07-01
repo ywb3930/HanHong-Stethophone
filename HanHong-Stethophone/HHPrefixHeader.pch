@@ -1,0 +1,307 @@
+//
+//  HGCPrefixHeader.pch
+//  HuiGaiChe
+//   1012956468@qq.com  Hanhong12*890
+//   18125669659@189.cn Hanhong137*680
+//  Created by Zhilun on 2020/4/24.
+//  Copyright © 2020 Zhilun. All rights reserved.
+//
+
+#ifndef HGCPrefixHeader_pch
+#define HGCPrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#ifdef __OBJC__
+#import "common.h"
+#endif
+
+/************ String ***************/
+#define MAINURL                                         @"https://www.myeverytimes.com/"
+#define METHOD_GET                                      @"GET"
+#define METHOD_POST                                     @"POST"
+#define hanhongServer                                   @"https://www.hedelongcloud.com"
+//#define REQUEST_URL                                     @"https://e43160045h.goho.co/api/"
+#define REQUEST_URL                                     @"https://www.hedelongcloud.com/api/"
+#define app_download_url                                @"https://www.hedelongcloud.com/hanhong_stethoscope_assistant"
+
+#define IMAGE_URL                                       @""
+#define Shared_Secret_Key                               @"" //共享密钥
+#define saltnum1                                        @"A1453t3t3twy3y5433654321"
+#define saltnum2                                        @"1234562g3anjhsdfbbtr547i67i6"
+
+
+#define CommUser_role                                   0 //普通用户
+#define Student_role                                    1 //学生
+#define Teacher_role                                    2 //教授
+#define Union_role                                      3 //医联体
+
+#define login_type_undefined                            0
+#define login_type_personal                             1 //个人版
+#define login_type_teaching                             2 //教学版
+#define login_type_union                                3 //医联体
+
+#define org_type_general                                0 //通用版
+#define org_type_personal                               1 //个人版
+#define org_type_teaching                               2 //教学版
+#define org_type_union                                  3 //医联体
+
+#define man                                             1//男人
+#define woman                                           0//女人
+
+#define charge_battery                                  0//充电电池
+#define dry_battery                                     1//干电池
+
+#define heart_sounds                                    1//心音 音频类别
+#define lung_sounds                                     2//肺音 音频类别
+#define heart_sounds_close_filtration                   3//心音（关闭滤波）音频类别（远程听诊时使用）
+#define lung_sounds_close_filtration                    4//肺音（关闭滤波）音频类别（远程听诊时使用）
+
+#define recordingState_stop                             0//录音状态 停止
+#define recordingState_ing                              1//录音状态 在录音
+#define recordingState_pause                            3//录音状态 暂停
+#define recordingState_prepare                          4//录音状态 准备
+
+#define open_filtration                                 1//打开滤波
+#define close_filtration                                0//关闭滤波
+
+#define QuickRecord                                     0//快速录音
+#define StanarRecord                                    1//标准录音
+#define RemoteRecord                                    3//
+
+#define Lung_front_bodyType                             0//肺音正面
+#define Lung_side_bodyType                              1//肺音侧面
+#define Lung_back_bodyType                              2//肺音背面
+
+#define All_filtrate_type                               0//全部
+#define Source_quick_filtrate_type                      1//快速录音
+#define Source_stand_filtrate_type                      2//标准录音
+#define Serial_number_filtrate_type                     3//患者ID
+#define Date_filtrate_type                              4//日期
+#define Annotation_filtrate_type                        5//标注
+#define heart_filtrate_type                             6//心音
+#define lung_filtrate_type                              7//肺音
+#define Shared_filtrate_type                            8//已分享
+#define Source_remote_filtrate_type                     9//
+
+#define heart_positions                                 @[@"二尖瓣听诊区", @"肺动脉听诊区", @"主动脉瓣听诊区", @"主动脉第二听诊区", @"三尖瓣听诊区"]
+#define lung_positions                                  @[@"左肺尖", @"右肺尖", @"左上肺", @"右上肺", @"左前胸", @"右前胸", @"左下肺", @"右下肺", @"左侧胸", @"右侧胸", @"背左", @"背右"]
+#define lung_front_positions                            @[@"左肺尖", @"右肺尖", @"左上肺", @"右上肺", @"左前胸", @"右前胸", @"左下肺", @"右下肺"]
+#define lung_side_positions                             @[@"左侧胸", @"右侧胸"]
+#define lung_back_positions                             @[@"背左", @"背右"]
+#define heart_PathologyTypes                            @[@"正常心音", @"房间隔缺损", @"室间隔缺损", @"动脉导管未闭", @"二尖瓣狭窄", @"二尖瓣关闭不全", @"主动脉瓣狭窄", @"主动脉关闭不全", @"三尖瓣关闭不全", @"心包摩擦音", @"脉动脉高压"]
+#define lungt_PathologyTypes                            @[@"正常呼吸音", @"大水泡音", @"中水泡音", @"小水泡音", @"干湿混合音", @"混合湿啰音", @"喘鸣音", @"哮鸣音", @"干啰音", @"其它异常音", @"伪音"]
+
+/*** 广播名称*/
+#define login_type_broadcast                            @"loginTypeBroadcast"
+#define login_broadcast                                 @"loginBroadcast"
+#define refresh_friendlist_broadcast                    @"refresh_friendlist_broadcast"
+#define add_program_broadcast                           @"add_program_broadcast"
+
+#define RecordLostEvent                                 @"RecordLostEvent"
+#define RecordBtnEvent                                  @"RecordBtnEvent"
+#define RecordDuration                                  @"RecordDuration"
+
+#define connectStateBR                                  @"ConnectState"//连接状态
+#define RecordBtnEvent_action                           @"RealtimeRecordBtn"//按键状态
+#define RecordStateEvent_action                         @"RealtimeRecordState"
+#define RecordLostEvent_action                          @"RecordLostState"// 信号状态
+#define RecordDuration_action                           @"RecordTime"// 当前录音时长
+#define StethoscopeEvent_action                         @"Stethoscope"// 听诊区状态
+
+#define Connect_Success                                 @"Connect_Success"//
+#define Connect_running                                 @"Connect_running"//
+#define Connect_fail                                    @"Connect_fail"//
+#define AutoDiscConnect                                 @"AutoDiscConnect"//
+#define Connection_EndEvent                             @"Connection_EndEvent"// 
+
+/************************************/
+
+/************ params ***************/
+#define showToastViewSuccessTime                        1.0f
+#define showToastViewWarmingTime                        1.5f
+#define showToastViewErrorTime                          2.0f
+#define MaximumDuration                                 30
+/************************************/
+
+/**************** color *********************/
+#define GKColorRGBA(r, g, b, a)                         [UIColor colorWithRed:(r / 255.0) green:(g / 255.0) blue:(b / 255.0) alpha:a]
+#define GKColorRGB(r, g, b)                             GKColorRGBA(r, g, b, 1.0)
+#define GKColorGray(v)                                  GKColorRGB(v, v, v)
+#define HEXCOLOR(hexValue,a)                            [UIColor colorWithRed:((float)((hexValue & 0xFF0000) >> 16))/255.0 green:((float)((hexValue & 0xFF00) >> 8))/255.0  blue:((float)(hexValue & 0xFF))/255.0 alpha:a]
+#define GKColorRandom                                   GKColorRGB(arc4random() % 255, arc4random() % 255, arc4random() % 255)
+//#define MainColor                                       HEXCOLOR(0x005BEA,1)
+#define MainColor                                       HEXCOLOR(0x0081FF,1)
+#define AlreadyColor                                    HEXCOLOR(0x0FC7D3,1)
+#define MainBlack                                       HEXCOLOR(0x444444,1)
+#define MainGray                                        HEXCOLOR(0x666666,1)
+#define MainNormal                                      HEXCOLOR(0x999999,1)
+#define UnPressColor                                    HEXCOLOR(0xFFB6B6,1)
+#define CompleteColor                                   HEXCOLOR(0x00C6FF, 1)
+#define PlaceholderColor                                HEXCOLOR(0xCCCCCC, 1)
+#define BlackNaviColor                                  HEXCOLOR(0x262626, 1)
+#define ViewBackGroundColor                             HEXCOLOR(0xF7F7F7,1)
+#define MainRed                                         HEXCOLOR(0xFF5033, 1)
+#define LineBorderColor                                 HEXCOLOR(0xE5E5E5,1)
+#define BorderCGColor                                   LineBorderColor.CGColor
+#define WHITECOLOR                                      [UIColor whiteColor]
+#define UserImg                                         [UIImage imageNamed:@"users_img"]
+#define StatusBgView                                    [UIView new]
+#define StatusBgViewImage                               [Tools viewImageFromColor:WHITECOLOR rect:CGRectMake(0, 0, screenW, kStatusBarHeight)]
+#define BlackBgViewImage                                [Tools viewImageFromColor:BlackNaviColor rect:CGRectMake(0, 0, screenW, kStatusBarHeight)]
+/**************** color *********************/
+
+/**************** size  ***********************/
+#define MAXLENGTH                                       1280
+#define screenW                                         [UIScreen mainScreen].bounds.size.width
+#define screenH                                         [UIScreen mainScreen].bounds.size.height
+
+#define screenRatio                                     screenW / 320.f
+#define ViewSpace                                       18.f*screenRatio
+#define Ratio0_5                                        0.5f*screenRatio
+#define Ratio1                                          1.f*screenRatio
+#define Ratio2                                          2.f*screenRatio
+#define Ratio3                                          3.f*screenRatio
+#define Ratio4                                          4.f*screenRatio
+#define Ratio5                                          5.f*screenRatio
+#define Ratio5_5                                        5.5f*screenRatio
+#define Ratio6                                          6.f*screenRatio
+#define Ratio8                                          8.f*screenRatio
+#define Ratio9                                          9.f*screenRatio
+#define Ratio10                                         10.f*screenRatio
+#define Ratio11                                         11.f*screenRatio
+#define Ratio12                                         12.f*screenRatio
+#define Ratio13                                         13.f*screenRatio
+#define Ratio14                                         14.f*screenRatio
+#define Ratio15                                         15.f*screenRatio
+#define Ratio16                                         16.f*screenRatio
+#define Ratio16_5                                       16.5f*screenRatio
+#define Ratio17                                         17.f*screenRatio
+#define Ratio17_5                                       17.5f*screenRatio
+#define Ratio18                                         18.f*screenRatio
+#define Ratio19                                         19.f*screenRatio
+#define Ratio20                                         20.f*screenRatio
+#define Ratio21_5                                       21.5f*screenRatio
+#define Ratio22                                         22.f*screenRatio
+#define Ratio24                                         24.f*screenRatio
+
+#define Ratio25                                         25.f*screenRatio
+#define Ratio26                                         26.f*screenRatio
+#define Ratio28                                         28.f*screenRatio
+#define Ratio30                                         30.f*screenRatio
+#define Ratio33                                         33.f*screenRatio
+#define Ratio35                                         35.f*screenRatio
+#define Ratio36                                         36.f*screenRatio
+#define Ratio40                                         40.f*screenRatio
+#define Ratio44                                         44.f*screenRatio
+#define Ratio49                                         49.f*screenRatio
+#define Ratio50                                         50.f*screenRatio
+#define Ratio52                                         52.f*screenRatio
+#define Ratio55                                         55.f*screenRatio
+#define Ratio60                                         60.f*screenRatio
+#define Ratio66                                         66.f*screenRatio
+#define Ratio77                                         77.f*screenRatio
+#define Ratio82                                         82.f*screenRatio
+#define Ratio88                                         88.f*screenRatio
+#define Ratio90                                         90.f*screenRatio
+#define Ratio99                                         99.f*screenRatio
+#define Ratio135                                        135.f*screenRatio
+
+#define SystemFont                                      [UIFont systemFontOfSize:Ratio17]
+#define Font11                                          [UIFont systemFontOfSize:Ratio11]
+#define Font12                                          [UIFont systemFontOfSize:Ratio12]
+#define Font13                                          [UIFont systemFontOfSize:Ratio13]
+#define Font15                                          [UIFont systemFontOfSize:Ratio15]
+#define Font18                                          [UIFont systemFontOfSize:Ratio18]
+#define FontBold18                                      [UIFont systemFontOfSize:Ratio18 weight:UIFontWeightBold]
+#define Font20                                          [UIFont systemFontOfSize:Ratio20]
+#define FontBold20                                      [UIFont systemFontOfSize:Ratio20 weight:UIFontWeightBold]
+
+#define kIs_iphone                                      [[UIDevice currentDevice].model isEqualToString:@"iPhone"]
+#define kIs_iPhoneX                                     screenW >=375.0f && screenH >=812.0f&& kIs_iphone
+
+#define ADAPTATIONRATIO                                 screenW / 750.0f
+/*状态栏高度*/
+#define kStatusBarHeight                                (kIs_iPhoneX?(44.0):(20.0))
+/*导航栏高度*/
+#define kNavBarHeight                                   (44)
+/*状态栏和导航栏总高度*/
+#define kNavBarAndStatusBarHeight                       (kIs_iPhoneX?(88.0):(64.0))
+/*TabBar高度*/
+#define kTabBarHeight                                   (kIs_iPhoneX?(49.0 + 34.0):(49.0))
+/*顶部安全区域远离高度*/
+#define kTopBarSafeHeight                               (kIs_iPhoneX?(44.0):(0))
+/*底部安全区域远离高度*/
+#define kBottomSafeHeight                               (kIs_iPhoneX?(34.0):(0))
+/*iPhoneX的状态栏高度差值*/
+#define kTopBarDifHeight                                (kIs_iPhoneX?(24.0):(0))
+/*导航条和Tabbar总高度*/
+#define kNavAndTabHeight                                (kNavBarAndStatusBarHeight + kTabBarHeight)
+#define kTitleViewY                                     (kStatusBarHeight + 20.0f)
+#define kTransitionCenter                               20.0f
+#define kBaseHeaderHeight                               screenW * 385.0f / 704.0f
+#define kBaseSegmentHeight                              40.0f
+/*********************** size  ***********************/
+
+/******************* Object *********************/
+#define STANDARD_USER_DEFAULT                           [NSUserDefaults standardUserDefaults]
+#define kAppWindow                                      [UIApplication sharedApplication].delegate.window
+#define LoginData                                       [HHLoginManager sharedManager].currentHHLoginData
+/*********************Object***********************/
+
+/**************选视频*********************/
+#define k_creatFrameElement     CGFloat viewX=0.f, viewY=0.f, viewW=0.f, viewH=0.f
+#define k_setFrame              (CGRect){viewX, viewY, viewW, viewH}
+#define k_settingFrame(view)    (view).frame = k_setFrame
+#define k_creatWindowSizeElement(width, height) CGFloat windowWidth = (width), windowHeight = (height)
+
+#define k_creatSelfSizeElement CGSize size = self.bounds.size;\
+k_creatWindowSizeElement(size.width, size.height)
+
+#define k_creatSizeElementOfSize(size)  k_creatWindowSizeElement((size).width, (size).height)
+
+//全局屏幕相关
+#define k_MAIN_SCREEN   [UIScreen mainScreen]
+#define k_SCREEN_BOUNDS k_MAIN_SCREEN.bounds
+#define k_SCREEN_WIDTH  k_SCREEN_BOUNDS.size.width
+#define k_SCREEN_HEIGHT k_SCREEN_BOUNDS.size.height
+#define k_SCREEN_SCALE  k_MAIN_SCREEN.scale
+/**************选视频*********************/
+// 来自YYKit
+#ifndef weakify
+    #if DEBUG
+        #if __has_feature(objc_arc)
+        #define weakify(object) autoreleasepool{} __weak __typeof__(object) weak##_##object = object;
+        #else
+        #define weakify(object) autoreleasepool{} __block __typeof__(object) block##_##object = object;
+        #endif
+    #else
+        #if __has_feature(objc_arc)
+        #define weakify(object) try{} @finally{} {} __weak __typeof__(object) weak##_##object = object;
+        #else
+        #define weakify(object) try{} @finally{} {} __block __typeof__(object) block##_##object = object;
+        #endif
+    #endif
+#endif
+
+#ifndef strongify
+    #if DEBUG
+        #if __has_feature(objc_arc)
+        #define strongify(object) autoreleasepool{} __typeof__(object) object = weak##_##object;
+        #else
+        #define strongify(object) autoreleasepool{} __typeof__(object) object = block##_##object;
+        #endif
+    #else
+        #if __has_feature(objc_arc)
+        #define strongify(object) try{} @finally{} __typeof__(object) object = weak##_##object;
+        #else
+        #define strongify(object) try{} @finally{} __typeof__(object) object = block##_##object;
+        #endif
+    #endif
+#endif
+
+
+
+#endif /* HGCPrefixHeader_pch */
+
