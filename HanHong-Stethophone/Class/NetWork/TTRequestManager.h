@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  上传录音标本
  */
-+ (void)recordAdd:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
++ (void)recordAdd:(NSMutableDictionary *)params recordData:(NSData *)recordData progress:(void (^)(NSProgress *  uploadProgress))progress success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
 
 /**
  修改录音标本

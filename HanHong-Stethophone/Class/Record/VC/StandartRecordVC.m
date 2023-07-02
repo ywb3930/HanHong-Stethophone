@@ -10,7 +10,6 @@
 #import "LungVoiceView.h"
 #import "StandarRecordBottomView.h"
 #import "HHBlueToothManager.h"
-#import "RecordModel.h"
 #import "DeviceManagerVC.h"
 #import "RecordFinishVC.h"
 
@@ -237,18 +236,17 @@
 
 - (void)saveSuccess{
     [[HHBlueToothManager shareManager] stop];
-    RecordModel *recordModel = [[RecordModel alloc] init];
-    recordModel.user_id = [@(LoginData.id) stringValue];
-    recordModel.record_mode = QuickRecord;
-    recordModel.type_id = self.soundsType;
-    recordModel.record_filter = self.isFiltrationRecord;
-    recordModel.record_time = [Tools dateToTimeStringYMDHMS:[NSDate now]];
-    recordModel.record_length = self.recordDurationAll;
-    recordModel.file_path = self.relativePath;
+    self.recordModel.user_id = [@(LoginData.id) stringValue];
+    self.recordModel.record_mode = QuickRecord;
+    self.recordModel.type_id = self.soundsType;
+    self.recordModel.record_filter = self.isFiltrationRecord;
+    self.recordModel.record_time = [Tools dateToTimeStringYMDHMS:[NSDate now]];
+    self.recordModel.record_length = self.recordDurationAll;
+    self.recordModel.file_path = self.relativePath;
     //NSArray *array = [self.relativePath mutableArrayValueForKey:@"/"];
-    recordModel.tag = [NSString stringWithFormat:@"%@.wav", self.recordCode];
-    recordModel.modify_time = recordModel.record_time;
-    Boolean result = [[HHDBHelper shareInstance] addRecordItem:recordModel];
+    self.recordModel.tag = [NSString stringWithFormat:@"%@.wav", self.recordCode];
+    self.recordModel.modify_time = self.recordModel.record_time;
+    Boolean result = [[HHDBHelper shareInstance] addRecordItem:self.recordModel];
     if (result) {
         NSLog(@"保存数据库成功");
     } else {

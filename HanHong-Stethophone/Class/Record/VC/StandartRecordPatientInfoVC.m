@@ -43,7 +43,34 @@
 }
 
 - (void)actionToNextView:(UIButton *)button{
+    NSString *patientId = self.itemViewId.textFieldInfo.text;
+    if ([Tools isBlankString:patientId]) {
+        [self.view makeToast:@"请输入患者ID" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    NSString *sexString = self.itemViewSex.labelInfo.text;
+    if ([Tools isBlankString:patientId]) {
+        [self.view makeToast:@"选择患者性别" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    
+    NSInteger sex = [sexString isEqualToString:@"男"] ? man : woman;
+    NSString *age = self.itemAgeView.textFieldAge.text;
+    NSString *mouth = self.itemAgeView.textFieldMonth.text;
+    
+    
+    RecordModel *model = [[RecordModel alloc] init];
+    model.patient_id = patientId;
+    model.patient_sex = sex;
+    model.patient_birthday = [NSString stringWithFormat:@"%@-%@", age, mouth];
+    model.patient_height = self.itemViewHeight.textFieldInfo.text;
+    model.patient_weight = self.itemViewWeight.textFieldInfo.text;
+    model.patient_symptom = self.itemViewDisease.textFieldInfo.text;
+    model.patient_diagnosis = self.itemViewDiagnose.textFieldInfo.text;
+    model.patient_area = self.itemViewArea.labelInfo.text;
+    
     StandartRecordVC *standartRecord = [[StandartRecordVC alloc] init];
+    standartRecord.recordModel = model;
     [self.navigationController pushViewController:standartRecord animated:YES];
 }
 

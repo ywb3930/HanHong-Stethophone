@@ -496,13 +496,29 @@
 /**
  上传录音标本
  */
-+ (void)recordAdd:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
-    NSString *requestUrl = [NSString stringWithFormat:@"%@record/add", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
++ (void)recordAdd:(NSMutableDictionary *)params recordData:(NSData *)recordData progress:(void (^)(NSProgress *  uploadProgress))progress success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/html",@"text/plain", @"text/json", @"text/javascript",@"image/png", @"image/jpeg", nil];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@user/modify-avatar", REQUEST_URL];
+    [manager POST:requestUrl parameters:params headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"yyyyMMddHHmmss";
+        NSString *str = [formatter stringFromDate:[NSDate date]];
+        NSString *fileName = [NSString stringWithFormat:@"%@.wav", str];
+        [formData appendPartWithFileData:recordData name:@"record_file" fileName:fileName mimeType:@"text/html"];
+    } progress:^(NSProgress * _Nonnull uploadProgress) {
+        progress(uploadProgress);
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         completion(responseObject);
-    } failure:^(NSError * _Nonnull error) {
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         failure(error);
     }];
+    
+//    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+//        completion(responseObject);
+//    } failure:^(NSError * _Nonnull error) {
+//        failure(error);
+//    }];
 }
 /**
  修改录音标本

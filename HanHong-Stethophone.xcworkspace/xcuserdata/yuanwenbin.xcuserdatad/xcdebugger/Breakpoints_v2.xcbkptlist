@@ -14,8 +14,8 @@
             filePath = "HanHong-Stethophone/Class/Record/VC/StandartRecordVC.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
             landmarkName = "-actionStart"
             landmarkType = "7">
          </BreakpointContent>
@@ -62,8 +62,8 @@
             filePath = "HanHong-Stethophone/Class/Record/VC/StandartRecordVC.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "318"
-            endingLineNumber = "318"
+            startingLineNumber = "316"
+            endingLineNumber = "316"
             landmarkName = "-autoSelectNexrPositionSequence"
             landmarkType = "7">
          </BreakpointContent>

@@ -7,10 +7,13 @@
 
 #import <UIKit/UIKit.h>
 #import "HHBaseViewController.h"
+#import "RecordModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface StandartRecordVC : HHBaseViewController
+
+@property (retain, nonatomic) RecordModel               *recordModel;
 
 @end
 

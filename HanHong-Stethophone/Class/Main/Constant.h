@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 //根据tag获取听诊位置
 - (NSString *)positionTagPositionCn:(NSString *)tag;
 - (NSString *)positionVolumesString:(NSInteger )idx;
+- (NSString *)getRecordShareBrief;
 
 @end
 

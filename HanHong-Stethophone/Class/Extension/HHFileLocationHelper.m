@@ -49,6 +49,15 @@
     return appDocumentPath;
     
 }
+
++ (Boolean)deleteFilePath:(NSString *)path{
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path])
+    {
+        return [[NSFileManager defaultManager] removeItemAtPath:path error:nil];
+    }
+    return NO;
+}
+
 + (NSString *)getAppDocumentPath
 {
     static NSString *appDocumentPath = nil;
@@ -102,6 +111,8 @@
     }
     return dir;
 }
+
+
 
 
 + (NSString *)filepathForVideo:(NSString *)filename

@@ -19,7 +19,7 @@ target "HanHong-Stethophone" do
   pod 'YYModel'
   pod 'YYText'
   pod 'SCIndexView'
-  
+  pod 'WechatOpenSDK-XCFramework'
   
   pod 'UMCommon'
   pod 'UMDevice'

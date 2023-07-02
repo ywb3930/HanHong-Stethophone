@@ -76,6 +76,8 @@
     return [data objectAtIndex:idx];
 }
 
-
+- (NSString *)getRecordShareBrief{
+    return [NSString stringWithFormat:@"%@api/record/share_brief", REQUEST_URL];
+}
 
 @end

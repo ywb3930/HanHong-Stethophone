@@ -59,7 +59,6 @@
     }
 }
 
-
 - (void)actionTapDeviceDefault:(UITapGestureRecognizer *)tap{
     if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED) {
         DEVICE_MODEL deviceModel = [[HHBlueToothManager shareManager] getDeviceType];

@@ -39,6 +39,7 @@ PODS:
   - UMCommon (7.4.1):
     - UMDevice
   - UMDevice (3.1.0)
+  - WechatOpenSDK-XCFramework (2.0.2)
   - YYModel (1.0.4)
   - YYText (1.0.7)
 
@@ -62,6 +63,7 @@ DEPENDENCIES:
   - UMCCommonLog
   - UMCommon
   - UMDevice
+  - WechatOpenSDK-XCFramework
   - YYModel
   - YYText
 
@@ -86,6 +88,7 @@ SPEC REPOS:
     - UMCCommonLog
     - UMCommon
     - UMDevice
+    - WechatOpenSDK-XCFramework
     - YYModel
     - YYText
 
@@ -109,9 +112,10 @@ SPEC CHECKSUMS:
   UMCCommonLog: bea707e50c85cef4b0eb47cc5c7226bb843245ca
   UMCommon: 47e0b53f6a36568e958a5abd005ed7577fcac9ad
   UMDevice: 9ef8045b59e0479cff7062915c879a1af46fa094
+  WechatOpenSDK-XCFramework: acdeeda129efbef9532bca8a10c24e1b4b8c7d69
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: cf8de03255df3a5f7ca380ad5e74c64f7f834c27
+PODFILE CHECKSUM: d7b18511c987b7d269299ed05b661b8b4fd2e075
 
 COCOAPODS: 1.11.3

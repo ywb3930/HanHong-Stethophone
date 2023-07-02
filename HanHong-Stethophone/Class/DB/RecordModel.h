@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) NSString          *file_path;//本地路径
 @property (retain, nonatomic) NSString          *oss_name;//OSS文件名
 @property (retain, nonatomic) NSString          *tag;//文件名
+@property (retain, nonatomic) NSString          *share_code;//
 @property (retain, nonatomic) NSString          *modify_time;//修改时间
 @property (assign, nonatomic) NSInteger         shared;//设置为全局分享
 @property (retain, nonatomic) NSString          *create_time;//上传时间
