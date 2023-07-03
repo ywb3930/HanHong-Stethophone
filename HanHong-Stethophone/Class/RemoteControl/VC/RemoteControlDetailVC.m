@@ -63,7 +63,7 @@
     delTime = (delTime == 0) ? 1 : delTime;
     self.itemDuration.textFieldInfo.text = [NSString stringWithFormat:@"%li分钟", (long)delTime];
     self.labelPatientName.text = self.consultationModel.creator_name;
-    [self.imageViewPatient sd_setImageWithURL:[NSURL URLWithString:self.consultationModel.creator_avatar] placeholderImage:nil options:SDWebImageProgressiveLoad];
+    [self.imageViewPatient sd_setImageWithURL:[NSURL URLWithString:self.consultationModel.creator_avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
     self.itemStartTime.textFieldInfo.text = self.consultationModel.begin_time;
     self.itemTitle.textFieldInfo.text = self.consultationModel.title;
     
@@ -92,7 +92,7 @@
         
         FriendModel *model = [self.arrayData objectAtIndex:i];
         UIImageView *imageViewHead = [[UIImageView alloc] init];
-        [imageViewHead sd_setImageWithURL:[NSURL URLWithString:model.avatar] placeholderImage:nil options:SDWebImageProgressiveLoad];
+        [imageViewHead sd_setImageWithURL:[NSURL URLWithString:model.avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
         imageViewHead.layer.cornerRadius = Ratio4;
         imageViewHead.contentMode = UIViewContentModeScaleAspectFit;
         [viewMember addSubview:imageViewHead];

@@ -32,7 +32,6 @@
     [super viewDidLoad];
     self.view.backgroundColor = WHITECOLOR;
     self.loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
-    //self.bShowInvite = (self.loginType == login_type_teaching && LoginData.role == Teacher_role) || self.loginType == login_type_union;
     if(self.loginType == login_type_personal) {
         self.arrayImage = @[@"personal_information", @"password_manager", @"device_manager", @"about_us", @"about_us",  @"signout", @"logout"];
         self.arrayTitle = @[@"个人信息", @"密码管理", @"设备管理", @"检测更新",  @"关于我们", @"注销用户", @"退出登录"];
@@ -63,7 +62,7 @@
         
     }];
     [RACObserve(LoginData, avatar) subscribeNext:^(id  _Nullable x) {
-        [self.headerView.imageViewHeadView sd_setImageWithURL:[NSURL URLWithString:x] placeholderImage:[UIImage imageNamed:@"avatar"] options:SDWebImageLowPriority];
+        [self.headerView.imageViewHeadView sd_setImageWithURL:[NSURL URLWithString:x] placeholderImage:[UIImage imageNamed:@"avatar"] options:SDWebImageQueryMemoryData];
         self.headerView.imageViewHeadView.sd_imageTransition = SDWebImageTransition.fadeTransition;
     }];
     [RACObserve(LoginData, phone) subscribeNext:^(id  _Nullable x) {

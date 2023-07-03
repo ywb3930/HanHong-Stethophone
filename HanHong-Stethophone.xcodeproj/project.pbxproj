@@ -43,9 +43,6 @@
 		97469CC12A4DC7F60091A3F3 /* DeviceMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CC02A4DC7F50091A3F3 /* DeviceMessageCell.m */; };
 		97469CCD2A4E78DA0091A3F3 /* RecordFinishVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CCC2A4E78DA0091A3F3 /* RecordFinishVC.m */; };
 		97469CD02A4ED67B0091A3F3 /* StandarRecordBottomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CCF2A4ED67B0091A3F3 /* StandarRecordBottomView.m */; };
-		97469CD72A4EDDF30091A3F3 /* HanhongDeviceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CD12A4EDDF10091A3F3 /* HanhongDeviceHelper.m */; };
-		97469CD82A4EDDF30091A3F3 /* BluetoothHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CD32A4EDDF10091A3F3 /* BluetoothHelper.m */; };
-		97469CD92A4EDDF30091A3F3 /* HanhongDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CD62A4EDDF30091A3F3 /* HanhongDevice.m */; };
 		97469CDC2A4FA7DE0091A3F3 /* HHDBHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CDB2A4FA7DD0091A3F3 /* HHDBHelper.m */; };
 		9751BD962A47DFBE00787A5A /* RemoteControlTeacherVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9751BD952A47DFBE00787A5A /* RemoteControlTeacherVC.m */; };
 		9751BD992A47DFD000787A5A /* RemoteControlStudentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9751BD982A47DFD000787A5A /* RemoteControlStudentVC.m */; };
@@ -75,6 +72,9 @@
 		9765E0792A3DA15200181452 /* LungBodyFrontView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0782A3DA15200181452 /* LungBodyFrontView.m */; };
 		9765E0822A3DB53A00181452 /* LungBodySideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0812A3DB53A00181452 /* LungBodySideView.m */; };
 		9765E0852A3DB54C00181452 /* LungBodyBackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0842A3DB54C00181452 /* LungBodyBackView.m */; };
+		9798E1D22A52A86300710AFA /* HanhongDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798E1CC2A52A86200710AFA /* HanhongDevice.m */; };
+		9798E1D32A52A86300710AFA /* BluetoothHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798E1CE2A52A86200710AFA /* BluetoothHelper.m */; };
+		9798E1D42A52A86300710AFA /* HanhongDeviceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798E1D12A52A86300710AFA /* HanhongDeviceHelper.m */; };
 		97ED415C2A4A63DF0055D1C4 /* TeachingHistoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */; };
 		97ED41622A4A7BD70055D1C4 /* RecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41612A4A7BD70055D1C4 /* RecordModel.m */; };
 		97ED41682A4A8E0D0055D1C4 /* PatientModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41672A4A8E0D0055D1C4 /* PatientModel.m */; };
@@ -248,12 +248,6 @@
 		97469CCC2A4E78DA0091A3F3 /* RecordFinishVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordFinishVC.m; sourceTree = "<group>"; };
 		97469CCE2A4ED67B0091A3F3 /* StandarRecordBottomView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StandarRecordBottomView.h; sourceTree = "<group>"; };
 		97469CCF2A4ED67B0091A3F3 /* StandarRecordBottomView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = StandarRecordBottomView.m; sourceTree = "<group>"; };
-		97469CD12A4EDDF10091A3F3 /* HanhongDeviceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDeviceHelper.m; sourceTree = "<group>"; };
-		97469CD22A4EDDF10091A3F3 /* BluetoothHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothHelper.h; sourceTree = "<group>"; };
-		97469CD32A4EDDF10091A3F3 /* BluetoothHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BluetoothHelper.m; sourceTree = "<group>"; };
-		97469CD42A4EDDF20091A3F3 /* HanhongDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDevice.h; sourceTree = "<group>"; };
-		97469CD52A4EDDF20091A3F3 /* HanhongDeviceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDeviceHelper.h; sourceTree = "<group>"; };
-		97469CD62A4EDDF30091A3F3 /* HanhongDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDevice.m; sourceTree = "<group>"; };
 		97469CDA2A4FA7DD0091A3F3 /* HHDBHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHDBHelper.h; sourceTree = "<group>"; };
 		97469CDB2A4FA7DD0091A3F3 /* HHDBHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHDBHelper.m; sourceTree = "<group>"; };
 		9751BD942A47DFBE00787A5A /* RemoteControlTeacherVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteControlTeacherVC.h; sourceTree = "<group>"; };
@@ -312,6 +306,12 @@
 		9765E0812A3DB53A00181452 /* LungBodySideView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LungBodySideView.m; sourceTree = "<group>"; };
 		9765E0832A3DB54C00181452 /* LungBodyBackView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LungBodyBackView.h; sourceTree = "<group>"; };
 		9765E0842A3DB54C00181452 /* LungBodyBackView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LungBodyBackView.m; sourceTree = "<group>"; };
+		9798E1CC2A52A86200710AFA /* HanhongDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDevice.m; sourceTree = "<group>"; };
+		9798E1CD2A52A86200710AFA /* BluetoothHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothHelper.h; sourceTree = "<group>"; };
+		9798E1CE2A52A86200710AFA /* BluetoothHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BluetoothHelper.m; sourceTree = "<group>"; };
+		9798E1CF2A52A86200710AFA /* HanhongDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDevice.h; sourceTree = "<group>"; };
+		9798E1D02A52A86300710AFA /* HanhongDeviceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDeviceHelper.h; sourceTree = "<group>"; };
+		9798E1D12A52A86300710AFA /* HanhongDeviceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDeviceHelper.m; sourceTree = "<group>"; };
 		97ED415A2A4A63DF0055D1C4 /* TeachingHistoryModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TeachingHistoryModel.h; sourceTree = "<group>"; };
 		97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TeachingHistoryModel.m; sourceTree = "<group>"; };
 		97ED41602A4A7BD70055D1C4 /* RecordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordModel.h; sourceTree = "<group>"; };
@@ -782,12 +782,12 @@
 		97ED416F2A4AC89D0055D1C4 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				97469CD22A4EDDF10091A3F3 /* BluetoothHelper.h */,
-				97469CD32A4EDDF10091A3F3 /* BluetoothHelper.m */,
-				97469CD42A4EDDF20091A3F3 /* HanhongDevice.h */,
-				97469CD62A4EDDF30091A3F3 /* HanhongDevice.m */,
-				97469CD52A4EDDF20091A3F3 /* HanhongDeviceHelper.h */,
-				97469CD12A4EDDF10091A3F3 /* HanhongDeviceHelper.m */,
+				9798E1CD2A52A86200710AFA /* BluetoothHelper.h */,
+				9798E1CE2A52A86200710AFA /* BluetoothHelper.m */,
+				9798E1CF2A52A86200710AFA /* HanhongDevice.h */,
+				9798E1CC2A52A86200710AFA /* HanhongDevice.m */,
+				9798E1D02A52A86300710AFA /* HanhongDeviceHelper.h */,
+				9798E1D12A52A86300710AFA /* HanhongDeviceHelper.m */,
 			);
 			path = Bluetooth;
 			sourceTree = "<group>";
@@ -1079,12 +1079,12 @@
 		9B29B2942A3C0F89008DCFE7 /* MLAlertView */ = {
 			isa = PBXGroup;
 			children = (
-				9B29B2952A3C0F89008DCFE7 /* UIView+MLExtension.m */,
-				9B29B2962A3C0F89008DCFE7 /* NSString+AttributedString.h */,
 				9B29B2972A3C0F89008DCFE7 /* MLAlertView.h */,
 				9B29B2982A3C0F89008DCFE7 /* MLAlertView.m */,
+				9B29B2962A3C0F89008DCFE7 /* NSString+AttributedString.h */,
 				9B29B2992A3C0F89008DCFE7 /* NSString+AttributedString.m */,
 				9B29B29A2A3C0F89008DCFE7 /* UIView+MLExtension.h */,
+				9B29B2952A3C0F89008DCFE7 /* UIView+MLExtension.m */,
 			);
 			path = MLAlertView;
 			sourceTree = "<group>";
@@ -1475,9 +1475,11 @@
 			files = (
 				9B29B31F2A3C0F89008DCFE7 /* KSImagePickerItemCell.m in Sources */,
 				97469CDC2A4FA7DE0091A3F3 /* HHDBHelper.m in Sources */,
+				9798E1D32A52A86300710AFA /* BluetoothHelper.m in Sources */,
+				9798E1D42A52A86300710AFA /* HanhongDeviceHelper.m in Sources */,
 				9721E0C12A42D8C400B68939 /* CreateConsultationVC.m in Sources */,
+				9798E1D22A52A86300710AFA /* HanhongDevice.m in Sources */,
 				9B29B3402A3C0F89008DCFE7 /* InteriorCell.m in Sources */,
-				97469CD72A4EDDF30091A3F3 /* HanhongDeviceHelper.m in Sources */,
 				9B29B3172A3C0F89008DCFE7 /* KSImagePickerViewerView.m in Sources */,
 				97ED41A92A4C5DB70055D1C4 /* RecordSequenceVC.m in Sources */,
 				9B29B3022A3C0F89008DCFE7 /* BRStringPickerView.m in Sources */,
@@ -1492,7 +1494,6 @@
 				9721E0972A41760500B68939 /* RegisterInviteVC.m in Sources */,
 				9765E0502A3C2EF900181452 /* QuickRecordVC.m in Sources */,
 				9B29B3492A3C0F89008DCFE7 /* TTPopView.m in Sources */,
-				97469CD82A4EDDF30091A3F3 /* BluetoothHelper.m in Sources */,
 				9765E0822A3DB53A00181452 /* LungBodySideView.m in Sources */,
 				9B29B3292A3C0F89008DCFE7 /* MLAlertView.m in Sources */,
 				9751BD962A47DFBE00787A5A /* RemoteControlTeacherVC.m in Sources */,
@@ -1617,7 +1618,6 @@
 				9B29B3182A3C0F89008DCFE7 /* KSImagePickerAlbumCell.m in Sources */,
 				9751BDCD2A498C9600787A5A /* ProgramPlanListCell.m in Sources */,
 				9B29B34A2A3C0F89008DCFE7 /* HMEditView.m in Sources */,
-				97469CD92A4EDDF30091A3F3 /* HanhongDevice.m in Sources */,
 				9721E08D2A412F5200B68939 /* ChangeEmailVC.m in Sources */,
 				97ED41B22A4D62A10055D1C4 /* UIViewController+Swizzling.m in Sources */,
 				9B29B32E2A3C0F89008DCFE7 /* CompressingLogFileManager.m in Sources */,

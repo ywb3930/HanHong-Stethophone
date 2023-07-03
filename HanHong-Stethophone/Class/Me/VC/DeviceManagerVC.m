@@ -22,7 +22,7 @@
 #define Heart_Lung_filter_mode  3//心肺音过滤开关
 
 
-@interface DeviceManagerVC ()<UITableViewDelegate, UITableViewDataSource, HHBlueToothManagerDelegate>
+@interface DeviceManagerVC ()<UITableViewDelegate, UITableViewDataSource>
 
 @property (retain, nonatomic) DeviceDefaultView         *deviceDefaultView;
 @property (retain, nonatomic) NSMutableArray            *arrayData;
@@ -50,13 +50,12 @@
     [self initNaviView];
     [self initView];
     
-    
-    [HHBlueToothManager shareManager].delegate = self;
     if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED) {
         self.tableView.hidden = YES;
         [self reloadView];
         self.deviceDefaultView.buttonBluetooth.selected = YES;
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
 - (void)actionTapDeviceDefault:(UITapGestureRecognizer *)tap{
@@ -95,7 +94,11 @@
     
 }
 
-- (void)on_device_helper_event:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
+- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+    NSDictionary *userInfo = notification.userInfo;
+    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
+    NSObject *args1 = userInfo[@"args1"];
+    NSObject *args2 = userInfo[@"args2"];
     if (event == SearchFound) {
         self.labelTableViewTitle.text = @"已发现设备";
         [self onSearchFound:(NSString *)args1 device_mac:(NSString *)args2];
@@ -283,6 +286,7 @@
     
     NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:self.defaultConnectPath];
     if (!data) {
+        
         self.labelConnectRemind.hidden = NO;
         self.deviceDefaultView.hidden = YES;
     } else {

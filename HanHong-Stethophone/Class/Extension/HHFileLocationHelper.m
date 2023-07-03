@@ -58,6 +58,14 @@
     return NO;
 }
 
++ (Boolean)fileExistsAtPath:(NSString *)path{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:path]) {
+        return YES;
+    }
+    return NO;
+}
+
 + (NSString *)getAppDocumentPath
 {
     static NSString *appDocumentPath = nil;

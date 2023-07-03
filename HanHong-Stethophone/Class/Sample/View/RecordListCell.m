@@ -37,7 +37,33 @@
     return self;
 }
 
+- (void)actionClickPlay:(UIButton *)button{
+    if(![[HHBlueToothManager shareManager] getConnectState]) {
+        [kAppWindow makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(actionRecordListCellItemClick:bSelected:idx:)]) {
+        
+        Boolean bPlaying = [self.delegate actionRecordListCellItemClick:self.recordModel bSelected:button.selected idx:self.idx];
+        button.selected = bPlaying;
+    }
+}
+
+- (void)setIdx:(NSInteger)idx{
+    _idx= idx;
+}
+
+- (void)setPlayProgess:(float)playProgess{
+    NSLog(@"progress = %f", playProgess / self.recordModel.record_length);
+    self.slider.value = playProgess / self.recordModel.record_length;
+}
+
+- (void)setBStop:(Boolean)bStop{
+    self.buttonPlay.selected = bStop;
+}
+
 - (void)setRecordModel:(RecordModel *)recordModel{
+    _recordModel = recordModel;
     NSLog(@"record_time = %@",recordModel.record_time);
     self.lblTime.text = recordModel.record_time;
     if (![Tools isBlankString:recordModel.patient_id]) {
@@ -99,11 +125,9 @@
     
     [self.viewRecord addSubview:self.slider];
     self.slider.sd_layout.leftSpaceToView(self.lblTimeStart, Ratio5).rightSpaceToView(self.lblTimeEnd, Ratio5).heightIs(Ratio5).centerYEqualToView(self.lblTimeStart);
-    
-    
-    
-    
 }
+
+
 
 - (UIView *)viewBg{
     if(!_viewBg) {
@@ -168,7 +192,8 @@
     if(!_buttonPlay) {
         _buttonPlay = [[UIButton alloc] init];
         [_buttonPlay setImage:[UIImage imageNamed:@"start_play"] forState:UIControlStateNormal];
-        [_buttonPlay setImage:[UIImage imageNamed:@"recordstop"] forState:UIControlStateSelected];
+        [_buttonPlay setImage:[UIImage imageNamed:@"pause_play"] forState:UIControlStateSelected];
+        [_buttonPlay addTarget:self action:@selector(actionClickPlay:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonPlay;
 }
@@ -196,7 +221,6 @@
     if(!_slider) {
         _slider = [[UISlider alloc] init];
         _slider.minimumValue = 0;
-        _slider.maximumValue = 12;
         _slider.tintColor = HEXCOLOR(0x1CBBCB, 1);
         //_slider.minimumValueImage = [UIImage imageNamed:@"already_dot"];
         [_slider setThumbImage:[UIImage imageNamed:@"already_dot"] forState:UIControlStateNormal];

@@ -9,7 +9,7 @@
 #import "RecordListVC.h"
 #import "JXCategoryView.h"
 
-@interface SampleVC ()<JXCategoryViewDelegate,UIScrollViewDelegate>
+@interface SampleVC ()<JXCategoryViewDelegate,UIScrollViewDelegate, RecordListVCDelegate>
 
 @property (retain, nonatomic) JXCategoryTitleView           *categoryView;
 @property (nonatomic, strong) UIScrollView                  *scrollView;
@@ -29,12 +29,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+
     self.view.backgroundColor = WHITECOLOR;
     self.selectIndex = 0;
     [self.view addSubview:self.categoryView];
     [self.view addSubview:self.scrollView];
     [self.view addSubview:self.bluetoothButton];
     self.bluetoothButton.sd_layout.rightSpaceToView(self.view, Ratio11).widthIs(Ratio22).heightIs(Ratio22).topSpaceToView(self.view, kStatusBarHeight + Ratio5);
+}
+
+- (void)actionRecordListItemChange:(RecordModel *)model type:(NSInteger)type fromIndex:(NSInteger)fromIndex{
+    if (fromIndex == 0 && type == 1) {
+        [self.cloundListVC addCouldRecordItem:model];
+    }
 }
 
 - (void)categoryView:(JXCategoryBaseView *)categoryView didSelectedItemAtIndex:(NSInteger)index{
@@ -115,13 +122,20 @@
     if (!_childVCs) {
         self.localListVC = [[RecordListVC alloc] init];
         self.localListVC.idx = 0;
+        self.localListVC.string = @"本地录音";
+        self.localListVC.delegate = self;
         [self.localListVC initView];
         [self.localListVC initLocalData];
         
         self.cloundListVC = [[RecordListVC alloc] init];
         self.cloundListVC.idx = 1;
+        self.cloundListVC.delegate = self;
+        self.cloundListVC.string = @"云标本库";
+        
         self.collectListVC = [[RecordListVC alloc] init];
         self.collectListVC.idx = 2;
+        self.collectListVC.delegate = self;
+        self.collectListVC.string = @"我的收藏";
         _childVCs = @[self.localListVC, self.cloundListVC, self.collectListVC];
     }
     return _childVCs;

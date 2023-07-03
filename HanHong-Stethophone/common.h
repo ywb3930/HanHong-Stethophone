@@ -37,6 +37,7 @@
 #import "Constant.h"
 #import "HHBluetoothButton.h"
 #import "HHDBHelper.h"
+#import "TTAlertView.h"
 
 #ifdef DEBUG
 static DDLogLevel ddLogLevel = DDLogLevelVerbose;

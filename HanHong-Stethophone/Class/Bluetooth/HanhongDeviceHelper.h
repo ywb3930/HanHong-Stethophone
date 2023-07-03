@@ -104,11 +104,11 @@ typedef NS_ENUM(NSInteger, PLAY_MODE)
 -(NSData *)GetRecordData;
 -(NSData *)GetRecordFile;
 
--(void)SetPlayData:(NSData *)data;//
--(void)SetPlayFile:(NSData *)file_data;//播放  file_data：文件数据
+-(void)SetPlayData:(NSData *)data;
+-(void)SetPlayFile:(NSData *)file_data;
 -(void)SetPlayTimeRange:(float)start_time end_time:(float)end_time;
 -(void)SetPlayRepeat:(BOOL)state;
--(void)StartPlay:(PLAY_MODE)play_mode;//play_mode 用第一个
+-(void)StartPlay:(PLAY_MODE)play_mode;
 -(void)WritePlayuffer:(NSData *)data;
 
 -(void)Stop; 

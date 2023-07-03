@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)postRequestFormUrlencoded:(NSString *)url parameters:(id)parameters bVerify:(BOOL)bverify success:(void (^)(id responseObject))success failure:(void (^)(NSError * error))failure;
 
 + (void)requestNoKey:(NSString *)url method:(NSString *)method jsonParameters:(NSString *)parameters bVerify:(BOOL)verify success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure;
++ (void)downLoadFileWithUrl:(NSString *)url path:(NSString*)path  downloadProgress:(void (^)(NSProgress *downloadProgress))progress successBlock:(void (^)(NSURL *url))success fileDownloadFail:(void (^)(NSError *error))failure;
 
 @end
 

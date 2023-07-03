@@ -28,5 +28,6 @@
 + (NSString *)getAppDocumentPath:(NSString *)path;
 
 + (Boolean)deleteFilePath:(NSString *)path;
++ (Boolean)fileExistsAtPath:(NSString *)path;
 
 @end

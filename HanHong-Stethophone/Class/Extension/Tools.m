@@ -873,6 +873,24 @@ static id _instance;
     return [calendar dateByAddingComponents:dateComponents toDate:date options:0];
 }
 
++ (NSString *)dateAddMinuteYMD:(NSDate *)date mouth:(NSInteger)mouth{
+    NSCalendar *calendar = [NSCalendar calendarWithIdentifier:NSCalendarIdentifierGregorian];
+    NSDateComponents *dateComponents = [calendar components:NSCalendarUnitMonth fromDate:date];
+    [dateComponents setMonth:mouth];
+    NSDate *moutheDate = [calendar dateByAddingComponents:dateComponents toDate:date options:0];
+    return [self dateToTimeStringYMD:moutheDate];
+}
+
++(NSString *)dateToTimeStringYMD:(NSDate *)date{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    // ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+    [formatter setDateFormat:@"yyyy-MM-dd"];
+    //现在时间,你可以输出来看下是什么格式
+    //----------将nsdate按formatter格式转成nsstring
+    //[formatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+    return [formatter stringFromDate:date];
+}
+
 
 + (NSString *)dateAddMinuteYMDHM:(NSDate *)date minute:(NSInteger)minute{
     //NSDate *currentDate  = [NSDate date];
@@ -1193,7 +1211,7 @@ static id _instance;
 }
 
 + (void)showAlertView:(nullable NSString *)title andMessage:(NSString *)message andTitles:(NSArray *)titles andColors:(nullable NSArray *)colors sure:(void (^)(void))completionSure cancel:(nullable void (^)(void))completionCancel{
-    MLAlertView *alert = [[MLAlertView alloc] initWithTitle:title andMessage:message andMessageAlignment:NSTextAlignmentCenter andItem:titles andMessageFontSize:17.f andSelectBlock:^(NSInteger index) {
+    MLAlertView *alert = [[MLAlertView alloc] initWithTitle:title andMessage:message andMessageAlignment:NSTextAlignmentCenter andItem:titles andMessageFontSize:Ratio15 andSelectBlock:^(NSInteger index) {
         if (titles.count == 1) {
             completionSure();
         } else if(titles.count == 2){

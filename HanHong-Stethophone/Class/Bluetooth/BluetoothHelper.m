@@ -698,7 +698,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
         while (connected) {
             
             rx_avaliable = ble_rx_avaliable;
-            if (rx_avaliable > len) {
+            if (rx_avaliable >= len) {
                 break;
             }
             

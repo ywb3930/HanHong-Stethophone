@@ -7,64 +7,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C6972846-C612-4A33-A695-D32F8EE24CB2"
+            uuid = "6FEEB8B5-5E64-43CC-AE1F-F667D4291144"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Record/VC/StandartRecordVC.m"
+            filePath = "HanHong-Stethophone/Class/Sample/VC/RecordListVC.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "279"
-            endingLineNumber = "279"
-            landmarkName = "-actionStart"
+            startingLineNumber = "372"
+            endingLineNumber = "372"
+            landmarkName = "-actionRecieveBluetoothMessage:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B423BE77-5E84-465F-A139-63F750E3AF9D"
+            uuid = "E06B8609-73F2-4504-BA89-62821A4C9760"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Me/VC/AuscultatoryAreaVC.m"
+            filePath = "HanHong-Stethophone/Class/Sample/VC/RecordListVC.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
-            landmarkName = "-actionButtonClick:"
+            startingLineNumber = "237"
+            endingLineNumber = "237"
+            landmarkName = "-getAllRecordFiltrate:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "513B62E2-25F4-4167-85E2-E589D8E94103"
+            uuid = "32A5CB6C-21D2-44E8-B6A2-8A88C8D2CAAF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Me/VC/AuscultatoryAreaVC.m"
+            filePath = "HanHong-Stethophone/Class/Sample/VC/RecordListVC.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "45"
-            endingLineNumber = "45"
-            landmarkName = "-actionButtonClick:"
+            startingLineNumber = "57"
+            endingLineNumber = "57"
+            landmarkName = "-textFieldShouldReturn:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "38CAD58A-6F2A-4F3D-B7DB-6EE42170C8EE"
+            uuid = "43D3F48B-A259-427D-82AB-4C26ED779F54"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Record/VC/StandartRecordVC.m"
+            filePath = "HanHong-Stethophone/Class/Sample/VC/RecordListVC.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "316"
-            endingLineNumber = "316"
-            landmarkName = "-autoSelectNexrPositionSequence"
+            startingLineNumber = "227"
+            endingLineNumber = "227"
+            landmarkName = "-getAllRecordFiltrate:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

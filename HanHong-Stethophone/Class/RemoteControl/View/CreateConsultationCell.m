@@ -26,7 +26,7 @@
 }
 
 - (void)setModel:(FriendModel *)model{
-    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:model.avatar] placeholderImage:nil options:SDWebImageProgressiveLoad];
+    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:model.avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
     self.labelName.hidden = NO;
     self.labelName.text = model.name;
     self.imageViewTag.hidden = !model.bCollect;

@@ -499,13 +499,9 @@
 + (void)recordAdd:(NSMutableDictionary *)params recordData:(NSData *)recordData progress:(void (^)(NSProgress *  uploadProgress))progress success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/html",@"text/plain", @"text/json", @"text/javascript",@"image/png", @"image/jpeg", nil];
-    NSString *requestUrl = [NSString stringWithFormat:@"%@user/modify-avatar", REQUEST_URL];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@record/add", REQUEST_URL];
     [manager POST:requestUrl parameters:params headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"yyyyMMddHHmmss";
-        NSString *str = [formatter stringFromDate:[NSDate date]];
-        NSString *fileName = [NSString stringWithFormat:@"%@.wav", str];
-        [formData appendPartWithFileData:recordData name:@"record_file" fileName:fileName mimeType:@"text/html"];
+        [formData appendPartWithFileData:recordData name:@"record_file" fileName:params[@"tag"] mimeType:@"text/html"];
     } progress:^(NSProgress * _Nonnull uploadProgress) {
         progress(uploadProgress);
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {

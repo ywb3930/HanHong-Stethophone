@@ -31,10 +31,15 @@ static HanhongDeviceHelper             *_hanhongDevice;
 
 - (void)on_device_helper_event:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
     //收数据
-    //NSLog(@"DEVICE_HELPER_EVENT = %li", event);
-    if (self.delegate && [self.delegate respondsToSelector:@selector(on_device_helper_event:args1:args2:)]) {
-        [self.delegate on_device_helper_event:event args1:args1 args2:args2];
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    userInfo[@"event"] = [@(event) stringValue];
+    if (args1) {
+        userInfo[@"args1"] = args1;
     }
+    if (args2) {
+        userInfo[@"args2"] = args2;
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:HHBluetoothMessage object:nil userInfo:userInfo];
 }
 
 - (NSString *)getProductionDate{
@@ -141,5 +146,15 @@ static HanhongDeviceHelper             *_hanhongDevice;
 - (void)setRecordDuration:(int)duration{
     [_hanhongDevice SetRecordDuration:duration];
 }
+
+-(void)setPlayFile:(NSData *)file_data{
+    [_hanhongDevice SetPlayFile:file_data];
+}
+
+-(void)startPlay:(PLAY_MODE)play_mode{
+    [_hanhongDevice StartPlay:play_mode];
+}
+
+
 
 @end

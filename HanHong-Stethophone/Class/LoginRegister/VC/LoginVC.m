@@ -84,7 +84,7 @@
 
     
 
-    self.itemUser.textFieldInfo.text = @"18902400417";
+    self.itemUser.textFieldInfo.text = @"13170473117";
     self.itemPass.textFieldPass.text = @"123456";
 }
 

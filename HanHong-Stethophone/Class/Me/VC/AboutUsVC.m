@@ -42,7 +42,7 @@
 
 - (void)showOrgInfo:(NSString *)url {
     __weak typeof(self) wself = self;
-    [self.imageViewOrgInfo sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:nil options:SDWebImageWaitStoreCache completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+    [self.imageViewOrgInfo sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:nil options:SDWebImageQueryMemoryData completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         CGFloat height = (screenW - Ratio40 ) * image.size.height / image.size.width;
         dispatch_async(dispatch_get_main_queue(), ^{
             wself.imageViewOrgInfo.sd_layout.leftSpaceToView(wself.scrollView, 0).topSpaceToView(wself.scrollView, 0).rightSpaceToView(wself.scrollView, 0).heightIs(height);

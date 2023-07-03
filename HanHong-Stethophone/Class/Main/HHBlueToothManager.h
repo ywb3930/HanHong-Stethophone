@@ -10,15 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol HHBlueToothManagerDelegate <NSObject>
-
-- (void)on_device_helper_event:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2;
-
-@end
-
 @interface HHBlueToothManager : NSObject<HanhongDeviceHelperDelegate>
 
-@property (weak, nonatomic) id<HHBlueToothManagerDelegate> delegate;
 
 + (instancetype)shareManager;
 
@@ -47,6 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setRecordDuration:(int)duration;//设置录音时长
 - (void)stop;
 - (void)abortSearch;
+- (void)setPlayFile:(NSData *)file_data;//播放  file_data：文件数据
+- (void)startPlay:(PLAY_MODE)play_mode;//play_mode 用第一个
+- (void)stop; 
 
 - (void)actionSearchBluetoothList;//查找蓝牙列表
 - (void)actionConnectToBluetoothMacAddress:(NSString *)macAddress;//根据Mac地址连接蓝牙

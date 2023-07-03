@@ -12,7 +12,7 @@
 #import "RecordModel.h"
 #import "AboutUsVC.h"
 
-@interface QuickRecordVC ()<UIGestureRecognizerDelegate, AVAudioPlayerDelegate, HHBluetoothButtonDelegate, HHBlueToothManagerDelegate, HeartFilterLungViewDelegate>
+@interface QuickRecordVC ()<UIGestureRecognizerDelegate, AVAudioPlayerDelegate, HHBluetoothButtonDelegate, HeartFilterLungViewDelegate>
 
 @property (retain, nonatomic) HHBluetoothButton     *buttonBluetooth;
 @property (retain, nonatomic) UIButton              *buttonCommit;
@@ -45,13 +45,13 @@
     self.view.backgroundColor = ViewBackGroundColor;
     self.successCount = 0;
     self.title = @"便捷录音";
-    [HHBlueToothManager shareManager].delegate = self;
     [self loadPlistData:YES];
     [self initNavi];
     [self loadData];
     [self initView];
     [self reloadView];
     [self actionStart];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
 
@@ -65,21 +65,24 @@
     }
 }
 
-
-
-- (void)on_device_helper_event:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
+- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+    NSDictionary *userInfo = notification.userInfo;
+    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
+    NSObject *args1 = userInfo[@"args1"];
+    NSObject *args2 = userInfo[@"args2"];
     if (event == DeviceHelperRecordReady) {
         self.recordingState = recordingState_prepare;
         NSLog(@"录音就绪");
     } else if (event != DeviceHelperRecordingData) {
         NSLog(@"DEVICE_HELPER_EVENT = %li", event);
-    } else if (event == DeviceHelperRecordBegin) {
+    }
+    if (event == DeviceHelperRecordBegin) {
         self.recordingState = recordingState_ing;
         self.recordCode = [NSString stringWithFormat:@"%@%@",[Tools getCurrentTimes], [Tools getRamdomString]];
         NSLog(@"录音开始: %@", self.recordCode);
         dispatch_async(dispatch_get_main_queue(), ^{
             self.readyRecordView.recordCode = self.recordCode;
-            
+
         });
     } else if (event == DeviceHelperRecordingTime) {
         self.recordingState = recordingState_ing;
@@ -91,9 +94,9 @@
             self.readyRecordView.progress = number / self.recordDurationAll;
             self.labelStartRecord.hidden = YES;
         });
-        
+
     } else if (event == DeviceHelperRecordingData) {
-        
+
     } else if (event == DeviceHelperRecordPause) {
         self.recordingState = recordingState_pause;
         NSLog(@"录音暂停");
@@ -156,7 +159,7 @@
         [self reloadViewRecordView];
         self.readyRecordView.labelReadyRecord.text = @"保存成功，准备下一个录音";
         [self actionStart];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"add_record_success" object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:AddLocalRecordSuccess object:nil];
     });
     self.successCount ++;
 }
@@ -221,6 +224,8 @@
 }
 
 - (void)actionStart{
+    NSLog(@"-- self.recordDurationAll = %li", self.recordDurationAll);
+    NSLog(@"-- self.RECORD_TYPE = %li", self.RECORD_TYPE);
     [[HHBlueToothManager shareManager] setRecordDuration:(int)self.recordDurationAll];//设置录音时长
     [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:RecordingUntilRecordDuration];
 }
@@ -392,7 +397,5 @@
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
     return NO;
 }
-
-
 
 @end

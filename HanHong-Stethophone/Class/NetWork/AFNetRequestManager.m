@@ -401,4 +401,28 @@
     }
 }
 
++ (void)downLoadFileWithUrl:(NSString *)url path:(NSString*)path  downloadProgress:(void (^)(NSProgress *downloadProgress))progress successBlock:(void (^)(NSURL *url))success fileDownloadFail:(void (^)(NSError * error))failure{
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
+        
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        return [NSURL fileURLWithPath:path];
+        //return [NSURL URLWithString:path];
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        NSLog(@"完成cache：%@",filePath);
+        NSHTTPURLResponse *response1 = (NSHTTPURLResponse *)response;
+        NSInteger statusCode = [response1 statusCode];
+        if (statusCode == 200) {
+            success(filePath);
+        }else{
+            failure(error);
+        }
+    }];
+    [task resume];
+   
+ 
+}
+
 @end

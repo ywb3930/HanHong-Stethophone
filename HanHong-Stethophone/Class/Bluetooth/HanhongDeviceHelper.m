@@ -305,7 +305,7 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
                         //Prepare play data
                         self->playStartTime = self->configPlayStartTime;
                         self->playEndTime = self->configPlayEndTime;
-                        self->playRepeat = self->playRepeat;
+                        self->playRepeat = self->configPlayRepeat;
                         
                         int start = (int) (self->playStartTime * audiosize_per_second);
                         int count = (int) ((self->playEndTime - self->playStartTime) * audiosize_per_second);
@@ -313,6 +313,8 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
                         if (start + count > self->play_data.length) {
                             count = (int)self->play_data.length - start;
                         }
+                        
+                        [self->play_buffer removeAllObjects];
                         
                         int packets = (count + 399) / 400;
                         

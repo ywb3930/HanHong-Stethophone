@@ -104,6 +104,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDate *)dateWithYearsBeforeNow:(NSInteger)year;
 // 时间+分钟
 + (NSString *)dateAddMinuteYMDHM:(NSDate *)date minute:(NSInteger)minute;
++ (NSString *)dateAddMinuteYMD:(NSDate *)date mouth:(NSInteger)mouth;
 + (NSString *)dateAddMinuteYMDHMS:(NSDate *)date minute:(NSInteger)minute;
 // 时间字符串转成 yyyy-MM-dd HH:mm:ss
 + (NSDate *)stringToDateYMDHMS:(NSString *)string;

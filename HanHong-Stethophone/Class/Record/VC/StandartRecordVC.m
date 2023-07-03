@@ -13,7 +13,7 @@
 #import "DeviceManagerVC.h"
 #import "RecordFinishVC.h"
 
-@interface StandartRecordVC ()<HHBlueToothManagerDelegate, HeartVoiceViewDelegate, LungVoiceViewDelegate, StandarRecordBottomViewDelegate>
+@interface StandartRecordVC ()<HeartVoiceViewDelegate, LungVoiceViewDelegate, StandarRecordBottomViewDelegate>
 
 @property (retain, nonatomic) UIButton                      *buttonHeart;
 @property (retain, nonatomic) UIButton                      *buttonLung;
@@ -56,9 +56,9 @@
     self.selectIndex = 0;
     self.autoIndex = 0;
     [self loadPlistData:YES];
-    [HHBlueToothManager shareManager].delegate = self;
     [self initView];
     [self reloadView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
 - (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel{
@@ -101,8 +101,11 @@
     [self realodFilerView];
     self.readyRecordView.duration = self.recordDurationAll;//录音总时长
 }
-
-- (void)on_device_helper_event:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
+- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+    NSDictionary *userInfo = notification.userInfo;
+    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
+    NSObject *args1 = userInfo[@"args1"];
+    NSObject *args2 = userInfo[@"args2"];
     if (event == DeviceHelperRecordReady) {
         self.recordingState = recordingState_prepare;
         if (self.soundsType == heart_sounds) {
@@ -237,7 +240,7 @@
 - (void)saveSuccess{
     [[HHBlueToothManager shareManager] stop];
     self.recordModel.user_id = [@(LoginData.id) stringValue];
-    self.recordModel.record_mode = QuickRecord;
+    self.recordModel.record_mode = StanarRecord;
     self.recordModel.type_id = self.soundsType;
     self.recordModel.record_filter = self.isFiltrationRecord;
     self.recordModel.record_time = [Tools dateToTimeStringYMDHMS:[NSDate now]];
@@ -270,7 +273,7 @@
             [self autoSelectNexrPositionSequence];
         }
         //[self actionStart];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"add_record_success" object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:AddLocalRecordSuccess object:nil];
     });
 }
 
@@ -495,6 +498,10 @@
         _lungVoiceView.delegate = self;
     }
     return _lungVoiceView;
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

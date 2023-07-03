@@ -53,7 +53,7 @@
 }
 
 - (void)setSearchModel:(FriendModel *)searchModel{
-    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:searchModel.avatar] placeholderImage:nil options:SDWebImageProgressiveLoad];
+    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:searchModel.avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
     NSInteger state = searchModel.state;
     if (state < 0) {
         self.buttonLeft.hidden = YES;
@@ -109,13 +109,13 @@
 
 
 - (void)setFriendModel:(FriendModel *)friendModel{
-    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:friendModel.avatar] placeholderImage:nil options:SDWebImageProgressiveLoad];
+    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:friendModel.avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
     [self showLabelMessage:friendModel];
     self.buttonClick.selected = friendModel.bSelected;
 }
 
 - (void)setFriendNewModel:(FriendModel *)friendNewModel{
-    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:friendNewModel.avatar] placeholderImage:nil options:SDWebImageProgressiveLoad];
+    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:friendNewModel.avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
     
     
     NSInteger state = friendNewModel.state;

@@ -105,7 +105,7 @@
         
         //FriendModel *model = [self.arrayData objectAtIndex:i];
         UIImageView *imageViewHead = [[UIImageView alloc] init];
-        [imageViewHead sd_setImageWithURL:[NSURL URLWithString:dic[@"avatar"]] placeholderImage:nil options:SDWebImageProgressiveLoad];
+        [imageViewHead sd_setImageWithURL:[NSURL URLWithString:dic[@"avatar"]] placeholderImage:nil options:SDWebImageQueryMemoryData];
         imageViewHead.layer.cornerRadius = Ratio4;
         imageViewHead.contentMode = UIViewContentModeScaleAspectFit;
         [viewMember addSubview:imageViewHead];

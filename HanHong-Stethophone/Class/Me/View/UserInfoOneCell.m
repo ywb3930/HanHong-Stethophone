@@ -32,7 +32,7 @@
 
 - (void)setAvatar:(NSString *)avatar{
     //_avatar = avatar;
-    [self.imageViewInfo sd_setImageWithURL:[NSURL URLWithString:avatar] placeholderImage:[UIImage imageNamed:@"avatar"] options:SDWebImageLowPriority];
+    [self.imageViewInfo sd_setImageWithURL:[NSURL URLWithString:avatar] placeholderImage:[UIImage imageNamed:@"avatar"] options:SDWebImageQueryMemoryData];
     self.imageViewInfo.sd_imageTransition = SDWebImageTransition.fadeTransition;
 }
 

@@ -244,7 +244,7 @@ typedef void(^FinishBlock)(NSInteger index);
         
     }else if (!self.titleString.length && self.messageString.length) {
         
-        self.messageLabel.frame = CGRectMake(viewLeftRight, viewTop, viewWith-viewLeftRight*2, [self.messageString getSpaceLabelHeightwithSpeace:messageLineSpace withLabel:self.messageLabel andAlignment:self.messageAlignment andWidth:viewWith-viewLeftRight*2]);
+        self.messageLabel.frame = CGRectMake(viewLeftRight, viewTop, viewWith-viewLeftRight*2, [self.messageString getSpaceLabelHeightwithSpeace:messageLineSpace withLabel:self.messageLabel andAlignment:self.messageAlignment andWidth:viewWith-viewLeftRight*2]*2);
         
         self.lineView.frame     = CGRectMake(0, self.messageLabel.bottom+msgAndLineViewSpace, viewWith, 0.8);
         

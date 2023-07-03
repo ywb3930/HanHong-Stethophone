@@ -28,6 +28,7 @@
 @property (retain, nonatomic) UIButton                  *buttonClearHistory;
 
 @property (retain, nonatomic) UIButton                  *buttonNext;
+@property (assign, nonatomic) Boolean                   bAddArea;
 
 @end
 
@@ -57,17 +58,22 @@
     NSInteger sex = [sexString isEqualToString:@"男"] ? man : woman;
     NSString *age = self.itemAgeView.textFieldAge.text;
     NSString *mouth = self.itemAgeView.textFieldMonth.text;
-    
-    
+    NSInteger mounthCout = [mouth integerValue] + [age integerValue] * 12;
+    NSString *year = [Tools dateAddMinuteYMD:[NSDate now] mouth:-1 * mounthCout];
+    NSLog(@"year = %@", year);
+    //NSInteger year = [[currentDateString substringToIndex:4] integerValue] - age;
     RecordModel *model = [[RecordModel alloc] init];
     model.patient_id = patientId;
     model.patient_sex = sex;
-    model.patient_birthday = [NSString stringWithFormat:@"%@-%@", age, mouth];
+    model.patient_birthday = year;
     model.patient_height = self.itemViewHeight.textFieldInfo.text;
     model.patient_weight = self.itemViewWeight.textFieldInfo.text;
     model.patient_symptom = self.itemViewDisease.textFieldInfo.text;
     model.patient_diagnosis = self.itemViewDiagnose.textFieldInfo.text;
-    model.patient_area = self.itemViewArea.labelInfo.text;
+    if(self.bAddArea) {
+        model.patient_area = self.itemViewArea.labelInfo.text;
+    }
+    
     
     StandartRecordVC *standartRecord = [[StandartRecordVC alloc] init];
     standartRecord.recordModel = model;
@@ -76,6 +82,7 @@
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
     self.itemViewSex.labelInfo.text = index == woman ? @"女" : @"男";
+    self.itemViewSex.labelInfo.textColor = MainBlack;
 }
 
 - (void)actionTap:(UITapGestureRecognizer *)tap{
@@ -85,7 +92,8 @@
     //NSArray *dataSource = [NSArray arrayWithContentsOfFile:filePath];
     __weak typeof(self) wself = self;
     [BRAddressPickerView showAddressPickerWithShowType:BRAddressPickerModeArea dataSource:dataSource defaultSelected:nil isAutoSelect:NO themeColor:MainColor resultBlock:^(BRProvinceModel *province, BRCityModel *city, BRAreaModel *area) {
-
+        wself.bAddArea = YES;
+        wself.itemViewArea.labelInfo.textColor = MainBlack;
         wself.itemViewArea.labelInfo.text = [NSString stringWithFormat:@"%@%@%@", province.name, city.name, area.name];
 
     } cancelBlock:^{

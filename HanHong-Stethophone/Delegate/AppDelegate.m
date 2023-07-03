@@ -30,6 +30,7 @@
     NSDictionary *data = userIfo.userInfo;
     if([data[@"type"] isEqualToString:@"1"]) {//登录成功
         self.window.rootViewController = [[HHTabBarController alloc] init];
+        [self initBluetooth];
     } else if([data[@"type"] isEqualToString:@"0"]) {//退出登录
         HHNavigationController *navigation = [[HHNavigationController alloc] initWithRootViewController:[[LoginVC alloc] init]];
         self.window.rootViewController = navigation;
@@ -60,6 +61,7 @@
     if(LoginData) {
         [self getUserData];
         self.window.rootViewController = [[HHTabBarController alloc] init];
+        [self initBluetooth];
     } else {
         HHNavigationController *navigation = [[HHNavigationController alloc] initWithRootViewController:[[LoginVC alloc] init]];
         self.window.rootViewController = navigation;
@@ -75,11 +77,19 @@
     [UMConfigure initWithAppkey:@"649e6e8cbd4b621232c434ed" channel:@"App Store"];
     [UMCommonLogManager setUpUMCommonLogManager];
     [UMLaunch endLaunch:@"intUmeng"];
-    [WXApi registerApp:@"" universalLink:@""];
-    
+    [WXApi registerApp:@"wx97eae6a515b782d3" universalLink:@"https://www.hedelongcloud.com/auscultationassistant/"];
+    //AppID：
     return YES;
 }
 
+- (void)initBluetooth{
+    NSString *defaultConnectPath = [[Constant shareManager] getPlistFilepathByName:@"connectDevice.plist"];
+    NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:defaultConnectPath];
+    if (data) {
+        NSString *bluetoothDeviceUUID = [data objectForKey:@"bluetoothDeviceUUID"];
+        [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:bluetoothDeviceUUID];
+    }
+}
 
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url{
     return [WXApi handleOpenURL:url delegate:self];
