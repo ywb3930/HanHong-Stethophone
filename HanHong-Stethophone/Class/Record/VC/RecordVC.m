@@ -9,6 +9,7 @@
 #import "DeviceManagerVC.h"
 #import "QuickRecordVC.h"
 #import "StandartRecordPatientInfoVC.h"
+#import "MLAlertView.h"
 
 @interface RecordVC ()
 
@@ -25,7 +26,7 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = WHITECOLOR;
     [self initView];
-    
+
 }
 
 

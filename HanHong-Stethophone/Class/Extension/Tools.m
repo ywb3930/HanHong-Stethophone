@@ -1225,7 +1225,7 @@ static id _instance;
     }];
     //横线和竖线的颜色
     alert.lineViewColor = HEXCOLOR(0xE6E6E6, 1);
-    alert.titleLabelFont = [UIFont systemFontOfSize:20];
+    alert.titleLabelFont = Font20;
 
     //副标题或描述的字体颜色
     alert.titleLabelColor = MainBlack;
@@ -1236,10 +1236,8 @@ static id _instance;
 
     //副标题或描述的颜色
     alert.messageLabelColor = MainGray;
-
-    [alert showWithView:kAppWindow];
-    
-   
+    alert.frame = CGRectMake(0, 0, screenW, screenH);
+    [kAppWindow addSubview:alert];
 }
 
 

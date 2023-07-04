@@ -441,14 +441,13 @@
             [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要上传%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
                 [self actionUploadToClound];
             } cancel:^{
-                
+                NSLog(@"1");
             }];
             
         } else {
             [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要删除%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
                 [self actionDeleteLocalData];
             } cancel:^{
-                
             }];
             
         }

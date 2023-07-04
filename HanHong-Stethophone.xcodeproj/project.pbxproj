@@ -34,7 +34,6 @@
 		97296C872A406D40001EAD3A /* ChangePasswordVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97296C862A406D40001EAD3A /* ChangePasswordVC.m */; };
 		97296C8A2A407129001EAD3A /* ChangePhoneVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97296C892A407129001EAD3A /* ChangePhoneVC.m */; };
 		97349DFF2A3FEABD00AF5A06 /* PasswordManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */; };
-		97349E022A3FFC9D00AF5A06 /* TTAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E012A3FFC9D00AF5A06 /* TTAlertView.m */; };
 		97349E062A40007800AF5A06 /* PrivacyPermission.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E052A40007800AF5A06 /* PrivacyPermission.m */; };
 		97349E092A4002B100AF5A06 /* DeviceManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E082A4002B100AF5A06 /* DeviceManagerVC.m */; };
 		97349E0C2A40211200AF5A06 /* DeviceDefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E0B2A40211200AF5A06 /* DeviceDefaultView.m */; };
@@ -230,8 +229,6 @@
 		97296C892A407129001EAD3A /* ChangePhoneVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangePhoneVC.m; sourceTree = "<group>"; };
 		97349DFD2A3FEABC00AF5A06 /* PasswordManagerVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasswordManagerVC.h; sourceTree = "<group>"; };
 		97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasswordManagerVC.m; sourceTree = "<group>"; };
-		97349E002A3FFC9D00AF5A06 /* TTAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TTAlertView.h; sourceTree = "<group>"; };
-		97349E012A3FFC9D00AF5A06 /* TTAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TTAlertView.m; sourceTree = "<group>"; };
 		97349E042A40007800AF5A06 /* PrivacyPermission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyPermission.h; sourceTree = "<group>"; };
 		97349E052A40007800AF5A06 /* PrivacyPermission.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivacyPermission.m; sourceTree = "<group>"; };
 		97349E072A4002B100AF5A06 /* DeviceManagerVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceManagerVC.h; sourceTree = "<group>"; };
@@ -1286,8 +1283,6 @@
 				9B29B2E32A3C0F89008DCFE7 /* TTWebVC.m */,
 				9765E05B2A3C5A8100181452 /* ItemAgeView.h */,
 				9765E05C2A3C5A8100181452 /* ItemAgeView.m */,
-				97349E002A3FFC9D00AF5A06 /* TTAlertView.h */,
-				97349E012A3FFC9D00AF5A06 /* TTAlertView.m */,
 				97296C822A40660F001EAD3A /* HHPopEditView.h */,
 				97296C832A40660F001EAD3A /* HHPopEditView.m */,
 				9721E0CB2A47038900B68939 /* HeartFilterLungView.h */,
@@ -1594,7 +1589,6 @@
 				9B29B32A2A3C0F89008DCFE7 /* NSString+AttributedString.m in Sources */,
 				97469CC12A4DC7F60091A3F3 /* DeviceMessageCell.m in Sources */,
 				97349E0F2A402A1F00AF5A06 /* BluetoothDeviceModel.m in Sources */,
-				97349E022A3FFC9D00AF5A06 /* TTAlertView.m in Sources */,
 				9B29B3202A3C0F89008DCFE7 /* KSImagePickerVideoItemCell.m in Sources */,
 				9B29B3162A3C0F89008DCFE7 /* KSImagePickerViewerCell.m in Sources */,
 				97ED41872A4B16D50055D1C4 /* AnnotationVC.m in Sources */,

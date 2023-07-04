@@ -21,13 +21,6 @@ typedef void(^MLAlertViewResultBlock)(NSInteger index);
  */
 - (instancetype)initWithTitle:(NSString *)title andMessage:(NSString *)message andMessageAlignment:(NSTextAlignment)textAlignment andItem:(NSArray<NSString *> *)itemArr andMessageFontSize:(CGFloat)size andSelectBlock:(void(^)(NSInteger index))selectBlock;
 
-/**
- *  view显示方法
- *  @param view 传入俯父视图view
- */
-- (void)showWithView:(UIView *)view;
-
-
 /** 大标题title的字体大小 */
 @property (nonatomic, strong) UIFont * titleLabelFont;
 
@@ -45,8 +38,6 @@ typedef void(^MLAlertViewResultBlock)(NSInteger index);
 /** 横线和竖线的颜色 */
 @property (nonatomic, strong) UIColor * lineViewColor;
 
-/** 是否隐藏横线 默认为NO不隐藏 要隐藏设为YES*/
-@property (nonatomic, assign) BOOL transverseLineHidden;
 
 /** 总共最多3个item 按顺序把颜色放数组里面就行了，没item设置无效，多设置按顺序取 */
 @property (nonatomic, strong) NSArray<UIColor *> * itemTitleColorArr;
