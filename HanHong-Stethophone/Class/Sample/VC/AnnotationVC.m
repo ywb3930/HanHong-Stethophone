@@ -45,6 +45,8 @@
 @property (retain, nonatomic) UIView                        *viewLine;
 @property (assign, nonatomic) Boolean                       bPlaying;
 @property (assign, nonatomic) CGFloat                       startYLine;
+@property (assign, nonatomic) Boolean                       bCurrentView;//是否在当前页面
+
 
 @end
 
@@ -65,6 +67,9 @@
 
 //接收蓝牙底层消息
 - (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+    if (!self.bCurrentView) {
+        return;
+    }
     NSDictionary *userInfo = notification.userInfo;
     DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
     NSObject *args1 = userInfo[@"args1"];
@@ -97,9 +102,9 @@
 - (void)playLineAnimation:(float)value{
     CGFloat width = value / self.recordModel.record_length * (screenW - Ratio22);
     
-    [UIView animateWithDuration:0.2 animations:^{
+    //[UIView animateWithDuration:0.2 animations:^{
         self.viewLine.frame = CGRectMake(Ratio11+width, self.startYLine, Ratio1, Ratio150);
-    }];
+    //}];
 }
 
 
@@ -461,12 +466,14 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    self.bCurrentView = YES;
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 //切换页面时停止播放
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    self.bCurrentView = NO;
     [self stopPlayRecord];
 }
 

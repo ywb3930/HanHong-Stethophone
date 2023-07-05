@@ -42,7 +42,7 @@
 		972CC0A52A545DDD00B8F8DE /* AnnotationFullVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0A42A545DDD00B8F8DE /* AnnotationFullVC.m */; };
 		972CC0AB2A54F52700B8F8DE /* NoDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0AA2A54F52700B8F8DE /* NoDataView.m */; };
 		972CC0AE2A550DC900B8F8DE /* WaveFullView.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0AD2A550DC900B8F8DE /* WaveFullView.m */; };
-		972CC0B02A5528B100B8F8DE /* 2.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 972CC0AF2A5528B100B8F8DE /* 2.mp3 */; };
+		972CC0B32A5564A200B8F8DE /* BaseRecordPlayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0B22A5564A100B8F8DE /* BaseRecordPlayVC.m */; };
 		97349DFF2A3FEABD00AF5A06 /* PasswordManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */; };
 		97349E062A40007800AF5A06 /* PrivacyPermission.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E052A40007800AF5A06 /* PrivacyPermission.m */; };
 		97349E092A4002B100AF5A06 /* DeviceManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E082A4002B100AF5A06 /* DeviceManagerVC.m */; };
@@ -256,7 +256,8 @@
 		972CC0AA2A54F52700B8F8DE /* NoDataView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NoDataView.m; sourceTree = "<group>"; };
 		972CC0AC2A550DC900B8F8DE /* WaveFullView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveFullView.h; sourceTree = "<group>"; };
 		972CC0AD2A550DC900B8F8DE /* WaveFullView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WaveFullView.m; sourceTree = "<group>"; };
-		972CC0AF2A5528B100B8F8DE /* 2.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = 2.mp3; sourceTree = "<group>"; };
+		972CC0B12A5564A100B8F8DE /* BaseRecordPlayVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseRecordPlayVC.h; sourceTree = "<group>"; };
+		972CC0B22A5564A100B8F8DE /* BaseRecordPlayVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseRecordPlayVC.m; sourceTree = "<group>"; };
 		97349DFD2A3FEABC00AF5A06 /* PasswordManagerVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasswordManagerVC.h; sourceTree = "<group>"; };
 		97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasswordManagerVC.m; sourceTree = "<group>"; };
 		97349E042A40007800AF5A06 /* PrivacyPermission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyPermission.h; sourceTree = "<group>"; };
@@ -849,6 +850,8 @@
 				97ED41862A4B16D50055D1C4 /* AnnotationVC.m */,
 				972CC0A32A545DDD00B8F8DE /* AnnotationFullVC.h */,
 				972CC0A42A545DDD00B8F8DE /* AnnotationFullVC.m */,
+				972CC0B12A5564A100B8F8DE /* BaseRecordPlayVC.h */,
+				972CC0B22A5564A100B8F8DE /* BaseRecordPlayVC.m */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -1407,7 +1410,6 @@
 				9B5528022A36C14C00F02950 /* Main.storyboard */,
 				9B5528AB2A396E6700F02950 /* city.json */,
 				9B5528072A36C14C00F02950 /* LaunchScreen.storyboard */,
-				972CC0AF2A5528B100B8F8DE /* 2.mp3 */,
 				9B55280A2A36C14C00F02950 /* Info.plist */,
 			);
 			path = "HanHong-Stethophone";
@@ -1475,7 +1477,6 @@
 			files = (
 				9B5528092A36C14C00F02950 /* LaunchScreen.storyboard in Resources */,
 				9B5528062A36C14C00F02950 /* Assets.xcassets in Resources */,
-				972CC0B02A5528B100B8F8DE /* 2.mp3 in Resources */,
 				9B5528AC2A396E6700F02950 /* city.json in Resources */,
 				9B5528042A36C14C00F02950 /* Main.storyboard in Resources */,
 			);
@@ -1604,6 +1605,7 @@
 				9721E09C2A41A19100B68939 /* ConsultationCell.m in Sources */,
 				9B29B3112A3C0F89008DCFE7 /* KSImagePickerItemModel.m in Sources */,
 				9B29B3092A3C0F89008DCFE7 /* KSMediaViewerTransition.m in Sources */,
+				972CC0B32A5564A200B8F8DE /* BaseRecordPlayVC.m in Sources */,
 				97349E092A4002B100AF5A06 /* DeviceManagerVC.m in Sources */,
 				97ED415C2A4A63DF0055D1C4 /* TeachingHistoryModel.m in Sources */,
 				9721E0BB2A42925800B68939 /* NSString+ChineseCharactersToSpelling.m in Sources */,

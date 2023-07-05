@@ -53,6 +53,7 @@
 @property (assign, nonatomic) Boolean           autoLogin;
 
 @property (assign, nonatomic) NSInteger         delay;
+@property (assign, nonatomic) Boolean           autoLogining;
 
 @end
 
@@ -62,6 +63,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.delay = 0.5;
+    self.autoLogining = YES;
     self.view.backgroundColor = WHITECOLOR;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionGetLoginType:) name:login_type_broadcast object:nil];
     self.loginTypePassword = YES;
@@ -198,13 +200,17 @@
             NSString *number = dic[@"number"];
             NSString *password = dic[@"password"];
             self.itemUser.textFieldInfo.text = number;
-            self.itemPass.textFieldPass.text = password;
+            //self.itemPass.textFieldPass.text = password;
             if(self.autoLogin && bLogin && ![Tools isBlankString:number] && ![Tools isBlankString:password]) {
+                self.autoLogining = YES;
                 self.delay = 2;
                 [self actionLogin:self.buttonLoginPass];
+            } else {
+                self.autoLogining = NO;
             }
         } else if([type isEqualToString:@"code"] && [loginType integerValue] == self.loginType) {
             self.itemCodeUser.textFieldInfo.text = dic[@"number"];
+            self.autoLogining = NO;
         }
     }
     
@@ -277,7 +283,14 @@
     }
     
     if(self.loginTypePassword) {
-        NSString *pass = self.itemPass.textFieldPass.text;
+        NSString *pass = @"";
+        if(self.autoLogining) {
+            NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
+            pass = dic[@"password"];
+        } else {
+          pass  = self.itemPass.textFieldPass.text;
+        }
+        
         NSString *passwordString = [NSString stringWithFormat:@"%@%@%@", saltnum1, pass, saltnum2];
         NSString *password = [Tools md5:passwordString];
         params[@"password"] = password;
@@ -332,7 +345,7 @@
     params[@"token"] = LoginData.token;
     __weak typeof(self) wself = self;
     [TTRequestManager orgList:params success:^(id  _Nonnull responseObject) {
-        NSLog(@"... 2");
+
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
             NSArray *data = responseObject[@"data"];
             NSArray *list = [NSArray yy_modelArrayWithClass:[OrgModel class] json:data];
@@ -383,7 +396,14 @@
     } else {
         params[@"type"] = @"password";
         params[@"number"] = self.itemUser.textFieldInfo.text;
-        params[@"password"] = self.itemPass.textFieldPass.text;
+        if (!self.autoLogining) {
+            params[@"password"] = self.itemPass.textFieldPass.text;
+        } else {
+            NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
+            NSString *pass = dic[@"password"];
+            params[@"password"] = pass;
+        }
+        
         params[@"login-type"] = [@(self.loginType) stringValue];
         params[@"teach-type"] = [@(self.teachRole) stringValue];
         
