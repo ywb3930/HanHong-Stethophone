@@ -47,6 +47,8 @@
                 
                 [Tools logout:@""];
             }];
+        } else {
+            [self.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
         }
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];

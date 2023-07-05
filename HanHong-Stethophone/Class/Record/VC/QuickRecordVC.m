@@ -9,14 +9,14 @@
 #import "ReadyRecordView.h"
 #import "HeartFilterLungView.h"
 #import "DeviceManagerVC.h"
-#import "RecordModel.h"
 #import "AboutUsVC.h"
 
 @interface QuickRecordVC ()<UIGestureRecognizerDelegate, AVAudioPlayerDelegate, HHBluetoothButtonDelegate, HeartFilterLungViewDelegate>
-
+//蓝牙图标按钮
 @property (retain, nonatomic) HHBluetoothButton     *buttonBluetooth;
+//蓝牙图标按钮
 @property (retain, nonatomic) UIButton              *buttonCommit;
-
+//
 @property (retain, nonatomic) ReadyRecordView       *readyRecordView;
 
 @property (retain, nonatomic) UIView                *viewInfo;
@@ -50,11 +50,11 @@
     [self loadData];
     [self initView];
     [self reloadView];
-    [self actionStart];
+    [self actionStartRecord];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
-
+//读取本地配置文件
 - (void)loadPlistData:(Boolean)firstLoadData{
     NSString *path = [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
     NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:path];
@@ -64,7 +64,7 @@
         self.isFiltrationRecord = [data[@"is_filtration_record"] integerValue];//滤波状态
     }
 }
-
+//接收蓝牙广播通知
 - (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
     NSDictionary *userInfo = notification.userInfo;
     DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
@@ -76,6 +76,7 @@
     } else if (event != DeviceHelperRecordingData) {
         NSLog(@"DEVICE_HELPER_EVENT = %li", event);
     }
+    //开始录音
     if (event == DeviceHelperRecordBegin) {
         self.recordingState = recordingState_ing;
         self.recordCode = [NSString stringWithFormat:@"%@%@",[Tools getCurrentTimes], [Tools getRamdomString]];
@@ -85,6 +86,7 @@
 
         });
     } else if (event == DeviceHelperRecordingTime) {
+        //显示录音进度
         self.recordingState = recordingState_ing;
         dispatch_async(dispatch_get_main_queue(), ^{
             NSNumber *result = (NSNumber *)args1;
@@ -98,6 +100,7 @@
     } else if (event == DeviceHelperRecordingData) {
 
     } else if (event == DeviceHelperRecordPause) {
+        
         self.recordingState = recordingState_pause;
         NSLog(@"录音暂停");
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -107,33 +110,36 @@
     } else if (event == DeviceHelperRecordEnd) {
         NSLog(@"录音结束");
         self.recordingState = recordingState_stop;
-        [self actionStopRecord];
+        [self actionEndRecord];
     }
 }
-
-- (void)actionStopRecord{
+//录音结束事件处理
+- (void)actionEndRecord{
+    //获取录音二进制文件
     NSData *data = [[HHBlueToothManager shareManager] getRecordFile];
-    //NSString *filePath = [[NSBundle mainBundle] pathForResource:@"1" ofType:@"wav"];
+    //获取录音文件保存路径
     NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
     self.relativePath = [NSString stringWithFormat:@"audio/%@.wav", self.recordCode];
     NSString *filePath = [NSString stringWithFormat:@"%@%@", path, self.relativePath];
     //NSLog(@"filepath = %@", filePath);
+    //将二进制文件写入目录
     Boolean success = [data writeToFile:filePath atomically:YES];
     if (success) {
         NSLog(@"保存成功");
+        //保存成功回调
         [self saveSuccess];
     } else {
         NSLog(@"保存失败");
         [self reloadViewRecordView];
     }
 }
-
+//重新加载录音界面
 - (void)reloadViewRecordView{
     self.readyRecordView.recordTime = 0;
     self.readyRecordView.progress = 0;
     self.recordingState = recordingState_prepare;
 }
-
+//保存成功后写入数据库
 - (void)saveSuccess{
     [[HHBlueToothManager shareManager] stop];
     RecordModel *recordModel = [[RecordModel alloc] init];
@@ -158,12 +164,12 @@
 
         [self reloadViewRecordView];
         self.readyRecordView.labelReadyRecord.text = @"保存成功，准备下一个录音";
-        [self actionStart];
+        [self actionStartRecord];
         [[NSNotificationCenter defaultCenter] postNotificationName:AddLocalRecordSuccess object:nil];
     });
     self.successCount ++;
 }
-
+//打开关闭滤波
 - (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel{
     if (self.recordingState == recordingState_ing) {
         [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
@@ -172,21 +178,16 @@
     self.isFiltrationRecord = filterModel;
     [self loadData];
     [self realodFilerView];
-    [self actionStart];
+    [self actionStartRecord];
     return YES;
 }
-
+//点击蓝牙按你到蓝牙配置界面
 - (void)actionClickBlueToothCallBack:(UIButton *)button{
     if(self.recordingState == recordingState_ing) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"正在录音，离开需要取消录音" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *go = [UIAlertAction actionWithTitle:@"继续录音" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [Tools showAlertView:@"提示" andMessage:@"正在录音，离开会取消录音" andTitles:@[@"取消录音", @"继续录音"] andColors:@[MainGray, MainColor] sure:^{
             
-        }];
-        [alert addAction:go];
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消录音" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-            NSInteger time = 0;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                //[self.buttonBluetooth actionToDeviceManagerVC:self];
+        } cancel:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
                 [self reloadViewRecordView];
                 self.readyRecordView.labelReadyRecord.text = @"准备录音";
                 self.labelStartRecord.hidden = NO;
@@ -194,22 +195,18 @@
                 [self actionToDeviceManagerVC];
             });
         }];
-        [alert addAction:cancel];
-        [self presentViewController:alert animated:YES completion:nil];
     } else {
         [self actionToDeviceManagerVC];
     }
-     
-    
 }
-
+//进入设备管理界面
 - (void)actionToDeviceManagerVC{
     DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
     deviceManager.recordingState = self.recordingState;
     [self.navigationController pushViewController:deviceManager animated:YES];
 }
 
-
+//
 - (void)loadData{
     if (self.isFiltrationRecord == open_filtration) {
         //判断音类型
@@ -222,14 +219,12 @@
         self.RECORD_TYPE = RECORD_FULL_WITH_BUTTON;
     }
 }
-
-- (void)actionStart{
-    NSLog(@"-- self.recordDurationAll = %li", self.recordDurationAll);
-    NSLog(@"-- self.RECORD_TYPE = %li", self.RECORD_TYPE);
+//开始录音
+- (void)actionStartRecord{
     [[HHBlueToothManager shareManager] setRecordDuration:(int)self.recordDurationAll];//设置录音时长
     [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:RecordingUntilRecordDuration];
 }
-
+//点击心音肺音按钮事件
 - (Boolean)actionHeartLungButtonClickCallback:(NSInteger)idx{
     if (self.recordingState == recordingState_ing) {
         [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
@@ -242,10 +237,10 @@
         self.soundsType = lung_sounds;
     }
     [self loadData];
-    [self actionStart];
+    [self actionStartRecord];
     return YES;
 }
-
+//初始化导航栏界面
 - (void)initNavi{
     UIBarButtonItem *item0 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     item0.width = Ratio11;
@@ -255,10 +250,7 @@
     UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"confirm_icon"] style:UIBarButtonItemStylePlain target:self action:nil];
     
     self.navigationItem.rightBarButtonItems = @[item0,item1,item2];
-    
 }
-
-
 
 - (void)initView{
 
@@ -368,7 +360,7 @@
     [self loadPlistData:NO];
     [self loadData];
     if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
-        [self actionStart];
+        [self actionStartRecord];
     }
     
     [self reloadView];

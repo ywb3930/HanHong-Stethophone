@@ -14,7 +14,7 @@
 #import <SDWebImage.h>
 #import <AFNetworking.h>
 #import <SVProgressHUD.h>
-#import "MJRefresh.h"
+//#import "MJRefresh.h"
 #import <YYModel.h>
 #import <Toast.h>
 #import <MJRefresh/MJRefresh.h>
@@ -35,9 +35,11 @@
 #import "HHFileLocationHelper.h"
 #import "HHBlueToothManager.h"
 #import "Constant.h"
+#import "RecordModel.h"
 #import "HHBluetoothButton.h"
 #import "HHDBHelper.h"
-#import "TTAlertView.h"
+#import "NoDataView.h"
+
 
 #ifdef DEBUG
 static DDLogLevel ddLogLevel = DDLogLevelVerbose;

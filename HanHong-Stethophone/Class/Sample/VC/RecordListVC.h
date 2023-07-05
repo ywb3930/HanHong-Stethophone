@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) id<RecordListVCDelegate>     delegate;
 @property (assign, nonatomic) NSInteger idx;//0 本地， 1 云， 2 收藏
 @property (retain, nonatomic) NSString  *string;//0 本地， 1 云， 2 收藏
-@property (assign, nonatomic) Boolean bLoadData;
+@property (assign, nonatomic) Boolean bLoadData;//是否已加载数据
 
 - (void)initView;
 - (void)initCollectData;

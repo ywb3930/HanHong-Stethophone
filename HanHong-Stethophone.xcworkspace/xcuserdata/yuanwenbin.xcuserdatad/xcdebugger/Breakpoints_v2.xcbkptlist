@@ -5,50 +5,78 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
-            uuid = "66CA35D7-A130-4575-A231-B35E02821E95"
+            uuid = "37171D87-A3BE-4516-B9E7-A846B4DF9F11"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Extension/Tools.m"
+            breakpointStackSelectionBehavior = "1"
+            scope = "1"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1632D9C2-8F30-4702-BF21-2B46CBFC4ABB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HanHong-Stethophone/Class/View/HHBluetoothButton.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1215"
-            endingLineNumber = "1215"
-            landmarkName = "+showAlertView:andMessage:andTitles:andColors:sure:cancel:"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "-actionClickBlueTooth:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "57F1FE34-20E0-471C-9433-E4788B49CA80"
+            uuid = "28BC1A21-3E1E-4938-9D30-6E9576271BB7"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Sample/VC/RecordListVC.m"
+            filePath = "HanHong-Stethophone/Class/Sample/View/WaveFullView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "449"
-            endingLineNumber = "449"
-            landmarkName = "-actionSelectItem:tag:"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "-initData"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D998A8F4-8B91-481E-A7BE-B27488BF1A39"
+            uuid = "E5A0C8F7-E606-4F29-B2E7-258C0F46DD0D"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Sample/VC/RecordListVC.m"
+            filePath = "HanHong-Stethophone/Class/Sample/View/WaveFullView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "442"
-            endingLineNumber = "442"
-            landmarkName = "-actionSelectItem:tag:"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "-initLabel"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CF841FAD-13C1-4244-BBA2-F23638142414"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "HanHong-Stethophone/Class/Sample/View/WaveFullView.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "-drawLine"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

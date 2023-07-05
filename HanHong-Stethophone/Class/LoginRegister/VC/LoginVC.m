@@ -52,6 +52,7 @@
 @property (retain, nonatomic) OrgModel          *orgModel;
 @property (assign, nonatomic) Boolean           autoLogin;
 
+@property (assign, nonatomic) NSInteger         delay;
 
 @end
 
@@ -60,6 +61,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.delay = 0.5;
     self.view.backgroundColor = WHITECOLOR;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionGetLoginType:) name:login_type_broadcast object:nil];
     self.loginTypePassword = YES;
@@ -84,8 +86,10 @@
 
     
 
-    self.itemUser.textFieldInfo.text = @"13170473117";
-    self.itemPass.textFieldPass.text = @"123456";
+//    self.itemUser.textFieldInfo.text = @"18902400417";
+//    self.itemPass.textFieldPass.text = @"123456";
+    
+
 }
 
 - (void)actionAutoLogin:(UIButton *)button {
@@ -196,6 +200,7 @@
             self.itemUser.textFieldInfo.text = number;
             self.itemPass.textFieldPass.text = password;
             if(self.autoLogin && bLogin && ![Tools isBlankString:number] && ![Tools isBlankString:password]) {
+                self.delay = 2;
                 [self actionLogin:self.buttonLoginPass];
             }
         } else if([type isEqualToString:@"code"] && [loginType integerValue] == self.loginType) {
@@ -304,17 +309,18 @@
             [[HHLoginManager sharedManager] setCurrentHHLoginData:loginData];
             
             if (wself.loginType == login_type_personal) {
-                [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
-                [SVProgressHUD dismiss];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
+                    [SVProgressHUD dismiss];
+                });
                 [wself createUserDocument:@"hanhong"];
             } else {
                 [wself getOrgList];
             }
-
         } else {
             [SVProgressHUD dismiss];
         }
-        [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
+        [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionBottom];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
     }];
@@ -336,8 +342,11 @@
                     NSData * data = [NSKeyedArchiver archivedDataWithRootObject:model];
                     [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"orgModelLogin"];
                     [[NSUserDefaults standardUserDefaults] synchronize];
-                    [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
-                    [SVProgressHUD dismiss];
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
+                        [SVProgressHUD dismiss];
+                    });
+                    
                     [wself createUserDocument:model.code];
                     return;
                 }
@@ -362,6 +371,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:pathUser forKey:@"pathUser"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [Constant shareManager].userInfoPath = pathUser;
+    [self saveUserInfo];
    
 }
 
@@ -413,10 +423,8 @@
     [TTRequestManager userSmsVerCodeLogin:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
             [wself.codeItemView showTimer];
-            //NSDictionary *data = [responseObject objectForKey:@"data"];
-            [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-                
         }
+        [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];

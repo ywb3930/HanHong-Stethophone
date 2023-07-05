@@ -14,10 +14,10 @@
 #import <CoreTelephony/CTCellularData.h>
 
 
-#import <UMCommon/UMCommon.h>
-#import <UMAPM/UMCrashConfigure.h>
-#import <UMAPM/UMLaunch.h>
-#import <UMCommonLog/UMCommonLogHeaders.h>
+//#import <UMCommon/UMCommon.h>
+//#import <UMAPM/UMCrashConfigure.h>
+//#import <UMAPM/UMLaunch.h>
+//#import <UMCommonLog/UMCommonLogHeaders.h>
 
 @interface AppDelegate ()
 
@@ -38,14 +38,15 @@
     
 }
 
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     [self checkNetConnect];
-    
+
 
     
     //设置预定义DidFinishLaunchingEnd时间
-    [UMLaunch setPredefineLaunchType:UMPredefineLaunchType_DidFinishLaunchingEnd];
+    //[UMLaunch setPredefineLaunchType:UMPredefineLaunchType_DidFinishLaunchingEnd];
      
     [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];// 禁止触摸
     [SVProgressHUD setForegroundColor:MainColor];
@@ -58,25 +59,21 @@
     
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];//创建一个Window
-    if(LoginData) {
-        [self getUserData];
-        self.window.rootViewController = [[HHTabBarController alloc] init];
-        [self initBluetooth];
-    } else {
-        HHNavigationController *navigation = [[HHNavigationController alloc] initWithRootViewController:[[LoginVC alloc] init]];
-        self.window.rootViewController = navigation;
-    }
+//    if(LoginData) {
+//        [self getUserData];
+//        self.window.rootViewController = [[HHTabBarController alloc] init];
+//        [self initBluetooth];
+//    } else {
+    HHNavigationController *navigation = [[HHNavigationController alloc] initWithRootViewController:[[LoginVC alloc] init]];
+    self.window.rootViewController = navigation;
+//    }
     self.window.backgroundColor = UIColor.whiteColor;
     [self.window makeKeyAndVisible];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginBroadcast:) name:login_broadcast object:nil];
+ //
     
-    
-    [UMLaunch beginLaunch:@"intUmeng"];
-    
-    [UMConfigure initWithAppkey:@"649e6e8cbd4b621232c434ed" channel:@"App Store"];
-    [UMCommonLogManager setUpUMCommonLogManager];
-    [UMLaunch endLaunch:@"intUmeng"];
+//    applinks:eba4fc5d76acfd96108720a7aadb21c5.share2dlink.com
     [WXApi registerApp:@"wx97eae6a515b782d3" universalLink:@"https://www.hedelongcloud.com/auscultationassistant/"];
     //AppID：
     return YES;
@@ -150,6 +147,7 @@
 - (void)checkNetConnect{
     [[AFNetRequestManager shareManager] getRequestTest:@"https://www.baidu.com"];
 }
+
 
 
 @end

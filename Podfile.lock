@@ -21,7 +21,6 @@ PODS:
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
-  - GKNavigationBarViewController (3.0.2)
   - JXCategoryView (1.6.1)
   - Masonry (1.1.0)
   - MJRefresh (3.7.5)
@@ -34,11 +33,6 @@ PODS:
   - SDWebImage/Core (5.16.0)
   - SVProgressHUD (2.2.5)
   - Toast (4.0.0)
-  - UMAPM (1.8.3)
-  - UMCCommonLog (2.0.2)
-  - UMCommon (7.4.1):
-    - UMDevice
-  - UMDevice (3.1.0)
   - WechatOpenSDK-XCFramework (2.0.2)
   - YYModel (1.0.4)
   - YYText (1.0.7)
@@ -48,7 +42,6 @@ DEPENDENCIES:
   - Appirater
   - CocoaLumberjack
   - FMDB
-  - GKNavigationBarViewController
   - JXCategoryView
   - Masonry
   - MJRefresh
@@ -59,10 +52,6 @@ DEPENDENCIES:
   - SDWebImage
   - SVProgressHUD
   - Toast
-  - UMAPM
-  - UMCCommonLog
-  - UMCommon
-  - UMDevice
   - WechatOpenSDK-XCFramework
   - YYModel
   - YYText
@@ -73,7 +62,6 @@ SPEC REPOS:
     - Appirater
     - CocoaLumberjack
     - FMDB
-    - GKNavigationBarViewController
     - JXCategoryView
     - Masonry
     - MJRefresh
@@ -84,10 +72,6 @@ SPEC REPOS:
     - SDWebImage
     - SVProgressHUD
     - Toast
-    - UMAPM
-    - UMCCommonLog
-    - UMCommon
-    - UMDevice
     - WechatOpenSDK-XCFramework
     - YYModel
     - YYText
@@ -97,7 +81,6 @@ SPEC CHECKSUMS:
   Appirater: 44a4651f7912a17dc906b655f0c215d5bb768b84
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  GKNavigationBarViewController: f1fe00cbe0e3693d072b4d565e6791bc71ba71d7
   JXCategoryView: 7b1ee69ede4843c581688afe84d0f047723262f2
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
@@ -108,14 +91,10 @@ SPEC CHECKSUMS:
   SDWebImage: 2aea163b50bfcb569a2726b6a754c54a4506fcf6
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
-  UMAPM: 221bfc98b8d2fdcf300ffb4f65e16d8a9ce32eb9
-  UMCCommonLog: bea707e50c85cef4b0eb47cc5c7226bb843245ca
-  UMCommon: 47e0b53f6a36568e958a5abd005ed7577fcac9ad
-  UMDevice: 9ef8045b59e0479cff7062915c879a1af46fa094
   WechatOpenSDK-XCFramework: acdeeda129efbef9532bca8a10c24e1b4b8c7d69
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: d7b18511c987b7d269299ed05b661b8b4fd2e075
+PODFILE CHECKSUM: 85c131aa655ed18d40fa156ffcf378c3890c5f1d
 
 COCOAPODS: 1.11.3

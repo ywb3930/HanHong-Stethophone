@@ -117,6 +117,8 @@
     
     [self.view addSubview:self.buttonAdd];
     self.buttonAdd.sd_layout.rightSpaceToView(self.view, Ratio22).bottomSpaceToView(self.view, Ratio22 + kBottomSafeHeight).widthIs(Ratio44).heightIs(Ratio44);
+    
+    //[self.view addSubview:self.myCreateConsultationView.noDataView];
 }
 
 - (MyCreateConsultationView *)myCreateConsultationView{

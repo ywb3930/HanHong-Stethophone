@@ -77,7 +77,7 @@
 }
 
 - (NSString *)getRecordShareBrief{
-    return [NSString stringWithFormat:@"%@api/record/share_brief", REQUEST_URL];
+    return [NSString stringWithFormat:@"%@record/share_brief/", REQUEST_URL];
 }
 
 @end

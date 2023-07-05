@@ -7,9 +7,8 @@
 
 #import <Foundation/Foundation.h>
 #import "ProgramModel.h"
-#import "RecordModel.h"
 #import "PatientModel.h"
-
+#import "RecordModel.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface HHDBHelper : NSObject

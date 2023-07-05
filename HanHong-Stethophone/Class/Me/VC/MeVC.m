@@ -166,10 +166,12 @@
         [Tools showWithStatus:@"正在退出登录"];
         [TTRequestManager userLogout:params success:^(id  _Nonnull responseObject) {
             if([responseObject[@"errorCode"] intValue] == 0 ) {
-                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"user"];
+                //[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"user"];
                 [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
                     [Tools logout:@""];
                 }];
+            } else {
+                [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
             }
             [SVProgressHUD dismiss];
         } failure:^(NSError * _Nonnull error) {

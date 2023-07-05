@@ -7,13 +7,13 @@
 
 #import "MyCreateConsultationView.h"
 
-
-
 @interface MyCreateConsultationView()<UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, TTActionSheetDelegate>
 
-@property (retain, nonatomic) NSMutableArray           *arrayData;
+@property (retain, nonatomic) NSMutableArray    *arrayData;
 @property (retain, nonatomic) UIButton          *buttonAdd;
 @property (retain, nonatomic) NSIndexPath       *currentIndexPath;
+
+
 
 @end
 
@@ -112,6 +112,7 @@
     self.dataSource = self;
     [self registerClass:[ConsultationCell class] forCellReuseIdentifier:NSStringFromClass([ConsultationCell class])];
     self.separatorStyle = UITableViewCellSeparatorStyleNone;
+    //[kAppWindow addSubview:self.noDataView];
     
     UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]  initWithTarget:self action:@selector(handleLongPress:)];
     lpgr.delegate = self;
@@ -140,6 +141,14 @@
         // do stuff with the cell
         
     }
+}
+
+- (NoDataView *)noDataView{
+    if (_noDataView) {
+        _noDataView = [[NoDataView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight + Ratio35, screenW, screenH)];
+        _noDataView.hidden = YES;
+    }
+    return _noDataView;
 }
 
 @end

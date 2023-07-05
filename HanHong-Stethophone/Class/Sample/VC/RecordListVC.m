@@ -14,21 +14,26 @@
 
 @interface RecordListVC ()<TTPopViewDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, TTActionSheetDelegate, RecordListCellDelegate, UITextFieldDelegate>
 
-@property (retain, nonatomic) UIButton              *selectButton;
-@property (retain, nonatomic) TTPopView             *popView;
-@property (retain, nonatomic) NSArray               *listInfo;
-@property (retain, nonatomic) LRTextField           *textField;
-@property (retain, nonatomic) UITableView           *recordTableView;
-@property (retain, nonatomic) NSMutableArray        *arrayData;
-@property (assign, nonatomic) NSInteger             selectMode;
-@property (retain, nonatomic) NSIndexPath           *currentSelectIndexPath;
-@property (assign, nonatomic) NSInteger             currentPlayingRow;
-@property (assign, nonatomic) NSInteger             currentPlayingIdx;
-@property (retain, nonatomic) NSString              *path;
-@property (retain, nonatomic) NSMutableArray        *allData;
+@property (retain, nonatomic) UIButton              *selectButton;//选择按钮
+@property (retain, nonatomic) TTPopView             *popView;//选择按钮时弹出的页面
+@property (retain, nonatomic) NSArray               *listInfo;//选择按钮时弹出的页面的数据
+@property (retain, nonatomic) LRTextField           *textField;//搜索输入框
+@property (retain, nonatomic) UITableView           *recordTableView;//列表
+@property (retain, nonatomic) NSMutableArray        *arrayData;//列表展示数据
+@property (assign, nonatomic) NSInteger             selectMode;//选择按钮时弹出的页面选择的列数从0开始
+@property (retain, nonatomic) NSIndexPath           *currentSelectIndexPath;//当前选择的cell
+@property (assign, nonatomic) NSInteger             currentPlayingRow;//正在播放的列数 用于处理点击播放按钮事件
 
-@property (assign, nonatomic) Boolean               bPlaying;
+
+//@property (assign, nonatomic) NSInteger             currentPlayingIdx;//当前正播放的是第几个页面 用于处理播放进度回调是否是本界面 0 本地录音 1 云标本库  2 我的收藏
+@property (assign, nonatomic) Boolean               bCurrentView;//是否在当前页面
+
+@property (retain, nonatomic) NSString              *path; //本地文件保存目录
+@property (retain, nonatomic) NSMutableArray        *allData;//所有数据，用于筛选是使用
+
+@property (assign, nonatomic) Boolean               bPlaying;//是否正在播放中
 @property (assign, nonatomic) NSInteger             localReordFilterType;
+@property (retain, nonatomic) NoDataView            *noDataView;
 
 @end
 
@@ -45,61 +50,80 @@
     self.localReordFilterType = 0;
     
     self.view.backgroundColor = HEXCOLOR(0xE2E8F0, 1);
+    //播放事件广播，用于显示播放进度
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
     if (self.idx == 0) {
+        //录音成功事件广播，用于刷新本地数据
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initLocalData) name:AddLocalRecordSuccess object:nil];
     }
 }
-
+//输入框return事件处理
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    //隐藏键盘
     [self.view endEditing:YES];
     NSString *string = textField.text;
+    //停止播放
     [self stopPlayRecord];
     switch (self.localReordFilterType) {
         case All_filtrate_type:{
+            //获取全部数据
             [self getAllRecordFiltrate:string];
         }
             break;
         case Source_quick_filtrate_type:{
+            //获取快速录音数据
             [self getSourceQuickRecordFiltrate:string];
         }
             break;
         case Source_stand_filtrate_type: {
+            //获取标准录音数据
             [self getSourceStandRecordFiltrate:string];
         }
             break;
         case Source_remote_filtrate_type: {
+            //获取会诊录音数据
             [self getRemoteRecordFiltrate:string];
         }   break;;
         case heart_filtrate_type: {
+            //获取心音数据
             [self getHeartRecordFiltrate:string];
         }
             break;
         case lung_filtrate_type:{
+            //获取肺音数据
             [self getLungRecordFiltrate:string];
         }
             break;
         case Date_filtrate_type:{
+            //根据日期选择
             [self getDateRecordFiltrate:string];
         }
             break;
         case Serial_number_filtrate_type:{
+            //根据患者ID选择
             [self getSerialNumberFiltrate:string];
         }
             break;
         case Annotation_filtrate_type:{
+            //根据标注选择
             [self getAnnotationFiltrate:string];
         }
         case Shared_filtrate_type:{
+            //根据是否分享选择
             [self getShareRecordFiltrate:string];
         }
             break;
         default:
             break;
     }
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
+    }
     return YES;
 }
-
+//根据是否分享选择
 - (void)getShareRecordFiltrate:(NSString *)string {
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -109,7 +133,7 @@
     }
     [self.recordTableView reloadData];
 }
-
+//根据标注选择
 - (void)getAnnotationFiltrate:(NSString *)string {
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -121,7 +145,7 @@
     }
     [self.recordTableView reloadData];
 }
-
+//根据患者ID选择
 - (void)getSerialNumberFiltrate:(NSString *)string {
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -134,7 +158,7 @@
     [self.recordTableView reloadData];
 }
 
-
+//获取心音数据
 - (void)getHeartRecordFiltrate:(NSString *)string{
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -151,7 +175,7 @@
     [self.recordTableView reloadData];
 }
 
-
+//获取肺音数据
 - (void)getLungRecordFiltrate:(NSString *)string{
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -164,7 +188,7 @@
     }
     [self.recordTableView reloadData];
 }
-
+//获取标准录音数据
 - (void)getSourceStandRecordFiltrate:(NSString *)string{
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -179,7 +203,7 @@
     }
     [self.recordTableView reloadData];
 }
-
+//获取快速录音数据
 - (void)getSourceQuickRecordFiltrate:(NSString *)string{
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -194,7 +218,7 @@
     }
     [self.recordTableView reloadData];
 }
-
+//根据日期选择
 - (void)getDateRecordFiltrate:(NSString *)string {
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -207,7 +231,7 @@
     }
     [self.recordTableView reloadData];
 }
-
+//获取会诊录音数据
 - (void)getRemoteRecordFiltrate:(NSString *)string{
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -221,7 +245,7 @@
     }
     [self.recordTableView reloadData];
 }
-
+//获取全部数据
 - (void)getAllRecordFiltrate:(NSString *)string{
     self.arrayData = [NSMutableArray array];
     for (RecordModel *model in self.allData) {
@@ -232,59 +256,8 @@
         }
     }
     [self.recordTableView reloadData];
-    
-//    NSInteger loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
-//    for (RecordModel *model in self.allData) {
-//        if ([string containsString:@"心音"] && model.type_id == heart_sounds) {
-//            [self.arrayData addObject:model];
-//            continue;
-//        }
-//        if ([string containsString:@"肺音"] && model.type_id == lung_sounds) {
-//            [self.arrayData addObject:model];
-//            continue;
-//        }
-//        if ([string containsString:@"便捷录音"] && model.record_mode == QuickRecord) {
-//            [self.arrayData addObject:model];
-//            continue;
-//        }
-//        if ([string containsString:@"标准录音"] && model.record_mode == StanarRecord) {
-//            [self.arrayData addObject:model];
-//            continue;
-//        }
-//        if (loginType == login_type_teaching) {
-//            if (LoginData.role == Teacher_role) {
-//                if ([string containsString:@"教学录音"] && model.record_mode == RemoteRecord) {
-//                    [self.arrayData addObject:model];
-//                    continue;
-//                }
-//            }
-//        } else {
-//            if ([string containsString:@"会诊录音"] && model.record_mode == RemoteRecord) {
-//                [self.arrayData addObject:model];
-//                continue;;
-//            }
-//        }
-//
-//        if ([string containsString:@"未标注"]) {
-//            if ([model.characteristics isEqualToString:@"[]"] || [model.characteristics isEqualToString:@""]) {
-//                [self.arrayData addObject:model];
-//                continue;;
-//            }
-//        }
-//        if ([string containsString:@"已分享"]) {
-//            if (model.shared == 1) {
-//                [self.arrayData addObject:model];
-//                continue;;
-//            }
-//        }
-//
-//        if ([model.characteristics containsString:string] || [model.record_time containsString:string] || [model.patient_id containsString:string] || [model.patient_area containsString:string] || [model.patient_diagnosis containsString:string] || [model.patient_symptom containsString:string]) {
-//            [self.arrayData addObject:model];
-//        }
-//
-//    }
 }
-
+//停止播放录音
 - (void)stopPlayRecord{
     if(self.bPlaying) {
         [[HHBlueToothManager shareManager] stop];
@@ -296,9 +269,11 @@
     }
     
 }
-
+//选择不同类型之后的回调
 - (void)actionSelectedInfoCallBack:(NSString *)info row:(NSInteger)row tag:(NSInteger)tag{
-    if(row != self.listInfo.count - 1) {
+    if(row == self.listInfo.count - 1) {
+        return;
+    } else {
         [self.selectButton setTitle:self.listInfo[row] forState:UIControlStateNormal];
     }
     self.textField.text = @"";
@@ -347,19 +322,21 @@
             [self getLungRecordFiltrate:@""];
         }
     }
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
+    }
 }
-
-
-
+//接收蓝牙底层消息
 - (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
     NSDictionary *userInfo = notification.userInfo;
     DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
     NSObject *args1 = userInfo[@"args1"];
     NSObject *args2 = userInfo[@"args2"];
-    if (self.currentPlayingIdx != self.idx) {
+    if (!self.bCurrentView) {
         return;
     }
-    NSLog(@"string = %@, currentPlayingIdx = %li, self.idx = %li", self.string,self.currentPlayingIdx, self.idx);
     if (event == DeviceHelperPlayBegin) {
         self.bPlaying = YES;
     } else if (event == DeviceHelperPlayingTime) {
@@ -382,10 +359,11 @@
         
     }
 }
-
+//点击播放按钮事件处理
 - (Boolean)actionRecordListCellItemClick:(RecordModel *)model bSelected:(Boolean)bSelected idx:(NSInteger)idx{
-    self.currentPlayingIdx = idx;
+    //self.currentPlayingIdx = idx;
     NSInteger modelIndex = [self.arrayData indexOfObject:model];
+    //正在播放时点击其它行
     if (self.bPlaying && modelIndex != self.currentPlayingRow) {
         [self.view makeToast:@"当前正在播放中，不可播放其它录音" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return NO;
@@ -393,31 +371,37 @@
     self.currentPlayingRow = modelIndex;
     
     NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", self.path,model.tag];
-    
+    //正在播放中暂停播放
     if(bSelected) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:modelIndex inSection:0];
         [[HHBlueToothManager shareManager] stop];
         RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
         cell.playProgess = 0;
     } else {
+        //没播放的开始播放
         if (self.idx == 0) {
+            //本地录音播放事件处理
             NSLog(@"filePath = %@", filePath);
             [self startPlayRecordVoice:filePath];
         } else if(self.idx == 1) {
+            //云标本库播放事件处理
             [self playCloudRecordVoice:filePath model:model];
         }
     }
     
     return !bSelected;
 }
-
+//处理云标本库播放事件
 - (void)playCloudRecordVoice:(NSString *)filePath model:(RecordModel *)model{
+    //如本地有缓存的播放文件，直接播放
     if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
         [self startPlayRecordVoice:filePath];
     } else {
+        //如果本地没有缓存文件，先下载，后播放缓存文件
         [AFNetRequestManager downLoadFileWithUrl:model.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
             
         } successBlock:^(NSURL * _Nonnull url) {
+            //播放下载后的文件
             [self startPlayRecordVoice:url.path];
         } fileDownloadFail:^(NSError * _Nonnull error) {
             
@@ -426,19 +410,21 @@
     
 }
 
-
+//播放录音文件
 - (void)startPlayRecordVoice:(NSString *)filePath{
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     [[HHBlueToothManager shareManager] setPlayFile:data];
     [[HHBlueToothManager shareManager] startPlay:PlayingWithSettingData];
 }
-
+//长按事件点击选择后的处理
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
     NSString *fileName = model.record_time;
+    // tag: 0 本地录音 1 云标本库 2 我的收藏
     if (tag == 0) {
         if (index == 0) {
             [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要上传%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+                //将本地录音上传至云标本库
                 [self actionUploadToClound];
             } cancel:^{
                 NSLog(@"1");
@@ -446,6 +432,7 @@
             
         } else {
             [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要删除%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+                //删除本地录音
                 [self actionDeleteLocalData];
             } cancel:^{
             }];
@@ -454,6 +441,7 @@
     } else if(tag == 1) {
         if (index == 0) {
             [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要分享%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+                //分享云标本库
                 [self actionToShareCloud];
             } cancel:^{
                 
@@ -461,6 +449,7 @@
             
         } else {
             [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要删除%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+                //删除云标本库
                 [self actionDeleteCloudData];
             } cancel:^{
                 
@@ -468,7 +457,7 @@
         }
     }
 }
-//unexpected service error: build aborted due to an internal error: 
+//上传本地录音至云标本库
 - (void)actionUploadToClound{
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -497,7 +486,7 @@
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     [Tools showWithStatus:@"正在上传"];
     [TTRequestManager recordAdd:params recordData:data progress:^(NSProgress * _Nonnull uploadProgress) {
-        NSLog(@"completedUnitCount = %lli,totalUnitCount = %lli ", uploadProgress.completedUnitCount,uploadProgress.totalUnitCount);
+        //上传进度
         double f = (double)uploadProgress.completedUnitCount / (double)uploadProgress.totalUnitCount * 100;
         NSString *string = [NSString stringWithFormat:@"已上传%i%%", (int)f];
         [Tools showWithStatus:string];
@@ -509,6 +498,7 @@
             model.url = dic[@"url"];
             model.create_time = dic[@"create_time"];
             model.modify_time = dic[@"modify_time"];
+            //上传成功后的事件处理
             [self actionAfterUploadRecordSuccess];
         }
         [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
@@ -517,21 +507,23 @@
         [SVProgressHUD dismiss];
     }];
 }
-
+//本地录音上传后，添加至云标本库头一行
 - (void)addCouldRecordItem:(RecordModel *)model{
     [self.arrayData insertObject:model atIndex:0];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.recordTableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
-
+//上传成功后的事件处理
 - (void)actionAfterUploadRecordSuccess{
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
+    //删除本地数据
     [self actionDeleteLocalData];
     if (self.delegate && [self.delegate respondsToSelector:@selector(actionRecordListItemChange:type:fromIndex:)]) {
+        //通过回调 让云标本库添加数据
         [self.delegate actionRecordListItemChange:model type:1 fromIndex:0];
     }
 }
-
+//分享云标本库
 - (void)actionToShareCloud{
     
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
@@ -551,16 +543,15 @@
             } else {
                 model.share_code = @"";
             }
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [self.recordTableView reloadRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            });
+//            dispatch_sync(dispatch_get_main_queue(), ^{
+//                [self.recordTableView reloadRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+//            });
         }
     } failure:^(NSError * _Nonnull error) {
         
     }];
 }
 //分享
-
 - (void)shareWX:(NSString *)shareCode{
     WXWebpageObject *webpageObject = [WXWebpageObject object];
     webpageObject.webpageUrl = [NSString stringWithFormat:@"%@%@",[[Constant shareManager] getRecordShareBrief], shareCode];
@@ -574,26 +565,51 @@
     req.message = message;
     req.scene = WXSceneSession;
     [WXApi sendReq:req completion:^(BOOL success) {
-        
+        if (success) {
+            //dispatch_sync(dispatch_get_main_queue(), ^{
+                [self.recordTableView reloadRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            //});
+        }
     }];
 }
-
+//删除本地数据
 - (void)actionDeleteLocalData{
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
+    //删除数据库
     Boolean result = [[HHDBHelper shareInstance] deleteRecordItemInTime:model.record_time];
     if (result) {
         
        //202307011059120145 NSString *relativePath = [NSString stringWithFormat:@"audio/%@.wav", model.file_path];
-        NSString *filePath = [NSString stringWithFormat:@"%@%@", self.path, model.file_path];
-        [HHFileLocationHelper deleteFilePath:filePath];
-        [self.arrayData removeObject:model];
-        [self.allData removeObject:model];
-        [self.recordTableView deleteRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+//        NSString *filePath = [NSString stringWithFormat:@"%@%@", self.path, model.file_path];
+//        //删除本地录音文件
+//        [HHFileLocationHelper deleteFilePath:filePath];
+//        //刷新列表
+//        [self.arrayData removeObject:model];
+//        [self.allData removeObject:model];
+//        [self.recordTableView deleteRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+//        if (self.arrayData.count == 0) {
+//            self.noDataView.hidden = NO;
+//        }
+        [self deleteAndRefrshLocalRecordData];
     } else {
         NSLog(@"删除数据库失败");
     }
 }
-
+//寻找本地缓存文件，如果有先删除，再刷新
+- (void)deleteAndRefrshLocalRecordData{
+    RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
+    NSString *filePath = [NSString stringWithFormat:@"%@%@", self.path, model.file_path];
+    if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
+        [HHFileLocationHelper deleteFilePath:filePath];
+    }
+    [self.arrayData removeObject:model];
+    [self.allData removeObject:model];
+    [self.recordTableView deleteRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    }
+}
+//删除云标本库
 - (void)actionDeleteCloudData{
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
@@ -604,9 +620,8 @@
     [TTRequestManager recordDelete:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [wself.arrayData removeObject:model];
-                [wself.allData removeObject:model];
-                [wself.recordTableView deleteRowsAtIndexPaths:@[wself.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                //寻找本地缓存文件，如果有先删除，再刷新
+                [wself deleteAndRefrshLocalRecordData];
             });
         }
         [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
@@ -616,9 +631,7 @@
 }
     
 
-
-
-
+//点击列表进入标注界面
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     AnnotationVC *annotationVC = [[AnnotationVC alloc] init];
@@ -626,13 +639,25 @@
     [self.navigationController pushViewController:annotationVC animated:YES];
     
 }
-
+//初始化本地录音数据
 - (void)initLocalData{
     self.bLoadData = YES;
-    self.listInfo = @[@"全部",@"便捷录音",@"标准录音",@"患者ID",@"日期",@"标注",@"心音",@"肺音",@"取消"];
+    NSInteger loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
+    if (loginType == login_type_teaching) {
+        if (LoginData.role == Teacher_role) {//教学 教授数据
+            self.listInfo = @[@"全部",@"便捷录音",@"标准录音",@"患者ID",@"日期",@"标注",@"心音",@"肺音", @"教学录音",@"取消"];
+        } else {//教学 学生数据
+            self.listInfo = @[@"全部",@"便捷录音",@"标准录音",@"患者ID",@"日期",@"标注",@"心音",@"肺音",@"取消"];
+        }
+            
+    } else {//其它数据
+        self.listInfo = @[@"全部",@"便捷录音",@"标准录音",@"患者ID",@"日期",@"标注",@"心音",@"肺音", @"会诊录音",@"取消"];
+    }
+          
+    //读取本地数据库
     [self loadLocalDBData];
 }
-
+//读取本地数据库
 - (void)loadLocalDBData{
     self.arrayData = [NSMutableArray array];
     self.allData = [NSMutableArray array];
@@ -652,6 +677,8 @@
         self.localReordFilterType = heart_filtrate_type;
     } else if (self.selectMode == 7) {
         self.localReordFilterType = lung_filtrate_type;
+    } else if (self.selectMode == 8) {
+        self.localReordFilterType = Source_remote_filtrate_type;
     }
     Boolean mode_select = (self.localReordFilterType == Source_quick_filtrate_type) || (self.localReordFilterType == Source_stand_filtrate_type) || (self.localReordFilterType == Source_remote_filtrate_type);
     NSInteger mode = (self.localReordFilterType == Source_quick_filtrate_type) ? QuickRecord : ((self.localReordFilterType == Source_stand_filtrate_type) ? StanarRecord : RemoteRecord);
@@ -660,11 +687,16 @@
     NSArray *data = [[HHDBHelper shareInstance] selectRecord:mode_select mode:mode typeSelect:type_select type:type];
     [self.arrayData addObjectsFromArray:data];
     [self.allData addObjectsFromArray:data];
-    [self.recordTableView reloadData];
+    if (self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
+        [self.recordTableView reloadData];
+    }
+    
 }
 
-
-
+//初始化云标本库数据
 - (void)initCouldData{
     self.bLoadData = YES;
     self.listInfo = @[@"全部", @"患者ID",@"日期",@"标注",@"心音",@"肺音", @"已分享",@"取消"];
@@ -673,14 +705,19 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     [Tools showWithStatus:nil];
+    __weak typeof(self) wself = self;
     [TTRequestManager recordList:params success:^(id  _Nonnull responseObject) {
-        NSLog(@"responseObject = %@", responseObject);
         if ([responseObject[@"errorCode"] integerValue] == 0) {
             
             NSArray *data = [NSArray yy_modelArrayWithClass:[RecordModel class] json:responseObject[@"data"]];
-            [self.arrayData addObjectsFromArray:data];
-            [self.allData addObjectsFromArray:data];
-            [self.recordTableView reloadData];
+            [wself.arrayData addObjectsFromArray:data];
+            [wself.allData addObjectsFromArray:data];
+            if(wself.arrayData.count == 0) {
+                wself.noDataView.hidden = NO;
+            } else {
+                wself.noDataView.hidden = YES;
+                [wself.recordTableView reloadData];
+            }
         }
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
@@ -688,8 +725,7 @@
     }];
 }
 
-
-
+//初始化我的收藏数据
 - (void)initCollectData{
     self.bLoadData = YES;
     self.listInfo = @[@"全部", @"日期",@"标注",@"心音",@"肺音",@"取消"];
@@ -698,13 +734,20 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     [Tools showWithStatus:nil];
+    __weak typeof(self) wself = self;
     [TTRequestManager recordFavoriteList:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
             
             NSArray *data = [NSArray yy_modelArrayWithClass:[RecordModel class] json:responseObject[@"data"]];
-            [self.arrayData addObjectsFromArray:data];
-            [self.allData addObjectsFromArray:data];
-            [self.recordTableView reloadData];
+            [wself.arrayData addObjectsFromArray:data];
+            [wself.allData addObjectsFromArray:data];
+            if(wself.arrayData.count == 0) {
+                wself.noDataView.hidden = NO;
+            } else {
+                wself.noDataView.hidden = YES;
+                [wself.recordTableView reloadData];
+            }
+            
         }
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
@@ -741,6 +784,8 @@
     [self.view addSubview:self.recordTableView];
     self.recordTableView.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.selectButton, Ratio6).bottomSpaceToView(self.view, kTabBarHeight);
     
+
+    [self.view addSubview:self.noDataView];
 }
 
 - (void)actionCilckSelect:(UIButton *)button{
@@ -812,7 +857,7 @@
     return _recordTableView;
 }
 
-
+//长按列表事件
 -(void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
 {
     [self.view endEditing:YES];
@@ -828,17 +873,36 @@
     } else {
         self.currentSelectIndexPath = indexPath;
         RecordModel *model = [self.arrayData objectAtIndex:indexPath.row];
-        NSArray *arrayTitle = @[@"上传云标本库", @"删除"];
+        NSArray *arrayTitle = @[@"加入云标本库", @"删除"];
         if (self.idx == 1) {
             arrayTitle = @[model.shared ? @"取消分享": @"分享", @"删除"];
         }
         TTActionSheet *actionSheet = [TTActionSheet showActionSheet:arrayTitle cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
         actionSheet.delegate = self;
-        actionSheet.tag = 0;
+        actionSheet.tag = self.idx;
         [actionSheet showInView:kAppWindow];
         
     }
 }
+//切换页面时停止播放
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    self.bCurrentView = NO;
+    [self stopPlayRecord];
+    
+}
 
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.bCurrentView = YES;
+}
+
+- (NoDataView *)noDataView {
+    if (!_noDataView) {
+        _noDataView = [[NoDataView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight + Ratio33, screenW, screenH - kNavBarAndStatusBarHeight - kTabBarHeight - Ratio33)];
+        _noDataView.hidden = YES;
+    }
+    return _noDataView;
+}
 
 @end

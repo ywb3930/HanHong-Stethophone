@@ -64,7 +64,6 @@
 
 - (void)setRecordModel:(RecordModel *)recordModel{
     _recordModel = recordModel;
-    NSLog(@"record_time = %@",recordModel.record_time);
     self.lblTime.text = recordModel.record_time;
     if (![Tools isBlankString:recordModel.patient_id]) {
         self.lblName.text = recordModel.patient_id;

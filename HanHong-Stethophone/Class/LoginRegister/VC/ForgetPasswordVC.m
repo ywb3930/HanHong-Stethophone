@@ -65,6 +65,8 @@
                 }];
             });
             
+        } else {
+            [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
         }
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
@@ -91,8 +93,9 @@
     [TTRequestManager userSmsVerCodeModifyPassword:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
             [wself.itemViewCode showTimer];
-            [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            
         }
+        [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];

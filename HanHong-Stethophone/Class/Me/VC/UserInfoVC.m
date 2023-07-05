@@ -307,10 +307,9 @@
             dispatch_sync(dispatch_get_main_queue(), ^{
                 NSDictionary *data = [responseObject objectForKey:@"data"];
                 [wself refreshData:data];
-                [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
             });
-            
         }
+        [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];

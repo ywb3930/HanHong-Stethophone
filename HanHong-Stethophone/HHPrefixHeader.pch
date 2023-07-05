@@ -213,6 +213,7 @@
 #define Ratio90                                         90.f*screenRatio
 #define Ratio99                                         99.f*screenRatio
 #define Ratio135                                        135.f*screenRatio
+#define Ratio150                                        150.f*screenRatio
 
 #define SystemFont                                      [UIFont systemFontOfSize:Ratio17]
 #define Font11                                          [UIFont systemFontOfSize:Ratio11]

@@ -10,6 +10,13 @@
 #import "RightDirectionView.h"
 #import "Constant.h"
 #import "ItemAgeView.h"
+#import "KSYAudioPlotView.h"
+#import "KSYAudioFile.h"
+#import "WaveSmallView.h"
+#import "AnnotationFullVC.h"
+#import "DeviceManagerVC.h"
+#import "HHNavigationController.h"
+
 
 @interface AnnotationVC ()<UITextFieldDelegate>
 
@@ -29,6 +36,16 @@
 @property (retain, nonatomic) RightDirectionView            *itemPatientArea;//患者地区
 @property (retain, nonatomic) RegisterItemView              *itemPatientAnnotation;//标注
 
+@property (retain, nonatomic) WaveSmallView                 *viewSmallWave;
+@property (retain, nonatomic) KSYAudioPlotView              *audioPlotView;
+@property (nonatomic, strong) KSYAudioFile                  *audioFile;
+
+@property (retain, nonatomic) UIButton                      *buttonPlay;
+@property (retain, nonatomic) UIButton                      *buttonToAnnotation;
+@property (retain, nonatomic) UIView                        *viewLine;
+@property (assign, nonatomic) Boolean                       bPlaying;
+@property (assign, nonatomic) CGFloat                       startYLine;
+
 @end
 
 @implementation AnnotationVC
@@ -37,12 +54,107 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"标注";
-    self.itemHeight = Ratio40;
+    self.view.backgroundColor = WHITECOLOR;
+    self.itemHeight = Ratio33;
     [self setupView];
+    //播放事件广播，用于显示播放进度
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
-- (void)actionClickBlueTooth:(UIButton *)button{
+
+
+//接收蓝牙底层消息
+- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+    NSDictionary *userInfo = notification.userInfo;
+    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
+    NSObject *args1 = userInfo[@"args1"];
+    //NSObject *args2 = userInfo[@"args2"];
     
+    if (event == DeviceHelperPlayBegin) {
+        self.bPlaying = YES;
+        self.viewLine.hidden = NO;
+    } else if (event == DeviceHelperPlayingTime) {
+        __weak typeof(self) wself = self;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            NSNumber *number = (NSNumber *)args1;
+            float value = [number floatValue];
+            ///cell.playProgess = value;
+            //wself.viewSmallWave.playProgess = value;
+            [wself playLineAnimation:value];
+            NSLog(@"播放进度：%f", value);
+        });
+        
+        
+    } else if (event == DeviceHelperPlayEnd) {
+        NSLog(@"播放结束");
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self stopPlayRecord];
+        });
+        
+    }
+}
+
+- (void)playLineAnimation:(float)value{
+    CGFloat width = value / self.recordModel.record_length * (screenW - Ratio22);
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        self.viewLine.frame = CGRectMake(Ratio11+width, self.startYLine, Ratio1, Ratio150);
+    }];
+}
+
+
+
+- (void)actionClickBlueTooth:(UIButton *)button{
+    DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
+    [self.navigationController pushViewController:deviceManager animated:YES];
+}
+
+- (void)actionClickPlay:(UIButton *)button{
+    if(![[HHBlueToothManager shareManager] getConnectState]) {
+        [self.view makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    if (!self.bPlaying) {
+        button.selected = YES;
+        [self actionToStar];
+    } else {
+        button.selected = NO;
+        [self stopPlayRecord];
+    }
+}
+
+- (void)stopPlayRecord{
+    self.bPlaying = NO;
+    self.buttonPlay.selected = NO;
+    //[self.viewSmallWave actionStop];
+    self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio150);
+    self.viewLine.hidden = YES;
+    [[HHBlueToothManager shareManager] stop];
+}
+
+- (void)actionToStar{
+    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
+    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
+    if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
+        [self startPlayRecordVoice:filePath];
+    } else {
+        //如果本地没有缓存文件，先下载，后播放缓存文件
+        [AFNetRequestManager downLoadFileWithUrl:self.recordModel.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
+            
+        } successBlock:^(NSURL * _Nonnull url) {
+            //播放下载后的文件
+            [self startPlayRecordVoice:url.path];
+        } fileDownloadFail:^(NSError * _Nonnull error) {
+            
+        }];
+    }
+}
+
+//播放录音文件
+- (void)startPlayRecordVoice:(NSString *)filePath{
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    [[HHBlueToothManager shareManager] setPlayFile:data];
+    [[HHBlueToothManager shareManager] startPlay:PlayingWithSettingData];
 }
 
 - (void)setupView{
@@ -65,6 +177,7 @@
     [self.scrollView addSubview:self.itemPatientWeight];
     [self.scrollView addSubview:self.itemPatientArea];
     [self.scrollView addSubview:self.itemPatientAnnotation];
+    
     self.itemPatientSymptom.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itempPositionTag, 0).heightIs(self.itemHeight);
     self.itemPatientDiagnosis.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientSymptom, 0).heightIs(self.itemHeight);
     self.itemPatientSex.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientDiagnosis, 0).heightIs(self.itemHeight);
@@ -73,7 +186,60 @@
     self.itemPatientWeight.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientHeight, 0).heightIs(self.itemHeight);
     self.itemPatientArea.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientWeight, 0).heightIs(self.itemHeight);
     self.itemPatientAnnotation.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientArea, 0).heightIs(self.itemHeight);
+    
+    [self.scrollView addSubview:self.viewSmallWave];
+    [self.scrollView addSubview:self.audioPlotView];
+    self.viewSmallWave.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(150.f*screenRatio);
+    self.audioPlotView.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(150.f*screenRatio);
+    
+    [self.scrollView addSubview:self.buttonPlay];
+    self.buttonPlay.sd_layout.centerXEqualToView(self.scrollView).widthIs(Ratio44).heightIs(Ratio44).topSpaceToView(self.viewSmallWave, Ratio5);
+    [self.scrollView addSubview:self.buttonToAnnotation];
+    self.buttonToAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).heightIs(Ratio20).rightSpaceToView(self.scrollView, Ratio8).widthIs(Ratio77);
+    [self.scrollView addSubview:self.viewLine];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        CGFloat maxY = CGRectGetMaxY(self.buttonPlay.frame);
+        self.scrollView.contentSize = CGSizeMake(screenW, maxY + Ratio55);
+        self.startYLine = CGRectGetMinY(self.viewSmallWave.frame);
+        self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio150);
+    });
+    //NSString *a = [[NSBundle mainBundle] pathForResource:@"6" ofType:@"wav"];
+    [self openFileWithFilePathURL];
+    //[self showWaveView:a];
 }
+
+- (void)openFileWithFilePathURL
+{
+    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
+    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
+    
+    if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
+        [self showWaveView:filePath];
+    } else {
+        //如果本地没有缓存文件，先下载，后播放缓存文件
+        [AFNetRequestManager downLoadFileWithUrl:self.recordModel.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
+            
+        } successBlock:^(NSURL * _Nonnull url) {
+            //播放下载后的文件
+            [self showWaveView:filePath];
+        } fileDownloadFail:^(NSError * _Nonnull error) {
+            
+        }];
+    }
+}
+
+- (void)showWaveView:(NSString *)path{
+    self.audioFile = [KSYAudioFile audioFileWithURL:[NSURL fileURLWithPath:path]];
+    self.audioPlotView.plotType = KSYPlotTypeBuffer;
+    self.audioPlotView.shouldFill = YES;
+    self.audioPlotView.shouldMirror = YES;
+    __weak typeof (self) weakSelf = self;
+    [self.audioFile getWaveformDataWithCompletionBlock:^(float **waveformData, int length) {
+        [weakSelf.audioPlotView updateBuffer:waveformData[0] withBufferSize:length];
+    }];
+
+}
+
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
@@ -252,6 +418,87 @@
         _itemPatientAnnotation.textFieldInfo.delegate = self;
     }
     return _itemPatientAnnotation;
+}
+
+- (WaveSmallView *)viewSmallWave{
+    if (!_viewSmallWave) {
+        _viewSmallWave = [[WaveSmallView alloc] initWithFrame:CGRectZero recordModel:self.recordModel];
+        _viewSmallWave.backgroundColor = MainBlack;
+        
+    }
+    return _viewSmallWave;
+}
+
+- (KSYAudioPlotView *)audioPlotView{
+    if (!_audioPlotView) {
+        _audioPlotView = [[KSYAudioPlotView alloc] init];
+        _audioPlotView.backgroundColor = UIColor.clearColor;
+        _audioPlotView.color = MainColor;
+        _audioPlotView.plotType = KSYPlotTypeBuffer;
+        _audioPlotView.shouldFill = YES;
+        _audioPlotView.shouldMirror = YES;
+        _audioPlotView.shouldOptimizeForRealtimePlot = NO;
+        
+        _audioPlotView.waveformLayer.shadowOffset = CGSizeMake(0.0, 1.0);
+        _audioPlotView.waveformLayer.shadowRadius = 0.0;
+        _audioPlotView.waveformLayer.shadowColor = MainColor.CGColor;
+        _audioPlotView.waveformLayer.shadowOpacity = 5.0;
+        _audioPlotView.waveformLayer.lineWidth = Ratio1;
+        
+    }
+    return _audioPlotView;
+}
+
+- (UIButton *)buttonPlay{
+    if(!_buttonPlay) {
+        _buttonPlay = [[UIButton alloc] init];
+        [_buttonPlay setImage:[UIImage imageNamed:@"start_play"] forState:UIControlStateNormal];
+        [_buttonPlay setImage:[UIImage imageNamed:@"pause_play"] forState:UIControlStateSelected];
+        [_buttonPlay addTarget:self action:@selector(actionClickPlay:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _buttonPlay;
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
+//切换页面时停止播放
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [self stopPlayRecord];
+}
+
+- (UIButton *)buttonToAnnotation{
+    if (!_buttonToAnnotation) {
+        _buttonToAnnotation = [[UIButton alloc] init];
+        [_buttonToAnnotation setTitle:@"进入标注>>" forState:UIControlStateNormal];
+        [_buttonToAnnotation setTitleColor:MainColor forState:UIControlStateNormal];
+        _buttonToAnnotation.titleLabel.font = Font12;
+        [_buttonToAnnotation addTarget:self action:@selector(actionToAnnotationFull:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _buttonToAnnotation;
+}
+
+- (UIView *)viewLine{
+    if (!_viewLine) {
+        _viewLine = [[UIView alloc] init];
+        _viewLine.backgroundColor = WHITECOLOR;
+        _viewLine.hidden = YES;
+    }
+    return _viewLine;
+}
+
+
+- (void)actionToAnnotationFull:(UIButton *)button{
+    AnnotationFullVC *annotationFull = [[AnnotationFullVC alloc] init];
+    annotationFull.recordModel = self.recordModel;
+    [self.navigationController pushViewController:annotationFull animated:YES];
+}
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

@@ -29,5 +29,12 @@
     [super pushViewController:viewController animated:animated];
 }
 
+- (BOOL)shouldAutorotate{
+    return [self.topViewController shouldAutorotate];
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations {
+    return [self.topViewController supportedInterfaceOrientations];
+}
 
 @end

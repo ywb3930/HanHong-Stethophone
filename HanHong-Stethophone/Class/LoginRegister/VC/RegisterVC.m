@@ -79,10 +79,11 @@
     __weak typeof(self) wself = self;
     [Tools showWithStatus:@"正在获取验证码"];
     [TTRequestManager userSmsVerCodeRegister:params success:^(id  _Nonnull responseObject) {
+        //NSLog(<#NSString * _Nonnull format, ...#>)
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
-            [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
             [wself.itemViewCode showTimer];
         }
+        [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
@@ -211,6 +212,8 @@
             [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
                 [wself.navigationController popViewControllerAnimated:YES];
             }];
+        } else {
+            [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
         }
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {

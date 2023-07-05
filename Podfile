@@ -6,7 +6,7 @@ target "HanHong-Stethophone" do
   pod 'Appirater'
   pod 'CocoaLumberjack'
   pod 'FMDB'
-  pod 'GKNavigationBarViewController'
+  #pod 'GKNavigationBarViewController'
   pod 'JXCategoryView'
   pod 'Masonry'
   pod 'MJRefresh'
@@ -20,11 +20,12 @@ target "HanHong-Stethophone" do
   pod 'YYText'
   pod 'SCIndexView'
   pod 'WechatOpenSDK-XCFramework'
+  #pod 'Charts'
   
-  pod 'UMCommon'
-  pod 'UMDevice'
-  pod 'UMAPM'
-  pod 'UMCCommonLog'
+  #pod 'UMCommon'
+  #pod 'UMDevice'
+  #pod 'UMAPM'
+  #pod 'UMCCommonLog'
   
 end
 

@@ -158,7 +158,12 @@
 
 - (void)setBShowCheck:(Boolean)bShowCheck{
     self.buttonClick.hidden = !bShowCheck;
-    self.buttonClick.sd_layout.widthIs(Ratio33);
+    if(bShowCheck) {
+        self.buttonClick.sd_layout.widthIs(Ratio33);
+    } else {
+        self.buttonClick.sd_layout.widthIs(0);
+    }
+    
     [self.buttonClick updateLayout];
 }
 
@@ -179,7 +184,7 @@
     self.labelMessage.sd_layout.centerYEqualToView(self.imageViewHead).heightIs(Ratio16).rightSpaceToView(self.contentView, Ratio11).widthIs(screenW/2);
     self.labelName.sd_layout.leftSpaceToView(self.imageViewHead, Ratio15).rightSpaceToView(self.contentView, Ratio15).bottomSpaceToView(self.labelCommpany, Ratio3).heightIs(Ratio17);
     
-    [self.labelCommpany setSingleLineAutoResizeWithMaxWidth:screenW/2];
+    [self.labelCommpany setSingleLineAutoResizeWithMaxWidth:screenW-Ratio99];
     self.labelDepartment.sd_layout.leftEqualToView(self.labelName).rightEqualToView(self.labelName).topSpaceToView(self.labelCommpany, Ratio3).heightIs(Ratio16);
     
     self.buttonRight.sd_layout.rightSpaceToView(self.contentView, Ratio11).centerYEqualToView(self.imageViewHead).heightIs(Ratio22).widthIs(Ratio40);
