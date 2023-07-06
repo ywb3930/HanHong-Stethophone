@@ -43,6 +43,8 @@
 		972CC0AB2A54F52700B8F8DE /* NoDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0AA2A54F52700B8F8DE /* NoDataView.m */; };
 		972CC0AE2A550DC900B8F8DE /* WaveFullView.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0AD2A550DC900B8F8DE /* WaveFullView.m */; };
 		972CC0B32A5564A200B8F8DE /* BaseRecordPlayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0B22A5564A100B8F8DE /* BaseRecordPlayVC.m */; };
+		972CC0BA2A5592D000B8F8DE /* AnnotationInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0B92A5592D000B8F8DE /* AnnotationInfoVC.m */; };
+		972CC0BD2A55944D00B8F8DE /* HHBaseRecordVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0BC2A55944D00B8F8DE /* HHBaseRecordVC.m */; };
 		97349DFF2A3FEABD00AF5A06 /* PasswordManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */; };
 		97349E062A40007800AF5A06 /* PrivacyPermission.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E052A40007800AF5A06 /* PrivacyPermission.m */; };
 		97349E092A4002B100AF5A06 /* DeviceManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E082A4002B100AF5A06 /* DeviceManagerVC.m */; };
@@ -258,6 +260,10 @@
 		972CC0AD2A550DC900B8F8DE /* WaveFullView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WaveFullView.m; sourceTree = "<group>"; };
 		972CC0B12A5564A100B8F8DE /* BaseRecordPlayVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BaseRecordPlayVC.h; sourceTree = "<group>"; };
 		972CC0B22A5564A100B8F8DE /* BaseRecordPlayVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BaseRecordPlayVC.m; sourceTree = "<group>"; };
+		972CC0B82A5592D000B8F8DE /* AnnotationInfoVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnnotationInfoVC.h; sourceTree = "<group>"; };
+		972CC0B92A5592D000B8F8DE /* AnnotationInfoVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnnotationInfoVC.m; sourceTree = "<group>"; };
+		972CC0BB2A55944D00B8F8DE /* HHBaseRecordVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHBaseRecordVC.h; sourceTree = "<group>"; };
+		972CC0BC2A55944D00B8F8DE /* HHBaseRecordVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHBaseRecordVC.m; sourceTree = "<group>"; };
 		97349DFD2A3FEABC00AF5A06 /* PasswordManagerVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasswordManagerVC.h; sourceTree = "<group>"; };
 		97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasswordManagerVC.m; sourceTree = "<group>"; };
 		97349E042A40007800AF5A06 /* PrivacyPermission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyPermission.h; sourceTree = "<group>"; };
@@ -787,6 +793,8 @@
 				9765E0622A3D3A0800181452 /* StandartRecordVC.m */,
 				97469CCB2A4E78DA0091A3F3 /* RecordFinishVC.h */,
 				97469CCC2A4E78DA0091A3F3 /* RecordFinishVC.m */,
+				972CC0BB2A55944D00B8F8DE /* HHBaseRecordVC.h */,
+				972CC0BC2A55944D00B8F8DE /* HHBaseRecordVC.m */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -852,6 +860,8 @@
 				972CC0A42A545DDD00B8F8DE /* AnnotationFullVC.m */,
 				972CC0B12A5564A100B8F8DE /* BaseRecordPlayVC.h */,
 				972CC0B22A5564A100B8F8DE /* BaseRecordPlayVC.m */,
+				972CC0B82A5592D000B8F8DE /* AnnotationInfoVC.h */,
+				972CC0B92A5592D000B8F8DE /* AnnotationInfoVC.m */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -1597,6 +1607,7 @@
 				9B29B30F2A3C0F89008DCFE7 /* KSImagePickerEditPictureController.m in Sources */,
 				972CC0A52A545DDD00B8F8DE /* AnnotationFullVC.m in Sources */,
 				9B29B31B2A3C0F89008DCFE7 /* KSImagePickerView.m in Sources */,
+				972CC0BD2A55944D00B8F8DE /* HHBaseRecordVC.m in Sources */,
 				9B29B3042A3C0F89008DCFE7 /* BRDatePickerView.m in Sources */,
 				9751BDC32A492F1100787A5A /* ScanTeachCodeVC.m in Sources */,
 				9751BD992A47DFD000787A5A /* RemoteControlStudentVC.m in Sources */,
@@ -1671,6 +1682,7 @@
 				9751BDB12A48204900787A5A /* ClinicVC.m in Sources */,
 				9765E0632A3D3A0800181452 /* StandartRecordVC.m in Sources */,
 				9721E0A02A41A90000B68939 /* ConsultationModel.m in Sources */,
+				972CC0BA2A5592D000B8F8DE /* AnnotationInfoVC.m in Sources */,
 				972CBF632A54177900B8F8DE /* KSYAudioPlotView.m in Sources */,
 				9751BDA32A47F28500787A5A /* HHCalendarManager.m in Sources */,
 				9B29B3152A3C0F89008DCFE7 /* KSImagePickerViewerNavigationView.m in Sources */,

@@ -9,8 +9,8 @@
 #import "HeartVoiceView.h"
 #import "LungVoiceView.h"
 #import "StandarRecordBottomView.h"
-#import "HHBlueToothManager.h"
-#import "DeviceManagerVC.h"
+//#import "HHBlueToothManager.h"
+//#import "DeviceManagerVC.h"
 #import "RecordFinishVC.h"
 
 @interface StandartRecordVC ()<HeartVoiceViewDelegate, LungVoiceViewDelegate, StandarRecordBottomViewDelegate>
@@ -19,18 +19,18 @@
 @property (retain, nonatomic) UIButton                      *buttonLung;
 @property (retain, nonatomic) UIView                        *viewLine;
 @property (assign, nonatomic) NSInteger                     selectIndex;
-@property (retain, nonatomic) ReadyRecordView               *readyRecordView;
+//@property (retain, nonatomic) ReadyRecordView               *readyRecordView;
 @property (retain, nonatomic) StandarRecordBottomView       *recordBottomView;
 @property (retain, nonatomic) HeartVoiceView                *heartVoiceView;
 @property (retain, nonatomic) LungVoiceView                 *lungVoiceView;
 
-@property (assign, nonatomic) NSInteger                     recordDurationAll;
-@property (assign, nonatomic) NSInteger                     soundsType;
-@property (assign, nonatomic) NSInteger                     isFiltrationRecord;
-@property (assign, nonatomic) NSInteger                     RECORD_TYPE;
-@property (assign, nonatomic) NSInteger                     recordingState;
-@property (retain, nonatomic) NSString                      *recordCode;
-@property (retain, nonatomic) NSString                      *relativePath;
+//@property (assign, nonatomic) NSInteger                     recordDurationAll;
+//@property (assign, nonatomic) NSInteger                     soundsType;
+//@property (assign, nonatomic) NSInteger                     isFiltrationRecord;
+//@property (assign, nonatomic) NSInteger                     RECORD_TYPE;
+//@property (assign, nonatomic) NSInteger                     recordingState;
+//@property (retain, nonatomic) NSString                      *recordCode;
+//@property (retain, nonatomic) NSString                      *relativePath;
 
 @property (assign, nonatomic) NSInteger                     buttonSelectIndex;
 @property (assign, nonatomic) NSInteger                     lungSelectPositionIndex;
@@ -53,29 +53,31 @@
     // Do any additional setup after loading the view.
     self.title = @"标准录音";
     self.view.backgroundColor = WHITECOLOR;
+    [self initNavi:1];
     self.selectIndex = 0;
+    self.recordModel = StanarRecord;
     self.autoIndex = 0;
     [self loadPlistData:YES];
     [self initView];
     [self reloadView];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
-- (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel{
-    if (self.recordingState == recordingState_ing) {
-        [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-        return NO;
-    }
-    self.isFiltrationRecord = filterModel;
-    [self loadData];
-    [self realodFilerView];
-    return YES;
-}
+//- (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel{
+//    if (self.recordingState == recordingState_ing) {
+//        [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+//        return NO;
+//    }
+//    self.isFiltrationRecord = filterModel;
+//    [self loadData];
+//    [self realodFilerView];
+//    return YES;
+//}
 
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    [self loadPlistData:NO];
-}
+//- (void)viewWillAppear:(BOOL)animated{
+//    [super viewWillAppear:animated];
+//    [self loadPlistData:NO];
+//}
 
 - (void)actionClickHeartButtonBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag{
     self.soundsType = heart_sounds;
@@ -94,204 +96,273 @@
     self.readyRecordView.labelReadyRecord.text = @"准备录音";
     self.recordBottomView.positionName = [NSString stringWithFormat:@"准备开始采集%@",name];
     self.recordBottomView.labelStartRecord.hidden = NO;
-    [self actionStart];
+    [self actionStartRecord];
 }
 
-- (void)reloadView{
-    [self realodFilerView];
-    self.readyRecordView.duration = self.recordDurationAll;//录音总时长
-}
-- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
-    NSDictionary *userInfo = notification.userInfo;
-    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
-    NSObject *args1 = userInfo[@"args1"];
-    NSObject *args2 = userInfo[@"args2"];
-    if (event == DeviceHelperRecordReady) {
-        self.recordingState = recordingState_prepare;
-        if (self.soundsType == heart_sounds) {
-            self.heartVoiceView.recordingStae = recordingState_prepare;
-        } else if (self.soundsType == lung_sounds) {
-            self.lungVoiceView.recordingStae = recordingState_prepare;
-        }
-        NSLog(@"录音就绪");
-    } else if (event != DeviceHelperRecordingData) {
-       // NSLog(@"DEVICE_HELPER_EVENT = %li", event);
-    }
-    if (event == DeviceHelperRecordBegin) {
-        self.recordingState = recordingState_ing;
-        if (self.soundsType == heart_sounds) {
-            self.heartVoiceView.recordingStae = recordingState_ing;
-        } else if (self.soundsType == lung_sounds) {
-            self.lungVoiceView.recordingStae = recordingState_ing;
-        }
-        self.recordCode = [NSString stringWithFormat:@"%@%@",[Tools getCurrentTimes], [Tools getRamdomString]];
-        
-        NSLog(@"录音开始: %@", self.recordCode);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.readyRecordView.recordCode = self.recordCode;
-            if (self.soundsType == heart_sounds) {
-                [self.heartVoiceView recordingStart];
-            } else if(self.soundsType == lung_sounds) {
-                [self.lungVoiceView recordingStart];
-            }
-            NSString *name = [[Constant shareManager] positionTagPositionCn:self.currentPositon];
-            
-            self.recordBottomView.positionName = [NSString stringWithFormat:@"正在采集%@",name];
-        });
-        
-    } else if (event == DeviceHelperRecordingTime) {
-        self.recordingState = recordingState_ing;
-        if (self.soundsType == heart_sounds) {
-            self.heartVoiceView.recordingStae = recordingState_ing;
-        } else if(self.soundsType == lung_sounds) {
-            self.lungVoiceView.recordingStae = recordingState_ing;
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSNumber *result = (NSNumber *)args1;
-            float number = [result floatValue];
-            NSLog(@"...%f",number);
-            self.readyRecordView.recordTime = number;
-            self.readyRecordView.progress = number / self.recordDurationAll;
-            self.recordBottomView.labelStartRecord.hidden = YES;
-        });
-        
-    } else if (event == DeviceHelperRecordingData) {
-        
-    } else if (event == DeviceHelperRecordPause) {
-        self.recordingState = recordingState_pause;
-        if (self.soundsType == heart_sounds) {
-            self.heartVoiceView.recordingStae = recordingState_pause;
-        } else if (self.soundsType == lung_sounds) {
-            self.lungVoiceView.recordingStae = recordingState_pause;
-        }
-        NSLog(@"录音暂停");
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.readyRecordView.stop = YES;
-            self.recordBottomView.labelStartRecord.hidden = NO;
-            if (self.soundsType == heart_sounds) {
-                [self.heartVoiceView recordingPause];
-            } else if (self.soundsType == lung_sounds) {
-                [self.lungVoiceView recordingPause];
-            }
-        });
-    } else if (event == DeviceHelperRecordEnd) {
-        NSLog(@"录音结束");
-        self.recordingState = recordingState_stop;
-        
-        [self actionStopRecord];
+//- (void)reloadView{
+//    [super reloadView];
+////    [self realodFilerView];
+////    self.readyRecordView.duration = self.recordDurationAll;//录音总时长
+//}
+
+- (void)actionDeviceHelperRecordReady{
+    if (self.soundsType == heart_sounds) {
+        self.heartVoiceView.recordingStae = recordingState_prepare;
+    } else if (self.soundsType == lung_sounds) {
+        self.lungVoiceView.recordingStae = recordingState_prepare;
     }
 }
 
-- (void)actionClickBlueToothCallBack:(nonnull UIButton *)button{
-    NSLog(@"actionClickBlueTooth");
+- (void)actionDeviceHelperRecordBegin{
+    if (self.soundsType == heart_sounds) {
+        self.heartVoiceView.recordingStae = recordingState_ing;
+        [self.heartVoiceView recordingStart];
+    } else if (self.soundsType == lung_sounds) {
+        self.lungVoiceView.recordingStae = recordingState_ing;
+        [self.lungVoiceView recordingStart];
+    }
+    
+    NSString *name = [[Constant shareManager] positionTagPositionCn:self.currentPositon];
+    
+    self.recordBottomView.positionName = [NSString stringWithFormat:@"正在采集%@",name];
+}
 
-    if(self.recordingState == recordingState_ing) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"正在录音，离开需要取消录音" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *go = [UIAlertAction actionWithTitle:@"继续录音" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            [self actionStart];
-        }];
-        [alert addAction:go];
-        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消录音" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-            NSInteger time = 0;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                //[self.buttonBluetooth actionToDeviceManagerVC:self];
-                [self reloadViewRecordView];
-                self.readyRecordView.labelReadyRecord.text = @"准备录音";
-                self.recordBottomView.labelStartRecord.hidden = NO;
-                self.readyRecordView.recordCode = @"--";
-                [self actionToDeviceManagerVC];
-            });
-        }];
-        [alert addAction:cancel];
-        [self presentViewController:alert animated:YES completion:nil];
-    } else {
-        [self actionToDeviceManagerVC];
+- (void)actionDeviceHelperRecordingTime:(float)number{
+    if (self.soundsType == heart_sounds) {
+        self.heartVoiceView.recordingStae = recordingState_ing;
+    } else if(self.soundsType == lung_sounds) {
+        self.lungVoiceView.recordingStae = recordingState_ing;
+    }
+    self.readyRecordView.recordTime = number;
+    self.readyRecordView.progress = number / self.recordDurationAll;
+    self.recordBottomView.labelStartRecord.hidden = YES;
+}
+
+- (void)actionDeviceHelperRecordPause{
+    if (self.soundsType == heart_sounds) {
+        self.heartVoiceView.recordingStae = recordingState_pause;
+    } else if (self.soundsType == lung_sounds) {
+        self.lungVoiceView.recordingStae = recordingState_pause;
+    }
+    self.recordBottomView.labelStartRecord.hidden = NO;
+    if (self.soundsType == heart_sounds) {
+        [self.heartVoiceView recordingPause];
+    } else if (self.soundsType == lung_sounds) {
+        [self.lungVoiceView recordingPause];
     }
 }
 
-
-- (void)actionToDeviceManagerVC{
-    DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
-    deviceManager.recordingState = self.recordingState;
-    deviceManager.bStandart = YES;
-    [self.navigationController pushViewController:deviceManager animated:YES];
-}
-
-
-
-- (void)actionStopRecord{
-    NSData *data = [[HHBlueToothManager shareManager] getRecordFile];
-    //NSString *filePath = [[NSBundle mainBundle] pathForResource:@"1" ofType:@"wav"];
-    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
-    self.relativePath = [NSString stringWithFormat:@"audio/%@.wav", self.recordCode];
-    NSString *filePath = [NSString stringWithFormat:@"%@%@", path, self.relativePath];
-    NSLog(@"filepath = %@", filePath);
-    Boolean success = [data writeToFile:filePath atomically:YES];
-    if (success) {
-        NSLog(@"保存成功");
-        [self saveSuccess];
-    } else {
-        NSLog(@"保存失败");
-        [self reloadViewRecordView];
+- (void)actionDeviceHelperRecordEnd{
+    self.recordBottomView.labelStartRecord.hidden = NO;
+    if (self.soundsType == heart_sounds) {
+        self.heartVoiceView.recordingStae = recordingState_stop;
+        [self.heartVoiceView recordingStop];
+    } else if (self.soundsType == lung_sounds) {
+        self.lungVoiceView.recordingStae = recordingState_stop;
+        [self.lungVoiceView recordingStop];
     }
-}
-
-
-- (void)saveSuccess{
-    [[HHBlueToothManager shareManager] stop];
-    self.recordModel.user_id = [@(LoginData.id) stringValue];
-    self.recordModel.record_mode = StanarRecord;
-    self.recordModel.type_id = self.soundsType;
-    self.recordModel.record_filter = self.isFiltrationRecord;
-    self.recordModel.record_time = [Tools dateToTimeStringYMDHMS:[NSDate now]];
-    self.recordModel.record_length = self.recordDurationAll;
-    self.recordModel.file_path = self.relativePath;
-    //NSArray *array = [self.relativePath mutableArrayValueForKey:@"/"];
-    self.recordModel.tag = [NSString stringWithFormat:@"%@.wav", self.recordCode];
-    self.recordModel.modify_time = self.recordModel.record_time;
-    Boolean result = [[HHDBHelper shareInstance] addRecordItem:self.recordModel];
-    if (result) {
-        NSLog(@"保存数据库成功");
-    } else {
-        NSLog(@"保存数据库失败");
-    }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.recordBottomView.labelStartRecord.hidden = NO;
-        if (self.soundsType == heart_sounds) {
-            self.heartVoiceView.recordingStae = recordingState_stop;
-            [self.heartVoiceView recordingStop];
-        } else if (self.soundsType == lung_sounds) {
-            self.lungVoiceView.recordingStae = recordingState_stop;
-            [self.lungVoiceView recordingStop];
-        }
-        [self reloadViewRecordView];
-        self.recordBottomView.labelStartRecord.hidden = YES;
-        self.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
-        if (self.bAuscultationSequence) {
-            self.autoIndex++;
-            NSLog(@"autoIndex = %li", self.autoIndex);
+    [self reloadViewRecordView];
+    self.recordBottomView.labelStartRecord.hidden = YES;
+    self.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
+    if (self.bAuscultationSequence) {
+        self.autoIndex++;
+        NSLog(@"autoIndex = %li", self.autoIndex);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self autoSelectNexrPositionSequence];
-        }
-        //[self actionStart];
-        [[NSNotificationCenter defaultCenter] postNotificationName:AddLocalRecordSuccess object:nil];
-    });
+        });
+        
+    }
 }
 
-- (void)actionStart{
-    [[HHBlueToothManager shareManager] setRecordDuration:(int)self.recordDurationAll];//设置录音时长
-    [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:RecordingUntilRecordDuration];
+//- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+//    NSDictionary *userInfo = notification.userInfo;
+//    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
+//    NSObject *args1 = userInfo[@"args1"];
+//    NSObject *args2 = userInfo[@"args2"];
+//    if (event == DeviceHelperRecordReady) {
+//        self.recordingState = recordingState_prepare;
+//        if (self.soundsType == heart_sounds) {
+//            self.heartVoiceView.recordingStae = recordingState_prepare;
+//        } else if (self.soundsType == lung_sounds) {
+//            self.lungVoiceView.recordingStae = recordingState_prepare;
+//        }
+//        NSLog(@"录音就绪");
+//    } else if (event != DeviceHelperRecordingData) {
+//       // NSLog(@"DEVICE_HELPER_EVENT = %li", event);
+//    }
+//    if (event == DeviceHelperRecordBegin) {
+//        self.recordingState = recordingState_ing;
+//        if (self.soundsType == heart_sounds) {
+//            self.heartVoiceView.recordingStae = recordingState_ing;
+//        } else if (self.soundsType == lung_sounds) {
+//            self.lungVoiceView.recordingStae = recordingState_ing;
+//        }
+//        self.recordCode = [NSString stringWithFormat:@"%@%@",[Tools getCurrentTimes], [Tools getRamdomString]];
+//
+//        NSLog(@"录音开始: %@", self.recordCode);
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            self.readyRecordView.recordCode = self.recordCode;
+//            if (self.soundsType == heart_sounds) {
+//                [self.heartVoiceView recordingStart];
+//            } else if(self.soundsType == lung_sounds) {
+//                [self.lungVoiceView recordingStart];
+//            }
+//            NSString *name = [[Constant shareManager] positionTagPositionCn:self.currentPositon];
+//
+//            self.recordBottomView.positionName = [NSString stringWithFormat:@"正在采集%@",name];
+//        });
+//
+//    } else if (event == DeviceHelperRecordingTime) {
+//        self.recordingState = recordingState_ing;
+//        if (self.soundsType == heart_sounds) {
+//            self.heartVoiceView.recordingStae = recordingState_ing;
+//        } else if(self.soundsType == lung_sounds) {
+//            self.lungVoiceView.recordingStae = recordingState_ing;
+//        }
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSNumber *result = (NSNumber *)args1;
+//            float number = [result floatValue];
+//            NSLog(@"...%f",number);
+//            self.readyRecordView.recordTime = number;
+//            self.readyRecordView.progress = number / self.recordDurationAll;
+//            self.recordBottomView.labelStartRecord.hidden = YES;
+//        });
+//
+//    } else if (event == DeviceHelperRecordingData) {
+//
+//    } else if (event == DeviceHelperRecordPause) {
+//        self.recordingState = recordingState_pause;
+//        if (self.soundsType == heart_sounds) {
+//            self.heartVoiceView.recordingStae = recordingState_pause;
+//        } else if (self.soundsType == lung_sounds) {
+//            self.lungVoiceView.recordingStae = recordingState_pause;
+//        }
+//        NSLog(@"录音暂停");
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            self.readyRecordView.stop = YES;
+//            self.recordBottomView.labelStartRecord.hidden = NO;
+//            if (self.soundsType == heart_sounds) {
+//                [self.heartVoiceView recordingPause];
+//            } else if (self.soundsType == lung_sounds) {
+//                [self.lungVoiceView recordingPause];
+//            }
+//        });
+//    } else if (event == DeviceHelperRecordEnd) {
+//        NSLog(@"录音结束");
+//        self.recordingState = recordingState_stop;
+//
+//        [self actionStopRecord];
+//    }
+//}
+//
+//- (void)actionStopRecord{
+//    NSData *data = [[HHBlueToothManager shareManager] getRecordFile];
+//    //NSString *filePath = [[NSBundle mainBundle] pathForResource:@"1" ofType:@"wav"];
+//    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
+//    self.relativePath = [NSString stringWithFormat:@"audio/%@.wav", self.recordCode];
+//    NSString *filePath = [NSString stringWithFormat:@"%@%@", path, self.relativePath];
+//    NSLog(@"filepath = %@", filePath);
+//    Boolean success = [data writeToFile:filePath atomically:YES];
+//    if (success) {
+//        NSLog(@"保存成功");
+//        [self saveSuccess];
+//    } else {
+//        NSLog(@"保存失败");
+//        [self reloadViewRecordView];
+//    }
+//}
+
+- (void)actionCancelClickBluetooth{
+    self.recordBottomView.labelStartRecord.hidden = NO;
 }
+
+//- (void)actionClickBlueToothCallBack:(nonnull UIButton *)button{
+//    NSLog(@"actionClickBlueTooth");
+//
+//    if(self.recordingState == recordingState_ing) {
+//        [Tools showAlertView:@"提示" andMessage:@"正在录音，离开会取消录音" andTitles:@[@"取消录音", @"继续录音"] andColors:@[MainGray, MainColor] sure:^{
+//
+//        } cancel:^{
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [self reloadViewRecordView];
+//                self.readyRecordView.labelReadyRecord.text = @"准备录音";
+//
+//                self.readyRecordView.recordCode = @"--";
+//                //[self actionToDeviceManagerVC];
+//            });
+//        }];
+//    } else {
+//        //[self actionToDeviceManagerVC];
+//    }
+//}
+
+
+//- (void)actionToDeviceManagerVC{
+//    DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
+//    deviceManager.recordingState = self.recordingState;
+//    deviceManager.bStandart = YES;
+//    [self.navigationController pushViewController:deviceManager animated:YES];
+//}
+
+
+
+//
+//- (void)saveSuccess{
+//    [[HHBlueToothManager shareManager] stop];
+//    self.recordModel.user_id = [@(LoginData.id) stringValue];
+//    self.recordModel.record_mode = StanarRecord;
+//    self.recordModel.type_id = self.soundsType;
+//    self.recordModel.record_filter = self.isFiltrationRecord;
+//    self.recordModel.record_time = [Tools dateToTimeStringYMDHMS:[NSDate now]];
+//    self.recordModel.record_length = self.recordDurationAll;
+//    self.recordModel.file_path = self.relativePath;
+//    //NSArray *array = [self.relativePath mutableArrayValueForKey:@"/"];
+//    self.recordModel.tag = [NSString stringWithFormat:@"%@.wav", self.recordCode];
+//    self.recordModel.modify_time = self.recordModel.record_time;
+//    Boolean result = [[HHDBHelper shareInstance] addRecordItem:self.recordModel];
+//    if (result) {
+//        NSLog(@"保存数据库成功");
+//    } else {
+//        NSLog(@"保存数据库失败");
+//    }
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        self.recordBottomView.labelStartRecord.hidden = NO;
+//        if (self.soundsType == heart_sounds) {
+//            self.heartVoiceView.recordingStae = recordingState_stop;
+//            [self.heartVoiceView recordingStop];
+//        } else if (self.soundsType == lung_sounds) {
+//            self.lungVoiceView.recordingStae = recordingState_stop;
+//            [self.lungVoiceView recordingStop];
+//        }
+//        [self reloadViewRecordView];
+//        self.recordBottomView.labelStartRecord.hidden = YES;
+//        self.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
+//        if (self.bAuscultationSequence) {
+//            self.autoIndex++;
+//            NSLog(@"autoIndex = %li", self.autoIndex);
+//            [self autoSelectNexrPositionSequence];
+//        }
+//        //[self actionStart];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:AddLocalRecordSuccess object:nil];
+//    });
+//}
+
+//- (void)actionStart{
+//    [[HHBlueToothManager shareManager] setRecordDuration:(int)self.recordDurationAll];//设置录音时长
+//    [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:RecordingUntilRecordDuration];
+//}
 
 - (void)loadPlistData:(Boolean)firstLoadData{
+    [super loadPlistData:firstLoadData];
     NSString *path = [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
     NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:path];
-    
-    self.recordDurationAll = [data[@"record_duration"] integerValue];// 录音总时长
-    if (!firstLoadData) {
-        self.soundsType = heart_sounds;
-        self.isFiltrationRecord = [data[@"is_filtration_record"] integerValue];//滤波状态
-       
-    }
+//    
+//    self.recordDurationAll = [data[@"record_duration"] integerValue];// 录音总时长
+//    if (!firstLoadData) {
+//        self.soundsType = heart_sounds;
+//        self.isFiltrationRecord = [data[@"is_filtration_record"] integerValue];//滤波状态
+//       
+//    }
     Boolean aSequence = [data[@"auscultation_sequence"] boolValue];
     if (aSequence) {
         self.arrayHeartReorcSequence = data[@"heartReorcSequence"];
@@ -336,20 +407,20 @@
     }
 }
 
-
-- (void)loadData{
-    if (self.isFiltrationRecord == open_filtration) {
-        //判断音类型
-        if (self.soundsType == heart_sounds) {//---------
-            self.RECORD_TYPE = RECORD_HEART_WITH_BUTTON;
-        } else {
-            self.RECORD_TYPE = RECORD_LUNG_WITH_BUTTON;
-        }
-    } else if (self.isFiltrationRecord == close_filtration) {
-        self.RECORD_TYPE = RECORD_FULL_WITH_BUTTON;
-    }
-}
-
+//
+//- (void)loadData{
+//    if (self.isFiltrationRecord == open_filtration) {
+//        //判断音类型
+//        if (self.soundsType == heart_sounds) {//---------
+//            self.RECORD_TYPE = RECORD_HEART_WITH_BUTTON;
+//        } else {
+//            self.RECORD_TYPE = RECORD_LUNG_WITH_BUTTON;
+//        }
+//    } else if (self.isFiltrationRecord == close_filtration) {
+//        self.RECORD_TYPE = RECORD_FULL_WITH_BUTTON;
+//    }
+//}
+//
 - (void)realodFilerView{
     if (self.isFiltrationRecord == open_filtration) {
         [self.recordBottomView filterGrayString:@"关闭滤波" blueString:@"打开滤波/"];
@@ -358,11 +429,11 @@
     }
 }
 
-- (void)reloadViewRecordView{
-    self.readyRecordView.recordTime = 0;
-    self.readyRecordView.progress = 0;
-    self.recordingState = recordingState_prepare;
-}
+//- (void)reloadViewRecordView{
+//    self.readyRecordView.recordTime = 0;
+//    self.readyRecordView.progress = 0;
+//    self.recordingState = recordingState_prepare;
+//}
 
 - (void)actionClickButtonHeart:(UIButton *)button{
     if(!self.bActionFromAuto) {
@@ -371,6 +442,9 @@
             return ;
         }
         if (button.selected) {
+            return;
+        } else if(self.recordingState == recordingState_ing) {
+            [kAppWindow makeToast:@"正在录音中，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
         
@@ -387,7 +461,7 @@
     [self.recordBottomView updateLayout];
     self.lungVoiceView.hidden = YES;
     [self loadData];
-    [self actionStart];
+    [self actionStartRecord];
 
 }
 
@@ -398,6 +472,9 @@
             return ;
         }
         if (button.selected) {
+            return;
+        } else if(self.recordingState == recordingState_ing) {
+            [kAppWindow makeToast:@"正在录音中，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
     }
@@ -413,7 +490,7 @@
     [self.recordBottomView updateLayout];
     self.lungVoiceView.hidden = NO;
     [self loadData];
-    [self actionStart];
+    [self actionStartRecord];
 }
 
 
@@ -479,6 +556,7 @@
 - (StandarRecordBottomView *)recordBottomView{
     if (!_recordBottomView) {
         _recordBottomView = [[StandarRecordBottomView alloc] init];
+        _recordBottomView.delegate = self;
     }
     return _recordBottomView;
 }
@@ -500,8 +578,8 @@
     return _lungVoiceView;
 }
 
-- (void)dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
+//- (void)dealloc{
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//}
 
 @end

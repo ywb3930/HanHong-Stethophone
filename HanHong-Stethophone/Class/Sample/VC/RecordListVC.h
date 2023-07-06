@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RecordListCell.h"
+#import "BaseRecordPlayVC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface RecordListVC : UIViewController
+@interface RecordListVC : BaseRecordPlayVC
 
 @property (weak, nonatomic) id<RecordListVCDelegate>     delegate;
 @property (assign, nonatomic) NSInteger idx;//0 本地， 1 云， 2 收藏

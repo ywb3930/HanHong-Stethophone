@@ -7,13 +7,14 @@
 
 #import <UIKit/UIKit.h>
 #import "HHBaseViewController.h"
+#import "BaseRecordPlayVC.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AnnotationVC : HHBaseViewController
+@interface AnnotationVC : BaseRecordPlayVC
 
-@property (retain, nonatomic) RecordModel           *recordModel;
+//@property (retain, nonatomic) RecordModel           *recordModel;
 
 @end
 

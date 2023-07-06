@@ -6,10 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BaseRecordPlayVC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface AnnotationFullVC : UIViewController
+@interface AnnotationFullVC : BaseRecordPlayVC
 
 @property (retain, nonatomic) RecordModel               *recordModel;
 

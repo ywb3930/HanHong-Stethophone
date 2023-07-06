@@ -49,6 +49,7 @@
 }
 
 - (void)setRecordingStae:(NSInteger)recordingStae{
+    _recordingStae = recordingStae;
     if (self.lungSelectPositionIndex == Lung_front_bodyType) {
         self.lungBodyFrontView.recordingStae = recordingStae;
     } else if (self.lungSelectPositionIndex == Lung_side_bodyType) {
@@ -132,8 +133,13 @@
             [kAppWindow makeToast:@"自动录音状态，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
+        if(self.recordingStae == recordingState_ing) {
+            [kAppWindow makeToast:@"正在录音中，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return;
+        }
         
     }
+    
     self.bActionFromAuto = NO;
     self.lungSelectPositionIndex = Lung_front_bodyType;
     self.buttonFront.selected = YES;
@@ -152,8 +158,13 @@
             [kAppWindow makeToast:@"自动录音状态，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
+        if(self.recordingStae == recordingState_ing) {
+            [kAppWindow makeToast:@"正在录音中，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return;
+        }
         
     }
+    
     self.bActionFromAuto = NO;
     self.lungSelectPositionIndex = Lung_side_bodyType;
     self.buttonFront.selected = NO;
@@ -170,6 +181,10 @@
     if (!self.bActionFromAuto) {
         if (self.autoAction) {
             [kAppWindow makeToast:@"自动录音状态，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return;
+        }
+        if(self.recordingStae == recordingState_ing) {
+            [kAppWindow makeToast:@"正在录音中，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
         

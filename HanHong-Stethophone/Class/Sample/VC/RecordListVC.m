@@ -25,13 +25,9 @@
 @property (assign, nonatomic) NSInteger             currentPlayingRow;//正在播放的列数 用于处理点击播放按钮事件
 
 
-//@property (assign, nonatomic) NSInteger             currentPlayingIdx;//当前正播放的是第几个页面 用于处理播放进度回调是否是本界面 0 本地录音 1 云标本库  2 我的收藏
-@property (assign, nonatomic) Boolean               bCurrentView;//是否在当前页面
-
 @property (retain, nonatomic) NSString              *path; //本地文件保存目录
 @property (retain, nonatomic) NSMutableArray        *allData;//所有数据，用于筛选是使用
 
-@property (assign, nonatomic) Boolean               bPlaying;//是否正在播放中
 @property (assign, nonatomic) NSInteger             localReordFilterType;
 @property (retain, nonatomic) NoDataView            *noDataView;
 
@@ -42,16 +38,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.bPlaying = NO;
-    
     self.currentPlayingRow = 0;
     self.path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
     self.selectMode = 0;
     self.localReordFilterType = 0;
     
     self.view.backgroundColor = HEXCOLOR(0xE2E8F0, 1);
-    //播放事件广播，用于显示播放进度
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
     if (self.idx == 0) {
         //录音成功事件广播，用于刷新本地数据
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initLocalData) name:AddLocalRecordSuccess object:nil];
@@ -257,18 +249,25 @@
     }
     [self.recordTableView reloadData];
 }
-//停止播放录音
-- (void)stopPlayRecord{
-    if(self.bPlaying) {
-        [[HHBlueToothManager shareManager] stop];
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
-        RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
-        cell.bStop = NO;;
-        cell.playProgess = 0;
-        self.bPlaying = NO;
-    }
+
+- (void)actionDeviceHelperPlayBegin{
     
 }
+
+- (void)actionDeviceHelperPlayingTime:(float)value{
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
+    RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
+    cell.playProgess = value;
+    NSLog(@"播放进度：%f", value);
+}
+
+- (void)actionDeviceHelperPlayEnd{
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
+    RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
+    cell.bStop = NO;;
+    cell.playProgess = 0;
+}
+
 //选择不同类型之后的回调
 - (void)actionSelectedInfoCallBack:(NSString *)info row:(NSInteger)row tag:(NSInteger)tag{
     if(row == self.listInfo.count - 1) {
@@ -328,37 +327,7 @@
         self.noDataView.hidden = YES;
     }
 }
-//接收蓝牙底层消息
-- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
-    NSDictionary *userInfo = notification.userInfo;
-    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
-    NSObject *args1 = userInfo[@"args1"];
-    NSObject *args2 = userInfo[@"args2"];
-    if (!self.bCurrentView) {
-        return;
-    }
-    if (event == DeviceHelperPlayBegin) {
-        self.bPlaying = YES;
-    } else if (event == DeviceHelperPlayingTime) {
-        __weak typeof(self) wself = self;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:wself.currentPlayingRow inSection:0];
-            RecordListCell *cell = (RecordListCell *)[wself.recordTableView cellForRowAtIndexPath:indexPath];
-            NSNumber *number = (NSNumber *)args1;
-            float value = [number floatValue];
-            cell.playProgess = value;
-            NSLog(@"播放进度：%f", value);
-        });
-        
-        
-    } else if (event == DeviceHelperPlayEnd) {
-        NSLog(@"播放结束");
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self stopPlayRecord];
-        });
-        
-    }
-}
+
 //点击播放按钮事件处理
 - (Boolean)actionRecordListCellItemClick:(RecordModel *)model bSelected:(Boolean)bSelected idx:(NSInteger)idx{
     //self.currentPlayingIdx = idx;
@@ -427,7 +396,6 @@
                 //将本地录音上传至云标本库
                 [self actionUploadToClound];
             } cancel:^{
-                NSLog(@"1");
             }];
             
         } else {
@@ -543,9 +511,6 @@
             } else {
                 model.share_code = @"";
             }
-//            dispatch_sync(dispatch_get_main_queue(), ^{
-//                [self.recordTableView reloadRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-//            });
         }
     } failure:^(NSError * _Nonnull error) {
         
@@ -578,18 +543,6 @@
     //删除数据库
     Boolean result = [[HHDBHelper shareInstance] deleteRecordItemInTime:model.record_time];
     if (result) {
-        
-       //202307011059120145 NSString *relativePath = [NSString stringWithFormat:@"audio/%@.wav", model.file_path];
-//        NSString *filePath = [NSString stringWithFormat:@"%@%@", self.path, model.file_path];
-//        //删除本地录音文件
-//        [HHFileLocationHelper deleteFilePath:filePath];
-//        //刷新列表
-//        [self.arrayData removeObject:model];
-//        [self.allData removeObject:model];
-//        [self.recordTableView deleteRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-//        if (self.arrayData.count == 0) {
-//            self.noDataView.hidden = NO;
-//        }
         [self deleteAndRefrshLocalRecordData];
     } else {
         NSLog(@"删除数据库失败");
@@ -887,14 +840,15 @@
 //切换页面时停止播放
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    self.bCurrentView = NO;
-    [self stopPlayRecord];
+    //self.bCurrentView = NO;
+    //[self stopPlayRecord];
     
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    self.bCurrentView = YES;
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    //self.bCurrentView = YES;
 }
 
 - (NoDataView *)noDataView {

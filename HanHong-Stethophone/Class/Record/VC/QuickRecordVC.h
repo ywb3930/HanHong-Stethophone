@@ -6,11 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "HHBaseRecordVC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface QuickRecordVC : UIViewController
+@interface QuickRecordVC : HHBaseRecordVC
+
+
 
 @end
 

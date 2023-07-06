@@ -10,12 +10,13 @@
 #import "RightDirectionView.h"
 #import "Constant.h"
 #import "ItemAgeView.h"
-#import "KSYAudioPlotView.h"
-#import "KSYAudioFile.h"
+//#import "KSYAudioPlotView.h"
+//#import "KSYAudioFile.h"
 #import "WaveSmallView.h"
 #import "AnnotationFullVC.h"
 #import "DeviceManagerVC.h"
 #import "HHNavigationController.h"
+#import "BaseRecordPlayVC.h"
 
 
 @interface AnnotationVC ()<UITextFieldDelegate>
@@ -37,15 +38,13 @@
 @property (retain, nonatomic) RegisterItemView              *itemPatientAnnotation;//标注
 
 @property (retain, nonatomic) WaveSmallView                 *viewSmallWave;
-@property (retain, nonatomic) KSYAudioPlotView              *audioPlotView;
-@property (nonatomic, strong) KSYAudioFile                  *audioFile;
+//@property (retain, nonatomic) KSYAudioPlotView              *audioPlotView;
+//@property (nonatomic, strong) KSYAudioFile                  *audioFile;
 
 @property (retain, nonatomic) UIButton                      *buttonPlay;
 @property (retain, nonatomic) UIButton                      *buttonToAnnotation;
 @property (retain, nonatomic) UIView                        *viewLine;
-@property (assign, nonatomic) Boolean                       bPlaying;
 @property (assign, nonatomic) CGFloat                       startYLine;
-@property (assign, nonatomic) Boolean                       bCurrentView;//是否在当前页面
 
 
 @end
@@ -59,107 +58,27 @@
     self.view.backgroundColor = WHITECOLOR;
     self.itemHeight = Ratio33;
     [self setupView];
-    //播放事件广播，用于显示播放进度
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
 
-
-//接收蓝牙底层消息
-- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
-    if (!self.bCurrentView) {
-        return;
-    }
-    NSDictionary *userInfo = notification.userInfo;
-    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
-    NSObject *args1 = userInfo[@"args1"];
-    //NSObject *args2 = userInfo[@"args2"];
-    
-    if (event == DeviceHelperPlayBegin) {
-        self.bPlaying = YES;
-        self.viewLine.hidden = NO;
-    } else if (event == DeviceHelperPlayingTime) {
-        __weak typeof(self) wself = self;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            NSNumber *number = (NSNumber *)args1;
-            float value = [number floatValue];
-            ///cell.playProgess = value;
-            //wself.viewSmallWave.playProgess = value;
-            [wself playLineAnimation:value];
-            NSLog(@"播放进度：%f", value);
-        });
-        
-        
-    } else if (event == DeviceHelperPlayEnd) {
-        NSLog(@"播放结束");
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self stopPlayRecord];
-        });
-        
-    }
+- (void)actionDeviceHelperPlayBegin{
+    self.viewLine.hidden = NO;
 }
 
-- (void)playLineAnimation:(float)value{
+- (void)actionDeviceHelperPlayingTime:(float)value{
     CGFloat width = value / self.recordModel.record_length * (screenW - Ratio22);
-    
-    //[UIView animateWithDuration:0.2 animations:^{
-        self.viewLine.frame = CGRectMake(Ratio11+width, self.startYLine, Ratio1, Ratio150);
-    //}];
+    self.viewLine.frame = CGRectMake(Ratio11+width, self.startYLine, Ratio1, Ratio150);
 }
 
-
+- (void)actionDeviceHelperPlayEnd{
+    self.buttonPlay.selected = NO;
+    self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio150);
+    self.viewLine.hidden = YES;
+}
 
 - (void)actionClickBlueTooth:(UIButton *)button{
     DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
     [self.navigationController pushViewController:deviceManager animated:YES];
-}
-
-- (void)actionClickPlay:(UIButton *)button{
-    if(![[HHBlueToothManager shareManager] getConnectState]) {
-        [self.view makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-        return;
-    }
-    if (!self.bPlaying) {
-        button.selected = YES;
-        [self actionToStar];
-    } else {
-        button.selected = NO;
-        [self stopPlayRecord];
-    }
-}
-
-- (void)stopPlayRecord{
-    self.bPlaying = NO;
-    self.buttonPlay.selected = NO;
-    //[self.viewSmallWave actionStop];
-    self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio150);
-    self.viewLine.hidden = YES;
-    [[HHBlueToothManager shareManager] stop];
-}
-
-- (void)actionToStar{
-    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
-    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
-    if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
-        [self startPlayRecordVoice:filePath];
-    } else {
-        //如果本地没有缓存文件，先下载，后播放缓存文件
-        [AFNetRequestManager downLoadFileWithUrl:self.recordModel.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
-            
-        } successBlock:^(NSURL * _Nonnull url) {
-            //播放下载后的文件
-            [self startPlayRecordVoice:url.path];
-        } fileDownloadFail:^(NSError * _Nonnull error) {
-            
-        }];
-    }
-}
-
-//播放录音文件
-- (void)startPlayRecordVoice:(NSString *)filePath{
-    NSData *data = [NSData dataWithContentsOfFile:filePath];
-    [[HHBlueToothManager shareManager] setPlayFile:data];
-    [[HHBlueToothManager shareManager] startPlay:PlayingWithSettingData];
 }
 
 - (void)setupView{
@@ -208,41 +127,7 @@
         self.startYLine = CGRectGetMinY(self.viewSmallWave.frame);
         self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio150);
     });
-    //NSString *a = [[NSBundle mainBundle] pathForResource:@"6" ofType:@"wav"];
     [self openFileWithFilePathURL];
-    //[self showWaveView:a];
-}
-
-- (void)openFileWithFilePathURL
-{
-    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
-    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
-    
-    if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
-        [self showWaveView:filePath];
-    } else {
-        //如果本地没有缓存文件，先下载，后播放缓存文件
-        [AFNetRequestManager downLoadFileWithUrl:self.recordModel.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
-            
-        } successBlock:^(NSURL * _Nonnull url) {
-            //播放下载后的文件
-            [self showWaveView:filePath];
-        } fileDownloadFail:^(NSError * _Nonnull error) {
-            
-        }];
-    }
-}
-
-- (void)showWaveView:(NSString *)path{
-    self.audioFile = [KSYAudioFile audioFileWithURL:[NSURL fileURLWithPath:path]];
-    self.audioPlotView.plotType = KSYPlotTypeBuffer;
-    self.audioPlotView.shouldFill = YES;
-    self.audioPlotView.shouldMirror = YES;
-    __weak typeof (self) weakSelf = self;
-    [self.audioFile getWaveformDataWithCompletionBlock:^(float **waveformData, int length) {
-        [weakSelf.audioPlotView updateBuffer:waveformData[0] withBufferSize:length];
-    }];
-
 }
 
 
@@ -434,25 +319,6 @@
     return _viewSmallWave;
 }
 
-- (KSYAudioPlotView *)audioPlotView{
-    if (!_audioPlotView) {
-        _audioPlotView = [[KSYAudioPlotView alloc] init];
-        _audioPlotView.backgroundColor = UIColor.clearColor;
-        _audioPlotView.color = MainColor;
-        _audioPlotView.plotType = KSYPlotTypeBuffer;
-        _audioPlotView.shouldFill = YES;
-        _audioPlotView.shouldMirror = YES;
-        _audioPlotView.shouldOptimizeForRealtimePlot = NO;
-        
-        _audioPlotView.waveformLayer.shadowOffset = CGSizeMake(0.0, 1.0);
-        _audioPlotView.waveformLayer.shadowRadius = 0.0;
-        _audioPlotView.waveformLayer.shadowColor = MainColor.CGColor;
-        _audioPlotView.waveformLayer.shadowOpacity = 5.0;
-        _audioPlotView.waveformLayer.lineWidth = Ratio1;
-        
-    }
-    return _audioPlotView;
-}
 
 - (UIButton *)buttonPlay{
     if(!_buttonPlay) {
@@ -466,15 +332,15 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    self.bCurrentView = YES;
+    //self.bCurrentView = YES;
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 //切换页面时停止播放
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    self.bCurrentView = NO;
-    [self stopPlayRecord];
+    //self.bCurrentView = NO;
+    //[self stopPlayRecord];
 }
 
 - (UIButton *)buttonToAnnotation{
@@ -501,7 +367,7 @@
 - (void)actionToAnnotationFull:(UIButton *)button{
     AnnotationFullVC *annotationFull = [[AnnotationFullVC alloc] init];
     annotationFull.recordModel = self.recordModel;
-    [self.navigationController pushViewController:annotationFull animated:YES];
+    [self.navigationController pushViewController:annotationFull animated:NO];
 }
 
 - (void)dealloc{

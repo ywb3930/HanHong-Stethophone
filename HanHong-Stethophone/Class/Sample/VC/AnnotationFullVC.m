@@ -8,8 +8,7 @@
 #import "AnnotationFullVC.h"
 #import "HHBluetoothButton.h"
 #import "WaveFullView.h"
-#import "KSYAudioPlotView.h"
-#import "KSYAudioFile.h"
+#import "AnnotationInfoVC.h"
 
 @interface AnnotationFullVC ()
 
@@ -30,15 +29,16 @@
 @property (assign, nonatomic) CGFloat               rowWidth;
 @property (assign, nonatomic) CGFloat               viewWidth;
 @property (assign, nonatomic) CGFloat               viewHeight;
-@property (retain, nonatomic) KSYAudioPlotView              *audioPlotView;
-@property (nonatomic, strong) KSYAudioFile                  *audioFile;
 
-@property (assign, nonatomic) Boolean               bCurrentView;//是否在当前页面
 @property (retain, nonatomic) UIView                *viewLine;
 @property (retain, nonatomic) UIButton              *buttonPlay;
-@property (assign, nonatomic) Boolean               bPlaying;
+@property (retain, nonatomic) UIButton              *buttonAnnotation;
 
-@property (assign, nonatomic) CGFloat               a;
+@property (retain, nonatomic) UIView                *viewTouchBg;
+
+@property (retain, nonatomic) UIView                *clipView;
+@property (assign, nonatomic) CGPoint               startP;
+@property (retain, nonatomic) UIImageView           *imageViewP;
 
 
 @end
@@ -49,126 +49,45 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = MainBlack;
-    //[self changeRotate:YES];
     [self initNavi];
-    //播放事件广播，用于显示播放进度
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
-    
 }
 
 
-//接收蓝牙底层消息
-- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
-    if (!self.bCurrentView) {
-        return;
-    }
-    NSDictionary *userInfo = notification.userInfo;
-    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
-    NSObject *args1 = userInfo[@"args1"];
-    //NSObject *args2 = userInfo[@"args2"];
-    
-    if (event == DeviceHelperPlayBegin) {
-        self.bPlaying = YES;
-        self.viewLine.hidden = NO;
-        self.viewLine.frame = CGRectMake(kStatusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
-    } else if (event == DeviceHelperPlayingTime) {
-        __weak typeof(self) wself = self;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            NSNumber *number = (NSNumber *)args1;
-            float value = [number floatValue];
-            ///cell.playProgess = value;
-            //wself.viewSmallWave.playProgess = value;
-            [wself playLineAnimation:value];
-            NSLog(@"播放进度：%f", value);
-        });
-        
-        
-    } else if (event == DeviceHelperPlayEnd) {
-        NSLog(@"播放结束");
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self stopPlayRecord];
-        });
-        
-    }
+- (void)actionDeviceHelperPlayBegin{
+    self.viewLine.hidden = NO;
+    self.viewLine.frame = CGRectMake(kStatusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
 }
 
-- (void)playLineAnimation:(float)value{
+- (void)actionDeviceHelperPlayingTime:(float)value{
     CGFloat width = value / self.recordModel.record_length * self.viewWidth;
-    Boolean bA = YES;
-    Boolean bB = YES;
+    Boolean bFirstLoadA = YES;
+    Boolean bBirstLoadB = YES;
     if (width <= (screenW - kStatusBarHeight) / 2) {
         self.viewLine.frame = CGRectMake(kStatusBarHeight + width, kNavBarHeight, Ratio1, self.viewHeight);
-        
     } else if (width >= self.viewWidth - (screenW - kStatusBarHeight) / 2) {
-        if (bA) {
+        if (bFirstLoadA) {
             CGPoint offset = CGPointMake(self.viewWidth-screenW+kStatusBarHeight, 0);
             [self.scrollView setContentOffset:offset animated:YES];
-            bA = NO;
+            bFirstLoadA = NO;
         }
         self.viewLine.frame = CGRectMake(screenW - kStatusBarHeight-(self.viewWidth - width), kNavBarHeight, Ratio1, self.viewHeight);
     } else {
-        if (bB) {
+        if (bBirstLoadB) {
             self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
-            bB = NO;
+            bBirstLoadB = NO;
         }
         CGPoint offset = CGPointMake(width - (screenW - kStatusBarHeight) / 2, 0);
         [self.scrollView setContentOffset:offset animated:YES];
     }
-    
-    
 }
 
-
-- (void)stopPlayRecord{
-    self.bPlaying = NO;
+- (void)actionDeviceHelperPlayEnd{
     self.buttonPlay.selected = NO;
     //[self.viewSmallWave actionStop];
     self.viewLine.frame = CGRectMake(kStatusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
     self.viewLine.hidden = YES;
-    [[HHBlueToothManager shareManager] stop];
+    [self.scrollView setContentOffset:CGPointZero animated:YES];
 }
-
-- (void)actionToStar{
-    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
-    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
-    if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
-        [self startPlayRecordVoice:filePath];
-    } else {
-        //如果本地没有缓存文件，先下载，后播放缓存文件
-        [AFNetRequestManager downLoadFileWithUrl:self.recordModel.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
-            
-        } successBlock:^(NSURL * _Nonnull url) {
-            //播放下载后的文件
-            [self startPlayRecordVoice:url.path];
-        } fileDownloadFail:^(NSError * _Nonnull error) {
-            
-        }];
-    }
-}
-
-//播放录音文件
-- (void)startPlayRecordVoice:(NSString *)filePath{
-    NSData *data = [NSData dataWithContentsOfFile:filePath];
-    [[HHBlueToothManager shareManager] setPlayFile:data];
-    [[HHBlueToothManager shareManager] startPlay:PlayingWithSettingData];
-}
-
-- (void)actionToPlay:(UIButton *)button{
-
-    if(![[HHBlueToothManager shareManager] getConnectState]) {
-        [self.view makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-        return;
-    }
-    if (!self.bPlaying) {
-        button.selected = YES;
-        [self actionToStar];
-    } else {
-        button.selected = NO;
-        //[self stopPlayRecord];
-    }
-}
-
-
 
 
 - (void)initNavi{
@@ -199,15 +118,20 @@
     self.audioPlotView.sd_layout.leftSpaceToView(self.scrollView, 0).widthIs(self.viewWidth).topSpaceToView(self.scrollView, 0).bottomSpaceToView(self.scrollView, 0);
     self.scrollView.contentSize = CGSizeMake(self.viewWidth, self.viewHeight);
     
+   [self.scrollView addSubview:self.viewTouchBg];
+    self.viewTouchBg.frame = CGRectMake(0, self.viewHeight/3, self.viewWidth, self.viewHeight/3);
+    
     [self.view addSubview:self.labelTop];
     [self.view addSubview:self.labelCenter];
     [self.view addSubview:self.labelBottom];
     [self.view addSubview:self.buttonPlay];
+    [self.view addSubview:self.buttonAnnotation];
     [self.view addSubview:self.viewLine];
     self.labelTop.sd_layout.topSpaceToView(self.viewNavi, Ratio5).leftSpaceToView(self.view, kStatusBarHeight + Ratio2).widthIs(Ratio33).heightIs(Ratio16);
     self.labelCenter.sd_layout.centerYIs(kNavBarHeight + 4*self.rowWidth).leftEqualToView(self.labelTop).widthIs(Ratio33).heightIs(Ratio16);
     self.labelBottom.sd_layout.leftEqualToView(self.labelTop).topSpaceToView(self.scrollView, -Ratio22).widthIs(Ratio33).heightIs(Ratio16);
     self.buttonPlay.sd_layout.centerXEqualToView(self.view).topSpaceToView(self.scrollView, Ratio11).widthIs(Ratio44).heightIs(Ratio28);
+    self.buttonAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).rightSpaceToView(self.view, Ratio22).heightIs(Ratio28).widthIs(Ratio44);
     self.viewLine.frame = CGRectMake(kStatusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
     
     [self openFileWithFilePathURL];
@@ -223,9 +147,28 @@
         _buttonPlay.titleLabel.font = Font13;
         _buttonPlay.layer.cornerRadius = Ratio4;
         _buttonPlay.backgroundColor = HEXCOLOR(0x232323, 1);
-        [_buttonPlay addTarget:self action:@selector(actionToPlay:) forControlEvents:UIControlEventTouchUpInside];
+        [_buttonPlay addTarget:self action:@selector(actionClickPlay:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonPlay;
+}
+
+- (UIButton *)buttonAnnotation{
+    if (!_buttonAnnotation) {
+        _buttonAnnotation = [[UIButton alloc] init];
+        [_buttonAnnotation setTitle:@"标注" forState:UIControlStateNormal];
+        _buttonAnnotation.titleLabel.textColor = WHITECOLOR;
+        _buttonAnnotation.titleLabel.font = Font13;
+        _buttonAnnotation.layer.cornerRadius = Ratio4;
+        _buttonAnnotation.backgroundColor = HEXCOLOR(0x232323, 1);
+        [_buttonAnnotation addTarget:self action:@selector(actionToSelctAnnotaion:) forControlEvents:UIControlEventTouchUpInside];
+        _buttonAnnotation.hidden = YES;
+    }
+    return _buttonAnnotation;
+}
+
+- (void)actionToSelctAnnotaion:(UIButton *)button{
+    AnnotationInfoVC *annotationInfoVC = [[AnnotationInfoVC alloc] init];
+    [self.navigationController pushViewController:annotationInfoVC animated:YES];
 }
 
 - (UILabel *)labelTop{
@@ -265,40 +208,6 @@
     label.textColor = WHITECOLOR;
     label.text = name;
     return label;
-}
-
-- (void)openFileWithFilePathURL
-{
-    NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
-    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
-    
-    if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
-        [self showWaveView:filePath];
-    } else {
-        //如果本地没有缓存文件，先下载，后播放缓存文件
-        [AFNetRequestManager downLoadFileWithUrl:self.recordModel.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
-            
-        } successBlock:^(NSURL * _Nonnull url) {
-            //播放下载后的文件
-            [self showWaveView:filePath];
-        } fileDownloadFail:^(NSError * _Nonnull error) {
-            
-        }];
-    }
-}
-
-- (void)showWaveView:(NSString *)path{
-    self.audioFile = [KSYAudioFile audioFileWithURL:[NSURL fileURLWithPath:path]];
-    self.audioPlotView.plotType = KSYPlotTypeBuffer;
-    self.audioPlotView.shouldFill = YES;
-    self.audioPlotView.shouldMirror = YES;
-    __weak typeof (self) weakSelf = self;
-    [Tools showWithStatus:@"正在加载音频数据"];
-    [self.audioFile getWaveformDataWithCompletionBlock:^(float **waveformData, int length) {
-        [weakSelf.audioPlotView updateBuffer:waveformData[0] withBufferSize:length];
-        [SVProgressHUD dismiss];
-    }];
-
 }
 
 
@@ -348,7 +257,7 @@
 - (UILabel *)labelAnnotation{
     if (!_labelAnnotation) {
         _labelAnnotation = [[UILabel alloc] init];
-        _labelAnnotation.text = @"0:000-15:000 全部";
+        _labelAnnotation.text = [NSString stringWithFormat:@"0:000-%li:000 全部", self.recordModel.record_length];
         _labelAnnotation.textColor = WHITECOLOR;
         _labelAnnotation.font = Font15;
     }
@@ -375,31 +284,62 @@
     return _waveFullView;
 }
 
-- (KSYAudioPlotView *)audioPlotView{
-    if (!_audioPlotView) {
-        _audioPlotView = [[KSYAudioPlotView alloc] init];
-        _audioPlotView.backgroundColor = UIColor.clearColor;
-        _audioPlotView.color = MainColor;
-        _audioPlotView.plotType = KSYPlotTypeBuffer;
-        _audioPlotView.shouldFill = YES;
-        _audioPlotView.shouldMirror = YES;
-        _audioPlotView.shouldOptimizeForRealtimePlot = NO;
+- (UIView *)viewTouchBg{
+    if (!_viewTouchBg) {
+        _viewTouchBg = [[UIView alloc] init];
+        //_viewTouchBg.backgroundColor = HEXCOLOR(0xFFFF00, 0.2);
         
-        _audioPlotView.waveformLayer.shadowOffset = CGSizeMake(0.0, 1.0);
-        _audioPlotView.waveformLayer.shadowRadius = 0.0;
-        _audioPlotView.waveformLayer.shadowColor = MainColor.CGColor;
-        _audioPlotView.waveformLayer.shadowOpacity = 5.0;
-        _audioPlotView.waveformLayer.lineWidth = Ratio3;
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(actionPanGesture:)];
+        [_viewTouchBg addGestureRecognizer:panGesture];
         
+        UITapGestureRecognizer *tapGestuer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionTapGesture:)];
+        [_viewTouchBg addGestureRecognizer:tapGestuer];
     }
-    return _audioPlotView;
+    return _viewTouchBg;
 }
 
+- (void)actionTapGesture:(UITapGestureRecognizer *)gesture{
+    self.clipView.hidden = YES;
+    self.buttonAnnotation.hidden = YES;
+    self.labelAnnotation.text = [NSString stringWithFormat:@"0:000-%li:000 全部", self.recordModel.record_length];
+}
 
+- (void)actionPanGesture:(UIPanGestureRecognizer *)gesture{
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        self.startP = [gesture locationInView:self.viewTouchBg];
+        self.labelAnnotation.text = @"新选区";
+        
+        
+        UIView *clipView = [[UIView alloc] init];
+        clipView.backgroundColor = HEXCOLOR(0x7AE300, 0.5);//FFFF33
+        
+        clipView.alpha = 0.5;
+        [self.scrollView addSubview:clipView];
+        self.clipView = clipView;
+    } else if (gesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint curP = [gesture locationInView:self.scrollView];
+        self.clipView.frame = CGRectMake(self.startP.x, 0, curP.x - self.startP.x, self.viewHeight);
+    } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        self.buttonAnnotation.hidden = NO;
+        CGPoint endP = [gesture locationInView:self.viewTouchBg];
+        CGFloat startX = MIN(self.startP.x, endP.x);
+        CGFloat endX = MAX(self.startP.x, endP.x);
+        CGFloat timeStart = startX / self.viewWidth * self.recordModel.record_length;
+        CGFloat timeEnd = endX / self.viewWidth * self.recordModel.record_length;
+        NSLog(@"timeStart = %f, timeEnd = %f", timeStart, timeEnd);
+    }
+}
+
+- (UIImageView *)imageViewP{
+    if (!_imageViewP) {
+        _imageViewP = [[UIImageView alloc] init];
+    }
+    return _imageViewP;
+}
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    self.bCurrentView = YES;
+    //self.bCurrentView = YES;
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     //进入旋转
     [self changeRotate:YES];
@@ -408,7 +348,7 @@
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     //退出恢复
-    self.bCurrentView = NO;
+    //self.bCurrentView = NO;
     [self changeRotate:NO];
 }
 
