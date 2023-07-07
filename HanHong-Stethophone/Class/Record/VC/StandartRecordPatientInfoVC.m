@@ -6,22 +6,22 @@
 //
 
 #import "StandartRecordPatientInfoVC.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "RightDirectionView.h"
 #import "ItemAgeView.h"
 #import "BRPickerView.h"
 #import "StandartRecordVC.h"
 
-@interface StandartRecordPatientInfoVC ()<TTActionSheetDelegate>
+@interface StandartRecordPatientInfoVC ()<TTActionSheetDelegate, UITextFieldDelegate>
 
-@property (retain, nonatomic) RegisterItemView          *itemViewId;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemViewId;
 @property (retain, nonatomic) RightDirectionView        *itemViewSex;
 @property (retain, nonatomic) ItemAgeView               *itemAgeView;
-@property (retain, nonatomic) RegisterItemView          *itemViewHeight;
-@property (retain, nonatomic) RegisterItemView          *itemViewWeight;
-@property (retain, nonatomic) RegisterItemView          *itemViewDisease;
-@property (retain, nonatomic) RegisterItemView          *itemViewDiagnose;
-@property (retain, nonatomic) RightDirectionView        *itemViewArea;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemViewHeight;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemViewWeight;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemViewDisease;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemViewDiagnose;
+@property (retain, nonatomic) LabelTextFieldItemView        *itemViewArea;
 
 @property (retain, nonatomic) UIView                    *viewTop;
 //@property (retain, nonatomic) UITableView               *tableView;
@@ -43,6 +43,14 @@
     
 }
 
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    if (textField.tag == 11) {
+        [self actionSelectArea];
+        return NO;
+    }
+    return YES;
+}
+
 - (void)actionToNextView:(UIButton *)button{
     NSString *patientId = self.itemViewId.textFieldInfo.text;
     if ([Tools isBlankString:patientId]) {
@@ -59,19 +67,19 @@
     NSString *age = self.itemAgeView.textFieldAge.text;
     NSString *mouth = self.itemAgeView.textFieldMonth.text;
     NSInteger mounthCout = [mouth integerValue] + [age integerValue] * 12;
-    NSString *year = [Tools dateAddMinuteYMD:[NSDate now] mouth:-1 * mounthCout];
-    NSLog(@"year = %@", year);
+    NSString *birthday = [Tools dateAddMinuteYMD:[NSDate now] mouth:-1 * mounthCout];
+    NSLog(@"birthday = %@", birthday);
     //NSInteger year = [[currentDateString substringToIndex:4] integerValue] - age;
     RecordModel *model = [[RecordModel alloc] init];
     model.patient_id = patientId;
     model.patient_sex = sex;
-    model.patient_birthday = year;
+    model.patient_birthday = birthday;
     model.patient_height = self.itemViewHeight.textFieldInfo.text;
     model.patient_weight = self.itemViewWeight.textFieldInfo.text;
     model.patient_symptom = self.itemViewDisease.textFieldInfo.text;
     model.patient_diagnosis = self.itemViewDiagnose.textFieldInfo.text;
     if(self.bAddArea) {
-        model.patient_area = self.itemViewArea.labelInfo.text;
+        model.patient_area = self.itemViewArea.textFieldInfo.text;
     }
     
     
@@ -85,7 +93,7 @@
     self.itemViewSex.labelInfo.textColor = MainBlack;
 }
 
-- (void)actionTap:(UITapGestureRecognizer *)tap{
+- (void)actionSelectArea{
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"city" ofType:@"json"];//[plistBundle pathForResource:@"BRCity" ofType:@"plist"];
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     NSArray *dataSource = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:nil];
@@ -93,15 +101,14 @@
     __weak typeof(self) wself = self;
     [BRAddressPickerView showAddressPickerWithShowType:BRAddressPickerModeArea dataSource:dataSource defaultSelected:nil isAutoSelect:NO themeColor:MainColor resultBlock:^(BRProvinceModel *province, BRCityModel *city, BRAreaModel *area) {
         wself.bAddArea = YES;
-        wself.itemViewArea.labelInfo.textColor = MainBlack;
-        wself.itemViewArea.labelInfo.text = [NSString stringWithFormat:@"%@%@%@", province.name, city.name, area.name];
+        wself.itemViewArea.textFieldInfo.text = [NSString stringWithFormat:@"%@%@%@", province.name, city.name, area.name];
 
     } cancelBlock:^{
         DDLogInfo(@"点击了背景视图或取消按钮");
     }];
 }
 
-- (void)actionTapSex:(UITapGestureRecognizer *)tap{
+- (void)actionSelectSex{
     TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"女", @"男"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
     actionSheet.delegate = self;
     [actionSheet showInView:self.view];
@@ -161,9 +168,9 @@
 }
 
 
-- (RegisterItemView *)itemViewId{
+- (LabelTextFieldItemView *)itemViewId{
     if(!_itemViewId) {
-        _itemViewId = [[RegisterItemView alloc] initWithTitle:@"患者ID" bMust:NO placeholder:@"请输入患者的ID"];
+        _itemViewId = [[LabelTextFieldItemView alloc] initWithTitle:@"患者ID" bMust:NO placeholder:@"请输入患者的ID"];
     }
     return _itemViewId;
 }
@@ -173,10 +180,11 @@
         _itemViewSex = [[RightDirectionView alloc] initWithTitle:@"性别"];
         _itemViewSex.labelInfo.text = @"请选择患者的性别";
         _itemViewSex.labelInfo.textColor = PlaceholderColor;
-        _itemViewSex.userInteractionEnabled = YES;
         
-        UITapGestureRecognizer *tapSex = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionTapSex:)];
-        [_itemViewSex addGestureRecognizer:tapSex];
+        __weak typeof(self) wself = self;
+        _itemViewSex.tapBlock = ^{
+            [wself actionSelectSex];
+        };
     }
     return _itemViewSex;
 }
@@ -188,43 +196,40 @@
     return _itemAgeView;
 }
 
-- (RegisterItemView *)itemViewHeight{
+- (LabelTextFieldItemView *)itemViewHeight{
     if(!_itemViewHeight) {
-        _itemViewHeight = [[RegisterItemView alloc] initWithTitle:@"身高" bMust:NO placeholder:@"请输入患者的身高(cm)"];
+        _itemViewHeight = [[LabelTextFieldItemView alloc] initWithTitle:@"身高" bMust:NO placeholder:@"请输入患者的身高(cm)"];
     }
     return _itemViewHeight;
 }
 
-- (RegisterItemView *)itemViewWeight{
+- (LabelTextFieldItemView *)itemViewWeight{
     if(!_itemViewWeight) {
-        _itemViewWeight = [[RegisterItemView alloc] initWithTitle:@"体重" bMust:NO placeholder:@"请输入患者的体重(kg)"];
+        _itemViewWeight = [[LabelTextFieldItemView alloc] initWithTitle:@"体重" bMust:NO placeholder:@"请输入患者的体重(kg)"];
     }
     return _itemViewWeight;
 }
 
-- (RegisterItemView *)itemViewDisease{
+- (LabelTextFieldItemView *)itemViewDisease{
     if(!_itemViewDisease) {
-        _itemViewDisease = [[RegisterItemView alloc] initWithTitle:@"患者病症" bMust:NO placeholder:@"请输入患者的病症"];
+        _itemViewDisease = [[LabelTextFieldItemView alloc] initWithTitle:@"患者病症" bMust:NO placeholder:@"请输入患者的病症"];
     }
     return _itemViewDisease;
 }
 
-- (RegisterItemView *)itemViewDiagnose{
+- (LabelTextFieldItemView *)itemViewDiagnose{
     if(!_itemViewDiagnose) {
-        _itemViewDiagnose = [[RegisterItemView alloc] initWithTitle:@"诊断" bMust:NO placeholder:@"请输入诊断的结果"];
+        _itemViewDiagnose = [[LabelTextFieldItemView alloc] initWithTitle:@"诊断" bMust:NO placeholder:@"请输入诊断的结果"];
     }
     return _itemViewDiagnose;
 }
 
-- (RightDirectionView *)itemViewArea{
+- (LabelTextFieldItemView *)itemViewArea{
     if(!_itemViewArea) {
-        _itemViewArea = [[RightDirectionView alloc] initWithTitle:@"地区"];
-        _itemViewArea.labelInfo.text = @"请选择您的地区";
-        _itemViewArea.labelInfo.textColor = PlaceholderColor;
-        _itemViewArea.userInteractionEnabled = YES;
-        
-        UITapGestureRecognizer *tapArea = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionTap:)];
-        [_itemViewArea addGestureRecognizer:tapArea];
+        _itemViewArea = [[LabelTextFieldItemView alloc] initWithTitle:@"地区" bMust:NO placeholder:@"请选择您的地区"];
+        _itemViewArea.textFieldInfo.tag = 11;
+        _itemViewArea.textFieldInfo.delegate = self;
+        _itemViewArea.bShowDirection = YES;
     }
     return _itemViewArea;
 }

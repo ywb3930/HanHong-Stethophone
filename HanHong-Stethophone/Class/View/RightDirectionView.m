@@ -23,8 +23,18 @@
     if (self = [super init]) {
         self.title = title;
         [self initView];
+        
+        UITapGestureRecognizer *tapGestre = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionTap:)];
+        [self addGestureRecognizer:tapGestre];
+        self.userInteractionEnabled = YES;
     }
     return self;
+}
+
+- (void)actionTap:(UITapGestureRecognizer *)tap{
+    if (self.tapBlock) {
+        self.tapBlock();
+    }
 }
 
 - (void)initView{

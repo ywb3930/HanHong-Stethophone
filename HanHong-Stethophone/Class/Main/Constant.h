@@ -23,6 +23,29 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)positionVolumesString:(NSInteger )idx;
 - (NSString *)getRecordShareBrief;
 
+
+/** 顶部安全区高度 **/
+- (CGFloat)dev_safeDistanceTop;
+
+/** 底部安全区高度 **/
+- (CGFloat)dev_safeDistanceBottom;
+
+/** 顶部状态栏高度（包括安全区） **/
+- (CGFloat)dev_statusBarHeight;
+
+/** 导航栏高度 **/
+- (CGFloat)dev_navigationBarHeight;
+
+/** 状态栏+导航栏的高度 **/
+- (CGFloat)dev_navigationFullHeight;
+
+/** 底部导航栏高度 **/
+- (CGFloat)dev_tabBarHeight;
+
+/** 底部导航栏高度（包括安全区） **/
+- (CGFloat)dev_tabBarFullHeight;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

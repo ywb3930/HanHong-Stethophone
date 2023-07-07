@@ -6,17 +6,17 @@
 //
 
 #import "RemoteControlDetailVC.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "HeartFilterLungView.h"
-#import "ConsultationModel.h"
+#import "MeetingRoom.h"
 
-@interface RemoteControlDetailVC ()
+@interface RemoteControlDetailVC ()<MeetingRoomDelegate>
 
 @property (retain, nonatomic) UILabel               *labelTitle;
 @property (retain, nonatomic) UIScrollView          *scrollView;
-@property (retain, nonatomic) RegisterItemView      *itemTitle;
-@property (retain, nonatomic) RegisterItemView      *itemStartTime;
-@property (retain, nonatomic) RegisterItemView      *itemDuration;
+@property (retain, nonatomic) LabelTextFieldItemView      *itemTitle;
+@property (retain, nonatomic) LabelTextFieldItemView      *itemStartTime;
+@property (retain, nonatomic) LabelTextFieldItemView      *itemDuration;
 
 @property (retain, nonatomic) UIView                *viewLine1;
 @property (retain, nonatomic) UIView                *viewLine2;
@@ -35,7 +35,9 @@
 @property (retain, nonatomic) NSMutableArray        *arrayData;
 @property (assign, nonatomic) Boolean               bShowFilter;
 
-@property (retain, nonatomic) ConsultationModel    *consultationModel;
+@property (retain, nonatomic) MeetingRoom           *meetingRoom;
+
+//@property (retain, nonatomic) ConsultationModel    *consultationModel;
 
 @end
 
@@ -48,7 +50,41 @@
     self.view.backgroundColor = WHITECOLOR;
     [self initData];
     [self setupView];
+    [self initMeetingRoom];
 }
+
+- (void)initMeetingRoom{
+    self.meetingRoom = [[MeetingRoom alloc] init];
+    self.meetingRoom.delegate = self;
+}
+
+- (void)actionEnterRoom{
+    [self.meetingRoom Enter:LoginData.token meetingroom_url:self.consultationModel.server_url meetingroom_id:(int)self.consultationModel.meetingroom_id];
+}
+
+- (void)on_meetingroom_event:(MEETINGROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
+    
+}
+
+
+- (void)initData{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"token"] = LoginData.token;
+    params[@"meetingroom_id"] = [@(self.consultationModel.meetingroom_id) stringValue];
+    [Tools showWithStatus:nil];
+    __weak typeof(self) wself = self;
+    [TTRequestManager meetingGetMeetingroom:params success:^(id  _Nonnull responseObject) {
+        if ([responseObject[@"errorCode"] integerValue] == 0) {
+            wself.consultationModel = [ConsultationModel yy_modelWithJSON:responseObject[@"data"]];
+            [wself reloadView];
+            [wself actionEnterRoom];
+        }
+        [SVProgressHUD dismiss];
+    } failure:^(NSError * _Nonnull error) {
+        [SVProgressHUD dismiss];
+    }];
+}
+
 
 - (void)reloadView{
     self.arrayData = [NSMutableArray array];
@@ -117,22 +153,6 @@
     }
     
     
-}
-
-- (void)initData{
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    params[@"token"] = LoginData.token;
-    params[@"meetingroom_id"] = self.meetingroomd_id;
-    [Tools showWithStatus:nil];
-    [TTRequestManager meetingGetMeetingroom:params success:^(id  _Nonnull responseObject) {
-        if ([responseObject[@"errorCode"] integerValue] == 0) {
-            self.consultationModel = [ConsultationModel yy_modelWithJSON:responseObject[@"data"]];
-            [self reloadView];
-        }
-        [SVProgressHUD dismiss];
-    } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
-    }];
 }
 
 - (void)setupView{
@@ -205,9 +225,9 @@
     return _scrollView;
 }
 
-- (RegisterItemView *)itemTitle{
+- (LabelTextFieldItemView *)itemTitle{
     if (!_itemTitle) {
-        _itemTitle = [[RegisterItemView alloc] initWithTitle:@"会诊标题" bMust:NO placeholder:@""];
+        _itemTitle = [[LabelTextFieldItemView alloc] initWithTitle:@"会诊标题" bMust:NO placeholder:@""];
         _itemTitle.textFieldInfo.enabled = NO;
     }
     return _itemTitle;
@@ -236,17 +256,17 @@
     return _viewRecord;
 }
 
-- (RegisterItemView *)itemStartTime{
+- (LabelTextFieldItemView *)itemStartTime{
     if (!_itemStartTime) {
-        _itemStartTime = [[RegisterItemView alloc] initWithTitle:@"开始时间" bMust:NO placeholder:@""];
+        _itemStartTime = [[LabelTextFieldItemView alloc] initWithTitle:@"开始时间" bMust:NO placeholder:@""];
         _itemStartTime.textFieldInfo.enabled = NO;
     }
     return _itemStartTime;
 }
 
-- (RegisterItemView *)itemDuration{
+- (LabelTextFieldItemView *)itemDuration{
     if (!_itemDuration) {
-        _itemDuration = [[RegisterItemView alloc] initWithTitle:@"会诊时长" bMust:NO placeholder:@""];
+        _itemDuration = [[LabelTextFieldItemView alloc] initWithTitle:@"会诊时长" bMust:NO placeholder:@""];
         _itemDuration.textFieldInfo.enabled = NO;
     }
     return _itemDuration;

@@ -10,9 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void(^AnnotationFullResultBlock)(void);
+
 @interface AnnotationFullVC : BaseRecordPlayVC
 
-@property (retain, nonatomic) RecordModel               *recordModel;
+@property (assign, nonatomic) NSInteger                 saveLocation;//0 本地 1 云
+@property (retain, nonatomic) NSMutableArray            *arrayCharacteristic;
+@property (nonatomic, copy) AnnotationFullResultBlock   resultBlock;
 
 @end
 

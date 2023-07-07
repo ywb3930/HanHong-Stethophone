@@ -52,6 +52,7 @@ static FMDatabase *_db;
 
 - (Boolean)addRecordItem:(RecordModel *)model{
     NSString *sql = [NSString stringWithFormat:@"insert into local_record(user_id, patient_id, patient_area, record_mode, type_id, record_filter, position_tag, patient_posture, patient_symptom, patient_diagnosis, patient_sex, patient_birthday, patient_height, patient_weight, characteristics, record_time, record_length, file_path, oss_name, tag, modify_time, shared, create_time) values('%@','%@','%@',%ld,%ld,%ld,'%@',%ld,'%@','%@',%ld,'%@','%@','%@','%@','%@',%ld,'%@','%@','%@','%@',%ld,'%@')", model.user_id, model.patient_id, model.patient_area, model.record_mode, model.type_id,model.record_filter, model.position_tag, model.patient_posture, model.patient_symptom, model.patient_diagnosis, model.patient_sex, model.patient_birthday, model.patient_height, model.patient_weight, model.characteristics, model.record_time, model.record_length, model.file_path, model.oss_name, model.tag, model.modify_time, model.shared, model.create_time];
+    NSLog(@"sql = %@", sql);
     return [_db executeUpdate:sql];
 }
 

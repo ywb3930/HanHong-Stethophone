@@ -22,10 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)actionDeviceHelperPlayBegin;
 - (void)actionDeviceHelperPlayingTime:(float)value;
-- (void)actionClickPlay:(UIButton *)button;
+//- (void)actionClickPlay:(UIButton *)button;
 - (void)stopPlayRecord;
 - (void)actionDeviceHelperPlayEnd;
 - (void)openFileWithFilePathURL;
+- (void)actionToStar:(float)startTime endTime:(float)endTime;
 
 @end
 

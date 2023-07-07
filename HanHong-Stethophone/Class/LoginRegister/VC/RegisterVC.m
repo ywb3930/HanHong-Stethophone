@@ -6,7 +6,7 @@
 //
 
 #import "RegisterVC.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "PasswordItemView.h"
 #import "CodeItemView.h"
 #import "TTWebVC.h"
@@ -17,21 +17,21 @@
 
 @property (retain, nonatomic) UIImageView       *imageViewBg;
 @property (retain, nonatomic) UIButton          *buttonBack;
-@property (retain, nonatomic) RegisterItemView  *itemViewInvite;//邀请码
-@property (retain, nonatomic) RegisterItemView  *itemViewName;//姓名
-@property (retain, nonatomic) RegisterItemView  *itemViewSex;//性别
-@property (retain, nonatomic) RegisterItemView  *itemViewBirthDay;//生日
-@property (retain, nonatomic) RegisterItemView  *itemViewArea;//姓名
-@property (retain, nonatomic) RegisterItemView  *itemViewCompany;//企业（医院）
-@property (retain, nonatomic) RegisterItemView  *itemViewDepartent;//部门（科室）
-@property (retain, nonatomic) RegisterItemView  *itemViewTechnical;//职称
-@property (retain, nonatomic) RegisterItemView  *itemViewPhone;//手机
-@property (retain, nonatomic) RegisterItemView  *itemViewEmail;//邮箱
-@property (retain, nonatomic) RegisterItemView  *itemViewSchool;//院校
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewInvite;//邀请码
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewName;//姓名
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewSex;//性别
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewBirthDay;//生日
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewArea;//姓名
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewCompany;//企业（医院）
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewDepartent;//部门（科室）
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewTechnical;//职称
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewPhone;//手机
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewEmail;//邮箱
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewSchool;//院校
 
-@property (retain, nonatomic) RegisterItemView  *itemViewProfessional;//专业
-@property (retain, nonatomic) RegisterItemView  *itemViewClass;//班级
-@property (retain, nonatomic) RegisterItemView  *itemViewStudentNumber;//学号
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewProfessional;//专业
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewClass;//班级
+@property (retain, nonatomic) LabelTextFieldItemView  *itemViewStudentNumber;//学号
 
 @property (retain, nonatomic) PasswordItemView  *itemViewPassword;//密码
 @property (retain, nonatomic) CodeItemView      *itemViewCode;//验证码
@@ -311,7 +311,7 @@
     self.itemViewName.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewInvite, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
     [self.view addSubview:self.itemViewSex];
     self.itemViewSex.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewName, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
-    RegisterItemView *lastItemView = self.itemViewSex;
+    LabelTextFieldItemView *lastItemView = self.itemViewSex;
     if(self.loginType == login_type_personal) {
         [self.view addSubview:self.itemViewBirthDay];
         [self.view addSubview:self.itemViewArea];
@@ -431,114 +431,114 @@
 }
 
 
-- (RegisterItemView *)itemViewInvite{
+- (LabelTextFieldItemView *)itemViewInvite{
     if(!_itemViewInvite) {
-        _itemViewInvite = [[RegisterItemView alloc] initWithTitle:@"邀请码" bMust:YES placeholder:@"请输入邀请码"];
+        _itemViewInvite = [[LabelTextFieldItemView alloc] initWithTitle:@"邀请码" bMust:YES placeholder:@"请输入邀请码"];
         _itemViewInvite.textFieldInfo.delegate = self;
     }
     return _itemViewInvite;
 }
 
-- (RegisterItemView *)itemViewName{
+- (LabelTextFieldItemView *)itemViewName{
     if(!_itemViewName) {
-        _itemViewName = [[RegisterItemView alloc] initWithTitle:@"姓名" bMust:YES placeholder:@"请输入您的真实姓名"];
+        _itemViewName = [[LabelTextFieldItemView alloc] initWithTitle:@"姓名" bMust:YES placeholder:@"请输入您的真实姓名"];
         _itemViewName.textFieldInfo.delegate = self;
     }
     return _itemViewName;
 }
 
-- (RegisterItemView *)itemViewBirthDay{
+- (LabelTextFieldItemView *)itemViewBirthDay{
     if(!_itemViewBirthDay) {
-        _itemViewBirthDay = [[RegisterItemView alloc] initWithTitle:@"生日" bMust:YES placeholder:@"请选择您的生日"];
+        _itemViewBirthDay = [[LabelTextFieldItemView alloc] initWithTitle:@"生日" bMust:YES placeholder:@"请选择您的生日"];
         _itemViewBirthDay.textFieldInfo.delegate = self;
     }
     return _itemViewBirthDay;
 }
 
-- (RegisterItemView *)itemViewArea{
+- (LabelTextFieldItemView *)itemViewArea{
     if(!_itemViewArea) {
-        _itemViewArea = [[RegisterItemView alloc] initWithTitle:@"地区" bMust:NO placeholder:@"请选择您的地区"];
+        _itemViewArea = [[LabelTextFieldItemView alloc] initWithTitle:@"地区" bMust:NO placeholder:@"请选择您的地区"];
         _itemViewArea.textFieldInfo.delegate = self;
     }
     return _itemViewArea;
 }
 
-- (RegisterItemView *)itemViewSchool{
+- (LabelTextFieldItemView *)itemViewSchool{
     if(!_itemViewSchool) {
-        _itemViewSchool = [[RegisterItemView alloc] initWithTitle:@"院校" bMust:YES placeholder:@"请输入您的院校"];
+        _itemViewSchool = [[LabelTextFieldItemView alloc] initWithTitle:@"院校" bMust:YES placeholder:@"请输入您的院校"];
         _itemViewSchool.textFieldInfo.delegate = self;
     }
     return _itemViewSchool;
 }
 
-- (RegisterItemView *)itemViewSex{
+- (LabelTextFieldItemView *)itemViewSex{
     if(!_itemViewSex) {
-        _itemViewSex = [[RegisterItemView alloc] initWithTitle:@"性别" bMust:YES placeholder:@"请选择您的性别"];
+        _itemViewSex = [[LabelTextFieldItemView alloc] initWithTitle:@"性别" bMust:YES placeholder:@"请选择您的性别"];
         _itemViewSex.textFieldInfo.delegate = self;
     }
     return _itemViewSex;
 }
 
-- (RegisterItemView *)itemViewCompany{
+- (LabelTextFieldItemView *)itemViewCompany{
     if(!_itemViewCompany) {
-        _itemViewCompany = [[RegisterItemView alloc] initWithTitle:@"企业(医院)" bMust:NO placeholder:@"请输入您就职的企业(医院)"];
+        _itemViewCompany = [[LabelTextFieldItemView alloc] initWithTitle:@"企业(医院)" bMust:NO placeholder:@"请输入您就职的企业(医院)"];
         _itemViewCompany.textFieldInfo.delegate = self;
     }
     return _itemViewCompany;
 }
 
-- (RegisterItemView *)itemViewProfessional{
+- (LabelTextFieldItemView *)itemViewProfessional{
     if(!_itemViewProfessional) {
-        _itemViewProfessional = [[RegisterItemView alloc] initWithTitle:@"专业" bMust:YES placeholder:@"请输入您的专业"];
+        _itemViewProfessional = [[LabelTextFieldItemView alloc] initWithTitle:@"专业" bMust:YES placeholder:@"请输入您的专业"];
         _itemViewProfessional.textFieldInfo.delegate = self;
     }
     return _itemViewProfessional;
 }
 
-- (RegisterItemView *)itemViewClass{
+- (LabelTextFieldItemView *)itemViewClass{
     if(!_itemViewClass) {
-        _itemViewClass = [[RegisterItemView alloc] initWithTitle:@"班级" bMust:YES placeholder:@"请输入您的班级"];
+        _itemViewClass = [[LabelTextFieldItemView alloc] initWithTitle:@"班级" bMust:YES placeholder:@"请输入您的班级"];
         _itemViewClass.textFieldInfo.delegate = self;
     }
     return _itemViewClass;
 }
 
-- (RegisterItemView *)itemViewStudentNumber{
+- (LabelTextFieldItemView *)itemViewStudentNumber{
     if(!_itemViewStudentNumber) {
-        _itemViewStudentNumber = [[RegisterItemView alloc] initWithTitle:@"学号" bMust:YES placeholder:@"请输入您的学号"];
+        _itemViewStudentNumber = [[LabelTextFieldItemView alloc] initWithTitle:@"学号" bMust:YES placeholder:@"请输入您的学号"];
         _itemViewStudentNumber.textFieldInfo.delegate = self;
     }
     return _itemViewStudentNumber;
 }
 
-- (RegisterItemView *)itemViewDepartent{
+- (LabelTextFieldItemView *)itemViewDepartent{
     if(!_itemViewDepartent) {
-        _itemViewDepartent = [[RegisterItemView alloc] initWithTitle:@"部门(科室)" bMust:NO placeholder:@"请输入您的部门(科室)"];
+        _itemViewDepartent = [[LabelTextFieldItemView alloc] initWithTitle:@"部门(科室)" bMust:NO placeholder:@"请输入您的部门(科室)"];
         _itemViewDepartent.textFieldInfo.delegate = self;
     }
     return _itemViewDepartent;
 }
 
-- (RegisterItemView *)itemViewTechnical{
+- (LabelTextFieldItemView *)itemViewTechnical{
     if(!_itemViewTechnical) {
-        _itemViewTechnical = [[RegisterItemView alloc] initWithTitle:@"职称" bMust:NO placeholder:@"请输入您的职称"];
+        _itemViewTechnical = [[LabelTextFieldItemView alloc] initWithTitle:@"职称" bMust:NO placeholder:@"请输入您的职称"];
         _itemViewTechnical.textFieldInfo.delegate = self;
     }
     return _itemViewTechnical;
 }
 
-- (RegisterItemView *)itemViewPhone{
+- (LabelTextFieldItemView *)itemViewPhone{
     if(!_itemViewPhone) {
-        _itemViewPhone = [[RegisterItemView alloc] initWithTitle:@"手机" bMust:YES placeholder:@"请输入您的手机号码"];
+        _itemViewPhone = [[LabelTextFieldItemView alloc] initWithTitle:@"手机" bMust:YES placeholder:@"请输入您的手机号码"];
         _itemViewPhone.textFieldInfo.delegate = self;
         _itemViewPhone.textFieldInfo.keyboardType = UIKeyboardTypePhonePad;
     }
     return _itemViewPhone;
 }
 
-- (RegisterItemView *)itemViewEmail{
+- (LabelTextFieldItemView *)itemViewEmail{
     if(!_itemViewEmail) {
-        _itemViewEmail = [[RegisterItemView alloc] initWithTitle:@"邮箱" bMust:YES placeholder:@"请输入您的邮箱"];
+        _itemViewEmail = [[LabelTextFieldItemView alloc] initWithTitle:@"邮箱" bMust:YES placeholder:@"请输入您的邮箱"];
         _itemViewEmail.textFieldInfo.delegate = self;
     }
     return _itemViewEmail;

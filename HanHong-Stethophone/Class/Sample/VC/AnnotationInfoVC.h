@@ -8,10 +8,12 @@
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
+typedef void(^AnnotationInfoResultBlock)(NSString *selectValue);
 
 @interface AnnotationInfoVC : UIViewController
 
 @property (assign, nonatomic) NSInteger         soundType;
+@property (nonatomic, copy) AnnotationInfoResultBlock resultBlock;
 
 @end
 

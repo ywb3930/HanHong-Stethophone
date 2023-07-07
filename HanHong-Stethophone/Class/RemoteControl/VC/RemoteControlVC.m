@@ -39,7 +39,7 @@
 
 - (void)actionTableViewCellClickCallback:(ConsultationModel *)model{
     RemoteControlDetailVC *detailVC = [[RemoteControlDetailVC alloc] init];
-    detailVC.meetingroomd_id = [@(model.meetingroom_id) stringValue];
+    detailVC.consultationModel = model;
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 

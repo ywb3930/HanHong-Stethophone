@@ -6,15 +6,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HHBaseViewController.h"
 #import "BaseRecordPlayVC.h"
 
-
+typedef void(^AnnotationVCRecordModelChangeResultBlock)(RecordModel * _Nullable record);
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AnnotationVC : BaseRecordPlayVC
 
-//@property (retain, nonatomic) RecordModel           *recordModel;
+@property (assign, nonatomic) NSInteger               saveLocation;//0 本地 1 云
+@property (nonatomic, copy) AnnotationVCRecordModelChangeResultBlock resultBlock;
+
 
 @end
 

@@ -103,8 +103,12 @@ typedef NS_ENUM(NSInteger, BRStringPickerMode) {
         isDataSourceValid = NO;
     }
     NSArray *dataArr = nil;
-    if ([dataSource isKindOfClass:[NSArray class]] && [dataSource count] > 0) {
-        dataArr = [NSArray arrayWithArray:dataSource];
+    if ([dataSource isKindOfClass:[NSArray class]]) {
+        NSArray *array = (NSArray *)dataSource;
+        if(array.count > 0) {
+            dataArr = [NSArray arrayWithArray:dataSource];
+        }
+        
     } else if ([dataSource isKindOfClass:[NSString class]] && [dataSource length] > 0) {
         NSString *plistName = dataSource;
         NSString *path = [[NSBundle mainBundle] pathForResource:plistName ofType:nil];
@@ -156,9 +160,13 @@ typedef NS_ENUM(NSInteger, BRStringPickerMode) {
         NSMutableArray *tempArr = [NSMutableArray array];
         for (NSInteger i = 0; i < self.dataSourceArr.count; i++) {
             NSString *selValue = nil;
-            if (defaultSelValue && [defaultSelValue isKindOfClass:[NSArray class]] && [defaultSelValue count] > 0 && i < [defaultSelValue count] && [self.dataSourceArr[i] containsObject:defaultSelValue[i]]) {
-                [tempArr addObject:defaultSelValue[i]];
-                selValue = defaultSelValue[i];
+            if (defaultSelValue && [defaultSelValue isKindOfClass:[NSArray class]]) {
+                NSArray *a = (NSArray *)defaultSelValue;
+                if(a.count > 0 && i < a.count && [self.dataSourceArr[i] containsObject:defaultSelValue[i]]){
+                    [tempArr addObject:defaultSelValue[i]];
+                    selValue = defaultSelValue[i];
+                }
+                
             } else {
                 [tempArr addObject:[self.dataSourceArr[i] firstObject]];
                 selValue = [self.dataSourceArr[i] firstObject];
@@ -219,8 +227,10 @@ typedef NS_ENUM(NSInteger, BRStringPickerMode) {
         case BRStringPickerComponentSingle:
             return self.dataSourceArr.count;
             break;
-        case BRStringPickerComponentMore:
-            return [self.dataSourceArr[component] count];
+        case BRStringPickerComponentMore:{
+            NSArray *a = self.dataSourceArr[component];
+            return a.count;
+        }
             break;
             
         default:

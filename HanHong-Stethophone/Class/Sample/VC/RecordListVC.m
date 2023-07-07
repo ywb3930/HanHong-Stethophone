@@ -450,6 +450,7 @@
     params[@"characteristics"] = [model.characteristics stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
     params[@"record_time"] = model.record_time;
     params[@"record_length"] = [@(model.record_length) stringValue];
+    params[@"record_model"] = [@(model.record_mode) stringValue];
     NSString *filePath = [NSString stringWithFormat:@"%@%@", self.path, model.file_path];
     NSData *data = [NSData dataWithContentsOfFile:filePath];
     [Tools showWithStatus:@"正在上传"];
@@ -551,7 +552,7 @@
 //寻找本地缓存文件，如果有先删除，再刷新
 - (void)deleteAndRefrshLocalRecordData{
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
-    NSString *filePath = [NSString stringWithFormat:@"%@%@", self.path, model.file_path];
+    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", self.path, model.tag];
     if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
         [HHFileLocationHelper deleteFilePath:filePath];
     }
@@ -578,6 +579,7 @@
             });
         }
         [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
     }];
@@ -589,6 +591,12 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     AnnotationVC *annotationVC = [[AnnotationVC alloc] init];
     annotationVC.recordModel = self.arrayData[indexPath.row];
+    annotationVC.saveLocation = self.idx;
+    annotationVC.resultBlock = ^(RecordModel * _Nullable record) {
+        NSInteger row = [self.arrayData indexOfObject:record];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+        [self.recordTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    };
     [self.navigationController pushViewController:annotationVC animated:YES];
     
 }

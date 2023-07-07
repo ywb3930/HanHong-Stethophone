@@ -7,12 +7,12 @@
 
 #import "ChangeEmailVC.h"
 #import "PasswordItemView.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 
 @interface ChangeEmailVC ()
 
 @property (retain, nonatomic) PasswordItemView              *itemViewPassword;
-@property (retain, nonatomic) RegisterItemView              *itemViewEmail;
+@property (retain, nonatomic) LabelTextFieldItemView              *itemViewEmail;
 
 @end
 
@@ -80,9 +80,9 @@
     return _itemViewPassword;
 }
 
-- (RegisterItemView *)itemViewEmail{
+- (LabelTextFieldItemView *)itemViewEmail{
     if(!_itemViewEmail) {
-        _itemViewEmail = [[RegisterItemView alloc] initWithTitle:@"邮箱" bMust:NO placeholder:@"请输入您的邮箱"];
+        _itemViewEmail = [[LabelTextFieldItemView alloc] initWithTitle:@"邮箱" bMust:NO placeholder:@"请输入您的邮箱"];
     }
     return _itemViewEmail;
 }

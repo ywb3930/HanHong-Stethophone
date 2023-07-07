@@ -6,14 +6,14 @@
 //
 
 #import "ChangePhoneVC.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "PasswordItemView.h"
 #import "CodeItemView.h"
 
 @interface ChangePhoneVC ()<CodeItemViewDelegate>
 
 @property (retain, nonatomic) PasswordItemView  *itemPass;
-@property (retain, nonatomic) RegisterItemView  *itemUser;
+@property (retain, nonatomic) LabelTextFieldItemView  *itemUser;
 @property (retain, nonatomic) CodeItemView      *itemCode;
 @end
 
@@ -107,9 +107,9 @@
     self.itemCode.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPass, Ratio11).heightIs(Ratio44);
 }
 
-- (RegisterItemView *)itemUser{
+- (LabelTextFieldItemView *)itemUser{
     if(!_itemUser) {
-        _itemUser = [[RegisterItemView alloc] initWithTitle:@"新手机" bMust:NO placeholder:@"请输入新的手机号码"];
+        _itemUser = [[LabelTextFieldItemView alloc] initWithTitle:@"新手机" bMust:NO placeholder:@"请输入新的手机号码"];
     }
     return _itemUser;
 }

@@ -7,14 +7,14 @@
 
 #import "NewProgramVC.h"
 #import "RightDirectionView.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "BRPickerView.h"
 
 @interface NewProgramVC ()
 
 @property (retain, nonatomic) RightDirectionView        *itemTimeView;
-@property (retain, nonatomic) RegisterItemView          *itemTitleView;
-@property (retain, nonatomic) RegisterItemView          *itemDurationView;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemTitleView;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemDurationView;
 @property (retain, nonatomic) UILabel                   *labelMinute;
 
 @property (retain, nonatomic) UIButton                  *buttonDelete;
@@ -178,9 +178,9 @@
 
 
 
-- (RegisterItemView *)itemTitleView{
+- (LabelTextFieldItemView *)itemTitleView{
     if (!_itemTitleView) {
-        _itemTitleView = [[RegisterItemView alloc] initWithTitle:@"计划标题" bMust:NO placeholder:@"请输入计划标题"];
+        _itemTitleView = [[LabelTextFieldItemView alloc] initWithTitle:@"计划标题" bMust:NO placeholder:@"请输入计划标题"];
     }
     return _itemTitleView;
 }
@@ -199,9 +199,9 @@
     return _itemTimeView;
 }
 
-- (RegisterItemView *)itemDurationView{
+- (LabelTextFieldItemView *)itemDurationView{
     if (!_itemDurationView) {
-        _itemDurationView = [[RegisterItemView alloc] initWithTitle:@"计划时长" bMust:NO placeholder:@"请输入计划时长"];
+        _itemDurationView = [[LabelTextFieldItemView alloc] initWithTitle:@"计划时长" bMust:NO placeholder:@"请输入计划时长"];
         _itemDurationView.textFieldInfo.keyboardType = UIKeyboardTypeNumberPad;
 
         

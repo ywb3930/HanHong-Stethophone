@@ -45,11 +45,22 @@
 		972CC0B32A5564A200B8F8DE /* BaseRecordPlayVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0B22A5564A100B8F8DE /* BaseRecordPlayVC.m */; };
 		972CC0BA2A5592D000B8F8DE /* AnnotationInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0B92A5592D000B8F8DE /* AnnotationInfoVC.m */; };
 		972CC0BD2A55944D00B8F8DE /* HHBaseRecordVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0BC2A55944D00B8F8DE /* HHBaseRecordVC.m */; };
+		972CC0C02A566FF000B8F8DE /* AnnotationItemCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0BF2A566FEF00B8F8DE /* AnnotationItemCell.m */; };
+		972CC0D62A57A5AE00B8F8DE /* ClassRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0C62A57A5A500B8F8DE /* ClassRoom.m */; };
+		972CC0D72A57A5AE00B8F8DE /* BluetoothHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0C82A57A5A600B8F8DE /* BluetoothHelper.m */; };
+		972CC0D82A57A5AE00B8F8DE /* MeetingRoom.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0C92A57A5A700B8F8DE /* MeetingRoom.m */; };
+		972CC0D92A57A5AE00B8F8DE /* HanhongDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0CA2A57A5A700B8F8DE /* HanhongDevice.m */; };
+		972CC0DA2A57A5AE00B8F8DE /* MemberList.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0CB2A57A5A800B8F8DE /* MemberList.m */; };
+		972CC0DB2A57A5AE00B8F8DE /* HanhongDeviceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0CC2A57A5A800B8F8DE /* HanhongDeviceHelper.m */; };
+		972CC0DC2A57A5AE00B8F8DE /* Member.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0D22A57A5AB00B8F8DE /* Member.m */; };
+		972CC0DD2A57A5AE00B8F8DE /* TcpHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0D32A57A5AC00B8F8DE /* TcpHelper.m */; };
+		972CC0DE2A57A5AE00B8F8DE /* DataService.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0D42A57A5AC00B8F8DE /* DataService.m */; };
 		97349DFF2A3FEABD00AF5A06 /* PasswordManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */; };
 		97349E062A40007800AF5A06 /* PrivacyPermission.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E052A40007800AF5A06 /* PrivacyPermission.m */; };
 		97349E092A4002B100AF5A06 /* DeviceManagerVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E082A4002B100AF5A06 /* DeviceManagerVC.m */; };
 		97349E0C2A40211200AF5A06 /* DeviceDefaultView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E0B2A40211200AF5A06 /* DeviceDefaultView.m */; };
 		97349E0F2A402A1F00AF5A06 /* BluetoothDeviceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97349E0E2A402A1F00AF5A06 /* BluetoothDeviceModel.m */; };
+		973654F02A57B503006919AB /* HHMettingRoomManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 973654EF2A57B503006919AB /* HHMettingRoomManager.m */; };
 		97469CBE2A4DBD9A0091A3F3 /* DeviceMessageVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CBD2A4DBD9A0091A3F3 /* DeviceMessageVC.m */; };
 		97469CC12A4DC7F60091A3F3 /* DeviceMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CC02A4DC7F50091A3F3 /* DeviceMessageCell.m */; };
 		97469CCD2A4E78DA0091A3F3 /* RecordFinishVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CCC2A4E78DA0091A3F3 /* RecordFinishVC.m */; };
@@ -83,9 +94,6 @@
 		9765E0792A3DA15200181452 /* LungBodyFrontView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0782A3DA15200181452 /* LungBodyFrontView.m */; };
 		9765E0822A3DB53A00181452 /* LungBodySideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0812A3DB53A00181452 /* LungBodySideView.m */; };
 		9765E0852A3DB54C00181452 /* LungBodyBackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0842A3DB54C00181452 /* LungBodyBackView.m */; };
-		9798E1D22A52A86300710AFA /* HanhongDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798E1CC2A52A86200710AFA /* HanhongDevice.m */; };
-		9798E1D32A52A86300710AFA /* BluetoothHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798E1CE2A52A86200710AFA /* BluetoothHelper.m */; };
-		9798E1D42A52A86300710AFA /* HanhongDeviceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9798E1D12A52A86300710AFA /* HanhongDeviceHelper.m */; };
 		97ED415C2A4A63DF0055D1C4 /* TeachingHistoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */; };
 		97ED41622A4A7BD70055D1C4 /* RecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41612A4A7BD70055D1C4 /* RecordModel.m */; };
 		97ED41682A4A8E0D0055D1C4 /* PatientModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41672A4A8E0D0055D1C4 /* PatientModel.m */; };
@@ -163,7 +171,7 @@
 		9B29B3442A3C0F89008DCFE7 /* UserInfoOneCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2DC2A3C0F89008DCFE7 /* UserInfoOneCell.m */; };
 		9B29B3452A3C0F89008DCFE7 /* MeHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2DD2A3C0F89008DCFE7 /* MeHeaderView.m */; };
 		9B29B3462A3C0F89008DCFE7 /* UserInfoTwoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2DE2A3C0F89008DCFE7 /* UserInfoTwoCell.m */; };
-		9B29B3472A3C0F89008DCFE7 /* RegisterItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2E22A3C0F89008DCFE7 /* RegisterItemView.m */; };
+		9B29B3472A3C0F89008DCFE7 /* LabelTextFieldItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2E22A3C0F89008DCFE7 /* LabelTextFieldItemView.m */; };
 		9B29B3482A3C0F89008DCFE7 /* TTWebVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2E32A3C0F89008DCFE7 /* TTWebVC.m */; };
 		9B29B3492A3C0F89008DCFE7 /* TTPopView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2E42A3C0F89008DCFE7 /* TTPopView.m */; };
 		9B29B34A2A3C0F89008DCFE7 /* HMEditView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2E52A3C0F89008DCFE7 /* HMEditView.m */; };
@@ -264,6 +272,26 @@
 		972CC0B92A5592D000B8F8DE /* AnnotationInfoVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnnotationInfoVC.m; sourceTree = "<group>"; };
 		972CC0BB2A55944D00B8F8DE /* HHBaseRecordVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHBaseRecordVC.h; sourceTree = "<group>"; };
 		972CC0BC2A55944D00B8F8DE /* HHBaseRecordVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHBaseRecordVC.m; sourceTree = "<group>"; };
+		972CC0BE2A566FEF00B8F8DE /* AnnotationItemCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnnotationItemCell.h; sourceTree = "<group>"; };
+		972CC0BF2A566FEF00B8F8DE /* AnnotationItemCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnnotationItemCell.m; sourceTree = "<group>"; };
+		972CC0C42A57A5A400B8F8DE /* BluetoothHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothHelper.h; sourceTree = "<group>"; };
+		972CC0C52A57A5A400B8F8DE /* DataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataService.h; sourceTree = "<group>"; };
+		972CC0C62A57A5A500B8F8DE /* ClassRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClassRoom.m; sourceTree = "<group>"; };
+		972CC0C72A57A5A500B8F8DE /* ClassRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassRoom.h; sourceTree = "<group>"; };
+		972CC0C82A57A5A600B8F8DE /* BluetoothHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BluetoothHelper.m; sourceTree = "<group>"; };
+		972CC0C92A57A5A700B8F8DE /* MeetingRoom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetingRoom.m; sourceTree = "<group>"; };
+		972CC0CA2A57A5A700B8F8DE /* HanhongDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDevice.m; sourceTree = "<group>"; };
+		972CC0CB2A57A5A800B8F8DE /* MemberList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemberList.m; sourceTree = "<group>"; };
+		972CC0CC2A57A5A800B8F8DE /* HanhongDeviceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDeviceHelper.m; sourceTree = "<group>"; };
+		972CC0CD2A57A5A900B8F8DE /* MeetingRoom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetingRoom.h; sourceTree = "<group>"; };
+		972CC0CE2A57A5A900B8F8DE /* HanhongDeviceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDeviceHelper.h; sourceTree = "<group>"; };
+		972CC0CF2A57A5AA00B8F8DE /* Member.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Member.h; sourceTree = "<group>"; };
+		972CC0D02A57A5AA00B8F8DE /* TcpHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TcpHelper.h; sourceTree = "<group>"; };
+		972CC0D12A57A5AB00B8F8DE /* HanhongDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDevice.h; sourceTree = "<group>"; };
+		972CC0D22A57A5AB00B8F8DE /* Member.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Member.m; sourceTree = "<group>"; };
+		972CC0D32A57A5AC00B8F8DE /* TcpHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TcpHelper.m; sourceTree = "<group>"; };
+		972CC0D42A57A5AC00B8F8DE /* DataService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataService.m; sourceTree = "<group>"; };
+		972CC0D52A57A5AD00B8F8DE /* MemberList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemberList.h; sourceTree = "<group>"; };
 		97349DFD2A3FEABC00AF5A06 /* PasswordManagerVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PasswordManagerVC.h; sourceTree = "<group>"; };
 		97349DFE2A3FEABD00AF5A06 /* PasswordManagerVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PasswordManagerVC.m; sourceTree = "<group>"; };
 		97349E042A40007800AF5A06 /* PrivacyPermission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyPermission.h; sourceTree = "<group>"; };
@@ -274,6 +302,8 @@
 		97349E0B2A40211200AF5A06 /* DeviceDefaultView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceDefaultView.m; sourceTree = "<group>"; };
 		97349E0D2A402A1F00AF5A06 /* BluetoothDeviceModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothDeviceModel.h; sourceTree = "<group>"; };
 		97349E0E2A402A1F00AF5A06 /* BluetoothDeviceModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BluetoothDeviceModel.m; sourceTree = "<group>"; };
+		973654EE2A57B503006919AB /* HHMettingRoomManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHMettingRoomManager.h; sourceTree = "<group>"; };
+		973654EF2A57B503006919AB /* HHMettingRoomManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHMettingRoomManager.m; sourceTree = "<group>"; };
 		97469CBC2A4DBD9A0091A3F3 /* DeviceMessageVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceMessageVC.h; sourceTree = "<group>"; };
 		97469CBD2A4DBD9A0091A3F3 /* DeviceMessageVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceMessageVC.m; sourceTree = "<group>"; };
 		97469CBF2A4DC7F50091A3F3 /* DeviceMessageCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceMessageCell.h; sourceTree = "<group>"; };
@@ -340,12 +370,6 @@
 		9765E0812A3DB53A00181452 /* LungBodySideView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LungBodySideView.m; sourceTree = "<group>"; };
 		9765E0832A3DB54C00181452 /* LungBodyBackView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LungBodyBackView.h; sourceTree = "<group>"; };
 		9765E0842A3DB54C00181452 /* LungBodyBackView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LungBodyBackView.m; sourceTree = "<group>"; };
-		9798E1CC2A52A86200710AFA /* HanhongDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDevice.m; sourceTree = "<group>"; };
-		9798E1CD2A52A86200710AFA /* BluetoothHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothHelper.h; sourceTree = "<group>"; };
-		9798E1CE2A52A86200710AFA /* BluetoothHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BluetoothHelper.m; sourceTree = "<group>"; };
-		9798E1CF2A52A86200710AFA /* HanhongDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDevice.h; sourceTree = "<group>"; };
-		9798E1D02A52A86300710AFA /* HanhongDeviceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HanhongDeviceHelper.h; sourceTree = "<group>"; };
-		9798E1D12A52A86300710AFA /* HanhongDeviceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDeviceHelper.m; sourceTree = "<group>"; };
 		9798E1D52A53B63C00710AFA /* HanHong-Stethophone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "HanHong-Stethophone.entitlements"; sourceTree = "<group>"; };
 		97ED415A2A4A63DF0055D1C4 /* TeachingHistoryModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TeachingHistoryModel.h; sourceTree = "<group>"; };
 		97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TeachingHistoryModel.m; sourceTree = "<group>"; };
@@ -504,7 +528,7 @@
 		9B29B2DE2A3C0F89008DCFE7 /* UserInfoTwoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfoTwoCell.m; sourceTree = "<group>"; };
 		9B29B2DF2A3C0F89008DCFE7 /* UserInfoOneCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfoOneCell.h; sourceTree = "<group>"; };
 		9B29B2E02A3C0F89008DCFE7 /* MeHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeHeaderView.h; sourceTree = "<group>"; };
-		9B29B2E22A3C0F89008DCFE7 /* RegisterItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterItemView.m; sourceTree = "<group>"; };
+		9B29B2E22A3C0F89008DCFE7 /* LabelTextFieldItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LabelTextFieldItemView.m; sourceTree = "<group>"; };
 		9B29B2E32A3C0F89008DCFE7 /* TTWebVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTWebVC.m; sourceTree = "<group>"; };
 		9B29B2E42A3C0F89008DCFE7 /* TTPopView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTPopView.m; sourceTree = "<group>"; };
 		9B29B2E52A3C0F89008DCFE7 /* HMEditView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HMEditView.m; sourceTree = "<group>"; };
@@ -518,7 +542,7 @@
 		9B29B2ED2A3C0F89008DCFE7 /* HMEditView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HMEditView.h; sourceTree = "<group>"; };
 		9B29B2EE2A3C0F89008DCFE7 /* TTPopView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTPopView.h; sourceTree = "<group>"; };
 		9B29B2EF2A3C0F89008DCFE7 /* TTWebVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTWebVC.h; sourceTree = "<group>"; };
-		9B29B2F02A3C0F89008DCFE7 /* RegisterItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterItemView.h; sourceTree = "<group>"; };
+		9B29B2F02A3C0F89008DCFE7 /* LabelTextFieldItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelTextFieldItemView.h; sourceTree = "<group>"; };
 		9B29B2F12A3C0F89008DCFE7 /* TTActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTActionSheet.h; sourceTree = "<group>"; };
 		9B29B2F22A3C0F89008DCFE7 /* PasswordItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PasswordItemView.h; sourceTree = "<group>"; };
 		9B29B2F32A3C0F89008DCFE7 /* CodeItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeItemView.h; sourceTree = "<group>"; };
@@ -837,12 +861,24 @@
 		97ED416F2A4AC89D0055D1C4 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				9798E1CD2A52A86200710AFA /* BluetoothHelper.h */,
-				9798E1CE2A52A86200710AFA /* BluetoothHelper.m */,
-				9798E1CF2A52A86200710AFA /* HanhongDevice.h */,
-				9798E1CC2A52A86200710AFA /* HanhongDevice.m */,
-				9798E1D02A52A86300710AFA /* HanhongDeviceHelper.h */,
-				9798E1D12A52A86300710AFA /* HanhongDeviceHelper.m */,
+				972CC0C42A57A5A400B8F8DE /* BluetoothHelper.h */,
+				972CC0C82A57A5A600B8F8DE /* BluetoothHelper.m */,
+				972CC0C72A57A5A500B8F8DE /* ClassRoom.h */,
+				972CC0C62A57A5A500B8F8DE /* ClassRoom.m */,
+				972CC0C52A57A5A400B8F8DE /* DataService.h */,
+				972CC0D42A57A5AC00B8F8DE /* DataService.m */,
+				972CC0D12A57A5AB00B8F8DE /* HanhongDevice.h */,
+				972CC0CA2A57A5A700B8F8DE /* HanhongDevice.m */,
+				972CC0CE2A57A5A900B8F8DE /* HanhongDeviceHelper.h */,
+				972CC0CC2A57A5A800B8F8DE /* HanhongDeviceHelper.m */,
+				972CC0CD2A57A5A900B8F8DE /* MeetingRoom.h */,
+				972CC0C92A57A5A700B8F8DE /* MeetingRoom.m */,
+				972CC0CF2A57A5AA00B8F8DE /* Member.h */,
+				972CC0D22A57A5AB00B8F8DE /* Member.m */,
+				972CC0D52A57A5AD00B8F8DE /* MemberList.h */,
+				972CC0CB2A57A5A800B8F8DE /* MemberList.m */,
+				972CC0D02A57A5AA00B8F8DE /* TcpHelper.h */,
+				972CC0D32A57A5AC00B8F8DE /* TcpHelper.m */,
 			);
 			path = Bluetooth;
 			sourceTree = "<group>";
@@ -875,6 +911,8 @@
 				972CC0A12A54327500B8F8DE /* WaveSmallView.m */,
 				972CC0AC2A550DC900B8F8DE /* WaveFullView.h */,
 				972CC0AD2A550DC900B8F8DE /* WaveFullView.m */,
+				972CC0BE2A566FEF00B8F8DE /* AnnotationItemCell.h */,
+				972CC0BF2A566FEF00B8F8DE /* AnnotationItemCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1338,8 +1376,8 @@
 				9B29B2EC2A3C0F89008DCFE7 /* LRTextField.m */,
 				9B29B2F22A3C0F89008DCFE7 /* PasswordItemView.h */,
 				9B29B2EB2A3C0F89008DCFE7 /* PasswordItemView.m */,
-				9B29B2F02A3C0F89008DCFE7 /* RegisterItemView.h */,
-				9B29B2E22A3C0F89008DCFE7 /* RegisterItemView.m */,
+				9B29B2F02A3C0F89008DCFE7 /* LabelTextFieldItemView.h */,
+				9B29B2E22A3C0F89008DCFE7 /* LabelTextFieldItemView.m */,
 				9B29B2F42A3C0F89008DCFE7 /* RightDirectionView.h */,
 				9B29B2E92A3C0F89008DCFE7 /* RightDirectionView.m */,
 				9B29B2F12A3C0F89008DCFE7 /* TTActionSheet.h */,
@@ -1386,6 +1424,8 @@
 				97ED418C2A4BB2870055D1C4 /* Constant.m */,
 				97ED41A42A4C0FE20055D1C4 /* HHBlueToothManager.h */,
 				97ED41A52A4C0FE20055D1C4 /* HHBlueToothManager.m */,
+				973654EE2A57B503006919AB /* HHMettingRoomManager.h */,
+				973654EF2A57B503006919AB /* HHMettingRoomManager.m */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -1545,14 +1585,12 @@
 				972CC0AB2A54F52700B8F8DE /* NoDataView.m in Sources */,
 				9B29B31F2A3C0F89008DCFE7 /* KSImagePickerItemCell.m in Sources */,
 				97469CDC2A4FA7DE0091A3F3 /* HHDBHelper.m in Sources */,
-				9798E1D32A52A86300710AFA /* BluetoothHelper.m in Sources */,
-				9798E1D42A52A86300710AFA /* HanhongDeviceHelper.m in Sources */,
 				9721E0C12A42D8C400B68939 /* CreateConsultationVC.m in Sources */,
-				9798E1D22A52A86300710AFA /* HanhongDevice.m in Sources */,
 				9B29B3402A3C0F89008DCFE7 /* InteriorCell.m in Sources */,
 				9B29B3172A3C0F89008DCFE7 /* KSImagePickerViewerView.m in Sources */,
 				97ED41A92A4C5DB70055D1C4 /* RecordSequenceVC.m in Sources */,
 				9B29B3022A3C0F89008DCFE7 /* BRStringPickerView.m in Sources */,
+				973654F02A57B503006919AB /* HHMettingRoomManager.m in Sources */,
 				9B29B3392A3C0F89008DCFE7 /* SelectOrgVC.m in Sources */,
 				9B29B3272A3C0F89008DCFE7 /* KSVideoLayer.m in Sources */,
 				9765E0732A3D476300181452 /* AusultaionView.m in Sources */,
@@ -1565,6 +1603,7 @@
 				9765E0502A3C2EF900181452 /* QuickRecordVC.m in Sources */,
 				9B29B3492A3C0F89008DCFE7 /* TTPopView.m in Sources */,
 				9765E0822A3DB53A00181452 /* LungBodySideView.m in Sources */,
+				972CC0D92A57A5AE00B8F8DE /* HanhongDevice.m in Sources */,
 				9B29B3292A3C0F89008DCFE7 /* MLAlertView.m in Sources */,
 				9751BD962A47DFBE00787A5A /* RemoteControlTeacherVC.m in Sources */,
 				9B29B33E2A3C0F89008DCFE7 /* OrgModel.m in Sources */,
@@ -1574,6 +1613,8 @@
 				97ED418A2A4B16EE0055D1C4 /* HHBaseViewController.m in Sources */,
 				9721E0CD2A47038900B68939 /* HeartFilterLungView.m in Sources */,
 				9B29B33D2A3C0F89008DCFE7 /* SettingDepartmentVC.m in Sources */,
+				972CC0D72A57A5AE00B8F8DE /* BluetoothHelper.m in Sources */,
+				972CC0D62A57A5AE00B8F8DE /* ClassRoom.m in Sources */,
 				9751BDBF2A492D6100787A5A /* StudentProgramView.m in Sources */,
 				9B29B3532A3C0F89008DCFE7 /* RecordListVC.m in Sources */,
 				9751BDAB2A481FFF00787A5A /* TeachingProgramView.m in Sources */,
@@ -1586,6 +1627,7 @@
 				9721E0942A413E1A00B68939 /* LogoffUserVC.m in Sources */,
 				9B29B3132A3C0F89008DCFE7 /* KSNavigationView.m in Sources */,
 				9B29B3322A3C0F89008DCFE7 /* UIView+KJRectCorner.m in Sources */,
+				972CC0DA2A57A5AE00B8F8DE /* MemberList.m in Sources */,
 				9B29B3212A3C0F89008DCFE7 /* KSImagePickerSelectIndicator.m in Sources */,
 				9B5527FB2A36C14C00F02950 /* AppDelegate.m in Sources */,
 				9B29B33C2A3C0F89008DCFE7 /* LoginTypeVC.m in Sources */,
@@ -1621,6 +1663,7 @@
 				97ED415C2A4A63DF0055D1C4 /* TeachingHistoryModel.m in Sources */,
 				9721E0BB2A42925800B68939 /* NSString+ChineseCharactersToSpelling.m in Sources */,
 				9B29B3102A3C0F89008DCFE7 /* KSImagePickerAlbumModel.m in Sources */,
+				972CC0D82A57A5AE00B8F8DE /* MeetingRoom.m in Sources */,
 				9B29B31C2A3C0F89008DCFE7 /* KSImagePickerViewerVideoCell.m in Sources */,
 				9B29B34B2A3C0F89008DCFE7 /* TTActionSheet.m in Sources */,
 				9B29B3522A3C0F89008DCFE7 /* SampleVC.m in Sources */,
@@ -1638,6 +1681,7 @@
 				9B29B3282A3C0F89008DCFE7 /* UIView+MLExtension.m in Sources */,
 				9B29B3082A3C0F89008DCFE7 /* KSMediaViewerController.m in Sources */,
 				9B29B3432A3C0F89008DCFE7 /* UserInfoVC.m in Sources */,
+				972CC0DE2A57A5AE00B8F8DE /* DataService.m in Sources */,
 				9721E0AF2A427E5600B68939 /* FriendBookVC.m in Sources */,
 				9B29B3542A3C0F89008DCFE7 /* HHTabBarController.m in Sources */,
 				9751BDA62A480A3600787A5A /* HHCalendarCell.m in Sources */,
@@ -1650,6 +1694,7 @@
 				972CC0AE2A550DC900B8F8DE /* WaveFullView.m in Sources */,
 				9B29B3412A3C0F89008DCFE7 /* RemoteControlVC.m in Sources */,
 				9B29B3072A3C0F89008DCFE7 /* BRAddressPickerView.m in Sources */,
+				972CC0C02A566FF000B8F8DE /* AnnotationItemCell.m in Sources */,
 				9765E0792A3DA15200181452 /* LungBodyFrontView.m in Sources */,
 				9B29B33B2A3C0F89008DCFE7 /* ForgetPasswordVC.m in Sources */,
 				9751BDC72A49391600787A5A /* ProgramModel.m in Sources */,
@@ -1657,6 +1702,7 @@
 				9721E0B52A4285AE00B68939 /* FriendModel.m in Sources */,
 				97469CD02A4ED67B0091A3F3 /* StandarRecordBottomView.m in Sources */,
 				9B29B32C2A3C0F89008DCFE7 /* HHFileLocationHelper.m in Sources */,
+				972CC0DD2A57A5AE00B8F8DE /* TcpHelper.m in Sources */,
 				9B29B3442A3C0F89008DCFE7 /* UserInfoOneCell.m in Sources */,
 				9B29B3302A3C0F89008DCFE7 /* UIButton+ImagePosition.m in Sources */,
 				97469CCD2A4E78DA0091A3F3 /* RecordFinishVC.m in Sources */,
@@ -1669,6 +1715,7 @@
 				9B29B30C2A3C0F89008DCFE7 /* KSImagePickerViewerController.m in Sources */,
 				9B29B3052A3C0F89008DCFE7 /* BRBaseView.m in Sources */,
 				9B29B32A2A3C0F89008DCFE7 /* NSString+AttributedString.m in Sources */,
+				972CC0DB2A57A5AE00B8F8DE /* HanhongDeviceHelper.m in Sources */,
 				972CBF642A54177900B8F8DE /* KSYAudioDisplayLink.m in Sources */,
 				97469CC12A4DC7F60091A3F3 /* DeviceMessageCell.m in Sources */,
 				97349E0F2A402A1F00AF5A06 /* BluetoothDeviceModel.m in Sources */,
@@ -1689,7 +1736,7 @@
 				9B29B3422A3C0F89008DCFE7 /* MeVC.m in Sources */,
 				9721E0A62A41AF5C00B68939 /* BeInviteConsultationView.m in Sources */,
 				9B29B3062A3C0F89008DCFE7 /* BRAddressModel.m in Sources */,
-				9B29B3472A3C0F89008DCFE7 /* RegisterItemView.m in Sources */,
+				9B29B3472A3C0F89008DCFE7 /* LabelTextFieldItemView.m in Sources */,
 				9B29B34E2A3C0F89008DCFE7 /* PasswordItemView.m in Sources */,
 				9721E0B22A427F5E00B68939 /* NewFriendVC.m in Sources */,
 				9B29B31A2A3C0F89008DCFE7 /* KSImagePickerEditPictureView.m in Sources */,
@@ -1700,6 +1747,7 @@
 				9721E08D2A412F5200B68939 /* ChangeEmailVC.m in Sources */,
 				97ED41B22A4D62A10055D1C4 /* UIViewController+Swizzling.m in Sources */,
 				9B29B32E2A3C0F89008DCFE7 /* CompressingLogFileManager.m in Sources */,
+				972CC0DC2A57A5AE00B8F8DE /* Member.m in Sources */,
 				9B29B3342A3C0F89008DCFE7 /* AFNetRequestManager.m in Sources */,
 				9B29B32D2A3C0F89008DCFE7 /* HHLoginManager.m in Sources */,
 				9B29B3232A3C0F89008DCFE7 /* KSTriangleIndicatorButton.m in Sources */,

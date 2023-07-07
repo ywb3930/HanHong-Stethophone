@@ -127,6 +127,10 @@ static HanhongDeviceHelper             *_hanhongDevice;
     [_hanhongDevice Connect:macAddress];
 }
 
+- (void)setPlayTimeRange:(float)start_time end_time:(float)end_time{
+    [_hanhongDevice SetPlayTimeRange:start_time end_time:end_time];
+}
+
 - (void)setAdvStartState:(Boolean)state{
     [_hanhongDevice SetAdvStartState:state];
 }

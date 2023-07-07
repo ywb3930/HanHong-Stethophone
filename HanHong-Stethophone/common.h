@@ -39,7 +39,7 @@
 #import "HHBluetoothButton.h"
 #import "HHDBHelper.h"
 #import "NoDataView.h"
-
+#import "MeetingRoom.h"
 
 #ifdef DEBUG
 static DDLogLevel ddLogLevel = DDLogLevelVerbose;

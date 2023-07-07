@@ -20,6 +20,7 @@ target "HanHong-Stethophone" do
   pod 'YYText'
   pod 'SCIndexView'
   pod 'WechatOpenSDK-XCFramework'
+  pod 'Socket.IO-Client-Swift'
   #pod 'Charts'
   
   #pod 'UMCommon'

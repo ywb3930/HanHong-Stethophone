@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) NSInteger             recordDuration;//记录录音时长
 @property (assign, nonatomic) NSInteger             recordingState;//录音状态
 @property (assign, nonatomic) NSInteger             soundsType;//快速录音类型
-@property (assign, nonatomic) NSInteger             recordModel;//快速录音类型
+@property (assign, nonatomic) NSInteger             recordType;//快速录音类型
 @property (assign, nonatomic) NSInteger             isFiltrationRecord;//滤波状态
 @property (assign, nonatomic) NSInteger             recordDurationAll;// 录音总时长
 @property (assign, nonatomic) NSInteger             RECORD_TYPE;//判断滤波状态
@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) NSString              *relativePath;
 @property (assign, nonatomic) NSInteger             successCount;
 @property (retain, nonatomic) ReadyRecordView       *readyRecordView;
+@property (retain, nonatomic) NSString              *currentPositon;
 
 - (void)initNavi:(NSInteger)number;
 - (void)actionDeviceHelperRecordReady;

@@ -86,6 +86,7 @@
         _teachingRecordView = [[TeachingRecordView alloc] init];
         _teachingRecordView.hidden = YES;
     }
+    
     return _teachingRecordView;
 }
 

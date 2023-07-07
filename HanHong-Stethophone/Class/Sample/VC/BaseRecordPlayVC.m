@@ -9,7 +9,7 @@
 
 @interface BaseRecordPlayVC ()
 
-
+@property (assign, nonatomic) Boolean               bAddRecordData;
 
 @end
 
@@ -42,10 +42,7 @@
             NSNumber *number = (NSNumber *)args1;
             float value = [number floatValue];
             [wself actionDeviceHelperPlayingTime:value];
-            ///cell.playProgess = value;
-            //wself.viewSmallWave.playProgess = value;
-            //[wself playLineAnimation:value];
-            NSLog(@"播放进度：%f", value);
+            NSLog(@"startTime 播放进度：%f", value);
         });
         
         
@@ -74,19 +71,7 @@
 
 
 
-- (void)actionClickPlay:(UIButton *)button{
-    if(![[HHBlueToothManager shareManager] getConnectState]) {
-        [self.view makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-        return;
-    }
-    if (!self.bPlaying) {
-        button.selected = YES;
-        [self actionToStar];
-    } else {
-        button.selected = NO;
-        [self stopPlayRecord];
-    }
-}
+
 
 - (void)stopPlayRecord{
     if(self.bPlaying) {
@@ -97,23 +82,26 @@
     
 }
 
-- (void)actionToStar{
+- (void)actionToStar:(float)startTime endTime:(float)endTime{
     NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
     NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
+    NSLog(@"filePath = %@", filePath);
     if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
-        [self startPlayRecordVoice:filePath];
+        [self startPlayRecordVoice:filePath startTime:startTime endTime:endTime];
     } else {
         //如果本地没有缓存文件，先下载，后播放缓存文件
         [AFNetRequestManager downLoadFileWithUrl:self.recordModel.url path:filePath downloadProgress:^(NSProgress * _Nonnull downloadProgress) {
             
         } successBlock:^(NSURL * _Nonnull url) {
             //播放下载后的文件
-            [self startPlayRecordVoice:url.path];
+            [self startPlayRecordVoice:url.path startTime:startTime endTime:endTime];
         } fileDownloadFail:^(NSError * _Nonnull error) {
             
         }];
     }
 }
+
+
 
 
 - (KSYAudioPlotView *)audioPlotView{
@@ -174,14 +162,26 @@
 
 
 //播放录音文件
-- (void)startPlayRecordVoice:(NSString *)filePath{
-    NSData *data = [NSData dataWithContentsOfFile:filePath];
-    [[HHBlueToothManager shareManager] setPlayFile:data];
+- (void)startPlayRecordVoice:(NSString *)filePath startTime:(float)startTime endTime:(float)endTime{
+    if (!self.bAddRecordData) {
+        NSData *data = [NSData dataWithContentsOfFile:filePath];
+        NSLog(@"data.length = %li", data.length);
+        [[HHBlueToothManager shareManager] setPlayFile:data];
+        self.bAddRecordData = YES;
+    }
+    NSLog(@"startTime = %f, endTime = %f", startTime, endTime);
+    if (startTime == 0 && endTime == 0) {
+        [[HHBlueToothManager shareManager] setPlayTimeRange:0 end_time:self.recordModel.record_length];
+    } else {
+        [[HHBlueToothManager shareManager] setPlayTimeRange:startTime end_time:endTime];
+    }
     [[HHBlueToothManager shareManager] startPlay:PlayingWithSettingData];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    
     self.bCurrentView = YES;
     
 }

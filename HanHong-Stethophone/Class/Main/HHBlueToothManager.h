@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)abortSearch;
 - (void)setPlayFile:(NSData *)file_data;//播放  file_data：文件数据
 - (void)startPlay:(PLAY_MODE)play_mode;//play_mode 用第一个
-- (void)stop; 
+- (void)setPlayTimeRange:(float)start_time end_time:(float)end_time;
 
 - (void)actionSearchBluetoothList;//查找蓝牙列表
 - (void)actionConnectToBluetoothMacAddress:(NSString *)macAddress;//根据Mac地址连接蓝牙

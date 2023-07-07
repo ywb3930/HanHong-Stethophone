@@ -379,7 +379,7 @@ NSString *const POP3_btName = @"POP-3";
 -(BOOL)Connect:(NSString *)device {
     if (device) {
         if (![device isEqualToString:bluetooth_device_new]) {
-            bluetooth_device_new = device;
+            bluetooth_device_new = [device copy];
             return true;
         }
     }
@@ -664,7 +664,7 @@ NSString *const POP3_btName = @"POP-3";
                 }
             }
             if (![bluetooth_device_new isEqualToString:bluetooth_device]) {
-                bluetooth_device = bluetooth_device_new;
+                bluetooth_device = [bluetooth_device_new copy];
                 if (![bluetooth_device isEqualToString:@""]) {
                     connect_enabled = true;
                     connection_running = true;
@@ -780,7 +780,8 @@ NSString *const POP3_btName = @"POP-3";
                 if (![bt_helper CheckAdapter]) {
                     connect_enabled = false;
                     if ([bluetooth_device_new isEqualToString:bluetooth_device]) {
-                        bluetooth_device_new = bluetooth_device = @"";
+                        bluetooth_device_new = @"";
+                        bluetooth_device = @"";
                     }
                    [self Callback:AdapterNotValidEvent args1:NULL args2:NULL];
                 } else {
@@ -800,7 +801,8 @@ NSString *const POP3_btName = @"POP-3";
                                     if (connect_enabled) {
                                         connect_enabled = false;
                                         if ([bluetooth_device_new isEqualToString:bluetooth_device]) {
-                                            bluetooth_device_new = bluetooth_device = @"";
+                                            bluetooth_device_new = @"";
+                                            bluetooth_device = @"";
                                         }
                                         [self Callback:ConnectFailEvent args1:NULL args2:NULL];
                                     }
@@ -848,7 +850,8 @@ NSString *const POP3_btName = @"POP-3";
                                 [self Callback:ModelNotSupportEvent args1:NULL args2:NULL];
                                 connect_enabled = false; //close the connection
                                 if ([bluetooth_device_new isEqualToString:bluetooth_device]) {
-                                    bluetooth_device_new = bluetooth_device = @"";
+                                    bluetooth_device_new = @"";
+                                    bluetooth_device = @"";
                                 }
                                 @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"" userInfo:nil];
                             }
@@ -892,7 +895,8 @@ NSString *const POP3_btName = @"POP-3";
                                     [self Callback:UserLoginErrorEvent args1:NULL args2:NULL];
                                     connect_enabled = false; //close the connection
                                     if ([bluetooth_device_new isEqualToString:bluetooth_device]) {
-                                        bluetooth_device_new = bluetooth_device = @"";
+                                        bluetooth_device_new = @"";
+                                        bluetooth_device = @"";
                                     }
                                     @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"" userInfo:nil];
                                 }
@@ -937,7 +941,8 @@ NSString *const POP3_btName = @"POP-3";
                                     [self Callback:UserLoginErrorEvent args1:NULL args2:NULL];
                                     connect_enabled = false; //close the connection
                                     if ([bluetooth_device_new isEqualToString:bluetooth_device]) {
-                                        bluetooth_device_new = bluetooth_device = @"";
+                                        bluetooth_device_new = @"";
+                                        bluetooth_device = @"";
                                     }
                                     @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"" userInfo:nil];
                                 }
@@ -973,7 +978,8 @@ NSString *const POP3_btName = @"POP-3";
                         [self Callback:TestDevErrorEvent args1:NULL args2:NULL];
                         connect_enabled = false; //close the connection
                         if ([bluetooth_device_new isEqualToString:bluetooth_device]) {
-                            bluetooth_device_new = bluetooth_device = @"";
+                            bluetooth_device_new = @"";
+                            bluetooth_device = @"";
                         }
                         @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"" userInfo:nil];
                     }

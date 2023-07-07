@@ -6,13 +6,13 @@
 //
 
 #import "ForgetPasswordVC.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "PasswordItemView.h"
 #import "CodeItemView.h"
 
 @interface ForgetPasswordVC ()<CodeItemViewDelegate>
 
-@property (retain, nonatomic) RegisterItemView          *itemViewUser;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemViewUser;
 @property (retain, nonatomic) PasswordItemView          *itemViewPassword;
 @property (retain, nonatomic) CodeItemView              *itemViewCode;
 
@@ -120,9 +120,9 @@
 
 
 
-- (RegisterItemView *)itemViewUser{
+- (LabelTextFieldItemView *)itemViewUser{
     if(!_itemViewUser) {
-        _itemViewUser = [[RegisterItemView alloc] initWithTitle:@"账号" bMust:NO placeholder:@"请输入您的手机号码或邮箱"];
+        _itemViewUser = [[LabelTextFieldItemView alloc] initWithTitle:@"账号" bMust:NO placeholder:@"请输入您的手机号码或邮箱"];
     }
     return _itemViewUser;
 }

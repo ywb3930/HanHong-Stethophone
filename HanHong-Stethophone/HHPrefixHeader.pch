@@ -163,7 +163,7 @@
 #define screenW                                         [UIScreen mainScreen].bounds.size.width
 #define screenH                                         [UIScreen mainScreen].bounds.size.height
 
-#define screenRatio                                     screenW / 320.f
+#define screenRatio                                     ((screenW / 320.f) > 1.34f ? 1.34f : (screenW / 320.f))
 #define ViewSpace                                       18.f*screenRatio
 #define Ratio0_5                                        0.5f*screenRatio
 #define Ratio1                                          1.f*screenRatio
@@ -230,25 +230,22 @@
 
 #define ADAPTATIONRATIO                                 screenW / 750.0f
 /*状态栏高度*/
-#define kStatusBarHeight                                (kIs_iPhoneX?(44.0):(20.0))
+#define kStatusBarHeight                                [[Constant shareManager] dev_statusBarHeight]
 /*导航栏高度*/
 #define kNavBarHeight                                   (44)
 /*状态栏和导航栏总高度*/
-#define kNavBarAndStatusBarHeight                       (kIs_iPhoneX?(88.0):(64.0))
+#define kNavBarAndStatusBarHeight                       [[Constant shareManager] dev_navigationFullHeight]
 /*TabBar高度*/
-#define kTabBarHeight                                   (kIs_iPhoneX?(49.0 + 34.0):(49.0))
+#define kTabBarHeight                                   [[Constant shareManager] dev_tabBarFullHeight]
 /*顶部安全区域远离高度*/
-#define kTopBarSafeHeight                               (kIs_iPhoneX?(44.0):(0))
+#define kTopBarSafeHeight                               [[Constant shareManager] dev_safeDistanceTop]
 /*底部安全区域远离高度*/
-#define kBottomSafeHeight                               (kIs_iPhoneX?(34.0):(0))
+#define kBottomSafeHeight                               [[Constant shareManager] dev_safeDistanceBottom]
 /*iPhoneX的状态栏高度差值*/
 #define kTopBarDifHeight                                (kIs_iPhoneX?(24.0):(0))
 /*导航条和Tabbar总高度*/
 #define kNavAndTabHeight                                (kNavBarAndStatusBarHeight + kTabBarHeight)
-#define kTitleViewY                                     (kStatusBarHeight + 20.0f)
-#define kTransitionCenter                               20.0f
-#define kBaseHeaderHeight                               screenW * 385.0f / 704.0f
-#define kBaseSegmentHeight                              40.0f
+
 /*********************** size  ***********************/
 
 /******************* Object *********************/

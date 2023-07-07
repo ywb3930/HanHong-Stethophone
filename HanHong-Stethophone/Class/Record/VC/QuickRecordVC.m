@@ -27,7 +27,7 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = ViewBackGroundColor;
     self.title = @"便捷录音";
-    self.recordModel = QuickRecord;
+    self.recordType = QuickRecord;
     [self initNavi:2];
     [self loadPlistData:YES];
     [self initView];
@@ -170,6 +170,11 @@
         _heartFilterLungView.delegate = self;
     }
     return _heartFilterLungView;
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self actionStartRecord];
 }
 
 

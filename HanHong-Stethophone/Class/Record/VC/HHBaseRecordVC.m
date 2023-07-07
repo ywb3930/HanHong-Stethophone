@@ -145,13 +145,16 @@
     [[HHBlueToothManager shareManager] stop];
     RecordModel *recordModel = [[RecordModel alloc] init];
     recordModel.user_id = [@(LoginData.id) stringValue];
-    recordModel.record_mode = self.recordModel;
+    recordModel.record_mode = self.recordType;
     recordModel.type_id = self.soundsType;
     recordModel.record_filter = self.isFiltrationRecord;
     recordModel.record_time = [Tools dateToTimeStringYMDHMS:[NSDate now]];
     recordModel.record_length = self.recordDurationAll;
     recordModel.file_path = self.relativePath;
-    //NSArray *array = [self.relativePath mutableArrayValueForKey:@"/"];
+    if (self.recordType == StanarRecord) {
+        NSLog(@"self.currentPositon = %@", self.currentPositon);
+        recordModel.position_tag =  self.currentPositon;
+    }
     recordModel.tag = [NSString stringWithFormat:@"%@.wav", self.recordCode];
     recordModel.modify_time = recordModel.record_time;
     Boolean result = [[HHDBHelper shareInstance] addRecordItem:recordModel];
@@ -161,9 +164,6 @@
         NSLog(@"保存数据库失败");
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-//        self.labelStartRecord.hidden = NO;
-//
-//
         self.readyRecordView.labelReadyRecord.text = @"保存成功，准备下一个录音";
         [self reloadViewRecordView];
         [self actionStartRecord];

@@ -19,6 +19,11 @@
 //#import <UMAPM/UMLaunch.h>
 //#import <UMCommonLog/UMCommonLogHeaders.h>
 
+/**
+
+ 
+ */
+
 @interface AppDelegate ()
 
 @end
@@ -40,10 +45,10 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    // Override point for customization after application launch. 18902400417
     [self checkNetConnect];
 
-
+    NSLog(@"screenRatio = %f", screenRatio);
     
     //设置预定义DidFinishLaunchingEnd时间
     //[UMLaunch setPredefineLaunchType:UMPredefineLaunchType_DidFinishLaunchingEnd];

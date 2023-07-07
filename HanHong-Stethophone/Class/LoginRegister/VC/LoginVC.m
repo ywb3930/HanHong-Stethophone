@@ -8,7 +8,7 @@
 #import "LoginVC.h"
 #import "LoginTypeVC.h"
 #import "RegisterVC.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "PasswordItemView.h"
 #import "CodeItemView.h"
 #import "SelectOrgVC.h"
@@ -27,12 +27,12 @@
 @property (retain, nonatomic) UIButton         *buttonLoginCode;
 @property (retain, nonatomic) UIView           *viewLineCode;
 
-@property (retain, nonatomic) RegisterItemView  *itemUser;
+@property (retain, nonatomic) LabelTextFieldItemView  *itemUser;
 @property (retain, nonatomic) PasswordItemView  *itemPass;
 @property (retain, nonatomic) UIView            *viewPass;
 
 @property (retain, nonatomic) UIView            *viewCode;
-@property (retain, nonatomic) RegisterItemView  *itemCodeUser;
+@property (retain, nonatomic) LabelTextFieldItemView  *itemCodeUser;
 @property (retain, nonatomic) CodeItemView      *codeItemView;
 
 @property (retain, nonatomic) UIButton          *buttonLogin;
@@ -62,7 +62,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.delay = 0.5;
+    self.delay = 0;
     self.autoLogining = YES;
     self.view.backgroundColor = WHITECOLOR;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionGetLoginType:) name:login_type_broadcast object:nil];
@@ -203,7 +203,7 @@
             //self.itemPass.textFieldPass.text = password;
             if(self.autoLogin && bLogin && ![Tools isBlankString:number] && ![Tools isBlankString:password]) {
                 self.autoLogining = YES;
-                self.delay = 2;
+                self.delay = 0;
                 [self actionLogin:self.buttonLoginPass];
             } else {
                 self.autoLogining = NO;
@@ -631,9 +631,9 @@
     return _viewCode;
 }
 
-- (RegisterItemView *)itemCodeUser{
+- (LabelTextFieldItemView *)itemCodeUser{
     if(!_itemCodeUser) {
-        _itemCodeUser = [[RegisterItemView alloc] initWithTitle:@"手机/邮箱" bMust:NO placeholder:@"请输入您的手机号或邮箱"];
+        _itemCodeUser = [[LabelTextFieldItemView alloc] initWithTitle:@"手机/邮箱" bMust:NO placeholder:@"请输入您的手机号或邮箱"];
     }
     return _itemCodeUser;
 }
@@ -660,9 +660,9 @@
     return _viewPass;
 }
 
-- (RegisterItemView *)itemUser{
+- (LabelTextFieldItemView *)itemUser{
     if(!_itemUser) {
-        _itemUser = [[RegisterItemView alloc] initWithTitle:@"用户" bMust:NO placeholder:@"请输入您的手机号或邮箱"];
+        _itemUser = [[LabelTextFieldItemView alloc] initWithTitle:@"用户" bMust:NO placeholder:@"请输入您的手机号或邮箱"];
     }
     return _itemUser;
 }

@@ -31,6 +31,9 @@ PODS:
   - SDWebImage (5.16.0):
     - SDWebImage/Core (= 5.16.0)
   - SDWebImage/Core (5.16.0)
+  - Socket.IO-Client-Swift (15.2.0):
+    - Starscream (~> 3.1)
+  - Starscream (3.1.1)
   - SVProgressHUD (2.2.5)
   - Toast (4.0.0)
   - WechatOpenSDK-XCFramework (2.0.2)
@@ -50,6 +53,7 @@ DEPENDENCIES:
   - SCIndexView
   - SDAutoLayout
   - SDWebImage
+  - Socket.IO-Client-Swift
   - SVProgressHUD
   - Toast
   - WechatOpenSDK-XCFramework
@@ -70,6 +74,8 @@ SPEC REPOS:
     - SCIndexView
     - SDAutoLayout
     - SDWebImage
+    - Socket.IO-Client-Swift
+    - Starscream
     - SVProgressHUD
     - Toast
     - WechatOpenSDK-XCFramework
@@ -89,12 +95,14 @@ SPEC CHECKSUMS:
   SCIndexView: 20eba7a5ba1ffdf49a208031a82bf0549c0f9935
   SDAutoLayout: 8bf6b3bbc8b01f775d4defbb4fda2ace805461be
   SDWebImage: 2aea163b50bfcb569a2726b6a754c54a4506fcf6
+  Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   WechatOpenSDK-XCFramework: acdeeda129efbef9532bca8a10c24e1b4b8c7d69
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
 
-PODFILE CHECKSUM: 85c131aa655ed18d40fa156ffcf378c3890c5f1d
+PODFILE CHECKSUM: ca815282143c2f53614610a2471b1f7be217b54e
 
 COCOAPODS: 1.11.3

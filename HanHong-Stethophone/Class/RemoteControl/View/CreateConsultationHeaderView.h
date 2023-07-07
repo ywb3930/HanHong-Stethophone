@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "RightDirectionView.h"
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 #import "ConsultationModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,8 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (weak, nonatomic) id<CreateConsultationHeaderViewDelegate> delegate;
 @property (retain, nonatomic) RightDirectionView        *itemTimeView;
-@property (retain, nonatomic) RegisterItemView          *itemTitleView;
-@property (retain, nonatomic) RegisterItemView          *itemDurationView;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemTitleView;
+@property (retain, nonatomic) LabelTextFieldItemView          *itemDurationView;
 @property (retain, nonatomic) ConsultationModel         *consultationModel;
 
 @end

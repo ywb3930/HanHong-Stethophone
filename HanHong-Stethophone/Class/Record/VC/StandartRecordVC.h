@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface StandartRecordVC : HHBaseRecordVC
 
-//@property (retain, nonatomic) RecordModel               *recordModel;
+@property (retain, nonatomic) RecordModel               *recordModel;
 
 @end
 

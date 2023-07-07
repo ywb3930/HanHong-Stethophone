@@ -59,9 +59,9 @@
 }
 
 
-- (RegisterItemView *)itemTitleView{
+- (LabelTextFieldItemView *)itemTitleView{
     if (!_itemTitleView) {
-        _itemTitleView = [[RegisterItemView alloc] initWithTitle:@"会诊标题" bMust:NO placeholder:@"请输入会诊标题"];
+        _itemTitleView = [[LabelTextFieldItemView alloc] initWithTitle:@"会诊标题" bMust:NO placeholder:@"请输入会诊标题"];
     }
     return _itemTitleView;
 }
@@ -80,9 +80,9 @@
     return _itemTimeView;
 }
 
-- (RegisterItemView *)itemDurationView{
+- (LabelTextFieldItemView *)itemDurationView{
     if (!_itemDurationView) {
-        _itemDurationView = [[RegisterItemView alloc] initWithTitle:@"时长" bMust:NO placeholder:@"请输入会诊时长"];
+        _itemDurationView = [[LabelTextFieldItemView alloc] initWithTitle:@"时长" bMust:NO placeholder:@"请输入会诊时长"];
         _itemDurationView.hiddenLine = YES;
         _itemDurationView.textFieldInfo.keyboardType = UIKeyboardTypeNumberPad;
 

@@ -7,12 +7,13 @@
 
 #import <UIKit/UIKit.h>
 #import "HHBaseViewController.h"
+#import "ConsultationModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface RemoteControlDetailVC : HHBaseViewController
 
-@property (retain, nonatomic) NSString    *meetingroomd_id;
+@property (retain, nonatomic) ConsultationModel    *consultationModel;
 
 @end
 

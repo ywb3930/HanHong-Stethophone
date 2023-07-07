@@ -1,13 +1,13 @@
 //
-//  RegisterItemView.m
+//  LabelTextFieldItemView.m
 //  HM-Stethophone
 //
 //  Created by Eason on 2023/6/13.
 //
 
-#import "RegisterItemView.h"
+#import "LabelTextFieldItemView.h"
 
-@interface RegisterItemView()
+@interface LabelTextFieldItemView()
 
 @property (retain, nonatomic) NSString          *title;
 @property (assign, nonatomic) Boolean           bMust;
@@ -20,7 +20,7 @@
  
 @end
 
-@implementation RegisterItemView
+@implementation LabelTextFieldItemView
 
 - (instancetype)initWithTitle:(NSString *)title bMust:(Boolean)bMust  placeholder:(NSString *)placeholder
 {
