@@ -58,9 +58,9 @@ typedef NS_ENUM(NSInteger, MEETINGROOM_EVENT)
     MeetingDataServiceConnectSuccess = 13,
     MeetingDataServiceConnectFailed = 14,
     MeetingDataServiceDisconnected = 15,
-    MeetingDataServiceWavFrameReceived = 16,  //返回 2个参数//收到音频数据
+    MeetingDataServiceWavFrameReceived = 16,  //返回 2个参数
     MeetingDataServiceCmdReceived = 17,
-    MeetingDataServiceClientInfoReceived = 18, //返回 3个参数//音频服务连接成功
+    MeetingDataServiceClientInfoReceived = 18, //返回 3个参数
 };
 
 @protocol MeetingRoomDelegate <NSObject>
@@ -85,11 +85,11 @@ typedef NS_ENUM(NSInteger, MEETINGROOM_EVENT)
 -(BOOL)isEntered;
 -(void)Enter:(NSString *)token meetingroom_url:(NSString *)meetingroom_url meetingroom_id:(int)meetingroom_id;
 -(void)Exit;
--(void)SetCollerctor:(int)collector_id;//设置采集者 进房间之后调用
+-(void)SetCollector:(int)collector_id;
 -(void)ModifyMeeting:(NSString *)title begin:(NSString *)begin end:(NSString *)end collector_id:(NSString *)collector_id member_id:(NSArray<NSNumber *> *)member_id;
 -(void)ConnectDataService;
 -(void)DisconnectDataService;
--(void)StartAuscultation;//开始会诊
+-(void)StartAuscultation;
 -(void)StopAuscultation;
 
 @end

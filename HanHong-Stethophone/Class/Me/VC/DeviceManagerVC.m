@@ -15,7 +15,7 @@
 #import "ScanTeachCodeVC.h"
 #import "Constant.h"
 #import "DeviceMessageVC.h"
-
+#import "GuideVC.h"
 
 #define Heart_filter_mode  1//心音过滤开关
 #define Lung_filter_mode  2//肺音过滤开关
@@ -33,6 +33,8 @@
 @property (retain, nonatomic) NSString                  *defaultConnectPath;
 @property (retain, nonatomic) BluetoothDeviceModel      *deviceModel;
 @property (retain, nonatomic) UILabel                   *labelTableViewTitle;
+
+@property (retain, nonatomic) UIButton                  *buttonGuide;
 
 @end
 
@@ -280,9 +282,14 @@
     [self.view addSubview:self.tableView];
     self.tableView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.deviceDefaultView, Ratio8).bottomSpaceToView(self.view, 0);
 
+    [self.view addSubview:self.buttonGuide];
+    self.buttonGuide.sd_layout.centerYEqualToView(self.view).rightSpaceToView(self.view, Ratio11).heightIs(Ratio40).widthIs(Ratio90);
+    
     [self.view addSubview:self.deviceManagerSettingView];
     self.deviceManagerSettingView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.deviceDefaultView, Ratio8).bottomSpaceToView(self.view, 0);
     self.deviceManagerSettingView.hidden = YES;
+    
+    
     
     NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:self.defaultConnectPath];
     if (!data) {
@@ -300,6 +307,8 @@
         self.deviceDefaultView.hidden = NO;
         self.deviceDefaultView.deviceModel = self.deviceModel;
     }
+    
+    
 }
 
 - (DeviceManagerSettingView *)deviceManagerSettingView{
@@ -366,6 +375,20 @@
         _labelConnectRemind.hidden = YES;
     }
     return _labelConnectRemind;
+}
+
+- (UIButton *)buttonGuide{
+    if (!_buttonGuide) {
+        _buttonGuide = [[UIButton alloc] init];
+        [_buttonGuide setImage:[UIImage imageNamed:@"connection_guide_btn"] forState:UIControlStateNormal];
+        [_buttonGuide addTarget:self action:@selector(actionToGuide:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _buttonGuide;
+}
+
+- (void)actionToGuide:(UIButton *)button{
+    GuideVC *guidVC = [[GuideVC alloc] init];
+    [self.navigationController pushViewController:guidVC animated:YES];
 }
 
 - (void)actionToScanView:(UIBarButtonItem *)item{

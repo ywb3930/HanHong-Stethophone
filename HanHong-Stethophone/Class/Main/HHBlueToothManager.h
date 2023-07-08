@@ -24,7 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (CONNECT_STATE)getConnectState;//获取设备的连接状态
 - (NSInteger)getDeviceType;//获取设备类型
 - (void)startRecord:(RECORD_TYPE)record_type record_mode:(RECORD_MODE)record_mode; //2
-- (NSData *)getRecordFile;//获取录音文件
+- (NSArray *)getRecordFile;//获取录音文件
+- (NSArray *)getRecordData;
 - (NSString *)getSerialNumber;
 - (NSString *)getFirmwareVersion;
 - (NSString *)getBootloaderVersion;
@@ -43,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPlayFile:(NSData *)file_data;//播放  file_data：文件数据
 - (void)startPlay:(PLAY_MODE)play_mode;//play_mode 用第一个
 - (void)setPlayTimeRange:(float)start_time end_time:(float)end_time;
+- (void)writePlayBuffer:(NSData *)data;
 
 - (void)actionSearchBluetoothList;//查找蓝牙列表
 - (void)actionConnectToBluetoothMacAddress:(NSString *)macAddress;//根据Mac地址连接蓝牙

@@ -208,12 +208,17 @@
                 
                 @try
                 {
-                    self.meetingroom_info.data_server_url = mdata[@"data_server_url"];
-                    self.meetingroom_info.data_server_port = mdata[@"data_server_port"];
-                    self.meetingroom_info.data_server_access_token = mdata[@"data_server_access_token"];
-                    
-                    self.meetingroom_info.user_id = [mdata[@"user_id"] intValue];
-                    self.meetingroom_info.role = [mdata[@"role"] intValue];
+                    if (mdata[@"data_server_url"] != NULL) {
+                        self.meetingroom_info.data_server_url = mdata[@"data_server_url"];
+                   
+                        self.meetingroom_info.data_server_port = mdata[@"data_server_port"];
+                        self.meetingroom_info.data_server_access_token = mdata[@"data_server_access_token"];
+                    }
+                     
+                    if (mdata[@"user_id"] != NULL) {
+                        self.meetingroom_info.user_id = [mdata[@"user_id"] intValue];
+                        self.meetingroom_info.role = [mdata[@"role"] intValue];
+                    }
                 }
                 @catch (NSException *e) {
                     
@@ -388,7 +393,7 @@
     }
 }
 
--(void)SetCollerctor:(int)collector_id
+-(void)SetCollector:(int)collector_id
 {
     @try {
         if ([self isEntered]) {
@@ -402,7 +407,7 @@
                 [[mSocket emitWithAck:@"control" with:@[control]] timingOutAfter:(0) callback:^(NSArray *data) {
                     @try {
                          
-                        NSDictionary *r = [data lastObject][@"data"];
+                        NSDictionary *r = [data lastObject];
                         
                         int control_errorcode = [r[@"errorCode"] intValue];
                         
@@ -459,7 +464,7 @@
                 [[mSocket emitWithAck:@"control" with:@[control]] timingOutAfter:(0) callback:^(NSArray *data) {
                     @try {
                          
-                        NSDictionary *r = [data lastObject][@"data"];
+                        NSDictionary *r = [data lastObject];
                         
                         int control_errorcode = [r[@"errorCode"] intValue];
                         
@@ -587,7 +592,7 @@
                 [[mSocket emitWithAck:@"control" with:@[control]] timingOutAfter:(0) callback:^(NSArray *data) {
                     @try {
                          
-                        NSDictionary *r = [data lastObject][@"data"];
+                        NSDictionary *r = [data lastObject];
                         
                         int control_errorcode = [r[@"errorCode"] intValue];
                         
@@ -623,7 +628,7 @@
                 [[mSocket emitWithAck:@"control" with:@[control]] timingOutAfter:(0) callback:^(NSArray *data) {
                     @try {
                          
-                        NSDictionary *r = [data lastObject][@"data"];
+                        NSDictionary *r = [data lastObject];
                         
                         int control_errorcode = [r[@"errorCode"] intValue];
                         

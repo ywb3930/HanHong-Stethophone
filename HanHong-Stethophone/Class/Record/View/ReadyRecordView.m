@@ -27,6 +27,10 @@
     return self;
 }
 
+- (void)setStartTime:(NSString *)startTime{
+    self.labelStartTime.text = startTime;
+}
+
 - (void)setRecordTime:(float)recordTime{
     _recordTime = recordTime;
     NSString *recordTimeString = [Tools getMMSSFromSS:(NSInteger)recordTime];

@@ -309,6 +309,11 @@ NSString *const POP3_btName = @"POP-3";
 -(NSString *)GetBootloaderVersion{
     return bootloader_version;
 }
+ 
+-(NSString *)GetMac
+{
+    return [bluetooth_device stringByReplacingOccurrencesOfString:@":" withString:@""];
+}
 
 -(BOOL)ConnectRunning{
     return connection_running;
@@ -610,7 +615,7 @@ NSString *const POP3_btName = @"POP-3";
         @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"" userInfo:nil];
     }
     
-    return @[hv, bv, [NSString stringWithFormat:@"V%@.%@", hv, fv], b, f];
+    return @[[NSString stringWithFormat:@"V%@", hv], [NSString stringWithFormat:@"V%@", bv], [NSString stringWithFormat:@"V%@.%@", hv, fv], b, f];
 }
 
 -(void)Callback:(DEVICE_EVENT)event args1:(NSObject*)args1 args2:(NSObject*)args2 {
@@ -1164,16 +1169,16 @@ NSString *const POP3_btName = @"POP-3";
                                 } else {
                                     
                                     [realtimeplay_data_buffer_mutex unlock];
+                                     
+                                    data_waiting = true;
+                                }
+                                  
+                                if (data_waiting) {
                                     
                                     if (!empty_flag) {
                                         empty_flag = true;
                                         [self Callback:RealtimePlayBufferEmptyEvent args1:NULL args2:NULL];
                                     }
-                                    
-                                    data_waiting = true;
-                                }
-                                  
-                                if (data_waiting) {
                                     
                                     currentTime = [NSDate date];
                                     elapsedTime = [currentTime timeIntervalSinceDate:data_receive_time];
@@ -1318,8 +1323,10 @@ NSString *const POP3_btName = @"POP-3";
 
         if (realtimeplay_enable && !realtimeplay_enabled) {
             realtimeplay_enable = false;
-            realtimeplay_running = false;
-            [self Callback:RealtimePlayEndEvent args1:NULL args2:NULL];
+            if (realtimeplay_running) {
+                realtimeplay_running = false;
+                [self Callback:RealtimePlayEndEvent args1:NULL args2:NULL];
+            }
         }
 
     } // connect close
@@ -1327,8 +1334,10 @@ NSString *const POP3_btName = @"POP-3";
     if (realtimeplay_enable) {
         realtimeplay_enabled = false;
         realtimeplay_enable = false;
-        realtimeplay_running = false;
-        [self Callback:RealtimePlayEndEvent args1:NULL args2:NULL];
+        if (realtimeplay_running) {
+            realtimeplay_running = false;
+            [self Callback:RealtimePlayEndEvent args1:NULL args2:NULL];
+        }
     }
 
     [condition_thread_realtimeplay lock];
@@ -1588,16 +1597,20 @@ NSString *const POP3_btName = @"POP-3";
 
         if (realtimerecord_enable && !realtimerecord_enabled) {
             realtimerecord_enable = false;
-            realtimerecord_running = false;
-            [self Callback:RealtimeRecordEndEvent args1:NULL args2:NULL];
+            if (realtimerecord_running) {
+                realtimerecord_running = false;
+                [self Callback:RealtimeRecordEndEvent args1:NULL args2:NULL];
+            }
         }
     }
 
     if (realtimerecord_enable) {
         realtimerecord_enabled = false;
         realtimerecord_enable = false;
-        realtimerecord_running = false;
-        [self Callback:RealtimeRecordEndEvent args1:NULL args2:NULL];
+        if (realtimerecord_running) {
+            realtimerecord_running = false;
+            [self Callback:RealtimeRecordEndEvent args1:NULL args2:NULL];
+        }
     }
 
     [condition_thread_realtimerecord lock];

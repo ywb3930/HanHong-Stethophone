@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ReadyRecordView.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,8 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) NSString              *recordCode;//录音编号
 @property (retain, nonatomic) NSString              *relativePath;
 @property (assign, nonatomic) NSInteger             successCount;
-@property (retain, nonatomic) ReadyRecordView       *readyRecordView;
 @property (retain, nonatomic) NSString              *currentPositon;
+@property (assign, nonatomic) Boolean               bAutoSaveRecord;//是否自动保存录音
 
 - (void)initNavi:(NSInteger)number;
 - (void)actionDeviceHelperRecordReady;
@@ -33,16 +33,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)actionDeviceHelperRecordingTime:(float)number;
 - (void)actionDeviceHelperRecordPause;
 - (void)actionDeviceHelperRecordEnd;
+- (void)actionDeviceHelperRecordingData:(NSData *)data;
 - (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel;
-- (void)loadData;
+- (void)loadRecordTypeData;
 - (void)actionClickBlueToothCallBack:(UIButton *)button;
 - (void)actionCancelClickBluetooth;
 - (void)reloadView;
 - (void)actionRecordFinish;
 - (void)actionStartRecord;
+//- (void)actionStopRecord;
 - (void)loadPlistData:(Boolean)firstLoadData;
 - (void)realodFilerView;
-- (void)reloadViewRecordView;
 
 @end
 

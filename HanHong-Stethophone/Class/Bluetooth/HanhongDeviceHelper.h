@@ -11,6 +11,9 @@
 #import <Foundation/Foundation.h>
 #import "HanhongDevice.h"
 
+extern const int record_time_minimum;//
+extern const int record_time_maximum;//
+
 typedef NS_ENUM(NSInteger, DEVICE_HELPER_EVENT)
 {
     SearchStart = -3,
@@ -20,17 +23,25 @@ typedef NS_ENUM(NSInteger, DEVICE_HELPER_EVENT)
     DeviceConnecting = 0,
     DeviceConnected = 1,
     DeviceDisconnected = 2,
-     
-    DeviceHelperRecordReady = 9,  //录音就绪
-    DeviceHelperRecordBegin = 10, //录音开始
+    
+    DeviceConnectFailed = 3,
+    
+    DeviceHelperRecordReady = 9,  //录音就绪 （重新连接也有）
+    DeviceHelperRecordBegin = 10, //录音开始 只有一次
     DeviceHelperRecordingTime = 11,  //录音时间，每接收满1秒产生1次事件 ： args1 NSNumber* 第几秒 （intValue）
     DeviceHelperRecordingData = 12,  //录音数据，每次返回400字节 : args1 NSData*
     DeviceHelperRecordPause = 13, //录音暂停
-    DeviceHelperRecordEnd = 14, //录音结束，可以通过接口读取数据
-     
+    DeviceHelperRecordResume = 14, //录音恢复 暂停后
+    DeviceHelperRecordEnd = 15, //录音结束，可以通过接口读取数据 只有一次
+    
+    DeviceRecordLostEvent = 16,
+    
     DeviceHelperPlayBegin = 20,    //播放开始
     DeviceHelperPlayingTime = 21,  //当前播放的时间进度： args1 NSNumber * （floatValue）
     DeviceHelperPlayEnd = 22,      //播放结束
+    
+    DeviceRecordPlayInstable = 30,
+    
     
 };
  
@@ -96,20 +107,24 @@ typedef NS_ENUM(NSInteger, PLAY_MODE)
 -(NSString *)GetProductionDate;
 -(NSString *)GetFirmwareVersion;
 -(NSString *)GetBootloaderVersion;
- 
+-(NSString *)GetMac;
+
 //
 -(BOOL)SetRecordDuration:(int)duration;
+-(int)GetRecordDuration;
 -(void)StartRecord:(RECORD_TYPE)record_type record_mode:(RECORD_MODE)record_mode;
+-(BOOL)IsRecording;
 
--(NSData *)GetRecordData;
--(NSData *)GetRecordFile;
+-(NSArray *)GetRecordData;
+-(NSArray *)GetRecordFile;
 
 -(void)SetPlayData:(NSData *)data;
 -(void)SetPlayFile:(NSData *)file_data;
 -(void)SetPlayTimeRange:(float)start_time end_time:(float)end_time;
 -(void)SetPlayRepeat:(BOOL)state;
 -(void)StartPlay:(PLAY_MODE)play_mode;
--(void)WritePlayuffer:(NSData *)data;
+-(BOOL)IsPlaying;
+-(void)WritePlayBuffer:(NSData *)data;
 
 -(void)Stop; 
 

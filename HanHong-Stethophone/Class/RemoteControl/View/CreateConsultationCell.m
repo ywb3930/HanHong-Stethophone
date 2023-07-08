@@ -12,6 +12,7 @@
 @property (retain, nonatomic) UIImageView               *imageViewHead;
 @property (retain, nonatomic) UILabel                   *labelName;
 @property (retain, nonatomic) UIImageView               *imageViewTag;
+@property (retain, nonatomic) UIImageView               *imageViewOnLine;
 
 @end
 
@@ -29,7 +30,14 @@
     [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:model.avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
     self.labelName.hidden = NO;
     self.labelName.text = model.name;
-    self.imageViewTag.hidden = !model.bCollect;
+    //self.imageViewTag.hidden = !model.bCollect;
+    self.imageViewOnLine.hidden = !model.bOnLine;
+    if (model.bCollect) {
+        self.imageViewTag.hidden = NO;
+        self.imageViewTag.image = [UIImage imageNamed:@"no_collection_state"];
+    } else {
+        self.imageViewTag.hidden = YES;
+    }
 }
 
 - (void)setImage:(UIImage *)image{
@@ -42,9 +50,11 @@
     [self.contentView addSubview:self.imageViewHead];
     [self.contentView addSubview:self.labelName];
     [self.contentView addSubview:self.imageViewTag];
+    [self.contentView addSubview:self.imageViewOnLine];
     CGFloat width = (screenW - Ratio66)/5 - Ratio10;
     self.imageViewHead.sd_layout.leftSpaceToView(self.contentView, Ratio5).rightSpaceToView(self.contentView, Ratio5).topSpaceToView(self.contentView, Ratio5).heightIs(width);
-    self.imageViewTag.sd_layout.topSpaceToView(self.contentView, 0).rightSpaceToView(self.contentView, 0).widthIs(Ratio15).heightIs(Ratio15);
+    self.imageViewOnLine.sd_layout.topSpaceToView(self.contentView, 0).rightSpaceToView(self.contentView, 0).widthIs(Ratio15).heightIs(Ratio15);
+    self.imageViewTag.sd_layout.bottomSpaceToView(self.contentView, Ratio15).rightSpaceToView(self.contentView, 0).widthIs(Ratio15).heightIs(Ratio15);
     self.labelName.sd_layout.leftSpaceToView(self.contentView, 0).rightSpaceToView(self.contentView, 0).topSpaceToView(self.imageViewHead, Ratio5).heightIs(Ratio15);
 }
 
@@ -67,6 +77,15 @@
         _labelName.hidden = YES;
     }
     return _labelName;
+}
+    
+- (UIImageView *)imageViewOnLine{
+    if (!_imageViewOnLine) {
+        _imageViewOnLine = [[UIImageView alloc] init];
+        _imageViewOnLine.image = [UIImage imageNamed:@"on_line"];
+        _imageViewOnLine.hidden = YES;
+    }
+    return _imageViewOnLine;
 }
 
 - (UIImageView *)imageViewTag{

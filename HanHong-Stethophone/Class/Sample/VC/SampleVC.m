@@ -54,11 +54,11 @@
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated{
-    [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
-    [self.bluetoothButton star];
-}
+//- (void)viewWillAppear:(BOOL)animated{
+//    [super viewWillAppear:animated];
+//    [self.navigationController setNavigationBarHidden:YES animated:YES];
+//    [self.bluetoothButton star];
+//}
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];

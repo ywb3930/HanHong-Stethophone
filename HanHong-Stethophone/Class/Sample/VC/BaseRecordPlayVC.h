@@ -6,13 +6,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HHBaseViewController.h"
 #import "KSYAudioPlotView.h"
 #import "KSYAudioFile.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BaseRecordPlayVC : HHBaseViewController
+@interface BaseRecordPlayVC : UIViewController
 
 @property (retain, nonatomic) RecordModel           *recordModel;
 @property (retain, nonatomic) KSYAudioPlotView              *audioPlotView;

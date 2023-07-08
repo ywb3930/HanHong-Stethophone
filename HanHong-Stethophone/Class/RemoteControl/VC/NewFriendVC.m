@@ -12,6 +12,7 @@
 
 @property (retain, nonatomic) NSMutableArray               *arrayData;
 @property (retain, nonatomic) UITableView                   *tableView;
+@property (retain, nonatomic) NoDataView            *noDataView;
 
 @end
 
@@ -25,6 +26,7 @@
     if(self.data) {
         [self.arrayData addObjectsFromArray:self.data];
         [self.navigationController setNavigationBarHidden:NO animated:YES];
+        [self actionShowNoDataView];
     } else {
         [self initData];
     }
@@ -33,7 +35,16 @@
     viewLine.backgroundColor = ViewBackGroundColor;
     [self.view addSubview:viewLine];
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.noDataView];
     
+}
+
+- (void)actionShowNoDataView{
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
+    }
 }
 
 - (void)actionAddFriendCallback:(FriendModel *)model{
@@ -86,6 +97,7 @@
     [self.arrayData removeObjectAtIndex:row];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self actionShowNoDataView];
 }
 
 - (void)actionFriendApproveCallback:(FriendModel *)model{
@@ -135,6 +147,7 @@
             NSArray *array = [NSArray yy_modelArrayWithClass:[FriendModel class] json:responseObject[@"data"]];
             [wself.arrayData addObjectsFromArray:array];
             [wself.tableView reloadData];
+            [wself actionShowNoDataView];
         }
     } failure:^(NSError * _Nonnull error) {
         
@@ -149,6 +162,15 @@
         [_tableView registerClass:[FriendCell class] forCellReuseIdentifier:NSStringFromClass([FriendCell class])];
     }
     return _tableView;
+}
+
+
+- (NoDataView *)noDataView{
+    if (!_noDataView) {
+        _noDataView = [[NoDataView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight + Ratio35, screenW, screenH)];
+        _noDataView.hidden = YES;
+    }
+    return _noDataView;
 }
 
 

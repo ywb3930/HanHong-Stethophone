@@ -18,6 +18,7 @@
 @property (retain, nonatomic) NSMutableArray        *arrayData;
 @property (retain, nonatomic) NSMutableArray        *listTitle;
 @property (retain, nonatomic) UITableView           *tableView;
+@property (retain, nonatomic) NoDataView            *noDataView;
 
 @end
 
@@ -40,6 +41,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initData) name:refresh_friendlist_broadcast object:nil];
     [self initData];
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.noDataView];
 }
 
 - (void)actionToCommit:(UIBarButtonItem *)item {
@@ -94,7 +96,11 @@
     } else {
         [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     }
-    
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
+    }
 }
 
 - (void)initData{
@@ -144,10 +150,15 @@
                 });
                 wself.tableView.sc_indexViewDataSource = indexViewDataSource;
                 wself.tableView.sc_startSection = 0;
+               
                 
             }
             
-            
+            if(wself.arrayData.count == 0) {
+                wself.noDataView.hidden = NO;
+            } else {
+                wself.noDataView.hidden = YES;
+            }
             [wself.tableView reloadData];
             
         }
@@ -280,6 +291,14 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.listTitle.count;
+}
+
+- (NoDataView *)noDataView{
+    if (!_noDataView) {
+        _noDataView = [[NoDataView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight + Ratio35, screenW, screenH)];
+        _noDataView.hidden = YES;
+    }
+    return _noDataView;
 }
 
 @end

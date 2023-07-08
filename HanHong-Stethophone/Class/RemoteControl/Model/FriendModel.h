@@ -29,7 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) NSString              *academy;
 @property (retain, nonatomic) NSString              *class;
 @property (assign, nonatomic) Boolean               bSelected;//是否选中
+@property (assign, nonatomic) Boolean               bOnLine;//是否在线
 @property (assign, nonatomic) Boolean               bCollect;//是否是采集人
+@property (assign, nonatomic) Boolean               bConnect;//是否连接设备
 //@property (retain, nonatomic) NSString              *letter;
 
 

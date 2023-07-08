@@ -102,8 +102,12 @@ static HanhongDeviceHelper             *_hanhongDevice;
     return [_hanhongDevice AbortSearch];
 }
 
-- (NSData *)getRecordFile{
+- (NSArray *)getRecordFile{
     return [_hanhongDevice GetRecordFile];;
+}
+
+- (NSArray *)getRecordData{
+    return [_hanhongDevice GetRecordData];;
 }
 
 - (void)startRecord:(RECORD_TYPE)record_type record_mode:(RECORD_MODE)record_mode{
@@ -159,6 +163,8 @@ static HanhongDeviceHelper             *_hanhongDevice;
     [_hanhongDevice StartPlay:play_mode];
 }
 
-
+- (void)writePlayBuffer:(NSData *)data{
+    [_hanhongDevice WritePlayBuffer:data];
+}
 
 @end

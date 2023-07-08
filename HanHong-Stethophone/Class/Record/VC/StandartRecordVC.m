@@ -10,6 +10,7 @@
 #import "LungVoiceView.h"
 #import "StandarRecordBottomView.h"
 #import "RecordFinishVC.h"
+#import "ReadyRecordView.h"
 
 @interface StandartRecordVC ()<HeartVoiceViewDelegate, LungVoiceViewDelegate, StandarRecordBottomViewDelegate>
 
@@ -25,7 +26,7 @@
 @property (assign, nonatomic) Boolean                       bAuscultationSequence;//是否自动录音
 @property (retain, nonatomic) NSArray                      *arrayHeartReorcSequence;//心音自动录音顺序
 @property (retain, nonatomic) NSArray                       *arrayLungReorcSequence;//肺音自动录音顺序
-
+@property (retain, nonatomic) ReadyRecordView       *readyRecordView;
 @property (assign, nonatomic) NSInteger                     autoIndex;
 @property (assign, nonatomic) Boolean                       bActionFromAuto;//事件来自自动事件
 
@@ -38,13 +39,21 @@
     // Do any additional setup after loading the view.
     self.title = @"标准录音";
     self.view.backgroundColor = WHITECOLOR;
+    self.bAutoSaveRecord = YES;
     [self initNavi:1];
     self.selectIndex = 0;
     self.recordType = StanarRecord;
     self.autoIndex = 0;
     [self loadPlistData:YES];
+    [self loadRecordTypeData];
     [self initView];
     [self reloadView];
+}
+
+- (void)reloadView{
+    [super reloadView];
+    self.readyRecordView.duration = self.recordDurationAll;//录音总时长
+    
 }
 
 - (void)actionClickHeartButtonBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag{
@@ -85,7 +94,7 @@
     }
     
     NSString *name = [[Constant shareManager] positionTagPositionCn:self.currentPositon];
-    
+    self.readyRecordView.recordCode = self.recordCode;
     self.recordBottomView.positionName = [NSString stringWithFormat:@"正在采集%@",name];
 }
 
@@ -112,6 +121,7 @@
     } else if (self.soundsType == lung_sounds) {
         [self.lungVoiceView recordingPause];
     }
+    self.readyRecordView.stop = YES;
 }
 
 - (void)actionDeviceHelperRecordEnd{
@@ -126,6 +136,8 @@
     [self reloadViewRecordView];
     self.recordBottomView.labelStartRecord.hidden = YES;
     self.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
+    self.readyRecordView.recordCode = @"--";
+    self.readyRecordView.startTime = @"00:00";
     if (self.bAuscultationSequence) {
         self.autoIndex++;
         NSLog(@"autoIndex = %li", self.autoIndex);
@@ -138,6 +150,9 @@
 
 - (void)actionCancelClickBluetooth{
     self.recordBottomView.labelStartRecord.hidden = NO;
+    [self reloadViewRecordView];
+    self.readyRecordView.labelReadyRecord.text = @"准备录音";
+    self.readyRecordView.recordCode = @"--";
 }
 
 - (void)loadPlistData:(Boolean)firstLoadData{
@@ -154,7 +169,7 @@
             [self autoSelectNexrPositionSequence];
         }
     }
-    [self loadData];
+    [self loadRecordTypeData];
 }
 
 - (void)autoSelectNexrPositionSequence{
@@ -185,6 +200,13 @@
         self.lungVoiceView.positionValue = positionValue;
         
     }
+}
+
+//重新加载录音界面
+- (void)reloadViewRecordView{
+    //self.readyRecordView.recordTime = 0;
+    self.readyRecordView.progress = 0;
+    self.recordingState = recordingState_prepare;
 }
 
 - (void)realodFilerView{
@@ -220,7 +242,7 @@
     self.recordBottomView.sd_layout.topSpaceToView(self.heartVoiceView, 0);
     [self.recordBottomView updateLayout];
     self.lungVoiceView.hidden = YES;
-    [self loadData];
+    [self loadRecordTypeData];
     [self actionStartRecord];
 
 }
@@ -249,7 +271,7 @@
     self.recordBottomView.sd_layout.topSpaceToView(self.lungVoiceView, 0);
     [self.recordBottomView updateLayout];
     self.lungVoiceView.hidden = NO;
-    [self loadData];
+    [self loadRecordTypeData];
     [self actionStartRecord];
 }
 
@@ -317,6 +339,14 @@
         _recordBottomView.delegate = self;
     }
     return _recordBottomView;
+}
+
+- (ReadyRecordView *)readyRecordView{
+    if(!_readyRecordView) {
+        _readyRecordView = [[ReadyRecordView alloc] init];
+        _readyRecordView.backgroundColor = WHITECOLOR;
+    }
+    return _readyRecordView;
 }
 
 - (HeartVoiceView *)heartVoiceView{

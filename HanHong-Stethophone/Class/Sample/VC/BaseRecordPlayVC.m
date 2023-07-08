@@ -10,6 +10,7 @@
 @interface BaseRecordPlayVC ()
 
 @property (assign, nonatomic) Boolean               bAddRecordData;
+@property (retain, nonatomic) HHBluetoothButton              *buttonBluetooth;
 
 @end
 
@@ -169,6 +170,7 @@
         [[HHBlueToothManager shareManager] setPlayFile:data];
         self.bAddRecordData = YES;
     }
+    //[UIImage imageWithContentsOfFile:<#(nonnull NSString *)#>]
     NSLog(@"startTime = %f, endTime = %f", startTime, endTime);
     if (startTime == 0 && endTime == 0) {
         [[HHBlueToothManager shareManager] setPlayTimeRange:0 end_time:self.recordModel.record_length];
@@ -179,18 +181,41 @@
     
 }
 
+
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    //[self.navigationController setNavigationBarHidden:NO animated:YES];
+    UIBarButtonItem *item0 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    item0.width = Ratio11;
+    UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithCustomView:self.buttonBluetooth];
     
+    self.navigationItem.rightBarButtonItems = @[item0,item1];
+    [self.buttonBluetooth star];
     self.bCurrentView = YES;
-    
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillAppear:animated];
+    [super viewWillDisappear:animated];
     self.bCurrentView = NO;
+    [self.buttonBluetooth stop];
+    
     [self stopPlayRecord];
 }
+
+
+
+
+- (HHBluetoothButton *)buttonBluetooth{
+    if(!_buttonBluetooth) {
+        _buttonBluetooth  = [[HHBluetoothButton alloc] init];
+        //_buttonBluetooth.bluetoothButtonDelegate = self;
+    }
+    return _buttonBluetooth;
+}
+
+//- (void)actionClickBlueToothCallBack:(nonnull UIButton *)button {
+//    
+//}
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];

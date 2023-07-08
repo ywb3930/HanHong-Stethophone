@@ -5,78 +5,18 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
-         <BreakpointContent
-            uuid = "F2254348-7339-4261-BB48-C5A529451C58"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            breakpointStackSelectionBehavior = "1"
-            scope = "1"
-            stopOnStyle = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E601FA1C-3A5E-4020-9DC0-618B16580498"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Sample/VC/AnnotationVC.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
-            landmarkName = "-actionClickSaveAnnotation:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "72BAB757-0BC7-4F8A-96B3-35848581BB91"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/RemoteControl/VC/RemoteControlVC.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "43"
-            endingLineNumber = "43"
-            landmarkName = "-actionTableViewCellClickCallback:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D00C46CA-C88B-44AB-8837-A1AC48A95A6C"
+            uuid = "A3C966A0-F66D-4A4F-B19B-F24E213A9679"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "HanHong-Stethophone/Class/RemoteControl/VC/RemoteControlDetailVC.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
-            landmarkName = "-initData"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FA814E5C-1183-4B93-A450-231A5F63CD46"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/RemoteControl/VC/RemoteControlDetailVC.m"
-            startingColumnNumber = "5"
-            endingColumnNumber = "148"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "-actionEnterRoom"
+            startingLineNumber = "239"
+            endingLineNumber = "239"
+            landmarkName = "-actionMeetingDataServiceClientInfoReceived:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) float                 progress;
 @property (assign, nonatomic) Boolean               stop;
 @property (retain, nonatomic) NSString              *recordCode;
+@property (retain, nonatomic) NSString              *startTime;
 
 @end
 

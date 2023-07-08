@@ -19,7 +19,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MyCreateConsultationView : UITableView
-@property (retain, nonatomic) NoDataView        *noDataView;
+
 @property (weak, nonatomic) id<MyCreateConsultationViewDelegate> createConsultationDelegate;
 
 - (void)initData;

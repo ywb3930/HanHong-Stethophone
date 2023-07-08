@@ -10,6 +10,7 @@
 @interface BeInviteConsultationView()<UITableViewDelegate, UITableViewDataSource>
 
 @property (retain, nonatomic) NSArray           *arrayData;
+@property (retain, nonatomic) NoDataView        *noDataView;
 
 @end
 
@@ -57,6 +58,9 @@
             wself.bLoadData = YES;
             NSDictionary *data = responseObject[@"data"];
             wself.arrayData = [NSArray yy_modelArrayWithClass:[ConsultationModel class] json:data];
+            if(wself.arrayData == 0) {
+                wself.noDataView.hidden = NO;
+            }
             [wself reloadData];
         }
         [SVProgressHUD dismiss];
@@ -70,6 +74,15 @@
     self.dataSource = self;
     [self registerClass:[ConsultationCell class] forCellReuseIdentifier:NSStringFromClass([ConsultationCell class])];
     self.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self addSubview:self.noDataView];
+}
+
+- (NoDataView *)noDataView{
+    if (!_noDataView) {
+        _noDataView = [[NoDataView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight + Ratio35, screenW, screenH)];
+        _noDataView.hidden = YES;
+    }
+    return _noDataView;
 }
 
 @end

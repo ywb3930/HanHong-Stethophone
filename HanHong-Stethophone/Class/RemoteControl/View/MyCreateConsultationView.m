@@ -12,7 +12,7 @@
 @property (retain, nonatomic) NSMutableArray    *arrayData;
 @property (retain, nonatomic) UIButton          *buttonAdd;
 @property (retain, nonatomic) NSIndexPath       *currentIndexPath;
-
+@property (retain, nonatomic) NoDataView        *noDataView;
 
 
 @end
@@ -63,6 +63,9 @@
 - (void)reloadDataTableView{
     [self.arrayData removeObjectAtIndex:self.currentIndexPath.row];
     [self deleteRowsAtIndexPaths:@[self.currentIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -98,6 +101,9 @@
             NSDictionary *data = responseObject[@"data"];
             NSArray *array = [NSArray yy_modelArrayWithClass:[ConsultationModel class] json:data];
             [self.arrayData addObjectsFromArray:array];
+            if(self.arrayData.count == 0) {
+                self.noDataView.hidden = NO;
+            }
             [self reloadData];
         }
         [SVProgressHUD dismiss];
@@ -112,8 +118,7 @@
     self.dataSource = self;
     [self registerClass:[ConsultationCell class] forCellReuseIdentifier:NSStringFromClass([ConsultationCell class])];
     self.separatorStyle = UITableViewCellSeparatorStyleNone;
-    //[kAppWindow addSubview:self.noDataView];
-    
+    [self addSubview:self.noDataView];
     UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]  initWithTarget:self action:@selector(handleLongPress:)];
     lpgr.delegate = self;
     lpgr.delaysTouchesBegan = YES;
@@ -144,7 +149,7 @@
 }
 
 - (NoDataView *)noDataView{
-    if (_noDataView) {
+    if (!_noDataView) {
         _noDataView = [[NoDataView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight + Ratio35, screenW, screenH)];
         _noDataView.hidden = YES;
     }

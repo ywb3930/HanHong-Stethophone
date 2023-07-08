@@ -8,13 +8,14 @@
 #import "QuickRecordVC.h"
 #import "RecordFinishVC.h"
 #import "HeartFilterLungView.h"
+#import "ReadyRecordView.h"
 
 @interface QuickRecordVC ()<HeartFilterLungViewDelegate>
 
 
 @property (retain, nonatomic) UIView                *viewInfo;
 @property (retain ,nonatomic) UILabel               *labelStartRecord;
-
+@property (retain, nonatomic) ReadyRecordView       *readyRecordView;
 @property (retain, nonatomic) UILabel               *labelMessage;
 @property (retain, nonatomic) HeartFilterLungView   *heartFilterLungView;
 
@@ -28,10 +29,12 @@
     self.view.backgroundColor = ViewBackGroundColor;
     self.title = @"便捷录音";
     self.recordType = QuickRecord;
-    [self initNavi:2];
+    self.bAutoSaveRecord = YES;
+    [self initNavi:1];
     [self loadPlistData:YES];
     [self initView];
     [self reloadView];
+    [self loadRecordTypeData];
     [self actionStartRecord];
 }
 
@@ -41,23 +44,43 @@
     [self.navigationController pushViewController:recordFinish animated:YES];
 }
 
+//重新加载录音界面
+- (void)reloadViewRecordView{
+    //self.readyRecordView.recordTime = 0;
+    self.readyRecordView.progress = 0;
+    self.recordingState = recordingState_prepare;
+}
+
 
 //显示录音进度
 - (void)actionDeviceHelperRecordingTime:(float)number{
     self.labelStartRecord.hidden = YES;
+    self.readyRecordView.recordTime = number;
+    self.readyRecordView.progress = number / self.recordDurationAll;
 }
 
 - (void)actionDeviceHelperRecordPause{
-    
+    self.readyRecordView.stop = YES;
     self.labelStartRecord.hidden = NO;
 }
 
-- (void)actionDeviceHelperRecordEnd:(Boolean)success{
+- (void)actionDeviceHelperRecordBegin{
+    self.readyRecordView.recordCode = self.recordCode;
+}
+
+- (void)actionDeviceHelperRecordEnd{
+    self.readyRecordView.labelReadyRecord.text = @"保存成功，准备下一个录音";
+    self.readyRecordView.recordCode = @"--";
+    self.readyRecordView.startTime = @"00:00";
     self.labelStartRecord.hidden = NO;
+    [self reloadViewRecordView];
 }
 
 - (void)actionCancelClickBluetooth{
     self.labelStartRecord.hidden = NO;
+    [self reloadViewRecordView];
+    self.readyRecordView.labelReadyRecord.text = @"准备录音";
+    self.readyRecordView.recordCode = @"--";
 }
 
 //点击心音肺音按钮事件
@@ -72,7 +95,7 @@
     } else if (idx == 2) {
         self.soundsType = lung_sounds;
     }
-    [self loadData];
+    [self loadRecordTypeData];
     [self actionStartRecord];
     return YES;
 }
@@ -120,7 +143,7 @@
     }
     //判断滤波状态
     //[self realodFilerView];
-
+    self.readyRecordView.duration = self.recordDurationAll;//录音总时长
     
 }
 
@@ -162,6 +185,14 @@
         _labelMessage.hidden = YES;
     }
     return _labelMessage;
+}
+
+- (ReadyRecordView *)readyRecordView{
+    if(!_readyRecordView) {
+        _readyRecordView = [[ReadyRecordView alloc] init];
+        _readyRecordView.backgroundColor = WHITECOLOR;
+    }
+    return _readyRecordView;
 }
 
 - (HeartFilterLungView *)heartFilterLungView{

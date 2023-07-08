@@ -16,7 +16,6 @@
 
 @interface ClassRoomInfo : NSObject
 
-
 @property (assign, nonatomic) int classroom_id;
 @property (assign, nonatomic) int teacher_id;
 @property (copy, nonatomic) NSString *teacher_name;

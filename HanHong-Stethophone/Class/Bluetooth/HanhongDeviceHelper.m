@@ -8,6 +8,8 @@
   
 const int audiosize_per_second = 2 * 11025;
 const int audiosample_per_second = 11025;
+const int record_time_minimum = 3;
+const int record_time_maximum = 600;
 
 typedef NS_ENUM(NSInteger, RECORD_STATE)
 {
@@ -91,18 +93,24 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
 
 -(BOOL)SetRecordDuration:(int)duration
 {
-    if (duration >= 5 && duration <= 120) {
+    if (duration >= record_time_minimum && duration <= record_time_maximum) {
         configRecordDuration = duration;
         return true;
     }
     
     return false;
 }
+
+-(int)GetRecordDuration{
+    return recordDuration;
+}
      
 -(void)DelayExcuteRealtimeCmd
 {
-    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
-    dispatch_after(delayTime, dispatch_get_main_queue(), realtime_cmd);
+    if (realtime_cmd) {
+        dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC));
+        dispatch_after(delayTime, dispatch_get_main_queue(), realtime_cmd);
+    }
 }
 
 -(void)CancelRealtimeCmd
@@ -153,13 +161,35 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
     
     [cmd_lock unlock];
 }
--(NSData *)GetRecordData
+
+-(BOOL)IsRecording
+{
+    return recordState != RecordStop;
+}
+
+
+-(NSArray *)GetRecordData
 {
     if (recordState == RecordStop) {
         if (recordSecond > 0) {
            
             //去掉整数时间以外的数据
             int seconds = (int)(record_buffer.count * 400 / audiosize_per_second);
+            
+            if (recordMode == RecordingUntilRecordDuration) {
+                if (seconds < recordDuration) {
+                    return NULL;
+                } else {
+                    seconds = recordDuration;
+                }
+            } else if (recordMode == RecordingWithRecordDurationMaximum) {
+                if (seconds > recordDuration) {
+                    seconds = recordDuration;
+                }
+            } else {
+                //
+            }
+            
             int size = seconds * audiosize_per_second;
 
             NSMutableData *audio_data = [NSMutableData dataWithLength:size]; //包含音频头文件
@@ -185,42 +215,47 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
             
             audio_data = nil;
             
-            return [NSData dataWithData:ret_data];
+            return @[[NSNumber numberWithInt:seconds], [NSData dataWithData:ret_data]];
         }
     }
     
     return NULL;
 }
 
--(NSData *)GetRecordFile
+-(NSArray *)GetRecordFile
 {
-    NSData *audio_data = [self GetRecordData];
+    NSArray *audio_data = [self GetRecordData];
     
     if (audio_data == NULL) {
         return NULL;
     }
-  
-    NSMutableData *audio_file = [NSMutableData dataWithLength:audio_data.length + 44]; //包含音频头44字节
     
-    [audio_file replaceBytesInRange:NSMakeRange(44, audio_data.length) withBytes:audio_data.bytes];
+    NSNumber *audio_data_time = (NSNumber *)[audio_data firstObject];
+    NSData *audio_data_data = (NSData *)[audio_data lastObject];
+    
+    NSMutableData *audio_file = [NSMutableData dataWithLength:audio_data_data.length + 44]; //包含音频头44字节
+    
+    [audio_file replaceBytesInRange:NSMakeRange(44, audio_data_data.length) withBytes:audio_data_data.bytes];
      
-    [hanhongDevice GenerateWavFileHeader:(int)audio_data.length wav_file_header_buffer:audio_file];
+    [hanhongDevice GenerateWavFileHeader:(int)audio_data_data.length wav_file_header_buffer:audio_file];
     
     NSData *ret_data = [NSData dataWithData:audio_file];
     
     audio_file = nil;
     
-    return [NSData dataWithData:ret_data];
+    return @[audio_data_time, [NSData dataWithData:ret_data]];
 }
 
 -(void)SetPlayData:(NSData *)data
 {
     [self->cmd_lock lock];
     
-    play_data = [data copy];
-    
-    configPlayStartTime = 0;
-    configPlayEndTime = (float)play_data.length / audiosize_per_second;
+    if (data) {
+        play_data = [data copy];
+        
+        configPlayStartTime = 0;
+        configPlayEndTime = (float)play_data.length / audiosize_per_second;
+    }
     
     [self->cmd_lock unlock];
 }
@@ -228,6 +263,11 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
 -(void)SetPlayFile:(NSData *)file_data
 {
     [self->cmd_lock lock];
+    
+    if (file_data.length < 44) {
+        [self->cmd_lock unlock];
+        return;
+    }
     
     play_data = [file_data subdataWithRange:NSMakeRange(44, file_data.length - 44)]; //直接去掉头44字节（前提是我们自己录音的标准wav文件）
     
@@ -274,8 +314,10 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
 
 -(void)StartPlay:(PLAY_MODE)play_mode
 {
-    if (play_data == NULL) {
-        return;
+    if (play_mode == PlayingWithSettingData) {
+        if (play_data == NULL) {
+            return;
+        }
     }
     
     [cmd_lock lock];
@@ -344,6 +386,18 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
     [cmd_lock unlock];
 }
 
+-(BOOL)IsPlaying
+{
+    return [hanhongDevice RealtimePlayRunning];
+}
+
+-(void)WritePlayBuffer:(NSData *)data
+{
+    if (playMode == PlayingWithRealtimeData) {
+        [hanhongDevice RealtimePlayBufferWrite:data];
+    }
+}
+
 //异步的，真正结束时候会触发 DeviceHelperRecordEnd
 -(void)Stop
 {
@@ -401,6 +455,16 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
         
         [self EventCallback:DeviceConnected args1:NULL args2:NULL];
         
+        if (recordState == RecordPause) {
+            
+            if (![self IsRecordWithButton]) {
+                recordState = RecordIng;
+            } else {
+                [self EventCallback:DeviceHelperRecordReady args1:NULL args2:NULL];
+            }
+            
+        } [self EventCallback:DeviceConnected args1:NULL args2:NULL];
+        
     } else if (event == RealtimeRecordBeginEvent) {
         
         [cmd_lock lock];
@@ -410,18 +474,23 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
         [record_buffer removeAllObjects];
         
         [cmd_lock unlock];
-        
-        [self EventCallback:DeviceHelperRecordReady args1:NULL args2:NULL];
-        
+         
         if (![self IsRecordWithButton]) {
             recordState = RecordIng;
             [self EventCallback:DeviceHelperRecordBegin args1:NULL args2:NULL];
+        } else {
+            [self EventCallback:DeviceHelperRecordReady args1:NULL args2:NULL];
         }
         
     } else if (event == RealtimeRecordOnEvent) {
-             
-        recordState = RecordIng;
-        [self EventCallback:DeviceHelperRecordBegin args1:NULL args2:NULL];
+        
+        if (recordState == RecordStop) {
+            recordState = RecordIng;
+            [self EventCallback:DeviceHelperRecordBegin args1:NULL args2:NULL];
+        } else if (recordState == RecordPause) {
+            recordState = RecordIng;
+            [self EventCallback:DeviceHelperRecordResume args1:NULL args2:NULL];
+        }
       
     } else if (event == RealtimeRecordOffEvent) {
         
@@ -494,10 +563,11 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
         
     } else if (event == RealtimeRecordEndEvent) {
         
-        recordState = RecordStop;
+        if (recordState != RecordStop) {
+            recordState = RecordStop;
+            [self EventCallback:DeviceHelperRecordEnd args1:NULL args2:NULL];
+        }
         
-        [self EventCallback:DeviceHelperRecordEnd args1:NULL args2:NULL];
-         
     } else if (event == RealtimePlayBeginEvent) {
         
         float time;
@@ -541,7 +611,9 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
             playTime = playStartTime;
              
         } else {
-            [hanhongDevice RealtimeStop];
+            if (playMode == PlayingWithSettingData) {
+                [hanhongDevice RealtimeStop];
+            }
         }
         
         [cmd_lock unlock];
@@ -574,22 +646,27 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
         
         [self EventCallback:DeviceDisconnected args1:NULL args2:NULL];
         
-    } else if (event == ReadyEvent) {
-        
-        [self EventCallback:DeviceConnected args1:NULL args2:NULL];
-        
-        if (recordState == RecordPause) {
-            
-            if (![self IsRecordWithButton]) {
-                recordState = RecordIng;
-            }
-            
-        }
     } else if (event == ConnectingEvent) {
         
         [self EventCallback:DeviceConnecting args1:NULL args2:NULL];
         
+    } else if (event == ConnectFailEvent) {
+        
+        [self EventCallback:DeviceConnectFailed args1:NULL args2:NULL];
+        
+    } else if (event == RealtimeRecordLostEvent) {
+        
+        if (recordState == RecordIng) {
+            [self EventCallback:DeviceRecordLostEvent args1:NULL args2:NULL];
+        }
+        
+    } else if (event == RealtimeRecordInstableEvent || event == RealtimePlayInstableEvent) {
+        
+        if (recordState == RecordIng) {
+            [self EventCallback:DeviceRecordPlayInstable args1:NULL args2:NULL];
+        }
     }
+         
 }
  
 -(BOOL)Search:(DEVICE_MODEL)model{
@@ -701,6 +778,11 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
     return [hanhongDevice GetBootloaderVersion];
 }
 
+-(NSString *)GetMac
+{
+    return [hanhongDevice GetMac];
+}
 
 @end
+
 
