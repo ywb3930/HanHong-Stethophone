@@ -90,6 +90,7 @@
     if (data) {
         NSString *bluetoothDeviceUUID = [data objectForKey:@"bluetoothDeviceUUID"];
         [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:bluetoothDeviceUUID];
+        NSLog(@"bluetoothDeviceUUID 4 = %@", bluetoothDeviceUUID);
     }
 }
 

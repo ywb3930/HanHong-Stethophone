@@ -58,7 +58,7 @@
             wself.bLoadData = YES;
             NSDictionary *data = responseObject[@"data"];
             wself.arrayData = [NSArray yy_modelArrayWithClass:[ConsultationModel class] json:data];
-            if(wself.arrayData == 0) {
+            if(wself.arrayData.count == 0) {
                 wself.noDataView.hidden = NO;
             }
             [wself reloadData];

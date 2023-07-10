@@ -224,14 +224,14 @@
 
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
-    self.itemViewSex.textFieldInfo.text = index == woman ? @"女" : @"男";
+    self.itemViewSex.textFieldInfo.text = (index == man) ? @"女" : @"男";
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     self.currentTextField = textField;
     if(textField == self.itemViewSex.textFieldInfo) {
         [self.view endEditing:YES];
-        TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"女", @"男"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
+        TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"男", @"女"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
         actionSheet.delegate = self;
         [actionSheet showInView:self.view];
         return NO;

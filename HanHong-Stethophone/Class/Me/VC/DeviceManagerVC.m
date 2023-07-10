@@ -22,7 +22,7 @@
 #define Heart_Lung_filter_mode  3//心肺音过滤开关
 
 
-@interface DeviceManagerVC ()<UITableViewDelegate, UITableViewDataSource>
+@interface DeviceManagerVC ()<UITableViewDelegate, UITableViewDataSource, ScanTeachCodeVCDelegate>
 
 @property (retain, nonatomic) DeviceDefaultView         *deviceDefaultView;
 @property (retain, nonatomic) NSMutableArray            *arrayData;
@@ -60,6 +60,29 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
+- (void)actionScanCodeResultCallback:(NSString *)scanCodeResult{
+    NSString *deviceName = [[Constant shareManager] checkScanCode:scanCodeResult];
+    if ([Tools isBlankString:deviceName]) {
+        [self.view makeToast:@"无效二维码" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    NSString *macStr = [scanCodeResult substringFromIndex:2];
+    NSString *mac = [Tools converDataToMacStr:macStr];
+    BluetoothDeviceModel *model = [[BluetoothDeviceModel alloc] init];
+    model.bluetoothDeviceName = deviceName;
+    model.bluetoothDeviceMac = mac;
+    model.bluetoothDeviceUUID = macStr;
+    self.deviceModel = model;
+    [[HHBlueToothManager shareManager] abortSearch];//停止搜索
+    self.tableView.hidden = YES;
+    self.deviceDefaultView.deviceModel = model;
+    if([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED) {
+        [[HHBlueToothManager shareManager] disconnect];
+    }
+    [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:model.bluetoothDeviceUUID];
+    NSLog(@"bluetoothDeviceUUID 2 = %@", self.deviceModel.bluetoothDeviceUUID);
+}
+
 - (void)actionTapDeviceDefault:(UITapGestureRecognizer *)tap{
     if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED) {
         DEVICE_MODEL deviceModel = [[HHBlueToothManager shareManager] getDeviceType];
@@ -91,6 +114,7 @@
         [self.navigationController pushViewController:deviceMessage animated:YES];
     } else {
         [self.deviceDefaultView startTimer];
+        NSLog(@"bluetoothDeviceUUID 1 = %@", self.deviceModel.bluetoothDeviceUUID);
         [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:self.deviceModel.bluetoothDeviceUUID];
     }
     
@@ -393,6 +417,7 @@
 
 - (void)actionToScanView:(UIBarButtonItem *)item{
     ScanTeachCodeVC *scanTeachCode = [[ScanTeachCodeVC alloc] init];
+    scanTeachCode.delegate = self;
     [self.navigationController pushViewController:scanTeachCode animated:YES];
 }
 

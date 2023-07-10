@@ -11,11 +11,13 @@
 #import "ItemAgeView.h"
 #import "BRPickerView.h"
 #import "StandartRecordVC.h"
+#import "UINavigationController+QMUI.h"
+#import "UIViewController+HBD.h"
 
-@interface StandartRecordPatientInfoVC ()<TTActionSheetDelegate, UITextFieldDelegate>
+@interface StandartRecordPatientInfoVC ()<TTActionSheetDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource,UINavigationControllerBackButtonHandlerProtocol>
 
 @property (retain, nonatomic) LabelTextFieldItemView          *itemViewId;
-@property (retain, nonatomic) RightDirectionView        *itemViewSex;
+@property (retain, nonatomic) LabelTextFieldItemView        *itemViewSex;
 @property (retain, nonatomic) ItemAgeView               *itemAgeView;
 @property (retain, nonatomic) LabelTextFieldItemView          *itemViewHeight;
 @property (retain, nonatomic) LabelTextFieldItemView          *itemViewWeight;
@@ -24,11 +26,11 @@
 @property (retain, nonatomic) LabelTextFieldItemView        *itemViewArea;
 
 @property (retain, nonatomic) UIView                    *viewTop;
-//@property (retain, nonatomic) UITableView               *tableView;
+@property (retain, nonatomic) UITableView               *tableView;
 @property (retain, nonatomic) UIButton                  *buttonClearHistory;
 
 @property (retain, nonatomic) UIButton                  *buttonNext;
-@property (assign, nonatomic) Boolean                   bAddArea;
+@property (retain, nonatomic) NSMutableArray            *arrayData;
 
 @end
 
@@ -42,13 +44,65 @@
     [self initView];
     
 }
+//
+//- (void)viewDidAppear:(BOOL)animated
+//{
+//    [super viewDidAppear:animated];
+//    // 为当前控制器禁用👉右滑返回手势
+//    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+//        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+//    }
+//}
+//
+//- (BOOL)currentViewControllerShouldPop
+//{
+//    return NO;
+//}
+
+- (void)actionGetPatientList{
+    self.arrayData = [[HHDBHelper shareInstance] selectAllPatientHistory];
+    NSInteger count = self.arrayData.count;
+    if (count > 0) {
+        CGFloat height = Ratio33+self.arrayData.count * Ratio28;
+        CGFloat showHeight = (height > screenH / 3) ? screenH / 3 : height;
+        self.viewTop.hidden = NO;
+        self.viewTop.frame = CGRectMake(screenW/2, kNavBarAndStatusBarHeight + Ratio44, screenW/2 - Ratio22, showHeight);
+        [self.tableView reloadData];
+    }
+}
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    if (textField.tag == 11) {
+    NSInteger tag = textField.tag;
+    if (tag == 11) {
         [self actionSelectArea];
         return NO;
+    } else if (tag == 12) {
+        [self actionSelectSex];
+        return NO;
+    } else if (tag == 13) {
+        [self actionGetPatientList];
     }
     return YES;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    self.viewTop.hidden = YES;
+    [self.view endEditing:YES];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    PatientModel *model = self.arrayData[indexPath.row];
+    self.itemViewId.textFieldInfo.text = model.patient_id;
+    self.itemViewSex.textFieldInfo.text = (model.patient_sex == man) ? @"女" : @"男";
+    self.itemViewHeight.textFieldInfo.text = model.patient_height;
+    self.itemViewWeight.textFieldInfo.text = model.patient_weight;
+    self.itemViewDiagnose.textFieldInfo.text = model.patient_diagnosis;
+    self.itemViewDisease.textFieldInfo.text = model.patient_symptom;
+    self.itemViewArea.textFieldInfo.text = model.patient_area;
+    if(![Tools isBlankString:model.patient_birthday]) {
+        NSDictionary *data = [Tools getAgeFromBirthday:model.patient_birthday];
+        self.itemAgeView.textFieldAge.text = data[@"age"];
+        self.itemAgeView.textFieldMonth.text = data[@"month"];
+    }
+   
 }
 
 - (void)actionToNextView:(UIButton *)button{
@@ -57,8 +111,8 @@
         [self.view makeToast:@"请输入患者ID" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
-    NSString *sexString = self.itemViewSex.labelInfo.text;
-    if ([Tools isBlankString:patientId]) {
+    NSString *sexString = self.itemViewSex.textFieldInfo.text;
+    if ([Tools isBlankString:sexString]) {
         [self.view makeToast:@"选择患者性别" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
@@ -78,10 +132,25 @@
     model.patient_weight = self.itemViewWeight.textFieldInfo.text;
     model.patient_symptom = self.itemViewDisease.textFieldInfo.text;
     model.patient_diagnosis = self.itemViewDiagnose.textFieldInfo.text;
-    if(self.bAddArea) {
-        model.patient_area = self.itemViewArea.textFieldInfo.text;
-    }
+    model.patient_area = self.itemViewArea.textFieldInfo.text;
     
+    PatientModel *patientModel = [[PatientModel alloc] init];
+    patientModel.patient_id = patientId;
+    patientModel.patient_sex = sex;
+    patientModel.patient_birthday = birthday;
+    patientModel.patient_height = model.patient_height;
+    patientModel.patient_weight = model.patient_weight;
+    patientModel.patient_symptom = model.patient_symptom;
+    patientModel.patient_diagnosis = model.patient_diagnosis;
+    patientModel.patient_area = model.patient_area;
+    
+    
+    Boolean success = [[HHDBHelper shareInstance] addPatientItemData:patientModel];
+    if (success) {
+        NSLog(@"保存成功");
+    } else {
+        NSLog(@"保存失败");
+    }
     
     StandartRecordVC *standartRecord = [[StandartRecordVC alloc] init];
     standartRecord.recordModel = model;
@@ -89,8 +158,7 @@
 }
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
-    self.itemViewSex.labelInfo.text = index == woman ? @"女" : @"男";
-    self.itemViewSex.labelInfo.textColor = MainBlack;
+    self.itemViewSex.textFieldInfo.text = (index == man) ? @"女" : @"男";
 }
 
 - (void)actionSelectArea{
@@ -100,7 +168,6 @@
     //NSArray *dataSource = [NSArray arrayWithContentsOfFile:filePath];
     __weak typeof(self) wself = self;
     [BRAddressPickerView showAddressPickerWithShowType:BRAddressPickerModeArea dataSource:dataSource defaultSelected:nil isAutoSelect:NO themeColor:MainColor resultBlock:^(BRProvinceModel *province, BRCityModel *city, BRAreaModel *area) {
-        wself.bAddArea = YES;
         wself.itemViewArea.textFieldInfo.text = [NSString stringWithFormat:@"%@%@%@", province.name, city.name, area.name];
 
     } cancelBlock:^{
@@ -109,7 +176,7 @@
 }
 
 - (void)actionSelectSex{
-    TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"女", @"男"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
+    TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[ @"男", @"女"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
     actionSheet.delegate = self;
     [actionSheet showInView:self.view];
 }
@@ -132,14 +199,14 @@
     self.itemViewDiagnose.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewDisease, 0 ).heightIs(Ratio44);
     self.itemViewArea.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewDiagnose, 0 ).heightIs(Ratio44);
     [self.view addSubview:self.viewTop];
-//    [self.viewTop addSubview:self.tableView];
-//    [self.viewTop addSubview:self.buttonClearHistory];
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        CGFloat y = CGRectGetMaxY(self.itemViewId.frame);
-//        self.viewTop.frame = CGRectMake(Ratio11, y, screenW - Ratio22, screenH / 3);
-//        self.tableView.sd_layout.leftSpaceToView(self.viewTop, 0).topSpaceToView(self.viewTop, 0).rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, Ratio33);
-//        self.buttonClearHistory.sd_layout.rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, 0).heightIs(Ratio33).widthIs(Ratio55);
-//    });
+    [self.viewTop addSubview:self.tableView];
+    [self.viewTop addSubview:self.buttonClearHistory];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        //CGFloat y = CGRectGetMaxY(self.itemViewId.frame);
+        self.viewTop.frame = CGRectMake(screenW/2, kNavBarAndStatusBarHeight + Ratio44, screenW/2 - Ratio22, Ratio33);
+        self.tableView.sd_layout.leftSpaceToView(self.viewTop, 0).topSpaceToView(self.viewTop, 0).rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, Ratio33);
+        self.buttonClearHistory.sd_layout.rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, 0).heightIs(Ratio33).widthIs(Ratio55);
+    });
     
     [self.view addSubview:self.buttonNext];
     self.buttonNext.sd_layout.leftSpaceToView(self.view, Ratio22).rightSpaceToView(self.view, Ratio22).heightIs(Ratio44).topSpaceToView(self.itemViewArea, Ratio33);
@@ -163,28 +230,34 @@
         [_buttonClearHistory setTitle:@"清空历史" forState:UIControlStateNormal];
         [_buttonClearHistory setTitleColor:MainBlack forState:UIControlStateNormal];
         _buttonClearHistory.titleLabel.font = Font11;
+        [_buttonClearHistory addTarget:self action:@selector(actionClearHistory:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonClearHistory;
+}
+
+- (void)actionClearHistory:(UIButton *)button{
+     [[HHDBHelper shareInstance] deleteAllPatientData];
+    [self.arrayData removeAllObjects];
+    [self.tableView reloadData];
+    self.viewTop.hidden = YES;
 }
 
 
 - (LabelTextFieldItemView *)itemViewId{
     if(!_itemViewId) {
         _itemViewId = [[LabelTextFieldItemView alloc] initWithTitle:@"患者ID" bMust:NO placeholder:@"请输入患者的ID"];
+        _itemViewId.textFieldInfo.delegate = self;
+        _itemViewId.textFieldInfo.tag = 13;
     }
     return _itemViewId;
 }
 
-- (RightDirectionView *)itemViewSex{
+- (LabelTextFieldItemView *)itemViewSex{
     if(!_itemViewSex) {
-        _itemViewSex = [[RightDirectionView alloc] initWithTitle:@"性别"];
-        _itemViewSex.labelInfo.text = @"请选择患者的性别";
-        _itemViewSex.labelInfo.textColor = PlaceholderColor;
-        
-        __weak typeof(self) wself = self;
-        _itemViewSex.tapBlock = ^{
-            [wself actionSelectSex];
-        };
+        _itemViewSex = [[LabelTextFieldItemView alloc] initWithTitle:@"性别" bMust:NO placeholder:@"请选择患者的性别"];
+        _itemViewSex.textFieldInfo.tag = 12;
+        _itemViewSex.textFieldInfo.delegate = self;
+        _itemViewSex.bShowDirection = YES;
     }
     return _itemViewSex;
 }
@@ -257,36 +330,66 @@
     [self.view endEditing:YES];
     self.viewTop.hidden = YES;
 }
-//
-//- (UITableView *)tableView{
-//    if(!_tableView) {
-//        _tableView = [[UITableView alloc] init];
-//        _tableView.delegate = self;
-//        _tableView.dataSource = self;
-//        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//
-//    }
-//    return _tableView;
-//}
-//
-//
-//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-//    return 3;
-//}
-//
-//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    static NSString *cellIdentifier = @"cell";
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-//    if (!cell) {
-//        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-//    }
-//    cell.textLabel.text = @"123";
-//    return cell;
-//}
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    return Ratio22;
-//}
+
+- (UITableView *)tableView{
+    if(!_tableView) {
+        _tableView = [[UITableView alloc] init];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        //_tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+
+    }
+    return _tableView;
+}
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.arrayData.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *cellIdentifier = @"cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+    PatientModel *model = self.arrayData[indexPath.row];
+    cell.textLabel.text = model.patient_id;
+    cell.textLabel.textAlignment = NSTextAlignmentCenter;
+    cell.textLabel.font = Font13;
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return Ratio28;
+}
+
+
+- (BOOL)shouldHoldBackButtonEvent {
+    return YES;
+}
+
+- (BOOL)canPopViewController {
+    // 这里不要做一些费时的操作，否则可能会卡顿。
+    if (1) {
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"是否返回？" message:@"拦截系统返回" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *backActioin = [UIAlertAction actionWithTitle:@"返回" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"停留" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+
+        }];
+        [alertController addAction:backActioin];
+        [alertController addAction:continueAction];
+        [self presentViewController:alertController animated:YES completion:nil];
+
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+
 
 
 @end

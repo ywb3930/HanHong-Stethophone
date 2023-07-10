@@ -56,16 +56,18 @@
     } else if(tag == 8) {
         
         value = [NSString stringWithFormat:@"%li秒", time];
-        if (time < 5) {
-            [kAppWindow makeToast:@"录音时长不能少于5秒" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        if (time < record_time_minimum || time > record_time_maximum) {
+            NSString *message = [NSString stringWithFormat:@"录音时长为%i-%i秒", record_time_minimum, record_time_maximum];
+            [kAppWindow makeToast:message duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
         [self.settingData setObject:[@(time) stringValue] forKey:@"record_duration"];
         saveDictionary = YES;
     } else if(tag == 11) {
         value = [NSString stringWithFormat:@"%li秒", time];
-        if (time < 5) {
-            [kAppWindow makeToast:@"录音时长不能少于5秒" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        if (time < record_time_minimum || time > record_time_maximum) {
+            NSString *message = [NSString stringWithFormat:@"录音时长为%i-%i秒", record_time_minimum, record_time_maximum];
+            [kAppWindow makeToast:message duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
         [self.settingData setObject:[@(time) stringValue] forKey:@"remote_record_duration"];

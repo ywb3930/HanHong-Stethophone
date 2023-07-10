@@ -34,16 +34,16 @@
     if (self.loginType == login_type_personal || self.loginType == login_type_union) {
         self.arrayTitle = @[@"头像", @"姓名", @"性别", @"生日", @"地区", @"企业(医院)",@"部门(科室)", @"职称", @"邮箱", @"手机"];
         
-        self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == woman ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
+        self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man  ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
     } else if(self.loginType == login_type_teaching) {
         if (LoginData.role == Teacher_role) {
             self.arrayTitle = @[@"头像", @"姓名", @"性别", @"企业(医院)",@"部门(科室)", @"职称", @"院校", @"邮箱", @"手机"];
             
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == woman ? @"女" : @"男", LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"女" : @"男", LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
         } else if (LoginData.role == Student_role) {
             self.arrayTitle = @[@"头像", @"姓名", @"性别", @"院校", @"专业",@"班级", @"学号",  @"邮箱", @"手机"];
             
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == woman ? @"女" : @"男", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"女" : @"男", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
         }
     }
     
@@ -188,7 +188,7 @@
 }
 
 - (void)actionChangeSex{
-    TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"女", @"男"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
+    TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"男", @"女"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
     actionSheet.delegate = self;
     [actionSheet showInView:self.view];
 }
@@ -365,12 +365,12 @@
     if(![Tools isBlankString:loginData.org]){
         LoginData.org = loginData.org;
     }
-    self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == woman ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
+    self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
     [[HHLoginManager sharedManager] setCurrentHHLoginData:LoginData];
     
     [self.tableView reloadData];
 }
-
+//(index == man) ? @"女" : @"男"
 
 
 

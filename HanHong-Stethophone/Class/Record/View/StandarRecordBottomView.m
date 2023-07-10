@@ -9,6 +9,7 @@
 
 @interface StandarRecordBottomView()
 
+
 @property (retain, nonatomic) UIView                    *viewBottom;
 @property (retain, nonatomic) UILabel                   *labelCollectLocation;
 @property (retain, nonatomic) YYLabel                   *labelFiler;

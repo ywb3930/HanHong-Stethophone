@@ -51,11 +51,31 @@
     
 }
 
+- (void)actionDeviceHelperRecordResume{
+    
+}
+
 - (void)actionDeviceHelperRecordEnd{
     
 }
 
 - (void)actionDeviceHelperRecordingData:(NSData *)data{
+    
+}
+
+- (void)actionDeviceConnecting{
+    
+}
+
+- (void)actionDeviceConnected{
+    
+}
+
+- (void)actionDeviceConnectFailed{
+    
+}
+
+- (void)actionDeviceDisconnected{
     
 }
 
@@ -66,15 +86,20 @@
     DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
     NSObject *args1 = userInfo[@"args1"];
     NSObject *args2 = userInfo[@"args2"];
-    if (event == DeviceHelperRecordReady) {
+    if (event == DeviceConnecting) {
+        [self actionDeviceConnecting];
+    } else if (event == DeviceConnected) {
+        [self actionDeviceConnected];
+    } else if (event == DeviceConnectFailed) {
+        [self actionDeviceConnectFailed];
+    } else if (event == DeviceDisconnected) {
+        [self actionDeviceDisconnected];
+    } else if (event == DeviceHelperRecordReady) {
         self.recordingState = recordingState_prepare;
         NSLog(@"录音就绪");
         [self actionDeviceHelperRecordReady];
-    } else if (event != DeviceHelperRecordingData) {
-        NSLog(@"DEVICE_HELPER_EVENT = %li", event);
     }
-    //开始录音
-    if (event == DeviceHelperRecordBegin) {
+    else if (event == DeviceHelperRecordBegin) {
         self.recordingState = recordingState_ing;
         self.recordCode = [NSString stringWithFormat:@"%@%@",[Tools getCurrentTimes], [Tools getRamdomString]];
         NSLog(@"录音开始: %@", self.recordCode);
@@ -100,13 +125,14 @@
         }
         //
     } else if (event == DeviceHelperRecordPause) {
-        
         self.recordingState = recordingState_pause;
         NSLog(@"录音暂停");
         dispatch_async(dispatch_get_main_queue(), ^{
-            
             [self actionDeviceHelperRecordPause];
         });
+    } else if (event == DeviceHelperRecordResume) {
+        NSLog(@"录音恢复");
+        [self actionDeviceHelperRecordResume];
     } else if (event == DeviceHelperRecordEnd) {
         NSLog(@"录音结束");
         self.recordingState = recordingState_stop;

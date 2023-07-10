@@ -7,6 +7,9 @@
 
 #import "Constant.h"
 
+NSString *const EarPhone_btName = @"EARPHONE_ER001";
+NSString *const DS88_btName = @"DS88";
+
 @implementation Constant
 
 +(instancetype)shareManager{
@@ -78,6 +81,31 @@
 
 - (NSString *)getRecordShareBrief{
     return [NSString stringWithFormat:@"%@record/share_brief/", REQUEST_URL];
+}
+
+- (NSString *)checkScanCode:(NSString *)scanCode{
+    if (scanCode.length != 14) {
+        return @"";
+    }
+    NSString *header = [scanCode substringToIndex:2];
+    NSString *deviceName = @"";
+    if ([header isEqualToString:@"DS"]) {
+        deviceName = POPULAR3_btName;
+    } else if ([header isEqualToString:@"EP"]) {
+        deviceName = EarPhone_btName;
+    } else if ([header isEqualToString:@"ST"]) {
+        deviceName = POPULAR3_btName;
+    } else if ([header isEqualToString:@"PO"]) {
+        deviceName = POP3_btName;
+    } else {
+        return @"";
+    }
+    NSString *macStr = [scanCode substringFromIndex:2];
+    if (![Tools checkLogisticsCode:macStr]) {
+        return @"";
+    }
+    
+    return deviceName;
 }
 
 

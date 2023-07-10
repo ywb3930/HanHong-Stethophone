@@ -455,7 +455,7 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
         
         [self EventCallback:DeviceConnected args1:NULL args2:NULL];
         
-        if (recordState == RecordPause) {
+        if ([hanhongDevice RealtimeRecordRunning]) {
             
             if (![self IsRecordWithButton]) {
                 recordState = RecordIng;

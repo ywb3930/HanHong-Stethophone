@@ -121,6 +121,8 @@ static id _instance;
     return isMatch;
 }
 
+
+
 + (BOOL)checkLogisticsCode:(NSString *) logisticsCode{
     NSString *pattern = @"^[0-9a-zA-Z]+$";
     //NSString *pattern = @"^[\\w_-]{8,16}$";

@@ -33,6 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)actionDeviceHelperRecordingTime:(float)number;
 - (void)actionDeviceHelperRecordPause;
 - (void)actionDeviceHelperRecordEnd;
+- (void)actionDeviceConnecting;
+- (void)actionDeviceHelperRecordResume;
+- (void)actionDeviceConnected;
+- (void)actionDeviceConnectFailed;
+- (void)actionDeviceDisconnected;
 - (void)actionDeviceHelperRecordingData:(NSData *)data;
 - (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel;
 - (void)loadRecordTypeData;

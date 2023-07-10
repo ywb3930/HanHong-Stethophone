@@ -171,8 +171,8 @@
             scanCodeResult = metadataObj.stringValue;
             [self.view makeToast:scanCodeResult duration:showToastViewWarmingTime position:CSToastPositionCenter];
             //回调信息
-            if (self.delegate && [self.delegate respondsToSelector:@selector(scanCodeResultCallback:)]) {
-                [self.delegate scanCodeResultCallback:scanCodeResult];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(actionScanCodeResultCallback:)]) {
+                [self.delegate actionScanCodeResultCallback:scanCodeResult];
                 [self.navigationController popViewControllerAnimated:YES];
             }
         } else {

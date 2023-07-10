@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ScanTeachCodeVCDelegate <NSObject>
 
-- (void)scanCodeResultCallback:(NSString *)scanCodeResult;
+- (void)actionScanCodeResultCallback:(NSString *)scanCodeResult;
 
 @end
 

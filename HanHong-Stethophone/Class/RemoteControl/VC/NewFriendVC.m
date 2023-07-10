@@ -130,6 +130,7 @@
     } else {
         cell.friendNewModel = self.arrayData[indexPath.row];
     }
+    //cell.
     cell.delegate = self;
     return cell;
 }

@@ -79,6 +79,10 @@
         [self.buttonRight setTitle:@"添加" forState:UIControlStateNormal];
     }
     [self showLabelMessage:searchModel];
+    NSString *text = self.labelMessage.text;
+    CGFloat width = [Tools widthForString:text fontSize:Ratio13 andHeight:Ratio15];
+    self.labelMessage.sd_layout.widthIs(width);
+    [self.labelMessage updateLayout];
     
 }
 
@@ -101,6 +105,7 @@
     }
     
     self.labelName.text = name;
+    
 }
 
 
@@ -154,6 +159,10 @@
             self.labelMessage.text = @"好友请求不通过";
         }
     }
+    NSString *text = self.labelMessage.text;
+    CGFloat width = [Tools widthForString:text fontSize:Ratio13 andHeight:Ratio15];
+    self.labelMessage.sd_layout.widthIs(width);
+    [self.labelMessage updateLayout];
 }
 
 - (void)setBShowCheck:(Boolean)bShowCheck{
@@ -180,11 +189,12 @@
     
     self.buttonClick.sd_layout.leftSpaceToView(self.contentView, Ratio11).heightIs(Ratio33).widthIs(0).centerYEqualToView(self.contentView);
     self.imageViewHead.sd_layout.leftSpaceToView(self.buttonClick, Ratio5).topSpaceToView(self.contentView, Ratio17).heightIs(60.f*screenRatio).widthIs(60.f*screenRatio);
-    self.labelCommpany.sd_layout.leftEqualToView(self.labelName).widthIs(Ratio135).centerYEqualToView(self.imageViewHead).heightIs(Ratio16);
-    self.labelMessage.sd_layout.centerYEqualToView(self.imageViewHead).heightIs(Ratio16).rightSpaceToView(self.contentView, Ratio11).widthIs(screenW/2);
+    self.labelMessage.sd_layout.centerYEqualToView(self.imageViewHead).heightIs(Ratio16).rightSpaceToView(self.contentView, Ratio11).widthIs(0);
+    self.labelCommpany.sd_layout.leftEqualToView(self.labelName).rightSpaceToView(self.labelMessage, Ratio5).centerYEqualToView(self.imageViewHead).heightIs(Ratio16);
+
     self.labelName.sd_layout.leftSpaceToView(self.imageViewHead, Ratio15).rightSpaceToView(self.contentView, Ratio15).bottomSpaceToView(self.labelCommpany, Ratio3).heightIs(Ratio17);
     
-    [self.labelCommpany setSingleLineAutoResizeWithMaxWidth:screenW-Ratio99];
+    //[self.labelCommpany setSingleLineAutoResizeWithMaxWidth:screenW-Ratio99];
     self.labelDepartment.sd_layout.leftEqualToView(self.labelName).rightEqualToView(self.labelName).topSpaceToView(self.labelCommpany, Ratio3).heightIs(Ratio16);
     
     self.buttonRight.sd_layout.rightSpaceToView(self.contentView, Ratio11).centerYEqualToView(self.imageViewHead).heightIs(Ratio22).widthIs(Ratio40);
@@ -217,6 +227,7 @@
         _labelCommpany = [[UILabel alloc] init];
         _labelCommpany.font = Font15;
         _labelCommpany.textColor = MainBlack;
+        _labelCommpany.lineBreakMode = NSLineBreakByCharWrapping;
     }
     return _labelCommpany;
 }
@@ -237,6 +248,7 @@
         _labelMessage.textColor = MainGray;
         _labelMessage.textAlignment = NSTextAlignmentRight;
         _labelMessage.hidden = YES;
+        
     }
     return _labelMessage;
 }

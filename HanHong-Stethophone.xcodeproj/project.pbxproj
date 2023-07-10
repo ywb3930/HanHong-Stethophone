@@ -21,7 +21,6 @@
 		9721E0B22A427F5E00B68939 /* NewFriendVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9721E0B12A427F5E00B68939 /* NewFriendVC.m */; };
 		9721E0B52A4285AE00B68939 /* FriendModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9721E0B42A4285AE00B68939 /* FriendModel.m */; };
 		9721E0B82A4288DD00B68939 /* FriendCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9721E0B72A4288DD00B68939 /* FriendCell.m */; };
-		9721E0BB2A42925800B68939 /* NSString+ChineseCharactersToSpelling.m in Sources */ = {isa = PBXBuildFile; fileRef = 9721E0BA2A42925700B68939 /* NSString+ChineseCharactersToSpelling.m */; };
 		9721E0C12A42D8C400B68939 /* CreateConsultationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9721E0C02A42D8C400B68939 /* CreateConsultationVC.m */; };
 		9721E0C42A42E02D00B68939 /* CreateConsultationHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9721E0C32A42E02D00B68939 /* CreateConsultationHeaderView.m */; };
 		9721E0C72A42E31400B68939 /* CreateConsultationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9721E0C62A42E31400B68939 /* CreateConsultationCell.m */; };
@@ -62,6 +61,12 @@
 		973655362A591792006919AB /* HanhongDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 973655322A591792006919AB /* HanhongDevice.m */; };
 		9736553D2A595164006919AB /* HanhongDeviceHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 9736553C2A595164006919AB /* HanhongDeviceHelper.m */; };
 		973655422A59553C006919AB /* GuideVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 973655412A59553C006919AB /* GuideVC.m */; };
+		9736554B2A5A49AF006919AB /* UIViewController+BackBtnEventIntercept.m in Sources */ = {isa = PBXBuildFile; fileRef = 9736554A2A5A49AF006919AB /* UIViewController+BackBtnEventIntercept.m */; };
+		973655582A5A5139006919AB /* ViewController+extension.m in Sources */ = {isa = PBXBuildFile; fileRef = 9736554D2A5A5139006919AB /* ViewController+extension.m */; };
+		973655592A5A5139006919AB /* UINavigationController+QMUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 973655502A5A5139006919AB /* UINavigationController+QMUI.m */; };
+		9736555A2A5A5139006919AB /* UIViewController+HBD.m in Sources */ = {isa = PBXBuildFile; fileRef = 973655542A5A5139006919AB /* UIViewController+HBD.m */; };
+		9736555B2A5A5139006919AB /* HBDNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 973655552A5A5139006919AB /* HBDNavigationBar.m */; };
+		9736555C2A5A5139006919AB /* HBDNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 973655572A5A5139006919AB /* HBDNavigationController.m */; };
 		97469CBE2A4DBD9A0091A3F3 /* DeviceMessageVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CBD2A4DBD9A0091A3F3 /* DeviceMessageVC.m */; };
 		97469CC12A4DC7F60091A3F3 /* DeviceMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CC02A4DC7F50091A3F3 /* DeviceMessageCell.m */; };
 		97469CCD2A4E78DA0091A3F3 /* RecordFinishVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97469CCC2A4E78DA0091A3F3 /* RecordFinishVC.m */; };
@@ -223,8 +228,6 @@
 		9721E0B42A4285AE00B68939 /* FriendModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriendModel.m; sourceTree = "<group>"; };
 		9721E0B62A4288DD00B68939 /* FriendCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FriendCell.h; sourceTree = "<group>"; };
 		9721E0B72A4288DD00B68939 /* FriendCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FriendCell.m; sourceTree = "<group>"; };
-		9721E0B92A42925700B68939 /* NSString+ChineseCharactersToSpelling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+ChineseCharactersToSpelling.h"; sourceTree = "<group>"; };
-		9721E0BA2A42925700B68939 /* NSString+ChineseCharactersToSpelling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+ChineseCharactersToSpelling.m"; sourceTree = "<group>"; };
 		9721E0BF2A42D8C400B68939 /* CreateConsultationVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateConsultationVC.h; sourceTree = "<group>"; };
 		9721E0C02A42D8C400B68939 /* CreateConsultationVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CreateConsultationVC.m; sourceTree = "<group>"; };
 		9721E0C22A42E02D00B68939 /* CreateConsultationHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateConsultationHeaderView.h; sourceTree = "<group>"; };
@@ -306,6 +309,18 @@
 		9736553C2A595164006919AB /* HanhongDeviceHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HanhongDeviceHelper.m; sourceTree = "<group>"; };
 		973655402A59553C006919AB /* GuideVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuideVC.h; sourceTree = "<group>"; };
 		973655412A59553C006919AB /* GuideVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GuideVC.m; sourceTree = "<group>"; };
+		973655492A5A49AF006919AB /* UIViewController+BackBtnEventIntercept.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIViewController+BackBtnEventIntercept.h"; sourceTree = "<group>"; };
+		9736554A2A5A49AF006919AB /* UIViewController+BackBtnEventIntercept.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+BackBtnEventIntercept.m"; sourceTree = "<group>"; };
+		9736554D2A5A5139006919AB /* ViewController+extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ViewController+extension.m"; sourceTree = "<group>"; };
+		9736554E2A5A5139006919AB /* UINavigationController+QMUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+QMUI.h"; sourceTree = "<group>"; };
+		9736554F2A5A5139006919AB /* ViewController+extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+extension.h"; sourceTree = "<group>"; };
+		973655502A5A5139006919AB /* UINavigationController+QMUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+QMUI.m"; sourceTree = "<group>"; };
+		973655522A5A5139006919AB /* HBDNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBDNavigationBar.h; sourceTree = "<group>"; };
+		973655532A5A5139006919AB /* HBDNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBDNavigationController.h; sourceTree = "<group>"; };
+		973655542A5A5139006919AB /* UIViewController+HBD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+HBD.m"; sourceTree = "<group>"; };
+		973655552A5A5139006919AB /* HBDNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBDNavigationBar.m; sourceTree = "<group>"; };
+		973655562A5A5139006919AB /* UIViewController+HBD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+HBD.h"; sourceTree = "<group>"; };
+		973655572A5A5139006919AB /* HBDNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBDNavigationController.m; sourceTree = "<group>"; };
 		97469CBC2A4DBD9A0091A3F3 /* DeviceMessageVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceMessageVC.h; sourceTree = "<group>"; };
 		97469CBD2A4DBD9A0091A3F3 /* DeviceMessageVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DeviceMessageVC.m; sourceTree = "<group>"; };
 		97469CBF2A4DC7F50091A3F3 /* DeviceMessageCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeviceMessageCell.h; sourceTree = "<group>"; };
@@ -698,6 +713,30 @@
 			path = PrivacyPermission;
 			sourceTree = "<group>";
 		};
+		9736554C2A5A5139006919AB /* UINavgationController */ = {
+			isa = PBXGroup;
+			children = (
+				9736554D2A5A5139006919AB /* ViewController+extension.m */,
+				9736554E2A5A5139006919AB /* UINavigationController+QMUI.h */,
+				9736554F2A5A5139006919AB /* ViewController+extension.h */,
+				973655502A5A5139006919AB /* UINavigationController+QMUI.m */,
+			);
+			path = UINavgationController;
+			sourceTree = "<group>";
+		};
+		973655512A5A5139006919AB /* NavgationBar */ = {
+			isa = PBXGroup;
+			children = (
+				973655522A5A5139006919AB /* HBDNavigationBar.h */,
+				973655532A5A5139006919AB /* HBDNavigationController.h */,
+				973655542A5A5139006919AB /* UIViewController+HBD.m */,
+				973655552A5A5139006919AB /* HBDNavigationBar.m */,
+				973655562A5A5139006919AB /* UIViewController+HBD.h */,
+				973655572A5A5139006919AB /* HBDNavigationController.m */,
+			);
+			path = NavgationBar;
+			sourceTree = "<group>";
+		};
 		9751BD922A47DF7C00787A5A /* RemoteControlTeacher */ = {
 			isa = PBXGroup;
 			children = (
@@ -944,6 +983,8 @@
 		9B29B2322A3C0F89008DCFE7 /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				973655512A5A5139006919AB /* NavgationBar */,
+				9736554C2A5A5139006919AB /* UINavgationController */,
 				972CBF552A54177900B8F8DE /* KSYAudioPlotView */,
 				9751BD9D2A47F12400787A5A /* HHCalendar */,
 				97349E032A40007800AF5A06 /* PrivacyPermission */,
@@ -1231,8 +1272,8 @@
 				9B29B2A82A3C0F89008DCFE7 /* UIButton+ImagePosition.m */,
 				9B29B2B02A3C0F89008DCFE7 /* UIView+KJRectCorner.h */,
 				9B29B2AA2A3C0F89008DCFE7 /* UIView+KJRectCorner.m */,
-				9721E0B92A42925700B68939 /* NSString+ChineseCharactersToSpelling.h */,
-				9721E0BA2A42925700B68939 /* NSString+ChineseCharactersToSpelling.m */,
+				973655492A5A49AF006919AB /* UIViewController+BackBtnEventIntercept.h */,
+				9736554A2A5A49AF006919AB /* UIViewController+BackBtnEventIntercept.m */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -1659,7 +1700,6 @@
 				972CC0B32A5564A200B8F8DE /* BaseRecordPlayVC.m in Sources */,
 				97349E092A4002B100AF5A06 /* DeviceManagerVC.m in Sources */,
 				97ED415C2A4A63DF0055D1C4 /* TeachingHistoryModel.m in Sources */,
-				9721E0BB2A42925800B68939 /* NSString+ChineseCharactersToSpelling.m in Sources */,
 				9B29B3102A3C0F89008DCFE7 /* KSImagePickerAlbumModel.m in Sources */,
 				9B29B31C2A3C0F89008DCFE7 /* KSImagePickerViewerVideoCell.m in Sources */,
 				9B29B34B2A3C0F89008DCFE7 /* TTActionSheet.m in Sources */,
@@ -1679,6 +1719,7 @@
 				9B29B3282A3C0F89008DCFE7 /* UIView+MLExtension.m in Sources */,
 				9B29B3082A3C0F89008DCFE7 /* KSMediaViewerController.m in Sources */,
 				9B29B3432A3C0F89008DCFE7 /* UserInfoVC.m in Sources */,
+				973655592A5A5139006919AB /* UINavigationController+QMUI.m in Sources */,
 				9721E0AF2A427E5600B68939 /* FriendBookVC.m in Sources */,
 				9B29B3542A3C0F89008DCFE7 /* HHTabBarController.m in Sources */,
 				9751BDA62A480A3600787A5A /* HHCalendarCell.m in Sources */,
@@ -1692,6 +1733,7 @@
 				9B29B3412A3C0F89008DCFE7 /* RemoteControlVC.m in Sources */,
 				9B29B3072A3C0F89008DCFE7 /* BRAddressPickerView.m in Sources */,
 				972CC0C02A566FF000B8F8DE /* AnnotationItemCell.m in Sources */,
+				9736555C2A5A5139006919AB /* HBDNavigationController.m in Sources */,
 				9765E0792A3DA15200181452 /* LungBodyFrontView.m in Sources */,
 				9B29B33B2A3C0F89008DCFE7 /* ForgetPasswordVC.m in Sources */,
 				9751BDC72A49391600787A5A /* ProgramModel.m in Sources */,
@@ -1727,14 +1769,18 @@
 				9765E0632A3D3A0800181452 /* StandartRecordVC.m in Sources */,
 				9721E0A02A41A90000B68939 /* ConsultationModel.m in Sources */,
 				972CC0BA2A5592D000B8F8DE /* AnnotationInfoVC.m in Sources */,
+				9736555A2A5A5139006919AB /* UIViewController+HBD.m in Sources */,
+				973655582A5A5139006919AB /* ViewController+extension.m in Sources */,
 				972CBF632A54177900B8F8DE /* KSYAudioPlotView.m in Sources */,
 				9751BDA32A47F28500787A5A /* HHCalendarManager.m in Sources */,
 				9B29B3152A3C0F89008DCFE7 /* KSImagePickerViewerNavigationView.m in Sources */,
 				9B29B3422A3C0F89008DCFE7 /* MeVC.m in Sources */,
+				9736555B2A5A5139006919AB /* HBDNavigationBar.m in Sources */,
 				9721E0A62A41AF5C00B68939 /* BeInviteConsultationView.m in Sources */,
 				9B29B3062A3C0F89008DCFE7 /* BRAddressModel.m in Sources */,
 				9B29B3472A3C0F89008DCFE7 /* LabelTextFieldItemView.m in Sources */,
 				9B29B34E2A3C0F89008DCFE7 /* PasswordItemView.m in Sources */,
+				9736554B2A5A49AF006919AB /* UIViewController+BackBtnEventIntercept.m in Sources */,
 				973655212A581922006919AB /* BluetoothHelper.m in Sources */,
 				9721E0B22A427F5E00B68939 /* NewFriendVC.m in Sources */,
 				9B29B31A2A3C0F89008DCFE7 /* KSImagePickerEditPictureView.m in Sources */,

@@ -101,7 +101,7 @@ static FMDatabase *_db;
  查询患者ID是否存在
  */
 - (Boolean)checkPatientIDIsExist:(NSString *)patientId{
-    NSString *sql = [NSString stringWithFormat:@"select count(patientId) as countNum from patientHistory where patientId = '%@'", patientId];
+    NSString *sql = [NSString stringWithFormat:@"select count(patient_id) as countNum from patientHistory where patient_id = '%@'", patientId];
     FMResultSet *set = [_db executeQuery:sql];
     while ([set next]) {
         NSInteger count = [set intForColumn:@"countNum"];
@@ -130,8 +130,17 @@ static FMDatabase *_db;
  */
 - (void)deletePatientItemData:(NSString *)patient_id{
     NSString *sql = [NSString stringWithFormat:@"delete from patientHistory where patient_id = '%@'", patient_id];
+    BOOL success =  [_db executeUpdate:sql];
+    NSLog(@"%@", [@(success) stringValue]);
+}
+/**
+ 删除数据
+ */
+- (void)deleteAllPatientData{
+    NSString *sql = [NSString stringWithFormat:@"delete from patientHistory"];
     [_db executeUpdate:sql];
 }
+
 
 /**
  查询所有记录

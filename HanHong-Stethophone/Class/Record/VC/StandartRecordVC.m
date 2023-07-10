@@ -30,6 +30,7 @@
 @property (assign, nonatomic) NSInteger                     autoIndex;
 @property (assign, nonatomic) Boolean                       bActionFromAuto;//事件来自自动事件
 
+
 @end
 
 @implementation StandartRecordVC
@@ -48,6 +49,7 @@
     [self loadRecordTypeData];
     [self initView];
     [self reloadView];
+    self.recordBottomView.labelStartRecord.hidden = YES;
 }
 
 - (void)reloadView{
@@ -60,6 +62,7 @@
     self.soundsType = heart_sounds;
     self.currentPositon = string;
     [self actionAfterButtonTypeClick];
+    self.recordBottomView.labelStartRecord.hidden = NO;
 }
 
 - (void)actionClickButtonLungBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag position:(NSInteger)position{
@@ -72,8 +75,27 @@
     NSString *name = [[Constant shareManager] positionTagPositionCn:self.currentPositon];
     self.readyRecordView.labelReadyRecord.text = @"准备录音";
     self.recordBottomView.positionName = [NSString stringWithFormat:@"准备开始采集%@",name];
-    self.recordBottomView.labelStartRecord.hidden = NO;
+    self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
     [self actionStartRecord];
+}
+
+
+- (void)actionDeviceConnecting{
+    self.recordBottomView.recordMessage = @"设备正在连接";
+}
+
+- (void)actionDeviceConnectFailed{
+    self.recordBottomView.recordMessage = @"设备连接失败";
+}
+
+- (void)actionDeviceConnected{
+    if ([[HHBlueToothManager shareManager] getDeviceType] != STETHOSCOPE) {
+        self.recordBottomView.recordMessage = @"连接的设备不是听诊器，无录音功能";
+    }
+}
+
+- (void)actionDeviceDisconnected{
+    self.recordBottomView.recordMessage = @"设备已断开";
 }
 
 - (void)actionDeviceHelperRecordReady{
@@ -82,6 +104,8 @@
     } else if (self.soundsType == lung_sounds) {
         self.lungVoiceView.recordingStae = recordingState_prepare;
     }
+    self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
+    
 }
 
 - (void)actionDeviceHelperRecordBegin{
@@ -106,7 +130,11 @@
     }
     self.readyRecordView.recordTime = number;
     self.readyRecordView.progress = number / self.recordDurationAll;
-    self.recordBottomView.labelStartRecord.hidden = YES;
+    self.recordBottomView.recordMessage = @"";
+}
+
+- (void)actionDeviceHelperRecordResume{
+    self.recordBottomView.recordMessage = @"";
 }
 
 - (void)actionDeviceHelperRecordPause{
@@ -115,7 +143,7 @@
     } else if (self.soundsType == lung_sounds) {
         self.lungVoiceView.recordingStae = recordingState_pause;
     }
-    self.recordBottomView.labelStartRecord.hidden = NO;
+    self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
     if (self.soundsType == heart_sounds) {
         [self.heartVoiceView recordingPause];
     } else if (self.soundsType == lung_sounds) {
@@ -125,7 +153,6 @@
 }
 
 - (void)actionDeviceHelperRecordEnd{
-    self.recordBottomView.labelStartRecord.hidden = NO;
     if (self.soundsType == heart_sounds) {
         self.heartVoiceView.recordingStae = recordingState_stop;
         [self.heartVoiceView recordingStop];
@@ -134,7 +161,7 @@
         [self.lungVoiceView recordingStop];
     }
     [self reloadViewRecordView];
-    self.recordBottomView.labelStartRecord.hidden = YES;
+    self.recordBottomView.recordMessage = @"";
     self.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
     self.readyRecordView.recordCode = @"--";
     self.readyRecordView.startTime = @"00:00";
@@ -149,7 +176,7 @@
 }
 
 - (void)actionCancelClickBluetooth{
-    self.recordBottomView.labelStartRecord.hidden = NO;
+    //self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
     [self reloadViewRecordView];
     self.readyRecordView.labelReadyRecord.text = @"准备录音";
     self.readyRecordView.recordCode = @"--";

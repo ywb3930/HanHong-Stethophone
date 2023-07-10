@@ -54,14 +54,14 @@
 
 //显示录音进度
 - (void)actionDeviceHelperRecordingTime:(float)number{
-    self.labelStartRecord.hidden = YES;
+    self.labelStartRecord.text = @"";
     self.readyRecordView.recordTime = number;
     self.readyRecordView.progress = number / self.recordDurationAll;
 }
 
 - (void)actionDeviceHelperRecordPause{
     self.readyRecordView.stop = YES;
-    self.labelStartRecord.hidden = NO;
+    self.labelStartRecord.text = @"按听诊器录音键开始录音";
 }
 
 - (void)actionDeviceHelperRecordBegin{
@@ -72,12 +72,38 @@
     self.readyRecordView.labelReadyRecord.text = @"保存成功，准备下一个录音";
     self.readyRecordView.recordCode = @"--";
     self.readyRecordView.startTime = @"00:00";
-    self.labelStartRecord.hidden = NO;
+    self.labelStartRecord.text = @"";
     [self reloadViewRecordView];
 }
 
+- (void)actionDeviceHelperRecordReady{
+    self.labelStartRecord.text = @"按听诊器录音键开始录音";
+}
+
+- (void)actionDeviceHelperRecordResume{
+    self.labelStartRecord.text = @"";
+}
+
+- (void)actionDeviceConnecting{
+    self.labelStartRecord.text = @"设备正在连接";
+}
+
+- (void)actionDeviceConnectFailed{
+    self.labelStartRecord.text = @"设备连接失败";
+}
+
+- (void)actionDeviceConnected{
+    if ([[HHBlueToothManager shareManager] getDeviceType] != STETHOSCOPE) {
+        self.labelStartRecord.text = @"连接的设备不是听诊器，无录音功能";
+    }
+}
+
+- (void)actionDeviceDisconnected{
+    self.labelStartRecord.text = @"设备已断开";
+}
+
 - (void)actionCancelClickBluetooth{
-    self.labelStartRecord.hidden = NO;
+    self.labelStartRecord.text = @"";
     [self reloadViewRecordView];
     self.readyRecordView.labelReadyRecord.text = @"准备录音";
     self.readyRecordView.recordCode = @"--";

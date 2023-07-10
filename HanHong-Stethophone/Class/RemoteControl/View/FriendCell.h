@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) FriendModel           *friendNewModel;
 @property (assign, nonatomic) Boolean               bShowCheck;
 
+
 @end
 
 NS_ASSUME_NONNULL_END

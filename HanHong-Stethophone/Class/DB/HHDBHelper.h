@@ -48,6 +48,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)deletePatientItemData:(NSString *)patient_id;
 
 /**
+ 删除数据
+ */
+- (void)deleteAllPatientData;
+
+/**
  查询所有记录
  */
 - (NSMutableArray *)selectAllPatientHistory;

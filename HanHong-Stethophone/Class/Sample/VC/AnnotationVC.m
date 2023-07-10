@@ -197,7 +197,7 @@
 }
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
-    self.itemPatientSex.labelInfo.text = index == woman ? @"女" : @"男";
+    self.itemPatientSex.labelInfo.text = index == man ? @"女" : @"男";
     self.itemPatientSex.labelInfo.textColor = MainBlack;
     
     if(self.saveLocation == 0) {
@@ -382,7 +382,7 @@
 - (RightDirectionView *)itemPatientSex{
     if (!_itemPatientSex) {
         _itemPatientSex = [[RightDirectionView alloc] initWithTitle:@"性别"];
-        _itemPatientSex.labelInfo.text = self.recordModel.patient_sex == woman ? @"女" : @"男";
+        _itemPatientSex.labelInfo.text = self.recordModel.patient_sex == man ? @"女" : @"男";
         __weak typeof(self) wself = self;
         _itemPatientSex.tapBlock = ^{
             [wself actionSelectSex];
@@ -392,7 +392,7 @@
 }
 
 - (void)actionSelectSex{
-    TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"女", @"男"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
+    TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"男", @"女"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
     actionSheet.delegate = self;
     [actionSheet showInView:self.view];
 }

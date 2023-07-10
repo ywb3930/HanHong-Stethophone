@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)positionTagPositionCn:(NSString *)tag;
 - (NSString *)positionVolumesString:(NSInteger )idx;
 - (NSString *)getRecordShareBrief;
+- (NSString *)checkScanCode:(NSString *)scanCode;
 
 
 /** 顶部安全区高度 **/

@@ -54,10 +54,10 @@
 }
 
 - (void)actionStandertRecord:(UIButton *)button{
-    if ([self checkConnetState]) {
+    //if ([self checkConnetState]) {
         StandartRecordPatientInfoVC *standartRecord = [[StandartRecordPatientInfoVC alloc] init];
         [self.navigationController pushViewController:standartRecord animated:YES];
-    }
+   // }
 }
 
 - (void)initView{
