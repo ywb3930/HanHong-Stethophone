@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TeachingRecordView : UIView
 
 - (void)setupView;
+- (void)initData;
 
 @end
 

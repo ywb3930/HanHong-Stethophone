@@ -854,7 +854,7 @@ static id _instance;
 
 + (NSString *)converDataToMacStr:(NSString *)mac{
     NSString *result = [[NSString alloc] init];
-    mac = [mac substringFromIndex:4];
+    //mac = [mac substringFromIndex:4];
     for(int i = 0; i < mac.length/2; i++) {
         NSString *y = [mac substringWithRange:NSMakeRange(i*2, 2)];
         

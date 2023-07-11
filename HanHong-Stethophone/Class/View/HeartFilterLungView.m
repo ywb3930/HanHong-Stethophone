@@ -46,10 +46,10 @@
             button.selected = !button.selected;
             button.backgroundColor = MainColor;
             if (button.tag == 1) {
-                self.buttonLungVoice.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+                self.buttonLungVoice.backgroundColor = ColorDAECFD;
                 self.buttonLungVoice.selected = NO;
             } else {
-                self.buttonHeartVoice.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+                self.buttonHeartVoice.backgroundColor = ColorDAECFD;
                 self.buttonHeartVoice.selected = NO;
             }
         }
@@ -111,7 +111,7 @@
 - (UIButton *)buttonLungVoice{
     if(!_buttonLungVoice) {
         _buttonLungVoice = [self setupButton:@"肺音"];
-        _buttonLungVoice.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+        _buttonLungVoice.backgroundColor = ColorDAECFD;
         _buttonLungVoice.tag = 2;
         [_buttonLungVoice addTarget:self action:@selector(actionClickButton:) forControlEvents:UIControlEventTouchUpInside];
     }

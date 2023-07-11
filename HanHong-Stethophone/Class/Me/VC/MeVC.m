@@ -13,6 +13,7 @@
 #import "AboutUsVC.h"
 #import "LogoffUserVC.h"
 #import "RegisterInviteVC.h"
+#import "ToolsCheckUpdate.h"
 //#import "DeviceManagerSettingView.h"
 
 @interface MeVC ()<UITableViewDelegate, UITableViewDataSource>
@@ -117,6 +118,8 @@
     } else if (row == 2) {
         DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
         [self.navigationController pushViewController:deviceManager animated:YES];
+    } else if (row == 3) {
+        [[ToolsCheckUpdate getInstance] actionToCheckUpdate:YES];
     } else if (row == 4) {
         if (self.loginType == login_type_personal) {
             [self actionToAboutUsVC];

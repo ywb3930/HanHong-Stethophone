@@ -25,7 +25,7 @@
 */
 + (void)userSmsVerCodeLogin:(NSMutableDictionary *)params success:(void (^)(id _Nonnull))completion failure:(void (^)(NSError * _Nonnull))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/sms_ver_code_login",REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -37,7 +37,7 @@
  */
 +(void)userSmsVerCodeRegister:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/sms_ver_code_register",REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -49,7 +49,7 @@
  */
 +(void)userSmsVerCodeModifyPassword:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/sms_ver_code_modify_password",REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -62,7 +62,7 @@
  **/
 + (void)orgList:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@org/list",REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -76,7 +76,7 @@
  */
 + (void)userRegister:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/register",REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -88,7 +88,7 @@
  */
 + (void)userLogin:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/login", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -100,7 +100,7 @@
  */
 + (void)userForgetPassword:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/forget-password", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -136,7 +136,7 @@
  */
 + (void)userLogout:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/logout", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -148,7 +148,7 @@
  */
 + (void)userModifyInfo:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/modify-info", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -160,7 +160,7 @@
  */
 + (void)userModifyPassword:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/modify-password", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -172,7 +172,7 @@
  */
 + (void)userSmsVerCodeModifyPhone:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/sms_ver_code_modify_phone", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -184,7 +184,7 @@
  */
 + (void)userModifyPhone:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/modify-phone", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -196,7 +196,7 @@
  */
 + (void)userModifyEmail:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/modify-email", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -208,7 +208,7 @@
  */
 + (void)orgInfo:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@org/info", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -220,7 +220,7 @@
  */
 + (void)userLogoff:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/logoff", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -232,7 +232,7 @@
  */
 + (void)userInviteCode:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@user/invite_code", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -245,7 +245,7 @@
  */
 + (void)meetingListCreated:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@meeting/list_created", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -257,7 +257,7 @@
  */
 + (void)meetingListParticipated:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@meeting/list_participated", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -269,7 +269,7 @@
  */
 + (void)friendGetFriends:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@friend/get-friends", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -281,7 +281,7 @@
  */
 + (void)friendGetRequests:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@friend/get-requests", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -293,7 +293,7 @@
  */
 + (void)friendDelete:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@friend/delete", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -305,7 +305,7 @@
  */
 + (void)friendSearch:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@friend/search", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -316,7 +316,7 @@
 */
 + (void)friendApprove:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@friend/approve", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -329,7 +329,7 @@
 */
 + (void)friendDeney:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@friend/deney", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -341,7 +341,7 @@
  */
 + (void)friendRequest:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@friend/reuqest", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -353,7 +353,7 @@
  */
 + (void)meetingDeleteMeeting:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@meeting/delete_meeting", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -365,7 +365,7 @@
  */
 + (void)meetingEditMeeting:(NSMutableDictionary *)params path:(NSString *)path success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;{
     NSString *requestUrl = [NSString stringWithFormat:@"%@%@", REQUEST_URL, path];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -378,7 +378,7 @@
  */
 + (void)meetingGetMeetingroom:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@meeting/get_meetingroom", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -390,7 +390,7 @@
  */
 + (void)planList:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@plan/list", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -402,7 +402,7 @@
  */
 + (void)teachingGetHistory:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@teaching/get_history", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -414,7 +414,7 @@
  */
 + (void)teachingGetClassroom:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@teaching/get_classroom", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -426,7 +426,7 @@
  */
 + (void)teachingGetStudents:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@teaching/get_students", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -438,7 +438,7 @@
  */
 + (void)recordList:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/list", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -450,7 +450,7 @@
  */
 + (void)recordTypes:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/type", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -462,7 +462,7 @@
  */
 + (void)recordPositions:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/positions", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -474,7 +474,7 @@
  */
 + (void)recordCharacteristics:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/characteristics", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -486,7 +486,7 @@
  */
 + (void)recordSpace:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/space", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -510,7 +510,7 @@
         failure(error);
     }];
     
-//    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+//    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
 //        completion(responseObject);
 //    } failure:^(NSError * _Nonnull error) {
 //        failure(error);
@@ -522,7 +522,7 @@
 
 + (void)recordModify:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/modify", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -534,7 +534,7 @@
  */
 + (void)recordDelete:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/delete", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -545,7 +545,7 @@
  */
 + (void)recordShare:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/share", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -557,7 +557,7 @@
  */
 + (void)recordFavoriteList:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/favorite_list", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);
@@ -569,7 +569,7 @@
  */
 + (void)recordFavoriteDelete:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/favorite_delete", REQUEST_URL];
-    [AFNetRequestManager noTokenRequest:requestUrl method:METHOD_POST jsonParameters:params bVerify:NO success:^(id _Nonnull responseObject) {
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {
         failure(error);

@@ -6,6 +6,8 @@
 //
 
 #import "AnnotationInfoVC.h"
+#import "AppDelegate.h"
+#import "UIDevice+HanHong.h"
 
 @interface AnnotationInfoVC ()
 
@@ -36,9 +38,7 @@
         self.arrayData = lungt_PathologyTypes;
     }
     self.arrayButtons = [NSMutableArray array];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self setupView];
-    });
+    [self setupView];
     
 }
 
@@ -49,7 +49,7 @@
         NSString *result = self.arrayData[self.selectIdx];
         self.resultBlock(result);
     }
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (void)actionButtonClick:(UIButton *)button{
@@ -167,7 +167,7 @@
 }
 
 - (void)actionCancel{
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:NO];
 }
 
 - (UIButton *)buttonCommit{
@@ -190,48 +190,31 @@
 }
 
 
-
-
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     //self.bCurrentView = YES;
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     //进入旋转
-    [self changeRotate:YES];
+    //[self changeRotate:YES];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    // 打开横屏开关
+    appDelegate.allowRotation = YES;
+    // 调用转屏代码
+    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationLandscapeRight];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     //退出恢复
     //self.bCurrentView = NO;
-    [self changeRotate:NO];
-}
+    //[self changeRotate:NO];
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    // 关闭横屏仅允许竖屏
+    appDelegate.allowRotation = NO;
+    // 切换到竖屏
+    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
 
-- (void)viewDidDisappear:(BOOL)animated{
-
-}
-
-- (void)changeRotate:(BOOL)change{
-    /*
-     *采用KVO字段控制旋转
-     */
-    NSNumber *orientationUnknown = [NSNumber numberWithInt:UIInterfaceOrientationUnknown];
-    [[UIDevice currentDevice] setValue:orientationUnknown forKey:@"orientation"];
-    NSNumber *orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationPortrait];
-    if (change) {
-        orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight];
-    }
-    [[UIDevice currentDevice] setValue:orientationTarget forKey:@"orientation"];
-}
-
-#pragma mark - *********** 旋转设置 ***********
-
-- (BOOL)shouldAutorotate{
-    return YES;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
-    return UIInterfaceOrientationMaskLandscapeRight;
 }
 
 - (void)dealloc{

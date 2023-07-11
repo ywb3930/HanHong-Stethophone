@@ -21,7 +21,7 @@
 }
 
 #pragma mark - 设置请求的配置
-- (void)setRequestWithManager:(AFHTTPSessionManager *)manager bToken:(BOOL)btoken bGet:(BOOL)bget{
+- (void)setRequestWithManager:(AFHTTPSessionManager *)manager{
     //30s超时
     manager.requestSerializer.timeoutInterval = 10;
     [manager.securityPolicy setAllowInvalidCertificates:YES];
@@ -30,27 +30,17 @@
     manager.securityPolicy = securiryPolicy;
     
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    if (![[Reachability reachabilityForInternetConnection] isReachable] && bget){
+    if (![[Reachability reachabilityForInternetConnection] isReachable]){
         manager.requestSerializer.cachePolicy = NSURLRequestReturnCacheDataDontLoad;
     }
     manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/html",@"text/plain", @"text/json", @"text/javascript", nil];
     
     manager.requestSerializer.HTTPMethodsEncodingParametersInURI = [NSSet setWithObjects:@"GET", @"HEAD", @"DELETE", @"PUT", nil];
 }
-- (void)getRequestTest:(NSString *)url{
+
+- (void)getRequest:(NSString *)url parameters:(id)parameters success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:NO bGet:YES];
-    [manager GET:url parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        
-    }];
-}
-//http://www.aaaa.html?token=AAAAAAAAA&platform=IOS &version=1.0.1
-#pragma mark - get请求 btoken 是否需要token
-- (void)getRequest:(NSString *)url parameters:(id)parameters bToken:(BOOL)btoken success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:YES];
+    [self setRequestWithManager:manager];
     [manager GET:url parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if([self actionLogOut:responseObject])return;
         success(responseObject);
@@ -58,57 +48,23 @@
         failure(error);
         [self disposeError:error];
     }];
-//    [manager GET:url parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//        success(responseObject);
-//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//        failure(error);
-//        [self disposeError:error];
-//    }];
 }
 
-#pragma mark - post请求 提交JSON数据 verify 是否需要加密验证
-+ (void)request:(NSString *)url method:(NSString *)method jsonParameters:(id)parameters bVerify:(BOOL)verify success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure{
-    NSError *error;
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:method URLString:url parameters:nil error:nil];
-/*
- [manager.securityPolicy setAllowInvalidCertificates:YES];
- AFSecurityPolicy *securiryPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
- [securiryPolicy setValidatesDomainName:NO];
- manager.securityPolicy = securiryPolicy;
- 
- */
-    [manager.securityPolicy setAllowInvalidCertificates:YES];
-    AFSecurityPolicy *securiryPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-    [securiryPolicy setValidatesDomainName:NO];
-    manager.securityPolicy = securiryPolicy;
-    
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:&error];
-    
-    if (![[Reachability reachabilityForInternetConnection] isReachable] && [method isEqualToString:METHOD_GET]){
-        request.cachePolicy = NSURLRequestReturnCacheDataDontLoad;
-    }
-
-
-    
-    [request setHTTPBody:jsonData];
-    request.timeoutInterval = 10.0f;
-     __weak typeof(self) wself = self;
-    NSURLSessionDataTask *dt = [manager dataTaskWithRequest:request uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-        if(error){
-            failure(error);
-            [wself disposeErrorAdd:error];
-        }else{
-            if([self actionLogOut:responseObject])return;
-            success(responseObject);
-        }
+- (void)getRequestTest:(NSString *)url{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [self setRequestWithManager:manager];
+    [manager GET:url parameters:nil headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
     }];
-    [dt resume];
 }
 
 
+
+
 #pragma mark - post请求 提交JSON数据 verify 是否需要加密验证
-+ (void)noTokenRequest:(NSString *)url method:(NSString *)method jsonParameters:(id)parameters bVerify:(BOOL)verify success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure{
++ (void)request:(NSString *)url method:(NSString *)method jsonParameters:(id)parameters success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure{
     NSError *error;
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
     NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:method URLString:url parameters:nil error:nil];
@@ -137,174 +93,8 @@
     [dt resume];
 }
 
-+ (void)requestNoKey:(NSString *)url method:(NSString *)method jsonParameters:(NSString *)parameters bVerify:(BOOL)verify success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure{
-    NSError *error = nil;
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSMutableURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:method URLString:url parameters:nil error:nil];
-
-    [manager.securityPolicy setAllowInvalidCertificates:YES];
-    AFSecurityPolicy *securiryPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
-    [securiryPolicy setValidatesDomainName:NO];
-    manager.securityPolicy = securiryPolicy;
-
-    NSData *jsonData = [parameters dataUsingEncoding:NSUTF8StringEncoding];
-    
-    if (![[Reachability reachabilityForInternetConnection] isReachable] && [method isEqualToString:METHOD_GET]){
-        request.cachePolicy = NSURLRequestReturnCacheDataDontLoad;
-    }
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    
-    //joinString    __NSCFString *    @""    0x0000600002786b80
-    //sign    __NSCFString *    @"e74ae4a8144af2c600e1e285ff2baed6"    0x0000600000681140
-    [request setHTTPBody:jsonData];
-    request.timeoutInterval = 10.0f;
-     __weak typeof(self) wself = self;
-    NSURLSessionDataTask *dt = [manager dataTaskWithRequest:request uploadProgress:nil downloadProgress:nil completionHandler:^(NSURLResponse * _Nonnull response, id  _Nullable responseObject, NSError * _Nullable error) {
-        if(error){
-            failure(error);
-            [wself disposeErrorAdd:error];
-        }else{
-            if([self actionLogOut:responseObject])return;
-            success(responseObject);
-        }
-    }];
-    [dt resume];
-}
-
-#pragma mark - put请求
-- (void)putRequest:(NSString *)url parameters:(id)parameters bToken:(BOOL)btoken success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:NO];
-    [manager PUT:url parameters:parameters headers:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeError:error];
-        failure(error);
-    }];
-}
-
-#pragma mark - post请求
-- (void)postRequest:(NSString *)url parameters:(id)parameters bToken:(BOOL)btoken success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:NO];
-    [manager POST:url parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeError:error];
-        failure(error);
-    }];
-    
-}
 
 
-+ (void)postRequestFormUrlencoded:(NSString *)url parameters:(id)parameters bVerify:(BOOL)bverify success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure {
-    //NSError *error;
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-
-    //设置请求头
-
-
-    //NSData *jsonData = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:&error];
-    if (![[Reachability reachabilityForInternetConnection] isReachable]){
-        manager.requestSerializer.cachePolicy = NSURLRequestReturnCacheDataDontLoad;
-    }
-    
-
-    [manager.requestSerializer setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    
-    [manager POST:url parameters:parameters headers:nil progress:^(NSProgress * _Nonnull uploadProgress) {
-        
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeErrorAdd:error];
-        failure(error);
-    }];
-}
-
-#pragma mark - post请求
-- (void)postRequest:(NSString *)url parameters:(id)parameters bToken:(BOOL)btoken  progress:(void (^)(NSProgress * _Nonnull))progress success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:NO];
-    [manager POST:url parameters:parameters headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        for (NSString *key in parameters) {
-            [formData appendPartWithFormData:parameters[key] name:key];
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        progress(uploadProgress);
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeError:error];
-        failure(error);
-    }];
-}
-
-
-#pragma mark - 图片上传
-- (void)uploadImages:(NSString *)url images:(NSArray *)images andAssets:(NSArray *)assets parameters:(id)parameters bToken:(BOOL)btoken  progress:(void (^)(NSProgress * _Nonnull))progress success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure{
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:NO];
-    [manager POST:url parameters:parameters headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        for (UIImage *image in images) {
-             //压缩图片
-             NSData *data = [Tools zipNSDataWithImage:image];//UIImageJPEGRepresentation(image, 0.4);
-             //多张图片是需要在name中加“[]”，单张上传时不用
-             [formData appendPartWithFileData:data name:@"files" fileName:[NSString stringWithFormat:@"%@.jpg",[NSDate date]] mimeType:@"image/jpeg"];
-         }
-         PHAsset *asset = [assets objectAtIndex:0];
-        
-         if (asset.mediaType == PHAssetMediaTypeVideo) {
-             NSString *outPath = [assets objectAtIndex:1];
-             NSData *data = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:outPath]];
-             [formData appendPartWithFileData:data name:@"files" fileName:[NSString stringWithFormat:@"%@.mp4",[NSDate date]] mimeType:@"application/octet-stream"];
-         }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        progress(uploadProgress);
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeError:error];
-        failure(error);
-    }];
-}
-
-#pragma mark - 图片上传
-- (void)uploadImages:(NSString *)url base64Parameters:(id)parameters bToken:(BOOL)btoken  progress:(void (^)(NSProgress * _Nonnull))progress success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure{
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:NO];
-    [manager POST:url parameters:parameters headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        for (NSString *key in parameters) {
-            [formData appendPartWithFormData:parameters[key] name:key];
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        progress(uploadProgress);
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeError:error];
-        failure(error);
-    }];
-}
-
-#pragma mark - delete请求
-- (void)deleteRequest:(NSString *)url parameters:(id)parameters bToken:(BOOL)btoken success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:NO];
-    [manager DELETE:url parameters:parameters headers:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeError:error];
-        failure(error);
-    }];
-}
 
 - (BOOL)actionLogOut:(id)responseObject{
     if ([responseObject[@"errorCode"] integerValue] == 63004) {
@@ -329,25 +119,6 @@
     return NO;
 }
 
-- (void)uploadImages:(NSString *)url parameters:(id)parameters bToken:(BOOL)btoken  progress:(void (^)(NSProgress * _Nonnull))progress success:(void (^)(id _Nonnull))success failure:(void (^)(NSError * _Nonnull))failure{
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    [self setRequestWithManager:manager bToken:btoken bGet:NO];
-    [manager POST:url parameters:parameters headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        for (NSString *key in parameters) {
-            [formData appendPartWithFormData:parameters[key] name:key];
-        }
-    } progress:^(NSProgress * _Nonnull uploadProgress) {
-        progress(uploadProgress);
-    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if ([responseObject[@"code"] isEqualToString:@"1009"]) {
-            [Tools logout:@""];
-        }
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [self disposeError:error];
-        failure(error);
-    }];
-}
 
 - (void)disposeError:(NSError *)error{
     [SVProgressHUD dismiss];
@@ -423,6 +194,57 @@
     [task resume];
    
  
+}
+
+-(void)a{
+//    id version =  [[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleShortVersionString"];
+//    
+//    AFHTTPSessionManager  * manager = [AFHTTPSessionManager manager];
+//    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", @"text/html", @"text/plain",@"text/xml", nil];
+//    
+//    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+//    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+//    
+//    manager.requestSerializer.timeoutInterval = 30;
+//    [manager POST:@"https://itunes.apple.com/lookup" parameters:@{@"id":@"1179764149"} headers:nil progress:^(NSProgress * _Nonnull uploadProgress) {
+//        
+//    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSError * error = nil;
+//            NSDictionary * dic = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingAllowFragments error:&error];
+//            if(error==nil){
+//                if(dic.count>0){
+//                    NSArray * dataArray = dic[@"results"];
+//                    if(dataArray.count>0){
+//                        NSDictionary * versionDic = dataArray[0];
+//                        if(versionDic.count>0){
+//                            NSString * storeVersion = versionDic[@"version"];
+//                            NSLog(@"storeVersion==%@--localversion==%@",storeVersion,version);
+//                            
+//                
+//                            if(![storeVersion isEqualToString:version]){
+//                                UIAlertController * updateAlert = [UIAlertController alertControllerWithTitle:@"" message:[LANG DPLocalizedString:@"L_Home_UpdateVersion"] preferredStyle:UIAlertControllerStyleAlert];
+//                                
+//                                [updateAlert addAction:[UIAlertAction actionWithTitle:[LANG DPLocalizedString:@"L_Cancel_Title"] style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+//                                                                
+//                                }]];
+//                                [updateAlert addAction:[UIAlertAction actionWithTitle:[LANG DPLocalizedString:@"L_Home_Update"] style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+////                                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://itunes.apple.com/cn/app/drtime/id1179764149?mt=8"]];
+////                                    exit(0);
+//                                }]];
+//                            
+//                                [self presentViewController:updateAlert animated:YES completion:nil];
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        });
+//       
+//    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//        NSLog(@"请求失败");
+//    }];
 }
 
 @end

@@ -33,6 +33,9 @@
 @property (strong, nonatomic) UIImageView *lineImageView;
 @property (assign, nonatomic) Boolean isShowNavigationItem;
 @property (assign, nonatomic) Boolean isRectScan;
+@property (retain, nonatomic) UILabel       *labelMessage;
+@property (retain, nonatomic) UIButton *openLightBtn;
+@property (retain, nonatomic) UIButton *buttonBack;
  
 @end
  
@@ -41,6 +44,7 @@
 - (void)viewDidLoad {
    
     [super viewDidLoad];
+
     self.isShowNavigationItem = YES;
     self.lightWidth = screenW/2;
     self.lightHeight = self.lightWidth;
@@ -50,22 +54,46 @@
     self.leftWith = screenW / 4;
     self.topHeight = (screenH - self.lightHeight) / 2;
    
-#if !TARGET_IPHONE_SIMULATOR
+
+    
+    #if !TARGET_IPHONE_SIMULATOR
     [self initScanCode];
-#endif
+    #endif
     [self initLayer];
     [self initViewControl];
-
 
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willResignActiveNotification) name:UIApplicationWillResignActiveNotification object:nil]; //监听是否触发home键挂起程序.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didBecomeActiveNotification) name:UIApplicationDidBecomeActiveNotification object:nil]; //监听是否重新进入程序程序.
 }
+
+- (void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [self stopScanCode];
+}
  
 -(void)viewWillDisappear:(BOOL)animated {
-    [self stopScanCode];
+    
+    [self.captureSession stopRunning];
     [super viewWillDisappear:animated];
 }
+
+- (void)setMessage:(NSString *)message{
+    self.labelMessage.text = message;
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+    if (self.captureSession) {
+        [self.captureSession startRunning];
+    }
+}
+
+//- (void)viewDidDisappear:(BOOL)animated{
+//    [super viewDidDisappear:animated];
+//
+//}
  
 - (void)willResignActiveNotification {
     self.flashLightBtn.selected = NO;
@@ -75,24 +103,42 @@
 }
 //加载界面上的控件，如：加上闪光灯按钮等
 - (void)initViewControl {
-    UIButton * openLightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    openLightBtn.cs_imagePositionMode = ImagePositionModeTop;
-    openLightBtn.cs_imageSize = CGSizeMake(Ratio44, Ratio44);
-    openLightBtn.cs_middleDistance = Ratio5;
-    [openLightBtn setImage:[UIImage imageNamed:@"open_flashlight_btn"] forState:UIControlStateNormal];
-    [openLightBtn setTitle:@"打开手电" forState:UIControlStateNormal];
-    [openLightBtn setTitleColor:WHITECOLOR forState:UIControlStateNormal];
-    openLightBtn.titleLabel.font = Font11;
-    openLightBtn.contentMode = UIViewContentModeScaleAspectFit;
-    [openLightBtn addTarget:self action:@selector(systemFlashLight) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:openLightBtn];
-    openLightBtn.sd_layout.bottomSpaceToView(self.view, kBottomSafeHeight + Ratio22).widthIs(Ratio66).heightIs(Ratio66).centerXEqualToView(self.view);
-    self.lineImageView = [[UIImageView alloc] init];
-    self.lineImageView.frame = CGRectMake(self.leftWith, self.topHeight, self.lightWidth, 2);
-    self.lineImageView.backgroundColor = UIColor.redColor;
+    [self.view addSubview:self.buttonBack];
+    self.buttonBack.sd_layout.leftSpaceToView(self.view, Ratio11).heightIs(Ratio22).widthIs(Ratio30).topSpaceToView(self.view, kTopBarSafeHeight + Ratio10);
+    
+    [self.view addSubview:self.openLightBtn];
+    self.openLightBtn.sd_layout.bottomSpaceToView(self.view, kBottomSafeHeight + Ratio22).widthIs(Ratio66).heightIs(Ratio66).centerXEqualToView(self.view);
     [self.view addSubview:self.lineImageView];
    [self scanLineAnimation];
+    
+    [self.view addSubview:self.labelMessage];
+    self.labelMessage.frame = CGRectMake(0, self.topHeight - Ratio30, screenW, Ratio20);
    
+}
+
+- (UIButton *)openLightBtn{
+    if (!_openLightBtn) {
+        _openLightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _openLightBtn.cs_imagePositionMode = ImagePositionModeTop;
+        _openLightBtn.cs_imageSize = CGSizeMake(Ratio44, Ratio44);
+        _openLightBtn.cs_middleDistance = Ratio5;
+        [_openLightBtn setImage:[UIImage imageNamed:@"open_flashlight_btn"] forState:UIControlStateNormal];
+        [_openLightBtn setTitle:@"打开手电" forState:UIControlStateNormal];
+        [_openLightBtn setTitleColor:WHITECOLOR forState:UIControlStateNormal];
+        _openLightBtn.titleLabel.font = Font11;
+        _openLightBtn.contentMode = UIViewContentModeScaleAspectFit;
+        [_openLightBtn addTarget:self action:@selector(systemFlashLight) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _openLightBtn;
+}
+
+- (UIImageView *)lineImageView{
+    if (!_lineImageView) {
+        _lineImageView = [[UIImageView alloc] init];
+        _lineImageView.frame = CGRectMake(self.leftWith, self.topHeight, self.lightWidth, 2);
+        _lineImageView.backgroundColor = UIColor.redColor;
+    }
+    return _lineImageView;
 }
  
 - (void)scanLineAnimation {
@@ -134,30 +180,28 @@
 }
  
 -(void)initScanCode {
-    self.captureDevice = [AVCaptureDevice defaultDeviceWithMediaType : AVMediaTypeVideo];
-    self.captureInput = [AVCaptureDeviceInput deviceInputWithDevice : self.captureDevice error : nil];
+    self.captureDevice = [AVCaptureDevice defaultDeviceWithMediaType: AVMediaTypeVideo];
+    self.captureInput = [AVCaptureDeviceInput deviceInputWithDevice: self.captureDevice error: nil];
     self.captureOutput = [[AVCaptureMetadataOutput alloc] init];
-    [self.captureOutput setMetadataObjectsDelegate: self queue : dispatch_get_main_queue ()];
+    [self.captureOutput setMetadataObjectsDelegate: self queue: dispatch_get_main_queue ()];
     if (_isRectScan) {
-        [self.captureOutput setRectOfInterest : CGRectMake (self.topHeight / screenH, self.leftWith / screenW, self.lightHeight/screenH, self.lightWidth / screenW)];
+        [self.captureOutput setRectOfInterest: CGRectMake (self.topHeight / screenH, self.leftWith / screenW, self.lightHeight/screenH, self.lightWidth / screenW)];
     }
  
     self.captureSession = [[AVCaptureSession alloc] init];
-    [self.captureSession setSessionPreset : AVCaptureSessionPresetHigh];
-    if ([self.captureSession canAddInput : self.captureInput])
-    {
-        [self.captureSession addInput : self.captureInput];
+    [self.captureSession setSessionPreset: AVCaptureSessionPresetHigh];
+    if ([self.captureSession canAddInput: self.captureInput]){
+        [self.captureSession addInput: self.captureInput];
     }
-    if ([self.captureSession canAddOutput : self.captureOutput])
-    {
-        [self.captureSession addOutput : self.captureOutput];
+    if ([self.captureSession canAddOutput: self.captureOutput]){
+        [self.captureSession addOutput: self.captureOutput];
     }
     self.captureOutput.metadataObjectTypes = @[AVMetadataObjectTypeQRCode] ;
      
     self.capturePreview =[AVCaptureVideoPreviewLayer layerWithSession :self.captureSession];
     self.capturePreview.videoGravity = AVLayerVideoGravityResizeAspectFill ;
     self.capturePreview.frame = self.view.layer.bounds ;
-    [self.view.layer insertSublayer : self.capturePreview atIndex : 0];
+    [self.view.layer insertSublayer: self.capturePreview atIndex: 0];
     [self.captureSession startRunning];
 }
  
@@ -173,7 +217,7 @@
             //回调信息
             if (self.delegate && [self.delegate respondsToSelector:@selector(actionScanCodeResultCallback:)]) {
                 [self.delegate actionScanCodeResultCallback:scanCodeResult];
-                [self.navigationController popViewControllerAnimated:YES];
+                [self.navigationController popViewControllerAnimated:NO];
             }
         } else {
             NSLog(@"扫描信息错误！");
@@ -208,12 +252,36 @@
 }
  
 -(void)stopScanCode {
-    [self.captureSession stopRunning];
+    
     self.captureSession = nil;
     self.captureDevice = nil;
     self.captureInput = nil;
     self.captureOutput = nil;
     [self.capturePreview removeFromSuperlayer];
+}
+
+- (UILabel *)labelMessage{
+    if (!_labelMessage) {
+        _labelMessage = [[UILabel alloc] init];
+        _labelMessage.font = Font18;
+        _labelMessage.textColor = WHITECOLOR;
+        _labelMessage.textAlignment = NSTextAlignmentCenter;
+    }
+    return _labelMessage;
+}
+
+- (UIButton *)buttonBack{
+    if (!_buttonBack) {
+        _buttonBack = [[UIButton alloc] init];
+        [_buttonBack setImage:[UIImage imageNamed:@"back_grey"] forState:UIControlStateNormal];
+        _buttonBack.imageEdgeInsets = UIEdgeInsetsMake(Ratio3, Ratio10, Ratio3, Ratio10);
+        [_buttonBack addTarget:self action:@selector(actionViewBack:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _buttonBack;
+}
+
+- (void)actionViewBack:(UIButton *)button{
+    [self.navigationController popViewControllerAnimated:YES];
 }
  
 - (void)didReceiveMemoryWarning {

@@ -9,8 +9,10 @@
 #import "RecordFinishVC.h"
 #import "HeartFilterLungView.h"
 #import "ReadyRecordView.h"
+#import "UINavigationController+QMUI.h"
+#import "UIViewController+HBD.h"
 
-@interface QuickRecordVC ()<HeartFilterLungViewDelegate>
+@interface QuickRecordVC ()<HeartFilterLungViewDelegate, UINavigationControllerBackButtonHandlerProtocol>
 
 
 @property (retain, nonatomic) UIView                *viewInfo;
@@ -160,11 +162,11 @@
         self.heartFilterLungView.buttonHeartVoice .selected = YES;
         self.heartFilterLungView.buttonLungVoice .selected = NO;
         self.heartFilterLungView.buttonHeartVoice.backgroundColor = MainColor;
-        self.heartFilterLungView.buttonLungVoice.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+        self.heartFilterLungView.buttonLungVoice.backgroundColor = ColorDAECFD;
     } else if (self.soundsType == lung_sounds) {//显示肺音
         self.heartFilterLungView.buttonHeartVoice .selected = NO;
         self.heartFilterLungView.buttonLungVoice .selected = YES;
-        self.heartFilterLungView.buttonHeartVoice.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+        self.heartFilterLungView.buttonHeartVoice.backgroundColor = ColorDAECFD;
         self.heartFilterLungView.buttonLungVoice.backgroundColor = MainColor;
     }
     //判断滤波状态
@@ -233,6 +235,31 @@
     [super viewWillAppear:animated];
     [self actionStartRecord];
 }
+
+
+- (BOOL)shouldHoldBackButtonEvent {
+    return YES;
+}
+
+- (BOOL)canPopViewController {
+    // 这里不要做一些费时的操作，否则可能会卡顿。
+    [Tools showAlertView:nil andMessage:@"确定退出吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+        [self.navigationController popViewControllerAnimated:YES];
+    } cancel:^{
+        
+    }];
+    return NO;
+}
+
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
+        [[HHBlueToothManager shareManager] stop];
+    }
+    self.recordingState = recordingState_stop;
+}
+
 
 
 @end

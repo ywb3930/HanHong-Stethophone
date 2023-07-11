@@ -171,13 +171,7 @@
     params[@"email"] = email;
     params[@"ver_code"] = code;//验证码
     params[@"password"] = md5Password;
-    NSInteger s = -1;
-    if([sex isEqualToString:@"男"]) {
-        s = 1;
-    }
-    if([sex isEqualToString:@"女"]) {
-        s = 0;
-    }
+    NSInteger s = [sex isEqualToString:@"男"] ? 1 : 0;
     params[@"sex"] = [@(s) stringValue];
     params[@"name"] = name;
     if(self.loginType == login_type_personal) {

@@ -89,6 +89,9 @@
     [self addTarget:self action:@selector(actionClickBlueTooth:) forControlEvents:UIControlEventTouchUpInside];
 }
 
-
+//- (void)dealloc{
+//    [self.timer invalidate];
+//    self.timer = nil;
+//}
 
 @end

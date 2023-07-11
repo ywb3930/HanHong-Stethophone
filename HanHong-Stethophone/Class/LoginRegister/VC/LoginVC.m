@@ -28,7 +28,7 @@
 @property (retain, nonatomic) UIView           *viewLineCode;
 
 @property (retain, nonatomic) LabelTextFieldItemView  *itemUser;
-@property (retain, nonatomic) PasswordItemView  *itemPass;
+@property (strong, nonatomic) PasswordItemView  *itemPass;
 @property (retain, nonatomic) UIView            *viewPass;
 
 @property (retain, nonatomic) UIView            *viewCode;
@@ -63,7 +63,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.delay = 0;
-    self.autoLogining = YES;
+    self.autoLogining = NO;
     self.view.backgroundColor = WHITECOLOR;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionGetLoginType:) name:login_type_broadcast object:nil];
     self.loginTypePassword = YES;
@@ -85,7 +85,6 @@
     
     [self initView];
     [self reloadView:YES];
-
     
 
 //    self.itemUser.textFieldInfo.text = @"18902400417";
@@ -192,6 +191,23 @@
         self.viewUnionType.labelInfo.text = self.orgModel.name;
     }
     
+    NSData *data;
+    Boolean bNull = NO;
+    if(self.org_type == org_type_union) {
+        data = [[NSUserDefaults standardUserDefaults] objectForKey:@"orgModelUnion"];
+    } else if(self.org_type == org_type_teaching) {
+        data = [[NSUserDefaults standardUserDefaults] objectForKey:@"orgModelTeaching"];
+    } else {
+        bNull = YES;
+    }
+    if (bNull) {
+        self.viewUnionType.labelInfo.text = @"";
+    } else if(data) {
+        self.orgModel = (OrgModel *)[NSKeyedUnarchiver unarchiveObjectWithData:data];
+        self.viewUnionType.labelInfo.text = self.orgModel.name;
+    }
+
+    
     NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
     if(dic) {
         NSString *type = dic[@"type"];
@@ -214,22 +230,7 @@
         }
     }
     
-    NSData *data;
-    Boolean bNull = NO;
-    if(self.org_type == org_type_union) {
-        data = [[NSUserDefaults standardUserDefaults] objectForKey:@"orgModelUnion"];
-    } else if(self.org_type == org_type_teaching) {
-        data = [[NSUserDefaults standardUserDefaults] objectForKey:@"orgModelTeaching"];
-    } else {
-        bNull = YES;
-    }
-    if (bNull) {
-        self.viewUnionType.labelInfo.text = @"";
-    } else if(data) {
-        self.orgModel = (OrgModel *)[NSKeyedUnarchiver unarchiveObjectWithData:data];
-        self.viewUnionType.labelInfo.text = self.orgModel.name;
-    }
-
+   
     
 }
 
@@ -288,12 +289,13 @@
             NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
             pass = dic[@"password"];
         } else {
-          pass  = self.itemPass.textFieldPass.text;
+             pass = self.itemPass.textFieldPass.text;
         }
         
         NSString *passwordString = [NSString stringWithFormat:@"%@%@%@", saltnum1, pass, saltnum2];
         NSString *password = [Tools md5:passwordString];
         params[@"password"] = password;
+       NSLog(@"phone = %@, pas = %@", user, pass);
         
     } else {
         NSString *code= self.codeItemView.textFieldCode.text;
@@ -333,7 +335,7 @@
         } else {
             [SVProgressHUD dismiss];
         }
-        [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionBottom];
+        [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
     }];
@@ -426,15 +428,15 @@
         return;
     }
     if(self.loginType == login_type_personal) {
-        [params addEntriesFromDictionary:@{@"org": @"hanhong"}];
-        [params addEntriesFromDictionary:@{@"role": [@(CommUser_role) stringValue]}];
+        params[@"org"] = @"hanhong";
+        params[@"role"] = [@(CommUser_role) stringValue];
    
     } else if (self.loginType == login_type_teaching) {
-        [params addEntriesFromDictionary:@{@"org": self.orgModel.name}];
-        [params addEntriesFromDictionary:@{@"role": [@(self.teachRole) stringValue]}];
+        params[@"org"] = self.orgModel.code;
+        params[@"role"] = [@(self.teachRole) stringValue];
     } else {
-        [params addEntriesFromDictionary:@{@"org": self.orgModel.name}];
-        [params addEntriesFromDictionary:@{@"role": [@(Union_role) stringValue]}];
+        params[@"org"] = self.orgModel.code;
+        params[@"role"] = [@(Union_role) stringValue];
     }
     
     

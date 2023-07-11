@@ -43,7 +43,7 @@
 -(void)viewDidLoaded
 {
     [self viewDidLoaded];
-    NSLog(@"练习RunTime所加的viewDidLoaded打印%@",[self class]);
+    
 }
 
 @end

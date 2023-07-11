@@ -18,9 +18,11 @@
 #import "HHNavigationController.h"
 #import "BaseRecordPlayVC.h"
 #import "BRPickerView.h"
+#import "UINavigationController+QMUI.h"
+#import "UIViewController+HBD.h"
 
 
-@interface AnnotationVC ()<UITextFieldDelegate, TTActionSheetDelegate>
+@interface AnnotationVC ()<UITextFieldDelegate, TTActionSheetDelegate, UINavigationControllerBackButtonHandlerProtocol>
 
 @property (retain, nonatomic) UIScrollView                  *scrollView;
 
@@ -47,6 +49,8 @@
 
 @property (retain, nonatomic) UIButton                      *buttonSave;
 @property (retain, nonatomic) NSMutableArray                *arrayCharacteristic;
+
+@property (assign, nonatomic) Boolean                       bChangeData;
 
 
 @end
@@ -86,6 +90,7 @@
 }
 
 - (void)actionClickSaveAnnotation:(UIButton *)button{
+    NSString *characteristics = [Tools convertToJsonData:self.arrayCharacteristic];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     params[@"tag"] = self.recordModel.tag;
@@ -100,13 +105,22 @@
     params[@"patient_birthday"] = [self getUserBirthday];
     params[@"patient_height"] = self.itemPatientHeight.textFieldInfo.text;
     params[@"patient_weight"] = self.itemPatientWeight.textFieldInfo.text;
-    params[@"characteristics"] = [Tools convertToJsonData:self.arrayCharacteristic];
+    params[@"characteristics"] = characteristics;
     [Tools showWithStatus:@"正在保存"];
+    __weak typeof(self) wself = self;
     [TTRequestManager recordModify:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
-            
+            wself.recordModel.characteristics = characteristics;
+            if (wself.resultBlock) {
+                wself.resultBlock(wself.recordModel);
+            }
+            [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
+                [wself.navigationController popViewControllerAnimated:YES];
+            }];
+        } else {
+            [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
         }
-        [self.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
+       
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
@@ -139,7 +153,7 @@
         }
         [self modifyDataLocal];
     }
-    
+    self.bChangeData = YES;
 
     
 }
@@ -178,7 +192,7 @@
         string = [string substringToIndex:string.length - 1];
     }
     self.itemPatientAnnotation.textFieldInfo.text = string;
-    if(self.saveLocation == 0) {
+    if(self.saveLocation == 0 && self.arrayCharacteristic.count > 0) {
         self.recordModel.characteristics = [Tools convertToJsonData:self.arrayCharacteristic];
         [self modifyDataLocal];
     }
@@ -385,6 +399,7 @@
         _itemPatientSex.labelInfo.text = self.recordModel.patient_sex == man ? @"女" : @"男";
         __weak typeof(self) wself = self;
         _itemPatientSex.tapBlock = ^{
+            wself.bChangeData = YES;
             [wself actionSelectSex];
         };
     }
@@ -479,7 +494,7 @@
        // wself.itemPatientArea.textFieldInfo.textColor = MainBlack;
         NSString *result = [NSString stringWithFormat:@"%@%@%@", province.name, city.name, area.name];
         wself.itemPatientArea.textFieldInfo.text = result;
-        
+        wself.bChangeData = YES;
         if(self.saveLocation == 0) {
             wself.recordModel.patient_area = result;
             [self modifyDataLocal];
@@ -565,6 +580,7 @@
     annotationFull.arrayCharacteristic = self.arrayCharacteristic;
     __weak typeof(self) wself = self;
     annotationFull.resultBlock = ^{
+        wself.bChangeData = YES;
         [wself reloadAnnotationView];
     };
     [self.navigationController pushViewController:annotationFull animated:NO];
@@ -586,6 +602,27 @@
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+//self.saveLocation
+
+
+- (BOOL)shouldHoldBackButtonEvent {
+    if(self.saveLocation == 1 && self.bChangeData) {
+        return YES;
+    } else {
+        return NO;
+    }
+     
+}
+
+- (BOOL)canPopViewController {
+    // 这里不要做一些费时的操作，否则可能会卡顿。
+    [Tools showAlertView:nil andMessage:@"您修改的内容未保存，是否保存？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+        [self actionClickSaveAnnotation:self.buttonSave];
+    } cancel:^{
+        [self.navigationController popViewControllerAnimated:YES];
+    }];
+    return NO;
 }
 
 @end

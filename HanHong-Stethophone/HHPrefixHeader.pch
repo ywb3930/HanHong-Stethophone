@@ -26,7 +26,7 @@
 #define REQUEST_URL                                     @"https://www.hedelongcloud.com/api/"
 #define app_download_url                                @"https://www.hedelongcloud.com/hanhong_stethoscope_assistant"
 
-#define IMAGE_URL                                       @""
+#define AppId                                           @"6446353587"
 #define Shared_Secret_Key                               @"" //共享密钥
 #define saltnum1                                        @"A1453t3t3twy3y5433654321"
 #define saltnum2                                        @"1234562g3anjhsdfbbtr547i67i6"
@@ -150,6 +150,8 @@
 #define ViewBackGroundColor                             HEXCOLOR(0xF7F7F7,1)
 #define MainRed                                         HEXCOLOR(0xFF5033, 1)
 #define LineBorderColor                                 HEXCOLOR(0xE5E5E5,1)
+#define ColorF5F5F5                                     HEXCOLOR(0xF5F5F5,1)
+#define ColorDAECFD                                     HEXCOLOR(0xDAECFD,1)
 #define BorderCGColor                                   LineBorderColor.CGColor
 #define WHITECOLOR                                      [UIColor whiteColor]
 #define UserImg                                         [UIImage imageNamed:@"users_img"]

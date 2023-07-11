@@ -48,7 +48,7 @@
             self.viewBg.hidden = YES;
         }
         if (calendarDayModel.modelList.count > 0) {
-            self.viewBg.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+            self.viewBg.backgroundColor = ColorDAECFD;
             self.viewBg.hidden = NO;
             self.labelDay.textColor = WHITECOLOR;
         } else {

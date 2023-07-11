@@ -9,7 +9,7 @@
 const int audiosize_per_second = 2 * 11025;
 const int audiosample_per_second = 11025;
 const int record_time_minimum = 3;
-const int record_time_maximum = 600;
+const int record_time_maximum = 3600;
 
 typedef NS_ENUM(NSInteger, RECORD_STATE)
 {

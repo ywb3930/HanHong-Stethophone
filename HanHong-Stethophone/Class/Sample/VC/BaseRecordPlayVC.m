@@ -22,6 +22,27 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
+- (void)actionEventMain:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1{
+
+    //NSObject *args2 = userInfo[@"args2"];
+    
+    if (event == DeviceHelperPlayBegin) {
+        self.bPlaying = YES;
+        [self actionDeviceHelperPlayBegin];
+        //self.viewLine.hidden = NO;
+    } else if (event == DeviceHelperPlayingTime) {
+        __weak typeof(self) wself = self;
+        NSNumber *number = (NSNumber *)args1;
+        float value = [number floatValue];
+        [wself actionDeviceHelperPlayingTime:value];
+        NSLog(@"startTime 播放进度：%f", value);
+        
+    } else if (event == DeviceHelperPlayEnd) {
+        NSLog(@"播放结束");
+        [self stopPlayRecord];
+    }
+}
+
 
 //接收蓝牙底层消息
 - (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
@@ -31,29 +52,12 @@
     NSDictionary *userInfo = notification.userInfo;
     DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
     NSObject *args1 = userInfo[@"args1"];
-    //NSObject *args2 = userInfo[@"args2"];
-    
-    if (event == DeviceHelperPlayBegin) {
-        self.bPlaying = YES;
-        [self actionDeviceHelperPlayBegin];
-        //self.viewLine.hidden = NO;
-    } else if (event == DeviceHelperPlayingTime) {
-        __weak typeof(self) wself = self;
+    if ([NSThread isMainThread]) {
+        [self actionEventMain:event args1:args1];
+    } else {
         dispatch_sync(dispatch_get_main_queue(), ^{
-            NSNumber *number = (NSNumber *)args1;
-            float value = [number floatValue];
-            [wself actionDeviceHelperPlayingTime:value];
-            NSLog(@"startTime 播放进度：%f", value);
+            [self actionEventMain:event args1:args1];
         });
-        
-        
-    } else if (event == DeviceHelperPlayEnd) {
-        NSLog(@"播放结束");
-        dispatch_sync(dispatch_get_main_queue(), ^{
-           
-            [self stopPlayRecord];
-        });
-        
     }
 }
 

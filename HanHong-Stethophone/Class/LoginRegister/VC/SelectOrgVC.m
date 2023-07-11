@@ -126,10 +126,11 @@
 
 - (UITableView *)tableView{
     if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight, screenW, screenH - kNavBarAndStatusBarHeight - kBottomSafeHeight) style:UITableViewStyleGrouped];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight, screenW, screenH - kNavBarAndStatusBarHeight - kBottomSafeHeight)];
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.backgroundColor = WHITECOLOR;
+        _tableView.sectionHeaderTopPadding = 0;
        // _tableView.separatorStyle = UITableViewCellAccessoryNone;
         [_tableView registerClass:[InteriorCell class] forCellReuseIdentifier:NSStringFromClass([InteriorCell class])];
         [_tableView registerClass:[InteriorHeaderView class] forHeaderFooterViewReuseIdentifier:NSStringFromClass([InteriorHeaderView class])];

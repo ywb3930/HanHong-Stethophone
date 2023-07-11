@@ -35,6 +35,7 @@
 @property (retain, nonatomic) UILabel                   *labelTableViewTitle;
 
 @property (retain, nonatomic) UIButton                  *buttonGuide;
+@property (assign, nonatomic) NSInteger                 loginType;
 
 @end
 
@@ -44,6 +45,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.defaultConnectPath = [[Constant shareManager] getPlistFilepathByName:@"connectDevice.plist"];
+    self.loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
     self.settingData = [NSMutableDictionary dictionary];
     self.deviceModel = [[BluetoothDeviceModel alloc] init];
     self.title = @"设备管理";
@@ -66,13 +68,20 @@
         [self.view makeToast:@"无效二维码" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
+
+    
     NSString *macStr = [scanCodeResult substringFromIndex:2];
     NSString *mac = [Tools converDataToMacStr:macStr];
     BluetoothDeviceModel *model = [[BluetoothDeviceModel alloc] init];
     model.bluetoothDeviceName = deviceName;
     model.bluetoothDeviceMac = mac;
-    model.bluetoothDeviceUUID = macStr;
+    NSString *uuid = [NSString stringWithFormat:@"4848%@", macStr];
+    model.bluetoothDeviceUUID = [uuid lowercaseString];
     self.deviceModel = model;
+    self.deviceDefaultView.hidden = NO;
+    self.labelConnectRemind.hidden = YES;
+    self.deviceDefaultView.deviceModel = model;
+    [self.deviceDefaultView startTimer];
     [[HHBlueToothManager shareManager] abortSearch];//停止搜索
     self.tableView.hidden = YES;
     self.deviceDefaultView.deviceModel = model;
@@ -80,7 +89,6 @@
         [[HHBlueToothManager shareManager] disconnect];
     }
     [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:model.bluetoothDeviceUUID];
-    NSLog(@"bluetoothDeviceUUID 2 = %@", self.deviceModel.bluetoothDeviceUUID);
 }
 
 - (void)actionTapDeviceDefault:(UITapGestureRecognizer *)tap{
@@ -120,31 +128,45 @@
     
 }
 
+- (void)actionEventBluetoothMessageMain:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
+    if (event == SearchFound) {
+        self.labelTableViewTitle.text = @"已发现设备";
+        [self onSearchFound:(NSString *)args1 device_mac:(NSString *)args2];
+    } else if (event == DeviceConnected) {
+        self.tableView.hidden = YES;
+        NSMutableDictionary *data = [NSMutableDictionary dictionary];
+        [data setObject:self.deviceModel.bluetoothDeviceName forKey:@"bluetoothDeviceName"];
+        [data setObject:self.deviceModel.bluetoothDeviceMac forKey:@"bluetoothDeviceMac"];
+        [data setObject:self.deviceModel.bluetoothDeviceUUID forKey:@"bluetoothDeviceUUID"];
+        [data writeToFile:self.defaultConnectPath atomically:YES];
+        [self reloadView];
+        
+    }
+}
+
 - (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
     NSDictionary *userInfo = notification.userInfo;
     DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
     NSObject *args1 = userInfo[@"args1"];
     NSObject *args2 = userInfo[@"args2"];
-    if (event == SearchFound) {
-        self.labelTableViewTitle.text = @"已发现设备";
-        [self onSearchFound:(NSString *)args1 device_mac:(NSString *)args2];
-    } else if (event == DeviceConnected) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.tableView.hidden = YES;
-            [self reloadView];
+    if ([NSThread isMainThread]) {
+        [self actionEventBluetoothMessageMain:event args1:args1 args2:args2];
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self actionEventBluetoothMessageMain:event args1:args1 args2:args2];
         });
-        
     }
 }
 
-
-- (void)onSearchFound:(NSString *)device_name device_mac:(NSString *)device_mac{
-    NSString *mac = [Tools converDataToMacStr:device_mac];
+- (void)actionEventSearchFound:(NSString *)device_name device_mac:(NSString *)device_mac{
+    NSString *macSub4 = [device_mac substringFromIndex:4];
+    NSString *mac = [Tools converDataToMacStr:macSub4];
     for (BluetoothDeviceModel *model in self.arrayData) {
         if ([model.bluetoothDeviceUUID isEqualToString:device_mac]) {
             return;
         }
     }
+    NSLog(@"device_mac = %@, mac = %@", device_mac, mac);
     BluetoothDeviceModel *model = [[BluetoothDeviceModel alloc] init];
     model.bluetoothDeviceName = device_name;
     model.bluetoothDeviceMac = mac;
@@ -152,6 +174,16 @@
     [self.arrayData addObject:model];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.arrayData.count-1 inSection:0];
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)onSearchFound:(NSString *)device_name device_mac:(NSString *)device_mac{
+    if ([NSThread isMainThread]) {
+        [self actionEventSearchFound:device_name device_mac:device_mac];
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self actionEventSearchFound:device_name device_mac:device_mac];
+        });
+    }
 }
 
 
@@ -232,7 +264,19 @@
         self.deviceManagerSettingView.settingData = self.settingData;
         [self.deviceManagerSettingView reloadData];
     } else if ([deviceMode isEqualToString:POP3_btName]) {
-        
+        NSArray *arrayTitle = [NSArray array];
+        if (self.loginType == login_type_teaching) {
+            arrayTitle = @[@"自动连接", @"自动关机", @"远程教学录音最大时长"];
+        } else {
+            arrayTitle = @[@"自动连接", @"自动关机", @"远程会诊录音最大时长"];
+        }
+        NSArray *arrayType = @[@"0", @"1", @"1"];
+        NSArray *arrayDefault = @[autoConnectString, getAutoOffTimeString, remoteRecordDuration];
+        self.deviceManagerSettingView.arrayType = arrayType;
+        self.deviceManagerSettingView.arrayTitle = arrayTitle;
+        self.deviceManagerSettingView.arrayValue = [NSMutableArray arrayWithArray:arrayDefault];
+        self.deviceManagerSettingView.settingData = self.settingData;
+        [self.deviceManagerSettingView reloadData];
     }
     
     self.deviceManagerSettingView.hidden  = NO;
@@ -248,11 +292,7 @@
     self.deviceModel = model;
     
     
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-    [data setObject:model.bluetoothDeviceName forKey:@"bluetoothDeviceName"];
-    [data setObject:model.bluetoothDeviceMac forKey:@"bluetoothDeviceMac"];
-    [data setObject:model.bluetoothDeviceUUID forKey:@"bluetoothDeviceUUID"];
-    [data writeToFile:self.defaultConnectPath atomically:YES];
+
     self.deviceDefaultView.hidden = NO;
     self.labelConnectRemind.hidden = YES;
     self.deviceDefaultView.deviceModel = model;
@@ -307,7 +347,7 @@
     self.tableView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.deviceDefaultView, Ratio8).bottomSpaceToView(self.view, 0);
 
     [self.view addSubview:self.buttonGuide];
-    self.buttonGuide.sd_layout.centerYEqualToView(self.view).rightSpaceToView(self.view, Ratio11).heightIs(Ratio40).widthIs(Ratio90);
+    self.buttonGuide.sd_layout.centerYEqualToView(self.view).rightSpaceToView(self.view, Ratio11).heightIs(48.f*screenRatio).widthIs(108.f*screenRatio);
     
     [self.view addSubview:self.deviceManagerSettingView];
     self.deviceManagerSettingView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.deviceDefaultView, Ratio8).bottomSpaceToView(self.view, 0);
@@ -418,6 +458,7 @@
 - (void)actionToScanView:(UIBarButtonItem *)item{
     ScanTeachCodeVC *scanTeachCode = [[ScanTeachCodeVC alloc] init];
     scanTeachCode.delegate = self;
+    scanTeachCode.message = @"将二维码放置在框架中";
     [self.navigationController pushViewController:scanTeachCode animated:YES];
 }
 

@@ -8,6 +8,7 @@
 #import "RemoteControlStudentVC.h"
 #import "StudentProgramView.h"
 #import "ScanTeachCodeVC.h"
+#import "ClinicLearningVC.h"
 
 @interface RemoteControlStudentVC ()<ScanTeachCodeVCDelegate>
 
@@ -29,6 +30,30 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCalender:) name:add_program_broadcast object:nil];
 }
 
+- (void)actionScanCodeResultCallback:(NSString *)scanCodeResult{
+    Boolean urlValid = NO;
+    NSArray *urlArray;
+    if ([scanCodeResult containsString:@"/api/teaching/classroom/"]) {
+        urlArray = [scanCodeResult componentsSeparatedByString:@"/api/teaching/classroom/"];
+        if (urlArray.count == 2) {
+            urlValid = YES;
+        }
+    }
+    if (urlValid) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            ClinicLearningVC *clinicLearning = [[ClinicLearningVC alloc] init];
+            clinicLearning.classroomUrl = [NSString stringWithFormat:@"%@/api/teaching/classroom", urlArray[0]];
+            clinicLearning.classroomId = urlArray[1];
+            [self.navigationController pushViewController:clinicLearning animated:YES];
+        });
+        
+    } else {
+        [self.view makeToast:@"无效的临床学习二维码" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+    }
+    
+
+}
+
 - (void)reloadCalender:(NSNotification *)noti{
     [self.studentProgramView initData:self.studentProgramView.currentDate];
 }
@@ -47,6 +72,7 @@
 - (void)actionClickClinic:(UIButton *)button{
     ScanTeachCodeVC *scanTeachCode = [[ScanTeachCodeVC alloc] init];
     scanTeachCode.delegate = self;
+    scanTeachCode.message = @"请扫码进入教室";
     [self.navigationController pushViewController:scanTeachCode animated:YES];
 }
 

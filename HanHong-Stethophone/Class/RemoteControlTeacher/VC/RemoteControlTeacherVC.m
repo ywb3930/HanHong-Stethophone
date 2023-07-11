@@ -6,7 +6,7 @@
 //
 
 #import "RemoteControlTeacherVC.h"
-#import "ClinicVC.h"
+#import "ClinicTeachingVC.h"
 #import "TeachingProgramView.h"
 #import "TeachingRecordView.h"
 
@@ -57,7 +57,11 @@
 }
 
 - (void)actionClickClinic:(UIButton *)button{
-    ClinicVC *clinicVC = [[ClinicVC alloc] init];
+    ClinicTeachingVC *clinicVC = [[ClinicTeachingVC alloc] init];
+    __weak typeof(self) wself = self;
+    clinicVC.historyListBlock = ^{
+        [wself.teachingRecordView initData];
+    };
     [self.navigationController pushViewController:clinicVC animated:YES];
 }
 - (void)setupView{

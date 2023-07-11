@@ -11,10 +11,9 @@
 #import "ItemAgeView.h"
 #import "BRPickerView.h"
 #import "StandartRecordVC.h"
-#import "UINavigationController+QMUI.h"
-#import "UIViewController+HBD.h"
 
-@interface StandartRecordPatientInfoVC ()<TTActionSheetDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource,UINavigationControllerBackButtonHandlerProtocol>
+
+@interface StandartRecordPatientInfoVC ()<TTActionSheetDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
 
 @property (retain, nonatomic) LabelTextFieldItemView          *itemViewId;
 @property (retain, nonatomic) LabelTextFieldItemView        *itemViewSex;
@@ -73,6 +72,7 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     NSInteger tag = textField.tag;
+    [self.view endEditing:YES];
     if (tag == 11) {
         [self actionSelectArea];
         return NO;
@@ -155,6 +155,15 @@
     StandartRecordVC *standartRecord = [[StandartRecordVC alloc] init];
     standartRecord.recordModel = model;
     [self.navigationController pushViewController:standartRecord animated:YES];
+    
+    NSMutableArray *marr = [[NSMutableArray alloc]initWithArray:self.navigationController.viewControllers];
+    for (UIViewController *vc in marr) {
+        if ([vc isKindOfClass:[self class]]) {
+            [marr removeObject:vc];
+            break;
+        }
+    }
+    self.navigationController.viewControllers = marr;
 }
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
@@ -365,30 +374,20 @@
 }
 
 
+
 - (BOOL)shouldHoldBackButtonEvent {
     return YES;
 }
 
 - (BOOL)canPopViewController {
     // 这里不要做一些费时的操作，否则可能会卡顿。
-    if (1) {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"是否返回？" message:@"拦截系统返回" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *backActioin = [UIAlertAction actionWithTitle:@"返回" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-            [self.navigationController popViewControllerAnimated:YES];
-        }];
-        UIAlertAction *continueAction = [UIAlertAction actionWithTitle:@"停留" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-
-        }];
-        [alertController addAction:backActioin];
-        [alertController addAction:continueAction];
-        [self presentViewController:alertController animated:YES completion:nil];
-
-        return NO;
-    } else {
-        return YES;
-    }
+    [Tools showAlertView:nil andMessage:@"确定退出吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+        [self.navigationController popViewControllerAnimated:YES];
+    } cancel:^{
+        
+    }];
+    return NO;
 }
-
 
 
 

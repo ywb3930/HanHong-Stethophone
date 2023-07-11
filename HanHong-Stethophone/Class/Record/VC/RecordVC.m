@@ -26,7 +26,11 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = WHITECOLOR;
     [self initView];
-
+    NSInteger login_type = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
+    if (login_type == login_type_teaching || login_type == login_type_union) {
+       // [(UITabBarController*)self.navigationController.topViewController setSelectedIndex:3];
+        [self.tabBarController setSelectedIndex:2];
+    }
 }
 
 
@@ -54,10 +58,10 @@
 }
 
 - (void)actionStandertRecord:(UIButton *)button{
-    //if ([self checkConnetState]) {
+    if ([self checkConnetState]) {
         StandartRecordPatientInfoVC *standartRecord = [[StandartRecordPatientInfoVC alloc] init];
         [self.navigationController pushViewController:standartRecord animated:YES];
-   // }
+    }
 }
 
 - (void)initView{

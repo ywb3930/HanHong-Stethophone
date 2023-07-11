@@ -101,7 +101,7 @@
 - (UIView *)viewTop{
     if (!_viewTop) {
         _viewTop = [[UIView alloc] init];
-        _viewTop.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+        _viewTop.backgroundColor = ColorDAECFD;
     }
     return _viewTop;
 }

@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PasswordItemView : UIView
 
-@property (retain, nonatomic) UITextField       *textFieldPass;
+@property (strong, nonatomic) UITextField       *textFieldPass;
 - (instancetype)initWithTitle:(NSString *)title bMust:(Boolean)bMust placeholder:(NSString *)placeholder;
 
 @end

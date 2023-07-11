@@ -42,6 +42,9 @@
     if (self) {
         self.backgroundColor = WHITECOLOR;
         [self setupView];
+        if (self.syncSaveBlock) {
+            self.syncSaveBlock(self.buttonSaveRecord.selected);
+        }
     }
     return self;
 }
@@ -53,9 +56,13 @@
     return YES;
 }
 
-//- (void)setBOnline:(Boolean)bOnline{
-//    self.imageViewOnLine.hidden = !bOnline;
-//}
+- (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(actionHeartLungFilterChange:)]) {
+        return [self.delegate actionHeartLungFilterChange:filterModel];
+    }
+    return YES;
+}
+
 
 - (void)setTitleMessage:(NSString *)titleMessage{
     self.labelTitle.text = titleMessage;
@@ -342,6 +349,9 @@
 
 - (void)actionCilckSaveRecord:(UIButton *)button{
     button.selected = !button.selected;
+    if (self.syncSaveBlock) {
+        self.syncSaveBlock(self.buttonSaveRecord.selected);
+    }
 }
 
 - (UILabel *)labelMembers{

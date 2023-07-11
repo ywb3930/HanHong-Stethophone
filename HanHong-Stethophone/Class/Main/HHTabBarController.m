@@ -80,14 +80,10 @@ typedef NS_ENUM(NSInteger, HHMainTabType){
      } else {
          [UIApplication sharedApplication].keyWindow.backgroundColor = UIColor.whiteColor;
      }
+    //self.selectedIndex = tabba
     self.delegate = self;
     [self initData];
     [self initTabBar];
-    if (self.login_type == login_type_teaching) {
-        [self.tabBarController setSelectedIndex:2];
-        
-    }
-    
 }
 
 - (void)initData{
@@ -160,7 +156,6 @@ typedef NS_ENUM(NSInteger, HHMainTabType){
     }];
     
     self.viewControllers = [NSArray arrayWithArray:vcArray];
-    //[self.tabBar setShadowImage:[UIImage new]];
     
     UIView *view = [[UIView alloc] init];
     view.backgroundColor = HEXCOLOR(0xFAFAFA, 1);

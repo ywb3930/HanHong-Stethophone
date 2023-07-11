@@ -109,7 +109,6 @@ static char originGestureDelegateKey;
     [self qmui_viewDidLoad];
     objc_setAssociatedObject(self, &originGestureDelegateKey, self.interactivePopGestureRecognizer.delegate, OBJC_ASSOCIATION_ASSIGN);
     self.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
-    NSLog(@"---%@",[self class]);
 }
 
 - (BOOL)canPopViewController:(UIViewController *)viewController {

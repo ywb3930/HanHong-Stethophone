@@ -132,7 +132,6 @@
     
     connection_enabled = true;
     connection_running = true;
-    
     connection_thread = [[NSThread alloc] initWithBlock:^{
         
         @autoreleasepool {

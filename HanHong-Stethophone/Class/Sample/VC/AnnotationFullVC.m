@@ -10,6 +10,8 @@
 #import "WaveFullView.h"
 #import "AnnotationInfoVC.h"
 #import "AnnotationItemCell.h"
+#import "AppDelegate.h"
+#import "UIDevice+HanHong.h"
 
 @interface AnnotationFullVC ()<UITableViewDelegate, UITableViewDataSource, AnnotationItemCellDelegate, UIScrollViewDelegate>
 
@@ -61,6 +63,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    
+    
     self.view.backgroundColor = MainBlack;
     self.statusBarHeight = kStatusBarHeight;
     NSLog(@"self.statusBarHeight = %f", self.statusBarHeight);
@@ -384,19 +389,14 @@
 }
 
 - (void)actionViewBack:(UIButton *)button{
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:nil message:@"是否退出" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *cancalAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [Tools showAlertView:nil andMessage:@"是否退出" andTitles:@[@"取消",@"确定"] andColors:@[MainGray, MainColor] sure:^{
         if (self.resultBlock) {
             self.resultBlock();
         }
         [self.navigationController popViewControllerAnimated:YES];
+    } cancel:^{
+        
     }];
-
-    [alertController addAction:cancalAction];           // A
-    [alertController addAction:okAction];
-    [self presentViewController:alertController animated:YES completion:nil];
-    
 }
 
 - (UIView *)viewSelectAnnotation{
@@ -484,10 +484,16 @@
     annotationInfoVC.resultBlock = ^(NSString * _Nonnull selectValue) {
         NSString *start = [NSString stringWithFormat:@"%@", self.startTimeDecimalNumber];
         NSString *end = [NSString stringWithFormat:@"%@",self.endTimeDecimalNumber];
-//        start = [start stringByReplacingOccurrencesOfString:@"." withString:@":"];
-//        end = [end stringByReplacingOccurrencesOfString:@"." withString:@":"];
+        NSRange startRange = [start rangeOfString:@"."];
+        NSString *startMinute = [start substringToIndex:startRange.location];
+        start = [startMinute integerValue] < 10 ? [NSString stringWithFormat:@"0%@", start] : start;
+        NSRange endRange = [end rangeOfString:@"."];
+        NSString *endMinute = [end substringToIndex:endRange.location];
+        end = [endMinute integerValue] < 10 ? [NSString stringWithFormat:@"0%@", end] : end;
+        
         NSString *timeStr = [NSString stringWithFormat:@"%@-%@", start, end];
-        self.labelAnnotation.text = [NSString stringWithFormat:@"%@ %@", [timeStr stringByReplacingOccurrencesOfString:@"." withString:@":"], selectValue];
+        NSString *showString = [NSString stringWithFormat:@"%@ %@", [timeStr stringByReplacingOccurrencesOfString:@"." withString:@":"], selectValue];
+        self.labelAnnotation.text = showString;
         
         self.buttonAnnotation.hidden = YES;
         [self.clipView removeFromSuperview];
@@ -497,27 +503,13 @@
         [self addCharacteristicView:data tag:self.arrayCharacteristic.count bAdd:YES];
         
     };
-    [self.navigationController pushViewController:annotationInfoVC animated:YES];
+    [self.navigationController pushViewController:annotationInfoVC animated:NO];
 }
-//
-//- (void)actionSaveRecordChange{
-//    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-//    params[@"token"] = LoginData.token;
-//    params[@"tag"] = self.recordModel.tag;
-//    params[@"patient_id"] = self.recordModel.patient_id;
-//    params[@"patient_area"] = self.recordModel.patient_area;
-//    params[@"patient_id"] = self.recordModel.patient_id;
-//    params[@"patient_area"] = self.recordModel.patient_area;
-//
-//    params[@"patient_id"] = self.recordModel.patient_id;
-//    params[@"patient_area"] = self.recordModel.patient_area;
-//    params[@"patient_id"] = self.recordModel.patient_id;
-//    params[@"patient_area"] = self.recordModel.patient_area;
-//}
+
 
 - (void)addCharacteristicView:(NSDictionary *)dic tag:(NSInteger)tag bAdd:(Boolean)bAdd{
     NSString *timeStr = dic[@"time"];
-    
+    timeStr = [timeStr stringByReplacingOccurrencesOfString:@":" withString:@"."];
     NSArray *timeArray = [timeStr componentsSeparatedByString:@"-"];
     CGFloat startTime = [timeArray[0] floatValue];
     CGFloat endTime = [timeArray[1] floatValue];
@@ -546,42 +538,58 @@
     //self.bCurrentView = YES;
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     //进入旋转
-    [self changeRotate:YES];
+    //[self changeRotate:YES];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    // 打开横屏开关
+    appDelegate.allowRotation = YES;
+    // 调用转屏代码
+    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationLandscapeRight];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     //退出恢复
     //self.bCurrentView = NO;
-    [self changeRotate:NO];
-}
+    //[self changeRotate:NO];
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    // 关闭横屏仅允许竖屏
+    appDelegate.allowRotation = NO;
+    // 切换到竖屏
+    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
 
-- (void)viewDidDisappear:(BOOL)animated{
-    
 }
-
-- (void)changeRotate:(BOOL)change{
-    /*
-     *采用KVO字段控制旋转
-     */
-    NSNumber *orientationUnknown = [NSNumber numberWithInt:UIInterfaceOrientationUnknown];
-    [[UIDevice currentDevice] setValue:orientationUnknown forKey:@"orientation"];
-    NSNumber *orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationPortrait];
-    if (change) {
-        orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight];
-    }
-    [[UIDevice currentDevice] setValue:orientationTarget forKey:@"orientation"];
-}
-
-#pragma mark - *********** 旋转设置 ***********
-
-- (BOOL)shouldAutorotate{
-    return YES;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
-    return UIInterfaceOrientationMaskLandscapeRight;
-}
+//
+//- (void)viewDidDisappear:(BOOL)animated{
+//
+//}
+//
+//- (void)changeRotate:(BOOL)change{
+//    /*
+//     *采用KVO字段控制旋转
+//     */
+//    NSNumber *orientationUnknown = [NSNumber numberWithInt:UIInterfaceOrientationUnknown];
+//    [[UIDevice currentDevice] setValue:orientationUnknown forKey:@"orientation"];
+//    NSNumber *orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationPortrait];
+//    if (change) {
+//        orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight];
+//    }
+//    [[UIDevice currentDevice] setValue:orientationTarget forKey:@"orientation"];
+//}
+//
+//#pragma mark - *********** 旋转设置 ***********
+//
+//- (BOOL)shouldAutorotate{
+//    return YES;
+//}
+//
+//- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
+//    return UIInterfaceOrientationMaskLandscapeRight;
+//}
+//
+//- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation{
+//    return [self preferredInterfaceOrientationForPresentation];
+//}
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -635,12 +643,9 @@
     self.viewLine.frame = CGRectMake(self.statusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
     
     [self.view addSubview:self.tableView];
-//    self.viewTableViewBg.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, 0).bottomSpaceToView(self.view, 0);
     
     [self openFileWithFilePathURL];
     
-    
-    //[self showWaveView:a];
 }
 
 

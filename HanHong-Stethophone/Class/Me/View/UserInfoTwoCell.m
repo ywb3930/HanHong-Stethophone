@@ -77,7 +77,7 @@
 -(UIView *)viewLine{
     if(!_viewLine) {
         _viewLine = [[UIView alloc] init];
-        _viewLine.backgroundColor = HEXCOLOR(0xF5F5F5, 1);
+        _viewLine.backgroundColor = ColorF5F5F5;
     }
     return _viewLine;
 }

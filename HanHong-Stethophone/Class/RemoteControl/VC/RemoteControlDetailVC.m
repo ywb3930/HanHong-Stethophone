@@ -9,8 +9,10 @@
 #import "MeetingRoom.h"
 #import "RemoteControlDetailHeaderView.h"
 #import "CreateConsultationCell.h"
+#import "UINavigationController+QMUI.h"
+#import "UIViewController+HBD.h"
 
-@interface RemoteControlDetailVC ()<MeetingRoomDelegate,UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, RemoteControlDetailHeaderViewDelegate, TTActionSheetDelegate>
+@interface RemoteControlDetailVC ()<MeetingRoomDelegate,UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIGestureRecognizerDelegate, RemoteControlDetailHeaderViewDelegate, TTActionSheetDelegate, UINavigationControllerBackButtonHandlerProtocol>
 
 
 @property (retain, nonatomic) NSMutableArray        *arrayData;
@@ -54,17 +56,9 @@
     [self setupView];
     [self loadRecordTypeData];
     [self initMeetingRoom];
-    
-    //[self actionStartRecord];
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
 }
 
 
-//接收蓝牙底层消息
-//- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
-//
-//    
-//}
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
     FriendModel *model = self.arrayData[self.currentIndexPath.row];
@@ -84,6 +78,23 @@
     }
 }
 
+- (Boolean)actionHeartLungButtonClickCallback:(NSInteger)idx {
+    if (self.recordingState == recordingState_ing) {
+        [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return NO;
+    }
+    
+    if (idx == 1) {
+        self.soundsType = heart_sounds;
+    } else if (idx == 2) {
+        self.soundsType = lung_sounds;
+    }
+    [self loadRecordTypeData];
+    [self actionStartRecord];
+    return YES;
+}
+
+
 - (void)initMeetingRoom{
     self.meetingRoom = [[MeetingRoom alloc] init];
     self.meetingRoom.delegate = self;
@@ -100,8 +111,6 @@
 
 - (void)actionDeviceHelperRecordBegin{
     self.headerView.recordMessage = @"";
-    [self.meetingRoom SendCommand:1 data:NULL];
-   // [self actionStartRecord];
 }
 
 - (void)actionDeviceHelperRecordingTime:(float)number{
@@ -115,7 +124,7 @@
 }
 
 - (void)actionDeviceHelperRecordEnd{
-   // self.headerView.recordMessage = @"录音完成,按听诊器键重新开始录音";
+    self.headerView.recordMessage = @"录音完成,按听诊器键重新开始录音";
     [self.meetingRoom SendCommand:0 data:NULL];
 }
 
@@ -136,10 +145,8 @@
     
     
     [self.collectionView reloadData];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
-        self.headerView.titleMessage = @"进入会诊成功";
-    });
+    self.headerView.titleMessage = @"进入会诊成功";
+    
 }
 
 - (void)actionMeetingMemberUpdate:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
@@ -212,7 +219,7 @@
     }
     [[HHBlueToothManager shareManager] writePlayBuffer:data];
     NSLog(@"播放中 = %li", data.length);
-   
+    
 }
 
 - (void)actionMeetingDataServiceCmdReceived:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
@@ -237,9 +244,8 @@
 
 - (void)actionMeetingDataServiceClientInfoReceived:(Clients *)clients{
     for (FriendModel *friendModel in self.arrayData) {
-        for (NSNumber *memberUserId in clients.members) {
-            NSString *userId = [NSString stringWithFormat:@"%@", memberUserId];
-            if ([userId longLongValue] == friendModel.id) {
+        for (NSNumber *number in clients.members) {
+            if ([number intValue] == friendModel.id) {
                 friendModel.bCollect = YES;
                 break;
             } else {
@@ -247,14 +253,11 @@
             }
         }
     }
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [self.collectionView reloadData];
-    });
+    [self.collectionView reloadData];
     
 }
 
-- (void)on_meetingroom_event:(MEETINGROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
-    //NSLog(@"event = %li", event);
+- (void)actionMeetingRoomEvent:(MEETINGROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
     if (event == MeetingEntering) {
         NSLog(@"正在连接");
     } else if (event == MeetingEnterSuccess) {
@@ -301,11 +304,8 @@
     } else if (event == MeetingDataServiceConnecting) {
         self.headerView.titleMessage = @"远程听诊服务器连接中";
     } else if (event == MeetingDataServiceConnectSuccess) {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            self.headerView.bStartRecord = YES;
-            self.headerView.titleMessage = @"远程会诊进行中";
-            
-        });
+        self.headerView.bStartRecord = YES;
+        self.headerView.titleMessage = @"远程会诊进行中";
         
         if (self.collector_id == LoginData.id && !self.bDataServiceRecording) {
             [self.meetingRoom SendCommand:1 data:NULL];
@@ -323,19 +323,22 @@
         [self.meetingRoom SendCommand:0 data:NULL];
         [[HHBlueToothManager shareManager] stop];
     } else if (event == MeetingDataServiceWavFrameReceived) {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self actionMeetingDataServiceWavFrameReceived:args1 args2:args2 args3:args3];
-            
-        });
-        
+        [self actionMeetingDataServiceWavFrameReceived:args1 args2:args2 args3:args3];
     } else if (event == MeetingDataServiceCmdReceived) {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self actionMeetingDataServiceCmdReceived:args1 args2:args2 args3:args3];
-            
-        });
+        [self actionMeetingDataServiceCmdReceived:args1 args2:args2 args3:args3];
+        
     } else if (event == MeetingDataServiceClientInfoReceived) {
         Clients *clients = (Clients *)args3;
         [self actionMeetingDataServiceClientInfoReceived:clients];
+    }
+}
+
+- (void)on_meetingroom_event:(MEETINGROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
+    //NSLog(@"event = %li", event);
+    if ([NSThread isMainThread]) {
+        [self actionMeetingRoomEvent:event args1:args1 args2:args2 args3:args3];
+    } else {
+        [self actionMeetingRoomEvent:event args1:args1 args2:args2 args3:args3];
     }
 }
 
@@ -343,7 +346,7 @@
     NSInteger i =0 ;
     for (FriendModel *model in self.arrayData) {
         if(model.id == self.collector_id) {
-           // FriendModel *cModel = [self.collectorModel copy];
+            // FriendModel *cModel = [self.collectorModel copy];
             
             [self.arrayData replaceObjectAtIndex:i withObject:self.collectorModel];
             self.collectorModel = model;
@@ -409,7 +412,7 @@
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath{
     UICollectionReusableView *reusableview = nil;
-
+    
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         self.headerView = (RemoteControlDetailHeaderView *)[collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:NSStringFromClass([RemoteControlDetailHeaderView class]) forIndexPath:indexPath];
         __weak typeof(self) wself = self;
@@ -455,19 +458,19 @@
         fallsLayout.minimumInteritemSpacing = Ratio11;
         [fallsLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
         fallsLayout.headerReferenceSize = CGSizeMake(screenW, 355.f*screenRatio);
-         
+        
         _collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:fallsLayout];
         _collectionView.backgroundColor = WHITECOLOR;
         [_collectionView registerClass:[CreateConsultationCell class] forCellWithReuseIdentifier:NSStringFromClass([CreateConsultationCell class])];
-         
+        
         [_collectionView registerClass:[RemoteControlDetailHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:NSStringFromClass([RemoteControlDetailHeaderView class])];
-         
+        
         //collectionView的item只剩下一个时自动左对齐
         SEL sel = NSSelectorFromString(@"_setRowAlignmentsOptions:");
         if ([_collectionView.collectionViewLayout respondsToSelector:sel]) {
             ((void(*)(id,SEL,NSDictionary*)) objc_msgSend)(_collectionView.collectionViewLayout, sel, @{@"UIFlowLayoutCommonRowHorizontalAlignmentKey":@(NSTextAlignmentLeft),@"UIFlowLayoutLastRowHorizontalAlignmentKey" : @(NSTextAlignmentLeft), @"UIFlowLayoutRowVerticalAlignmentKey" : @(NSTextAlignmentCenter)});
         }
-         
+        
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
         
@@ -489,7 +492,7 @@
     }
     
     CGPoint p = [gestureRecognizer locationInView:self.collectionView];
-
+    
     NSIndexPath *indexPath = [self.collectionView indexPathForItemAtPoint:p];
     if (indexPath == nil){
         NSLog(@"couldn't find index path");
@@ -518,5 +521,32 @@
     }
     return YES;
 }
+
+
+- (BOOL)shouldHoldBackButtonEvent {
+    return YES;
+}
+
+- (BOOL)canPopViewController {
+    // 这里不要做一些费时的操作，否则可能会卡顿。
+    [Tools showAlertView:nil andMessage:@"确定退出吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+        [self.navigationController popViewControllerAnimated:YES];
+    } cancel:^{
+        
+    }];
+    return NO;
+}
+
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
+        [[HHBlueToothManager shareManager] stop];
+    }
+    self.recordingState = recordingState_stop;
+    [self.meetingRoom Exit];
+}
+
+
 
 @end

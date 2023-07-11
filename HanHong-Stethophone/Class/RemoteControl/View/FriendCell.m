@@ -188,7 +188,7 @@
     [self.contentView addSubview:self.labelStateTitle];
     
     self.buttonClick.sd_layout.leftSpaceToView(self.contentView, Ratio11).heightIs(Ratio33).widthIs(0).centerYEqualToView(self.contentView);
-    self.imageViewHead.sd_layout.leftSpaceToView(self.buttonClick, Ratio5).topSpaceToView(self.contentView, Ratio17).heightIs(60.f*screenRatio).widthIs(60.f*screenRatio);
+    self.imageViewHead.sd_layout.leftSpaceToView(self.buttonClick, Ratio5).topSpaceToView(self.contentView, Ratio17).heightIs(Ratio50).widthIs(Ratio50);
     self.labelMessage.sd_layout.centerYEqualToView(self.imageViewHead).heightIs(Ratio16).rightSpaceToView(self.contentView, Ratio11).widthIs(0);
     self.labelCommpany.sd_layout.leftEqualToView(self.labelName).rightSpaceToView(self.labelMessage, Ratio5).centerYEqualToView(self.imageViewHead).heightIs(Ratio16);
 
@@ -209,6 +209,7 @@
         _imageViewHead.backgroundColor = HEXCOLOR(0xE5E5E5, 0.7);
         _imageViewHead.contentMode = UIViewContentModeScaleAspectFit;
         _imageViewHead.layer.cornerRadius = Ratio5;
+        _imageViewHead.clipsToBounds = YES;
     }
     return _imageViewHead;
 }
@@ -216,7 +217,7 @@
 - (UILabel *)labelName{
     if (!_labelName) {
         _labelName = [[UILabel alloc] init];
-        _labelName.font = [UIFont systemFontOfSize:Ratio16 weight:UIFontWeightBold];
+        _labelName.font = [UIFont systemFontOfSize:Ratio15 weight:UIFontWeightBold];
         _labelName.textColor = MainBlack;
     }
     return _labelName;
@@ -225,7 +226,7 @@
 - (UILabel *)labelCommpany{
     if (!_labelCommpany) {
         _labelCommpany = [[UILabel alloc] init];
-        _labelCommpany.font = Font15;
+        _labelCommpany.font = Font13;
         _labelCommpany.textColor = MainBlack;
         _labelCommpany.lineBreakMode = NSLineBreakByCharWrapping;
     }
@@ -235,7 +236,7 @@
 - (UILabel *)labelDepartment{
     if (!_labelDepartment) {
         _labelDepartment = [[UILabel alloc] init];
-        _labelDepartment.font = Font15;
+        _labelDepartment.font = Font13;
         _labelDepartment.textColor = MainGray;
     }
     return _labelDepartment;

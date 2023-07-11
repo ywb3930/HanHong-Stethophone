@@ -12,12 +12,12 @@
 #import "HHCalendarManager.h"
 #import "HHFileLocationHelper.h"
 #import <CoreTelephony/CTCellularData.h>
+#import "ToolsCheckUpdate.h"
 
-
-//#import <UMCommon/UMCommon.h>
-//#import <UMAPM/UMCrashConfigure.h>
-//#import <UMAPM/UMLaunch.h>
-//#import <UMCommonLog/UMCommonLogHeaders.h>
+#import <UMCommon/UMCommon.h>
+#import <UMAPM/UMCrashConfigure.h>
+#import <UMAPM/UMLaunch.h>
+#import <UMCommonLog/UMCommonLogHeaders.h>
 
 /**
 
@@ -48,7 +48,7 @@
     // Override point for customization after application launch. 18902400417
     [self checkNetConnect];
 
-
+    [[ToolsCheckUpdate getInstance] actionToCheckUpdate:NO];
     
     //设置预定义DidFinishLaunchingEnd时间
     //[UMLaunch setPredefineLaunchType:UMPredefineLaunchType_DidFinishLaunchingEnd];
@@ -57,6 +57,7 @@
     [SVProgressHUD setForegroundColor:MainColor];
     [SVProgressHUD setBorderWidth:Ratio1];
     [SVProgressHUD setBorderColor:ViewBackGroundColor];
+    [SVProgressHUD setBackgroundColor:WHITECOLOR];
     
     [UINavigationBar appearance].backgroundColor = ViewBackGroundColor;
     [UINavigationBar appearance].tintColor = MainBlack;
@@ -80,7 +81,7 @@
     
 //    applinks:eba4fc5d76acfd96108720a7aadb21c5.share2dlink.com
     [WXApi registerApp:@"wx97eae6a515b782d3" universalLink:@"https://www.hedelongcloud.com/auscultationassistant/"];
-    //AppID：
+
     return YES;
 }
 
@@ -154,6 +155,13 @@
     [[AFNetRequestManager shareManager] getRequestTest:@"https://www.baidu.com"];
 }
 
+- (UIInterfaceOrientationMask)application:(UIApplication *)application
+  supportedInterfaceOrientationsForWindow:(UIWindow *)window {
+    if (self.allowRotation) { // 如果设置了 allowRotation 属性，支持全屏
+        return UIInterfaceOrientationMaskAll;
+    }
+    return UIInterfaceOrientationMaskPortrait; // 默认全局不支持横屏
+}
 
 
 @end

@@ -23,6 +23,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"更换注册手机";
+    self.view.backgroundColor = WHITECOLOR;
     [self initView];
 }
 

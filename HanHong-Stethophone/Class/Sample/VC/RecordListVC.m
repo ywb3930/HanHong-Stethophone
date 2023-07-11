@@ -428,6 +428,10 @@
 //上传本地录音至云标本库
 - (void)actionUploadToClound{
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
+    if (model.record_length > 180) {
+        [self.view makeToast:@"不能上传超过3分钟的音频" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     NSString *a = [NSString stringWithFormat:@"%@%@",[Tools getCurrentTimes], [Tools getRamdomString]];
     params[@"token"] = LoginData.token;
@@ -723,6 +727,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     RecordListCell *cell = (RecordListCell *)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass([RecordListCell class])];
+    //NSLog(@"self.arrayData = %@", [Tools convertToJsonData:self.arrayData]);
     cell.recordModel = self.arrayData[indexPath.row];
     cell.idx = self.idx;
     cell.delegate = self;

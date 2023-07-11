@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ScanTeachCodeVC : UIViewController
 
 @property (weak, nonatomic) id<ScanTeachCodeVCDelegate> delegate;
+@property (retain, nonatomic) NSString              *message;
 
 @end
 

@@ -71,8 +71,8 @@
 
 
 - (void)actionMy:(UIButton *)button{
-    self.buttonMy.backgroundColor = HEXCOLOR(0xDAECFD, 1);
-    self.buttonInvite.backgroundColor = HEXCOLOR(0xF5F5F5, 1);
+    self.buttonMy.backgroundColor = ColorDAECFD;
+    self.buttonInvite.backgroundColor = ColorF5F5F5;
     self.buttonMy.selected = YES;
     self.buttonInvite.selected = NO;
     self.myCreateConsultationView.hidden = NO;
@@ -81,8 +81,8 @@
 }
 
 - (void)actionInvite:(UIButton *)button{
-    self.buttonInvite.backgroundColor = HEXCOLOR(0xDAECFD, 1);
-    self.buttonMy.backgroundColor = HEXCOLOR(0xF5F5F5, 1);
+    self.buttonInvite.backgroundColor = ColorDAECFD;
+    self.buttonMy.backgroundColor = ColorF5F5F5;
     self.buttonMy.selected = NO;
     self.buttonInvite.selected = YES;
     self.myCreateConsultationView.hidden = YES;
@@ -183,7 +183,7 @@
 - (UIButton *)buttonMy{
     if(!_buttonMy) {
         _buttonMy = [self setupButton2:@"我创建的会诊"];
-        _buttonMy.backgroundColor = HEXCOLOR(0xDAECFD, 1);
+        _buttonMy.backgroundColor = ColorDAECFD;
         [_buttonMy addTarget:self action:@selector(actionMy:) forControlEvents:UIControlEventTouchUpInside];
         _buttonMy.selected = YES;
     }
@@ -202,7 +202,7 @@
 - (UIButton *)buttonInvite{
     if(!_buttonInvite) {
         _buttonInvite = [self setupButton2:@"被邀请的会诊"];
-        _buttonInvite.backgroundColor = HEXCOLOR(0xF5F5F5, 1);
+        _buttonInvite.backgroundColor = ColorF5F5F5;
         [_buttonInvite addTarget:self action:@selector(actionInvite:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonInvite;

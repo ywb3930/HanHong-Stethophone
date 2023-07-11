@@ -118,7 +118,7 @@
 - (UIView *)viewLineGetCode{
     if(!_viewLineGetCode) {
         _viewLineGetCode = [[UIView alloc] init];
-        _viewLineGetCode.backgroundColor = HEXCOLOR(0xF5F5F5, 1);
+        _viewLineGetCode.backgroundColor = ColorF5F5F5;
     }
     return _viewLineGetCode;
 }

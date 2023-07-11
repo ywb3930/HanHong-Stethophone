@@ -11,6 +11,7 @@
 @interface AppDelegate : UIResponder <UIApplicationDelegate,WXApiDelegate>
 
 @property (retain, nonatomic) UIWindow *window;
+@property (nonatomic,assign)BOOL allowRotation;
 
 
 @end

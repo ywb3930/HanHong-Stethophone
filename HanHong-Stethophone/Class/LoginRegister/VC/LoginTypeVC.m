@@ -21,6 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.title = @"登录类型";
     self.view.backgroundColor = WHITECOLOR;
     [self initView];
 }
@@ -76,7 +77,7 @@
 
 - (UIButton *)buttonUnion{
     if(!_buttonUnion){
-        _buttonUnion = [self setButtonType:@"医联版"];
+        _buttonUnion = [self setButtonType:@"医联体"];
         _buttonUnion.backgroundColor = HEXCOLOR(0x00AAFF, 1);
         [_buttonUnion addTarget:self action:@selector(actionUnion:) forControlEvents:UIControlEventTouchUpInside];
     }

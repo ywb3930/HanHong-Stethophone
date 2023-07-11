@@ -11,8 +11,10 @@
 #import "StandarRecordBottomView.h"
 #import "RecordFinishVC.h"
 #import "ReadyRecordView.h"
+#import "UINavigationController+QMUI.h"
+#import "UIViewController+HBD.h"
 
-@interface StandartRecordVC ()<HeartVoiceViewDelegate, LungVoiceViewDelegate, StandarRecordBottomViewDelegate>
+@interface StandartRecordVC ()<HeartVoiceViewDelegate, LungVoiceViewDelegate, StandarRecordBottomViewDelegate, UINavigationControllerBackButtonHandlerProtocol>
 
 @property (retain, nonatomic) UIButton                      *buttonHeart;
 @property (retain, nonatomic) UIButton                      *buttonLung;
@@ -399,5 +401,15 @@
         [self actionStartRecord];
     }
 }
+
+
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
+        [[HHBlueToothManager shareManager] stop];
+    }
+    self.recordingState = recordingState_stop;
+}
+
 
 @end

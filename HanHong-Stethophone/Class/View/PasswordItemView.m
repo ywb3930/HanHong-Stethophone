@@ -85,7 +85,7 @@
 - (UIView *)viewLinePa{
     if(!_viewLinePa) {
         _viewLinePa = [[UIView alloc] init];
-        _viewLinePa.backgroundColor = HEXCOLOR(0xF5F5F5, 1);
+        _viewLinePa.backgroundColor = ColorF5F5F5;
     }
     return _viewLinePa;
 }

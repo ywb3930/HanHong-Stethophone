@@ -11,14 +11,15 @@
 #import "InteriorHeaderView.h"
 #import "FriendCell.h"
 
-#define HeaderViewHeight 89.f*screenRatio
+#define HeaderViewHeight 79.f*screenRatio
 
-@interface FriendBookVC ()<UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate>
+@interface FriendBookVC ()<UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, TTActionSheetDelegate>
 
 @property (retain, nonatomic) NSMutableArray        *arrayData;
 @property (retain, nonatomic) NSMutableArray        *listTitle;
 @property (retain, nonatomic) UITableView           *tableView;
 @property (retain, nonatomic) NoDataView            *noDataView;
+@property (retain, nonatomic) NSIndexPath           *currentIndexPath;
 
 @end
 
@@ -101,6 +102,19 @@
     } else {
         self.noDataView.hidden = YES;
     }
+    [self reloadRightTableView];
+}
+
+- (void)reloadRightTableView{
+    NSMutableArray *indexViewDataSource = [NSMutableArray arrayWithObject:UITableViewIndexSearch];
+    for (NSString *title in self.listTitle) {
+        [indexViewDataSource addObject:title];
+    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.001 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self reloadColorForHeaderView];
+    });
+    self.tableView.sc_indexViewDataSource = indexViewDataSource;
+    self.tableView.sc_startSection = 0;
 }
 
 - (void)initData{
@@ -141,19 +155,11 @@
                 }
                 [wself.arrayData addObject:item];
                 
-                NSMutableArray *indexViewDataSource = [NSMutableArray arrayWithObject:UITableViewIndexSearch];
-                for (NSString *title in wself.listTitle) {
-                    [indexViewDataSource addObject:title];
-                }
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.001 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [wself reloadColorForHeaderView];
-                });
-                wself.tableView.sc_indexViewDataSource = indexViewDataSource;
-                wself.tableView.sc_startSection = 0;
+                
                
                 
             }
-            
+            [wself reloadRightTableView];
             if(wself.arrayData.count == 0) {
                 wself.noDataView.hidden = NO;
             } else {
@@ -196,9 +202,6 @@
     return 0;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return Ratio22;
-}
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
     UIView *view = [[UIView alloc] initWithFrame:CGRectZero];
@@ -206,6 +209,9 @@
 }
 
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return Ratio22;
+}
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     InteriorHeaderView *headerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:NSStringFromClass([InteriorHeaderView class])];
@@ -214,20 +220,10 @@
     return headerView;
 }
 
-
-
-- (UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath{
-    UIContextualAction *deleteRowAction = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleDestructive title:@"delete" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
-        
-        [self actionToDeleteFriend:indexPath];
-    }];
-    deleteRowAction.title = @"删除";
-    deleteRowAction.backgroundColor = [UIColor redColor];
-
-
-
-    UISwipeActionsConfiguration *config = [UISwipeActionsConfiguration configurationWithActions:@[deleteRowAction]];
-    return config;
+- (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
+    if (index == 0) {
+        [self actionToDeleteFriend:self.currentIndexPath];
+    }
 }
 
 
@@ -264,15 +260,11 @@
 
 - (UITableView *)tableView{
     if (!_tableView) {
-        CGFloat y = 0;
-        if (self.bAdd) {
-            y = -Ratio18;
-        }
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, y, screenW, screenH - kNavBarAndStatusBarHeight - kBottomSafeHeight - Ratio55 - y)];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenW, screenH - kNavBarAndStatusBarHeight - kBottomSafeHeight - Ratio55)];
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.backgroundColor = WHITECOLOR;
-        
+        _tableView.sectionHeaderTopPadding = 0;
         
          _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         [_tableView registerClass:[FriendCell class] forCellReuseIdentifier:NSStringFromClass([FriendCell class])];
@@ -285,9 +277,38 @@
         configuration.indexItemSelectedTextColor = WHITECOLOR;
         _tableView.sc_indexViewConfiguration = configuration;
         
+        UILongPressGestureRecognizer *lpgr = [[UILongPressGestureRecognizer alloc]  initWithTarget:self action:@selector(handleLongPress:)];
+        //lpgr.delegate = self;
+        lpgr.delaysTouchesBegan = YES;
+        [_tableView addGestureRecognizer:lpgr];
+        
     }
     return _tableView;
 }
+
+
+
+-(void)handleLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
+{
+    [self.view endEditing:YES];
+    if (gestureRecognizer.state != UIGestureRecognizerStateEnded) {
+        return;
+    }
+    
+    CGPoint p = [gestureRecognizer locationInView:self.tableView];
+    
+    NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:p];
+    if (indexPath == nil){
+        NSLog(@"couldn't find index path");
+    } else {
+        self.currentIndexPath = indexPath;
+        
+        TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"删除"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
+        actionSheet.delegate = self;
+        [actionSheet showInView:kAppWindow];
+    }
+}
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.listTitle.count;

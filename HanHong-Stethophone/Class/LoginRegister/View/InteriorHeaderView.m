@@ -18,6 +18,7 @@
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier{
     if (self = [super initWithReuseIdentifier:reuseIdentifier]) {
+        //self.contentView.backgroundColor = ColorF5F5F5;
         [self setupView];
     }
     return self;
@@ -29,7 +30,7 @@
 }
 
 - (void)setupView{
-    self.contentView.backgroundColor = HEXCOLOR(0xF5F5F5, 1);
+    self.backgroundColor = UIColor.orangeColor;
     [self.contentView addSubview:self.lblTitle];
     self.lblTitle.sd_layout.leftSpaceToView(self.contentView, Ratio18).topSpaceToView(self.contentView, 0).rightSpaceToView(self.contentView, 0).bottomSpaceToView(self.contentView, 0);
 }
@@ -53,8 +54,8 @@
     if (textColorDiffArray.count == 0) {
         UIColor *selectTextColor = MainColor;
         UIColor *textColor = MainGray;
-        UIColor *selectBgColor = HEXCOLOR(0xF5F5F5, 1);
-        UIColor *bgColor = HEXCOLOR(0xF5F5F5, 1);
+        UIColor *selectBgColor = ColorF5F5F5;
+        UIColor *bgColor = ColorF5F5F5;
         
         selectTextColorArray = [self getRGBArrayByColor:selectTextColor];
         NSArray<NSNumber *> *textColorArray = [self getRGBArrayByColor:textColor];

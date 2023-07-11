@@ -29,6 +29,7 @@
         _modify_time = @"";//修改时间
         _create_time = @"";//上传时间
         _url = @"";//
+        _share_code = @"";
     }
     return self;
 }

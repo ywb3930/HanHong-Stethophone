@@ -21,6 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.view.backgroundColor = WHITECOLOR;
     self.title = @"修改注册邮箱";
     [self initView];
 }
