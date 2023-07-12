@@ -55,7 +55,14 @@
 }
 
 - (void)reloadCalender:(NSNotification *)noti{
-    [self.studentProgramView initData:self.studentProgramView.currentDate];
+    if ([NSThread isMainThread]) {
+        [self.studentProgramView initData:self.studentProgramView.currentDate];
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self.studentProgramView initData:self.studentProgramView.currentDate];
+        });
+    }
+    
 }
 
 - (void)setupView{

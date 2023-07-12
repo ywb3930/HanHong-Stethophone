@@ -69,7 +69,7 @@ typedef void(^FinishBlock)(NSInteger index);
     self = [super init];
     if (self) {
         //基本配置调用放最前面
-        self.backgroundColor = HEXCOLOR(999999, 0.5);
+        self.backgroundColor = HEXCOLOR(0x000000, 0.7);
         messageLabelFont = size;
         _finishBlock = selectBlock;
         _messageAlignment = textAlignment;

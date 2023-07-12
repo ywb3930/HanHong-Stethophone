@@ -9,7 +9,7 @@
 const int audiosize_per_second = 2 * 11025;
 const int audiosample_per_second = 11025;
 const int record_time_minimum = 3;
-const int record_time_maximum = 3600;
+const int record_time_maximum = 600;
 
 typedef NS_ENUM(NSInteger, RECORD_STATE)
 {
@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
     PlayPause = 2,
 };
  
-@implementation HanhongDeviceHelper 
+@implementation HanhongDeviceHelper
 {
     NSLock *cmd_lock;
     HanhongDevice *hanhongDevice;
@@ -194,17 +194,19 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
 
             NSMutableData *audio_data = [NSMutableData dataWithLength:size]; //包含音频头文件
 
+            int need_packets = (size + 399) / 400;
+            
             if (size > 0) {
 
                 int pos = 0;
                 int len = 0;
-                for (int i = 0; i < record_buffer.count - 1; i++) {
+                for (int i = 0; i < need_packets - 1; i++) {
                     pos = i * 400;
                     len = 400;
                     [audio_data replaceBytesInRange:NSMakeRange(pos, len) withBytes:[[record_buffer objectAtIndex:i] bytes]];
                 }
 
-                int last_i = (int)record_buffer.count - 1;
+                int last_i = need_packets - 1;
 
                 pos = last_i * 400;
                 len = size - pos;
@@ -462,9 +464,8 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
             } else {
                 [self EventCallback:DeviceHelperRecordReady args1:NULL args2:NULL];
             }
-            
-        } [self EventCallback:DeviceConnected args1:NULL args2:NULL];
-        
+        }
+          
     } else if (event == RealtimeRecordBeginEvent) {
         
         [cmd_lock lock];
@@ -557,7 +558,7 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
             }
         }
         
-        if (!data_used) { 
+        if (!data_used) {
             data = nil;
         }
         

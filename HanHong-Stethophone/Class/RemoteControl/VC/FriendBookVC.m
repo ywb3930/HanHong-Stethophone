@@ -154,23 +154,30 @@
                     }
                 }
                 [wself.arrayData addObject:item];
-                
-                
-               
-                
             }
-            [wself reloadRightTableView];
-            if(wself.arrayData.count == 0) {
-                wself.noDataView.hidden = NO;
+            if ([NSThread isMainThread]) {
+                [self actionRefreshView];
             } else {
-                wself.noDataView.hidden = YES;
+                dispatch_sync(dispatch_get_main_queue(), ^{
+                    [self actionRefreshView];
+                });
             }
-            [wself.tableView reloadData];
             
         }
     } failure:^(NSError * _Nonnull error) {
         
     }];
+}
+
+
+- (void)actionRefreshView{
+    [self reloadRightTableView];
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
+    }
+    [self.tableView reloadData];
 }
 
 

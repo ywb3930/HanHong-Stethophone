@@ -7,80 +7,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "60A4D2A1-E094-474D-9673-17859AFF11AE"
+            uuid = "7496020D-3329-4C79-B7AC-3425C24E1E34"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/RemoteControl/View/MyCreateConsultationView.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
+            filePath = "HanHong-Stethophone/Class/Record/VC/HHBaseRecordVC.m"
+            startingColumnNumber = "9"
+            endingColumnNumber = "31"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
+            landmarkName = "-actionDeviceHelperEvent:args1:args2:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "89C508AF-98A0-46B4-AF59-EDDB1DFF0C94"
+            uuid = "EB2E907A-9E9D-425E-8F92-6633EF42F394"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/RemoteControl/View/MyCreateConsultationView.m"
+            filePath = "HanHong-Stethophone/Class/Sample/View/WaveFullView.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "76"
-            endingLineNumber = "76"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "47BA8161-3350-470E-A291-60A20A7C3EA1"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/RemoteControl/View/MyCreateConsultationView.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
-            landmarkName = "-tableView:didSelectRowAtIndexPath:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "27C06B5D-814A-46F8-A039-5C9ADCF7CA1A"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/LoginRegister/VC/LoginVC.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
-            landmarkName = "-textField:shouldChangeCharactersInRange:replacementString:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "14D430AA-BFA6-4E5F-81A4-4B91E9FEA9F7"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/LoginRegister/VC/LoginVC.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "-textFieldShouldReturn:"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "-drawLine"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

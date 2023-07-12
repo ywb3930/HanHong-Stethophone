@@ -38,7 +38,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.currentPlayingRow = 0;
+    self.currentPlayingRow = -1;
     self.path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
     self.selectMode = 0;
     self.localReordFilterType = 0;
@@ -255,6 +255,9 @@
 }
 
 - (void)actionDeviceHelperPlayingTime:(float)value{
+    if (self.currentPlayingRow == -1) {
+        return;
+    }
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
     RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
     cell.playProgess = value;
@@ -262,6 +265,9 @@
 }
 
 - (void)actionDeviceHelperPlayEnd{
+    if (self.currentPlayingRow == -1) {
+        return;
+    }
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
     RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
     cell.bStop = NO;;
@@ -607,6 +613,7 @@
     AnnotationVC *annotationVC = [[AnnotationVC alloc] init];
     annotationVC.recordModel = self.arrayData[indexPath.row];
     annotationVC.saveLocation = self.idx;
+    self.currentPlayingRow = -1;
     annotationVC.resultBlock = ^(RecordModel * _Nullable record) {
         NSInteger row = [self.arrayData indexOfObject:record];
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
@@ -631,7 +638,13 @@
     }
           
     //读取本地数据库
-    [self loadLocalDBData];
+    if ([NSThread isMainThread]) {
+        [self loadLocalDBData];
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self loadLocalDBData];
+        });
+    }
 }
 //读取本地数据库
 - (void)loadLocalDBData{

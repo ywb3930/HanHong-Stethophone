@@ -73,9 +73,15 @@
     if ([Tools isBlankString:recordModel.characteristics]) {
         self.lblTag.text = @"未标注";
     } else {
+        NSLog(@"recordModel.characteristics = %@", recordModel.characteristics);
         NSArray *array = [Tools jsonData2Array:recordModel.characteristics];
-        NSDictionary *dictionary = array[0];
-        self.lblTag.text = dictionary[@"characteristic"];
+        if(array.count > 0) {
+            NSDictionary *dictionary = array[0];
+            self.lblTag.text = dictionary[@"characteristic"];
+        } else {
+            self.lblTag.text = @"未标注";
+        }
+        
     }
     //self.lblTag.text = [[Constant shareManager] positionTagPositionCn:recordModel.tag];
     if (recordModel.type_id == heart_sounds) {

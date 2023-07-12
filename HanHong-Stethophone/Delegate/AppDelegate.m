@@ -34,6 +34,17 @@
 
 - (void)loginBroadcast:(NSNotification *)userIfo{
     NSDictionary *data = userIfo.userInfo;
+    if ([NSThread isMainThread]) {
+        [self actionSetRootView:data];
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self actionSetRootView:data];
+        });
+    }
+    
+}
+
+- (void)actionSetRootView:(NSDictionary *)data{
     if([data[@"type"] isEqualToString:@"1"]) {//登录成功
         self.window.rootViewController = [[HHTabBarController alloc] init];
         [self initBluetooth];
@@ -41,7 +52,6 @@
         HHNavigationController *navigation = [[HHNavigationController alloc] initWithRootViewController:[[LoginVC alloc] init]];
         self.window.rootViewController = navigation;
     }
-    
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -65,11 +75,6 @@
     
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];//创建一个Window
-//    if(LoginData) {
-//        [self getUserData];
-//        self.window.rootViewController = [[HHTabBarController alloc] init];
-//        [self initBluetooth];
-//    } else {
     HHNavigationController *navigation = [[HHNavigationController alloc] initWithRootViewController:[[LoginVC alloc] init]];
     self.window.rootViewController = navigation;
 //    }

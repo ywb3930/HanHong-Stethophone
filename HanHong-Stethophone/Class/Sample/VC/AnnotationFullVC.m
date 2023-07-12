@@ -13,6 +13,8 @@
 #import "AppDelegate.h"
 #import "UIDevice+HanHong.h"
 
+#define lineCount           9
+
 @interface AnnotationFullVC ()<UITableViewDelegate, UITableViewDataSource, AnnotationItemCellDelegate, UIScrollViewDelegate>
 
 @property (retain, nonatomic) UIView            *viewNavi;
@@ -34,6 +36,8 @@
 @property (assign, nonatomic) CGFloat               viewHeight;
 
 @property (retain, nonatomic) UIView                *viewLine;
+@property (retain, nonatomic) UIButton              *buttonAdd;
+@property (retain, nonatomic) UIButton              *buttonReduce;
 @property (retain, nonatomic) UIButton              *buttonPlay;
 @property (retain, nonatomic) UIButton              *buttonAnnotation;
 @property (retain, nonatomic) UIView                *viewAnnotationArea;//显示标注区域
@@ -56,6 +60,7 @@
 @property (assign, nonatomic) CGFloat               statusBarHeight;
 
 @property (retain, nonatomic) UIView                *viewLeftView;
+@property (assign, nonatomic) NSInteger             secondCellCount;
 
 
 @end
@@ -65,17 +70,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    
-    
+    self.secondCellCount = 5;
     self.view.backgroundColor = MainBlack;
     self.statusBarHeight = kStatusBarHeight;
     NSLog(@"self.statusBarHeight = %f", self.statusBarHeight);
     self.startTime = 0;
     self.endTime = 0;
     self.allTime = [NSString stringWithFormat:@"0:000-%li:000 全部", self.recordModel.record_length];
-    //self.arrayCharacteristic = [NSMutableArray array];
-    //[self.arrayData addObject:self.allTime];
+    self.viewHeight = screenW - 2 *  kNavBarHeight - Ratio22;
     
     [self initView];
     [self reloadAnnotationAreaView];
@@ -118,24 +120,6 @@
         [self.scrollView setContentOffset:offset animated:YES];
     }
     
-    
-//    if (width <= (screenW - x) / 2) {
-//        self.viewLine.frame = CGRectMake(x + width, kNavBarHeight, Ratio1, self.viewHeight);
-//    } else if (width >= self.viewWidth - (screenW - x) / 2) {
-//        if (bFirstLoadA) {
-//            CGPoint offset = CGPointMake(self.viewWidth-screenW+x, 0);
-//            [self.scrollView setContentOffset:offset animated:YES];
-//            bFirstLoadA = NO;
-//        }
-//        self.viewLine.frame = CGRectMake(screenW - x-(self.viewWidth - width), kNavBarHeight, Ratio1, self.viewHeight);
-//    } else {
-//        if (bBirstLoadB) {
-//            self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
-//            bBirstLoadB = NO;
-//        }
-//        CGPoint offset = CGPointMake(width - (screenW - x) / 2, 0);
-//        [self.scrollView setContentOffset:offset animated:YES];
-//    }
 }
 
 - (void)actionClickDeleteCallback:(UITableViewCell *)cell{
@@ -258,6 +242,30 @@
     cell.row = row;
     cell.delegate = self;
     return cell;
+}
+
+- (UIButton *)buttonAdd{
+    if (!_buttonAdd) {
+        _buttonAdd = [[UIButton alloc] init];
+        [_buttonAdd setTitle:@"放大" forState:UIControlStateNormal];
+        _buttonAdd.titleLabel.textColor = WHITECOLOR;
+        _buttonAdd.titleLabel.font = Font13;
+        _buttonAdd.backgroundColor = HEXCOLOR(0x232323, 0.5);
+        [_buttonAdd addTarget:self action:@selector(actionToAdd:) forControlEvents:UIControlEventTouchUpInside];
+        _buttonAdd.hidden = YES;
+    }
+    return _buttonAdd;
+}
+
+- (void)actionToAdd:(UIButton *)button{
+    self.secondCellCount ++;
+    if(self.waveFullView) {
+        [self.waveFullView removeFromSuperview];
+        self.waveFullView = nil;
+    }
+    [self initWaveRowData];
+    [self initWaveView];
+    [self reloadAnnotationAreaView];
 }
 
 - (UIButton *)buttonPlay{
@@ -436,7 +444,7 @@
 
 - (WaveFullView *)waveFullView{
     if (!_waveFullView) {
-        _waveFullView = [[WaveFullView alloc] initWithFrame:CGRectZero recordModel:self.recordModel];
+        _waveFullView = [[WaveFullView alloc] initWithFrame:CGRectZero recordModel:self.recordModel cellCount:self.secondCellCount viewHeight:self.viewHeight];
     }
     return _waveFullView;
 }
@@ -569,59 +577,32 @@
     [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationLandscapeRight];
 }
 
-//- (void)viewWillDisappear:(BOOL)animated{
-//    [super viewWillDisappear:animated];
-    //退出恢复
-    //self.bCurrentView = NO;
-    //[self changeRotate:NO];
-//    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-//    // 关闭横屏仅允许竖屏
-//    appDelegate.allowRotation = NO;
-//    // 切换到竖屏
-//    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
-
-//}
-//
-//- (void)viewDidDisappear:(BOOL)animated{
-//
-//}
-//
-//- (void)changeRotate:(BOOL)change{
-//    /*
-//     *采用KVO字段控制旋转
-//     */
-//    NSNumber *orientationUnknown = [NSNumber numberWithInt:UIInterfaceOrientationUnknown];
-//    [[UIDevice currentDevice] setValue:orientationUnknown forKey:@"orientation"];
-//    NSNumber *orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationPortrait];
-//    if (change) {
-//        orientationTarget = [NSNumber numberWithInt:UIInterfaceOrientationLandscapeRight];
-//    }
-//    [[UIDevice currentDevice] setValue:orientationTarget forKey:@"orientation"];
-//}
-//
-//#pragma mark - *********** 旋转设置 ***********
-//
-//- (BOOL)shouldAutorotate{
-//    return YES;
-//}
-//
-//- (UIInterfaceOrientationMask)supportedInterfaceOrientations{
-//    return UIInterfaceOrientationMaskLandscapeRight;
-//}
-//
-//- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation{
-//    return [self preferredInterfaceOrientationForPresentation];
-//}
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)initWaveRowData{
+    self.viewWidth = self.recordModel.record_length * self.secondCellCount * self.rowWidth;
+}
+
+- (void)initWaveView{
+    [self.scrollView addSubview:self.waveFullView];//背景网格
+    self.waveFullView.sd_layout.leftSpaceToView(self.scrollView, 0).widthIs(self.viewWidth).topSpaceToView(self.scrollView, 0).bottomSpaceToView(self.scrollView, 0);
+    [self.scrollView addSubview:self.audioPlotView];//音频图
+   
+    self.audioPlotView.sd_layout.leftSpaceToView(self.scrollView, 0).widthIs(self.viewWidth).topSpaceToView(self.scrollView, 0).bottomSpaceToView(self.scrollView, 0);
+    self.scrollView.contentSize = CGSizeMake(self.viewWidth, self.viewHeight);
+    [self.scrollView addSubview:self.viewAnnotationArea];
+    self.viewAnnotationArea.sd_layout.leftSpaceToView(self.scrollView, 0).widthIs(self.viewWidth).topSpaceToView(self.scrollView, 0).bottomSpaceToView(self.scrollView, 0);
+   [self.scrollView addSubview:self.viewTouchBg];
+    self.viewTouchBg.frame = CGRectMake(0, self.viewHeight/3, self.viewWidth, self.viewHeight/3);
+}
 
 - (void)initView{
-    self.viewHeight = screenW - 2 *  kNavBarHeight - Ratio22;
-    self.rowWidth = self.viewHeight / 8.f;
-    self.viewWidth = self.recordModel.record_length * 5 * self.rowWidth;
+    
+    self.rowWidth = self.viewHeight / (lineCount - 1);
+    [self initWaveRowData];
     
     [self.view addSubview:self.viewNavi];
     self.viewNavi.sd_layout.leftSpaceToView(self.view, 0).topSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).heightIs(kNavBarHeight);
@@ -640,16 +621,7 @@
     
     [self.view addSubview:self.scrollView];
     self.scrollView.sd_layout.leftSpaceToView(self.view, self.statusBarHeight).rightSpaceToView(self.view, self.statusBarHeight).topSpaceToView(self.viewNavi, 0).heightIs(self.viewHeight);
-    [self.scrollView addSubview:self.waveFullView];//背景网格
-    self.waveFullView.sd_layout.leftSpaceToView(self.scrollView, 0).widthIs(self.viewWidth).topSpaceToView(self.scrollView, 0).bottomSpaceToView(self.scrollView, 0);
-    [self.scrollView addSubview:self.audioPlotView];//音频图
-   
-    self.audioPlotView.sd_layout.leftSpaceToView(self.scrollView, 0).widthIs(self.viewWidth).topSpaceToView(self.scrollView, 0).bottomSpaceToView(self.scrollView, 0);
-    self.scrollView.contentSize = CGSizeMake(self.viewWidth, self.viewHeight);
-    [self.scrollView addSubview:self.viewAnnotationArea];
-    self.viewAnnotationArea.sd_layout.leftSpaceToView(self.scrollView, 0).widthIs(self.viewWidth).topSpaceToView(self.scrollView, 0).bottomSpaceToView(self.scrollView, 0);
-   [self.scrollView addSubview:self.viewTouchBg];
-    self.viewTouchBg.frame = CGRectMake(0, self.viewHeight/3, self.viewWidth, self.viewHeight/3);
+    [self initWaveView];
     
     [self.view addSubview:self.viewLeftView];
     self.viewLeftView.sd_layout.widthIs(Ratio1).heightIs(self.viewHeight).leftEqualToView(self.scrollView).topEqualToView(self.scrollView);
@@ -659,13 +631,16 @@
     [self.view addSubview:self.labelCenter];
     [self.view addSubview:self.labelBottom];
     [self.view addSubview:self.buttonPlay];
+    [self.view addSubview:self.buttonAdd];
     [self.view addSubview:self.buttonAnnotation];
     [self.view addSubview:self.viewLine];
     self.labelTop.sd_layout.topSpaceToView(self.viewNavi, Ratio5).leftSpaceToView(self.view, self.statusBarHeight + Ratio2).widthIs(Ratio33).heightIs(Ratio16);
     self.labelCenter.sd_layout.centerYIs(kNavBarHeight + 4*self.rowWidth).leftEqualToView(self.labelTop).widthIs(Ratio33).heightIs(Ratio16);
     self.labelBottom.sd_layout.leftEqualToView(self.labelTop).topSpaceToView(self.scrollView, -Ratio22).widthIs(Ratio33).heightIs(Ratio16);
+    
     self.buttonPlay.sd_layout.centerXEqualToView(self.view).topSpaceToView(self.scrollView, Ratio11).widthIs(Ratio66).heightIs(Ratio28);
     self.buttonAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).rightSpaceToView(self.view, Ratio22).heightIs(Ratio28).widthIs(Ratio66);
+    self.buttonAdd.sd_layout.centerYEqualToView(self.buttonPlay).leftSpaceToView(self.view, Ratio55).widthIs(Ratio44).heightIs(Ratio22);
     self.viewLine.frame = CGRectMake(self.statusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
     
     [self.view addSubview:self.tableView];

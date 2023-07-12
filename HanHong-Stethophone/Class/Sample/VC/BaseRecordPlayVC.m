@@ -197,6 +197,11 @@
     self.navigationItem.rightBarButtonItems = @[item0,item1];
     [self.buttonBluetooth star];
     self.bCurrentView = YES;
+    
+//    if(!self.bPlaying) {
+//        
+//        [[HHBlueToothManager shareManager] st];
+//    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated{

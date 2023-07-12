@@ -288,7 +288,14 @@
     [[NSUserDefaults standardUserDefaults] setInteger:self.loginType forKey:@"login_type"];
         [[NSUserDefaults standardUserDefaults] setInteger:self.org_type forKey:@"org_type"];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [self reloadView:NO];
+    if ([NSThread isMainThread]) {
+        [self reloadView:NO];
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [self reloadView:NO];
+        });
+    }
+    
 }
 
 - (void)actionToLoginType:(UIButton *)button {

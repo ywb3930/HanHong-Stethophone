@@ -14,6 +14,7 @@
 @property (retain, nonatomic) RecordModel           *recordModel;
 @property (retain, nonatomic) NSMutableArray        *arrayRowNumber;
 @property (assign, nonatomic) NSInteger             rowCount;
+@property (assign, nonatomic) NSInteger             cellCount;
 @property (assign, nonatomic) CGFloat               rowWidth;
 @property (assign, nonatomic) CGFloat               viewWidth;
 @property (assign, nonatomic) CGFloat               viewHeight;
@@ -22,10 +23,12 @@
 
 @implementation WaveFullView
 
-- (instancetype)initWithFrame:(CGRect)frame recordModel:(RecordModel *)recordModel{
+- (instancetype)initWithFrame:(CGRect)frame recordModel:(RecordModel *)recordModel  cellCount:(NSInteger)cellCount viewHeight:(CGFloat)viewHeight{
     self = [super initWithFrame:frame];
     if (self) {
         self.recordModel = recordModel;
+        self.cellCount = cellCount;
+        self.viewHeight = viewHeight;
         [self initData];
         [self initLabel];
     }
@@ -33,8 +36,8 @@
 }
 
 - (void)initData{
-    self.rowCount = self.recordModel.record_length * 5;
-    self.viewHeight = screenW - 2 *  kNavBarHeight - Ratio22;
+    self.rowCount = self.recordModel.record_length * self.cellCount;
+    //self.viewHeight = screenW - 2 *  kNavBarHeight - Ratio22;
     self.rowWidth = self.viewHeight / (lineCount - 1);
     self.viewWidth = self.rowCount * self.rowWidth;
     
@@ -48,7 +51,7 @@
         label.textAlignment = NSTextAlignmentCenter;
         label.font = Font13;
         label.text = [NSString stringWithFormat:@"%i.0", i];
-        label.sd_layout.centerXIs(i * self.rowWidth * 5 - Ratio10).widthIs(Ratio44).heightIs(Ratio13).bottomSpaceToView(self, Ratio3);
+        label.sd_layout.centerXIs(i * self.rowWidth * self.cellCount - Ratio10).widthIs(Ratio44).heightIs(Ratio13).bottomSpaceToView(self, Ratio3);
     }
     
 
@@ -96,7 +99,7 @@
             //增加点
             CGContextAddLineToPoint(context, Ratio1, self.viewHeight);
             CGContextSetLineWidth(context, Ratio1);
-        } else if (i % 5 == 0 ) {
+        } else if (i % self.cellCount == 0 ) {
             CGContextMoveToPoint(context, i * self.rowWidth, 0);
             //增加点
             CGContextAddLineToPoint(context, i * self.rowWidth, self.viewHeight);

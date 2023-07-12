@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WaveFullView : UIView
 
-- (instancetype)initWithFrame:(CGRect)frame recordModel:(RecordModel *)recordModel;
+- (instancetype)initWithFrame:(CGRect)frame recordModel:(RecordModel *)recordModel cellCount:(NSInteger)cellCount viewHeight:(CGFloat)viewHeight;
 
 @end
 

@@ -99,14 +99,8 @@
 #define refresh_friendlist_broadcast                    @"refresh_friendlist_broadcast"
 #define add_program_broadcast                           @"add_program_broadcast"
 
-#define RecordLostEvent                                 @"RecordLostEvent"
-#define RecordBtnEvent                                  @"RecordBtnEvent"
-#define RecordDuration                                  @"RecordDuration"
 
 #define AddLocalRecordSuccess                           @"add_localrecord_success"//添加本地记录
-#define UploadLocalRecordSuccess                        @"upload_localrecord_success"//本地记录上传云
-#define ShareCloudRecordSuccess                         @"share_cloudrecord_success"//云记录分享
-
 #define HHBluetoothMessage                              @"hh_bluetooth_message"//添加本地记录
 
 #define connectStateBR                                  @"ConnectState"//连接状态
