@@ -2,7 +2,7 @@
 //  WaveSmallView.h
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/4.
+//  Created by Hanhong on 2023/7/4.
 //
 
 #import <UIKit/UIKit.h>

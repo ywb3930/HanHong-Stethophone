@@ -251,7 +251,6 @@
 /*********************** size  ***********************/
 
 /******************* Object *********************/
-#define STANDARD_USER_DEFAULT                           [NSUserDefaults standardUserDefaults]
 #define kAppWindow                                      [UIApplication sharedApplication].delegate.window
 #define LoginData                                       [HHLoginManager sharedManager].currentHHLoginData
 /*********************Object***********************/

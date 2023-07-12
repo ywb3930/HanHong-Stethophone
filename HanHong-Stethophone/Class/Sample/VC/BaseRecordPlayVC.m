@@ -2,7 +2,7 @@
 //  BaseRecordPlayVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/5.
+//  Created by Hanhong on 2023/7/5.
 //
 
 #import "BaseRecordPlayVC.h"
@@ -55,8 +55,9 @@
     if ([NSThread isMainThread]) {
         [self actionEventMain:event args1:args1];
     } else {
+        __weak typeof(self) wself = self;
         dispatch_sync(dispatch_get_main_queue(), ^{
-            [self actionEventMain:event args1:args1];
+            [wself actionEventMain:event args1:args1];
         });
     }
 }

@@ -2,7 +2,7 @@
 //  FriendCell.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/21.
+//  Created by Hanhong on 2023/6/21.
 //
 
 #import "FriendCell.h"
@@ -61,29 +61,35 @@
         self.labelMessage.hidden = YES;
         self.buttonRight.tag = 2;
         [self.buttonRight setTitle:@"添加" forState:UIControlStateNormal];
+        self.labelCommpany.sd_layout.rightSpaceToView(self.buttonRight, Ratio6);
     } else if (state == 0) {
         self.buttonLeft.hidden = YES;
         self.buttonRight.hidden = YES;
         self.labelMessage.hidden = NO;
         self.labelMessage.text = @"您已发出好友请求";
+        self.labelMessage.sd_layout.rightSpaceToView(self.labelMessage, Ratio11);
+        [self.labelCommpany updateLayout];
     } else if (state == 1) {
         self.buttonLeft.hidden = YES;
         self.buttonRight.hidden = YES;
         self.labelMessage.hidden = NO;
         self.labelMessage.text = @"对方已是您的好友";
+        self.labelCommpany.sd_layout.rightSpaceToView(self.labelMessage, Ratio11);
     } else if (state == 2) {
         self.buttonLeft.hidden = YES;
         self.buttonRight.hidden = NO;
         self.labelMessage.hidden = YES;
         self.buttonRight.tag = 2;
         [self.buttonRight setTitle:@"添加" forState:UIControlStateNormal];
+        self.labelCommpany.sd_layout.rightSpaceToView(self.buttonRight, Ratio6);
+        
     }
     [self showLabelMessage:searchModel];
     NSString *text = self.labelMessage.text;
     CGFloat width = [Tools widthForString:text fontSize:Ratio13 andHeight:Ratio15];
     self.labelMessage.sd_layout.widthIs(width);
     [self.labelMessage updateLayout];
-    
+    [self.labelCommpany updateLayout];
 }
 
 - (void)showLabelMessage:(FriendModel *)model{
@@ -134,6 +140,8 @@
             self.buttonRight.hidden = NO;
             self.labelMessage.hidden = YES;
             self.labelStateTitle.hidden = NO;
+            self.labelCommpany.sd_layout.rightSpaceToView(self.buttonRight, Ratio6);
+           
         } else {
             self.buttonLeft.hidden = YES;
             self.buttonRight.hidden = YES;
@@ -143,7 +151,10 @@
                 self.labelMessage.text = @"您通过了好友请求";
             } else if (state == 2) {
                 self.labelMessage.text = @"您未通过好友请求";
+            } else {
+                self.labelStateTitle.text = @"好友请求";
             }
+            self.labelCommpany.sd_layout.rightSpaceToView(self.labelMessage, Ratio11);
         }
     } else { //我发出的请求
         self.buttonLeft.hidden = YES;
@@ -158,11 +169,14 @@
         } else if (state == 2) {
             self.labelMessage.text = @"好友请求不通过";
         }
+        self.labelCommpany.sd_layout.rightSpaceToView(self.labelMessage, Ratio11);
+       
     }
     NSString *text = self.labelMessage.text;
     CGFloat width = [Tools widthForString:text fontSize:Ratio13 andHeight:Ratio15];
     self.labelMessage.sd_layout.widthIs(width);
     [self.labelMessage updateLayout];
+    [self.labelCommpany updateLayout];
 }
 
 - (void)setBShowCheck:(Boolean)bShowCheck{
@@ -189,17 +203,20 @@
     
     self.buttonClick.sd_layout.leftSpaceToView(self.contentView, Ratio11).heightIs(Ratio33).widthIs(0).centerYEqualToView(self.contentView);
     self.imageViewHead.sd_layout.leftSpaceToView(self.buttonClick, Ratio5).topSpaceToView(self.contentView, Ratio17).heightIs(Ratio50).widthIs(Ratio50);
+    self.buttonRight.sd_layout.rightSpaceToView(self.contentView, Ratio11).centerYEqualToView(self.imageViewHead).heightIs(Ratio22).widthIs(Ratio44);
+    self.buttonLeft.sd_layout.rightSpaceToView(self.buttonRight, Ratio6).centerYEqualToView(self.buttonRight).heightIs(Ratio22).widthIs(Ratio44);
     self.labelMessage.sd_layout.centerYEqualToView(self.imageViewHead).heightIs(Ratio16).rightSpaceToView(self.contentView, Ratio11).widthIs(0);
-    self.labelCommpany.sd_layout.leftEqualToView(self.labelName).rightSpaceToView(self.labelMessage, Ratio5).centerYEqualToView(self.imageViewHead).heightIs(Ratio16);
+    self.labelCommpany.sd_layout.leftEqualToView(self.labelName).rightSpaceToView(self.labelMessage, Ratio5).centerYEqualToView(self.imageViewHead).autoHeightRatio(0);
 
     self.labelName.sd_layout.leftSpaceToView(self.imageViewHead, Ratio15).rightSpaceToView(self.contentView, Ratio15).bottomSpaceToView(self.labelCommpany, Ratio3).heightIs(Ratio17);
     
     //[self.labelCommpany setSingleLineAutoResizeWithMaxWidth:screenW-Ratio99];
     self.labelDepartment.sd_layout.leftEqualToView(self.labelName).rightEqualToView(self.labelName).topSpaceToView(self.labelCommpany, Ratio3).heightIs(Ratio16);
     
-    self.buttonRight.sd_layout.rightSpaceToView(self.contentView, Ratio11).centerYEqualToView(self.imageViewHead).heightIs(Ratio22).widthIs(Ratio40);
-    self.buttonLeft.sd_layout.rightSpaceToView(self.buttonRight, Ratio6).centerYEqualToView(self.buttonRight).heightIs(Ratio22).widthIs(Ratio40);
+
     self.labelStateTitle.sd_layout.rightSpaceToView(self.contentView, Ratio11).heightIs(Ratio16).widthIs(Ratio55).bottomSpaceToView(self.buttonRight, Ratio3);
+    
+    [self setupAutoHeightWithBottomView:self.labelDepartment bottomMargin:Ratio11];
 
 }
 
@@ -249,6 +266,7 @@
         _labelMessage.textColor = MainGray;
         _labelMessage.textAlignment = NSTextAlignmentRight;
         _labelMessage.hidden = YES;
+        _labelMessage.numberOfLines = 0;
         
     }
     return _labelMessage;
@@ -268,7 +286,7 @@
     if (!_labelStateTitle) {
         _labelStateTitle = [[UILabel alloc] init];
         _labelStateTitle.text = @"好友请求";
-        _labelStateTitle.font = Font15;
+        _labelStateTitle.font = Font13;
         _labelStateTitle.textColor = MainGray;
         _labelStateTitle.hidden = YES;
         _labelStateTitle.textAlignment = NSTextAlignmentRight;
@@ -291,7 +309,7 @@
     button.backgroundColor = MainColor;
     button.layer.cornerRadius = Ratio5;
     [button setTitleColor:WHITECOLOR forState:UIControlStateNormal];
-    button.titleLabel.font = Font15;
+    button.titleLabel.font = Font13;
     return button;
 }
 

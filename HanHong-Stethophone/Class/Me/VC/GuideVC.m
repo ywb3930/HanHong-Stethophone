@@ -2,7 +2,7 @@
 //  GuideVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/8.
+//  Created by Hanhong on 2023/7/8.
 // s/h = 720/2353
 
 #import "GuideVC.h"

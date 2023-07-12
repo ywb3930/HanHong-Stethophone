@@ -2,7 +2,7 @@
 //  TeachingRecordView.m
 //  HanHong-Stethophone
 //  教学记录
-//  Created by 袁文斌 on 2023/6/25.
+//  Created by Hanhong on 2023/6/25.
 //
 
 #import "TeachingRecordView.h"

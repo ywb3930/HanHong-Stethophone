@@ -2,7 +2,7 @@
 //  ClinicCell.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/10.
+//  Created by Hanhong on 2023/7/10.
 //
 
 #import "ClinicCell.h"

@@ -62,6 +62,25 @@
     self.itemViewDepartent.textFieldInfo.text = string;
 }
 
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if(textField.tag == 1000 || textField.tag == 1001) {
+        if (string.length == 0) return YES;
+        //第一个参数，被替换字符串的range，第二个参数，即将键入或者粘贴的string，返回的textfield的新的文本内容
+        NSString *checkStr = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        //正则表达式
+        NSString *regex = @"^[0-9]+$";
+        return [Tools validateStr:checkStr withRegex:regex];
+    } else if(textField.tag == 999) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>24){
+            [self.view makeToast:@"您的姓名过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (void)actionGetCode:(UIButton *)button{
     if(!self.btnAgree.selected) {
         [self.view makeToast:@"请先阅读并同意用户协议" duration:showToastViewWarmingTime position:CSToastPositionCenter];
@@ -247,16 +266,7 @@
     return YES;
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    if(textField == self.itemViewName.textFieldInfo) {
-        NSString *s = [textField.text stringByAppendingString:string];
-        if([Tools checkNameLength:s]>24){
-            [self.view makeToast:@"您的姓名过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-            return NO;
-        }
-    }
-    return YES;
-}
+
 
 - (void)actionToSelectBirthDay{
     NSDate *minDate = [Tools dateWithYearsBeforeNow:120];
@@ -437,6 +447,7 @@
     if(!_itemViewName) {
         _itemViewName = [[LabelTextFieldItemView alloc] initWithTitle:@"姓名" bMust:YES placeholder:@"请输入您的真实姓名"];
         _itemViewName.textFieldInfo.delegate = self;
+        _itemViewName.textFieldInfo.tag = 999;
     }
     return _itemViewName;
 }
@@ -526,6 +537,7 @@
         _itemViewPhone = [[LabelTextFieldItemView alloc] initWithTitle:@"手机" bMust:YES placeholder:@"请输入您的手机号码"];
         _itemViewPhone.textFieldInfo.delegate = self;
         _itemViewPhone.textFieldInfo.keyboardType = UIKeyboardTypePhonePad;
+        _itemViewPhone.textFieldInfo.tag = 1001;
     }
     return _itemViewPhone;
 }
@@ -551,6 +563,7 @@
         _itemViewCode = [[CodeItemView alloc] initWithTitle:@"验证码" bMust:YES placeholder:@"请输入验证码"];
         _itemViewCode.textFieldCode.delegate = self;
         _itemViewCode.delegate = self;
+        _itemViewCode.textFieldCode.tag = 1000;
         self.currentTextField = _itemViewCode.textFieldCode;
     }
     return _itemViewCode;

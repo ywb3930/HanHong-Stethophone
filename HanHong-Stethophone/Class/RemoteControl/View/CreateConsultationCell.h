@@ -2,7 +2,7 @@
 //  CreateConsultationCell.h
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/21.
+//  Created by Hanhong on 2023/6/21.
 //
 
 #import <UIKit/UIKit.h>
@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (retain, nonatomic) UIImage               *image;
 @property (retain, nonatomic) FriendModel           *model;
+@property (retain, nonatomic) FriendModel           *createModel;
 
 @end
 

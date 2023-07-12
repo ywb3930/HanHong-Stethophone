@@ -2,7 +2,7 @@
 //  CreateConsultationCell.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/21.
+//  Created by Hanhong on 2023/6/21.
 //
 
 #import "CreateConsultationCell.h"
@@ -24,6 +24,20 @@
         [self setupView];
     }
     return self;
+}
+
+- (void)setCreateModel:(FriendModel *)createModel{
+    [self.imageViewHead sd_setImageWithURL:[NSURL URLWithString:createModel.avatar] placeholderImage:nil options:SDWebImageQueryMemoryData];
+    self.labelName.hidden = NO;
+    self.labelName.text = createModel.name;
+    //self.imageViewTag.hidden = !model.bCollect;
+    
+    if (createModel.bCollect) {
+        self.imageViewOnLine.hidden = NO;
+        self.imageViewOnLine.image = [UIImage imageNamed:@"collection_state"];
+    } else {
+        self.imageViewOnLine.hidden = YES;
+    }
 }
 
 - (void)setModel:(FriendModel *)model{

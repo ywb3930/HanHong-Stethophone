@@ -185,7 +185,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)firstCharactor:(NSString *)aString;
 //计算两个时间的差
 + (NSInteger)insertStarTimeo:(NSString *)time1 andInsertEndTime:(NSString *)time2;
-
++ (BOOL)validateStr:(NSString *)string withRegex:(NSString *)regex;
 
 @end
 

@@ -2,7 +2,7 @@
 //  HHBaseRecordVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/5.
+//  Created by Hanhong on 2023/7/5.
 //
 
 #import "HHBaseRecordVC.h"
@@ -355,13 +355,13 @@
 }
 
 
-- (void)viewDidAppear:(BOOL)animated{
-    self.navigationController.interactivePopGestureRecognizer.delegate = self;
-}
-
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
-    return NO;
-}
+//- (void)viewDidAppear:(BOOL)animated{
+//    self.navigationController.interactivePopGestureRecognizer.delegate = self;
+//}
+//
+//- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
+//    return NO;
+//}
 
 
 @end

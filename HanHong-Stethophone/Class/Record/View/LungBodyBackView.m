@@ -2,7 +2,7 @@
 //  LungBodyBackView.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/17.
+//  Created by Hanhong on 2023/6/17.
 //
 
 #import "LungBodyBackView.h"

@@ -2,7 +2,7 @@
 //  AnnotationItemCell.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/6.
+//  Created by Hanhong on 2023/7/6.
 //
 
 #import "AnnotationItemCell.h"
@@ -51,7 +51,7 @@
     [self.contentView addSubview:self.buttonDelete];
     [self.contentView addSubview:self.viewLine];
     self.buttonDelete.sd_layout.rightSpaceToView(self.contentView, Ratio2).widthIs(Ratio24).heightIs(Ratio24);
-    self.labelInfo.sd_layout.leftSpaceToView(self.contentView, Ratio11).centerYEqualToView(self.contentView).heightIs(Ratio17).rightSpaceToView(self.buttonDelete, Ratio11);
+    self.labelInfo.sd_layout.leftSpaceToView(self.contentView, Ratio11).centerYEqualToView(self.contentView).heightIs(Ratio17).rightSpaceToView(self.buttonDelete, Ratio5);
     self.viewLine.sd_layout.leftSpaceToView(self.contentView, 0).topSpaceToView(self.contentView, 0).heightIs(Ratio0_5).rightSpaceToView(self.contentView, 0);
 }
 
@@ -75,7 +75,7 @@
     if (!_labelInfo) {
         _labelInfo = [[UILabel alloc] init];
         _labelInfo.textColor = WHITECOLOR;
-        _labelInfo.font = Font15;
+        _labelInfo.font = Font13;
     }
     return _labelInfo;
 }

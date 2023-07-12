@@ -1323,5 +1323,11 @@ static id _instance;
     return cmps.minute;
 }
 
++ (BOOL)validateStr:(NSString *)string withRegex:(NSString *)regex
+{
+    NSPredicate *resultStr = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+    return [resultStr evaluateWithObject:string];
+}
+
 
 @end

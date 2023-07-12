@@ -61,6 +61,7 @@
         _imageViewInfo = [[UIImageView alloc] init];
         _imageViewInfo.layer.cornerRadius = Ratio4;
         _imageViewInfo.contentMode = UIViewContentModeScaleAspectFit;
+        _imageViewInfo.clipsToBounds = YES;
     }
     return _imageViewInfo;
 }

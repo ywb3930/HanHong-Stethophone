@@ -2,7 +2,7 @@
 //  HHPopEditView.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/19.
+//  Created by Hanhong on 2023/6/19.
 //
 
 #import "HHPopEditView.h"
@@ -36,6 +36,16 @@
 
 - (void)setDefaultNumber:(NSString *)defaultNumber{
     self.textFieldNumber.text = defaultNumber;
+}
+
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if (string.length == 0) return YES;
+    //第一个参数，被替换字符串的range，第二个参数，即将键入或者粘贴的string，返回的textfield的新的文本内容
+    NSString *checkStr = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    //正则表达式
+    NSString *regex = @"^[0-9]+$";
+    return [Tools validateStr:checkStr withRegex:regex];
 }
 
 - (void)disappear{
@@ -74,9 +84,9 @@
     
 
     [self.viewBg addSubview:self.buttonCancel];
-    self.buttonCancel.sd_layout.leftSpaceToView(self.viewBg, 0).bottomSpaceToView(self.viewBg, 0).widthIs(screenW/2-Ratio5).heightIs(Ratio33);
+    self.buttonCancel.sd_layout.leftSpaceToView(self.viewBg, 0).bottomSpaceToView(self.viewBg, 0).widthIs(screenW/2-Ratio5).heightIs(Ratio40);
     [self.viewBg addSubview:self.buttonCommit];
-    self.buttonCommit.sd_layout.rightSpaceToView(self.viewBg, 0).bottomSpaceToView(self.viewBg, 0).widthIs(screenW/2-Ratio5).heightIs(Ratio33);
+    self.buttonCommit.sd_layout.rightSpaceToView(self.viewBg, 0).bottomSpaceToView(self.viewBg, 0).widthIs(screenW/2-Ratio5).heightIs(Ratio40);
     [self.viewBg addSubview:self.textFieldNumber];
     self.textFieldNumber.sd_layout.centerXEqualToView(self.viewBg).widthIs(Ratio99).heightIs(Ratio33).centerYIs(58.f*screenRatio);
     [self.viewBg addSubview:self.viewLine1];

@@ -11,9 +11,10 @@
 #import "KSImagePickerController.h"
 #import "KSNavigationController.h"
 #import "HMEditView.h"
+#import "SettingDepartmentVC.h"
 #import "BRPickerView.h"
 
-@interface UserInfoVC ()<UITableViewDelegate, UITableViewDataSource, KSImagePickerControllerDelegate, HMEditViewDelegate, UITextFieldDelegate, TTActionSheetDelegate>
+@interface UserInfoVC ()<UITableViewDelegate, UITableViewDataSource, KSImagePickerControllerDelegate, HMEditViewDelegate, UITextFieldDelegate, TTActionSheetDelegate, SettingDepartmentViewDelegate>
 
 @property (retain, nonatomic) UITableView                   *tableView;
 @property (retain, nonatomic) NSArray                       *arrayTitle;
@@ -34,23 +35,25 @@
     if (self.loginType == login_type_personal || self.loginType == login_type_union) {
         self.arrayTitle = @[@"头像", @"姓名", @"性别", @"生日", @"地区", @"企业(医院)",@"部门(科室)", @"职称", @"邮箱", @"手机"];
         
-        self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man  ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
+        self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man  ? @"男" : @"女", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
     } else if(self.loginType == login_type_teaching) {
         if (LoginData.role == Teacher_role) {
             self.arrayTitle = @[@"头像", @"姓名", @"性别", @"企业(医院)",@"部门(科室)", @"职称", @"院校", @"邮箱", @"手机"];
             
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"女" : @"男", LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"男" : @"女", LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
         } else if (LoginData.role == Student_role) {
             self.arrayTitle = @[@"头像", @"姓名", @"性别", @"院校", @"专业",@"班级", @"学号",  @"邮箱", @"手机"];
             
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"女" : @"男", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ?  @"男" : @"女", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
         }
     }
     
     [self initView];
 }
 
-
+- (void)actionSettingDepartmentCallback:(NSString *)string{
+    [self actionNetCommitName:string infoName:@"department"];
+}
 
 - (void)actionEditInfoCallback:(nonnull NSString *)string idx:(NSInteger)idx {
     if(idx == 0) {
@@ -58,7 +61,7 @@
     } else if (idx == 1) {
         [self actionNetCommitName:string infoName:@"company"];
     } else if (idx == 2 ) {
-        [self actionNetCommitName:string infoName:@"departent"];
+        //[self actionNetCommitName:string infoName:@"department"];
     } else if (idx == 3 ) {
         [self actionNetCommitName:string infoName:@"title"];
     } else if (idx == 4 ) {
@@ -118,14 +121,15 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSInteger row = indexPath.row;
-    NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(row, 1)];
-    NSInteger tag = [s integerValue];
-    if(tag == 0) {
-        return;
-    }
     if(row == 0) {
         [self actionChangeUserHead];
-    } else if(row == 1) {
+    }
+    NSString *title = self.arrayTitle[row];
+    if (![self bModifiable:title]) {
+        [self.view makeToast:@"该项不可以修改" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    if(row == 1) {
         [self actionChangeName];
     } else if(row == 2) {
         [self actionChangeSex];
@@ -208,10 +212,14 @@
 }
 
 - (void)actionChangeDepartent{
-    self.editView = [[HMEditView alloc] initWithTitle:@"修改部门(科室)" info:LoginData.department placeholder:@"请输入您的部门(科室)" idx:2];
-    self.editView.delegate = self;
-    self.editView.textField.delegate = self;
-    [kAppWindow addSubview:self.editView];
+//    self.editView = [[HMEditView alloc] initWithTitle:@"修改部门(科室)" info:LoginData.department placeholder:@"请输入您的部门(科室)" idx:2];
+//    self.editView.delegate = self;
+//    self.editView.textField.delegate = self;
+//    [kAppWindow addSubview:self.editView];
+    
+    SettingDepartmentVC *settingDepartment = [[SettingDepartmentVC alloc] init];
+    settingDepartment.delegate = self;
+    [self.navigationController pushViewController:settingDepartment animated:YES];
 }
 
 - (void)actionChangeTitle{
@@ -243,29 +251,25 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSInteger row = indexPath.row;
-    NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(row, 1)];
-    NSInteger tag = [s integerValue];
+   
     
     if(row == 0) {
         UserInfoOneCell *cell = (UserInfoOneCell *)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UserInfoOneCell class])];
-        if(tag == 1) {
-            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        } else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-        }
-        
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
         cell.title = self.arrayTitle[row];
         cell.avatar = LoginData.avatar;
         return cell;
     } else {
+
         UserInfoTwoCell *cell = (UserInfoTwoCell *)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UserInfoTwoCell class])];
-        
-        if(tag == 1) {
+        NSString *title = self.arrayTitle[row];
+        if([self bModifiable:title]) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         } else {
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
-        cell.title = self.arrayTitle[row];
+        cell.title = title;
         cell.info = self.arrayInfo[row];
         return cell;
     }
@@ -346,6 +350,9 @@
     if(![Tools isBlankString:loginData.email]){
         LoginData.email = loginData.email;
     }
+    if(![Tools isBlankString:loginData.company]){
+        LoginData.company = loginData.company;
+    }
     if(![Tools isBlankString:loginData.name]){
         LoginData.name = loginData.name;
     }
@@ -365,13 +372,84 @@
     if(![Tools isBlankString:loginData.org]){
         LoginData.org = loginData.org;
     }
-    self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
+    if (self.loginType == login_type_personal || self.loginType == login_type_union) {
+
+        
+        self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man  ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
+    } else if(self.loginType == login_type_teaching) {
+        if (LoginData.role == Teacher_role) {
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"男" : @"女", LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
+        } else if (LoginData.role == Student_role) {
+            
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"男" : @"女", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
+        }
+    }
     [[HHLoginManager sharedManager] setCurrentHHLoginData:LoginData];
     
     [self.tableView reloadData];
 }
-//(index == man) ? @"女" : @"男"
 
-
-
+- (Boolean)bModifiable:(NSString *)title{
+    //@"头像", @"姓名", @"性别", @"生日", @"地区", @"企业(医院)",@"部门(科室)", @"职称", @"邮箱", @"手机"
+    //@"头像", @"姓名", @"性别", @"企业(医院)",@"部门(科室)", @"职称", @"院校", @"邮箱", @"手机"
+    //@"头像", @"姓名", @"性别", @"院校", @"专业",@"班级", @"学号",  @"邮箱", @"手机"
+    if ([title containsString:@"姓名"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(0, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"性别"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(1, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"学号"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(2, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    }  else if ([title containsString:@"生日"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(3, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"地区"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(4, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"院校"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(5, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"专业"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(6, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"班级"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(7, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"企业"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(8, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"部门"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(9, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    } else if ([title containsString:@"职称"]) {
+        NSString *s = [self.infoModifiable substringWithRange:NSMakeRange(10, 1)];
+        if([s intValue] == 1) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
 @end

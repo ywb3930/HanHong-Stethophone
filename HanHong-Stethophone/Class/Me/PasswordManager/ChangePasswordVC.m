@@ -2,7 +2,7 @@
 //  ChangePasswordVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/19.
+//  Created by Hanhong on 2023/6/19.
 //
 
 #import "ChangePasswordVC.h"

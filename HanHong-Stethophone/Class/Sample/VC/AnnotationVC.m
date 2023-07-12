@@ -2,7 +2,7 @@
 //  AnnotationVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/27.
+//  Created by Hanhong on 2023/6/27.
 //
 
 #import "AnnotationVC.h"
@@ -20,11 +20,13 @@
 #import "BRPickerView.h"
 #import "UINavigationController+QMUI.h"
 #import "UIViewController+HBD.h"
+#import "AppDelegate.h"
+#import "UIDevice+HanHong.h"
 
 
 @interface AnnotationVC ()<UITextFieldDelegate, TTActionSheetDelegate, UINavigationControllerBackButtonHandlerProtocol>
 
-@property (retain, nonatomic) UIScrollView                  *scrollView;
+//@property (retain, nonatomic) UIScrollView                  *scrollView;
 
 @property (assign, nonatomic) CGFloat                       itemHeight;
 
@@ -75,6 +77,9 @@
         [self.view endEditing:YES];
         return NO;
     }
+    //将光标自动移动到最后
+    UITextPosition *posotion = [textField endOfDocument];
+    textField.selectedTextRange = [textField textRangeFromPosition:posotion toPosition:posotion];
     return YES;
 }
 
@@ -138,22 +143,43 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField{
     NSInteger tag = textField.tag;
     NSString *text = textField.text;
-    if(self.saveLocation == 0) {
-        if (tag == 1) {
-            self.recordModel.patient_symptom = text;
-        } else if (tag == 2) {
-            self.recordModel.patient_diagnosis = text;
-        } else if (tag == 3 || tag == 4) {
-            
+    Boolean changeValue = NO;
+    if (tag == 1 && ![self.recordModel.patient_symptom isEqualToString:text]) {
+        changeValue = YES;
+        self.recordModel.patient_symptom = text;
+    } else if (tag == 2  && ![self.recordModel.patient_diagnosis isEqualToString:text]) {
+        changeValue = YES;
+        self.recordModel.patient_diagnosis = text;
+    } else if (tag == 3 || tag == 4) {
+        NSString *age = self.itemPatientAge.textFieldAge.text;
+        NSString *mouth = self.itemPatientAge.textFieldMonth.text;
+        NSDictionary *data = [Tools getAgeFromBirthday:self.recordModel.patient_birthday];
+        NSString *age1 = data[@"age"];
+        NSString *mouth1 = data[@"month"];
+        if(![age isEqualToString:age1] || ![mouth isEqualToString:mouth1]) {
             self.recordModel.patient_birthday = [self getUserBirthday];
-        } else if (tag == 5) {
-            self.recordModel.patient_height = text;
-        } else if (tag == 6) {
-            self.recordModel.patient_weight = text;
+            changeValue = YES;
         }
+        
+    } else if (tag == 5 && ![self.recordModel.patient_height isEqualToString:text]) {
+        self.recordModel.patient_height = text;
+        changeValue = YES;
+    } else if (tag == 6 && ![self.recordModel.patient_weight isEqualToString:text]) {
+        self.recordModel.patient_weight = text;
+        changeValue = YES;
+    } else if (tag == 111 && ![self.recordModel.patient_id isEqualToString:text]) {
+        self.recordModel.patient_id = text;
+        changeValue = YES;
+    }
+    
+    if(self.saveLocation == 0 && changeValue) {
+        
         [self modifyDataLocal];
     }
-    self.bChangeData = YES;
+    if (changeValue) {
+        self.bChangeData = YES;
+    }
+    
 
     
 }
@@ -226,12 +252,12 @@
 
 - (void)actionDeviceHelperPlayingTime:(float)value{
     CGFloat width = value / self.recordModel.record_length * (screenW - Ratio22);
-    self.viewLine.frame = CGRectMake(Ratio11+width, self.startYLine, Ratio1, Ratio150);
+    self.viewLine.frame = CGRectMake(Ratio11+width, self.startYLine, Ratio1, Ratio135);
 }
 
 - (void)actionDeviceHelperPlayEnd{
     self.buttonPlay.selected = NO;
-    self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio150);
+    self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio135);
     self.viewLine.hidden = YES;
 }
 
@@ -241,64 +267,68 @@
 }
 
 - (void)setupView{
-    [self.view addSubview:self.scrollView];
-    self.scrollView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, kNavBarAndStatusBarHeight).bottomSpaceToView(self.view, 0);
+//    [self.view addSubview:self.view];
+//    self.view.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, kNavBarAndStatusBarHeight).bottomSpaceToView(self.view, 0);
     
-    [self.scrollView addSubview:self.itemPatientId];
-    self.itemPatientId.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.scrollView, 0).heightIs(self.itemHeight);
-    [self.scrollView addSubview:self.itemHeartHungVoice];
-    self.itemHeartHungVoice.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientId, 0).heightIs(self.itemHeight);
+    [self.view addSubview:self.itemPatientId];
+    self.itemPatientId.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.view, kNavBarAndStatusBarHeight).heightIs(self.itemHeight);
+    [self.view addSubview:self.itemHeartHungVoice];
+    self.itemHeartHungVoice.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientId, 0).heightIs(self.itemHeight);
     
-    [self.scrollView addSubview:self.itemPatientSymptom];
-    [self.scrollView addSubview:self.itemPatientDiagnosis];
-    [self.scrollView addSubview:self.itemPatientSex];
-    [self.scrollView addSubview:self.itemPatientAge];
-    [self.scrollView addSubview:self.itemPatientHeight];
-    [self.scrollView addSubview:self.itemPatientWeight];
-    [self.scrollView addSubview:self.itemPatientArea];
-    [self.scrollView addSubview:self.itemPatientAnnotation];
+    [self.view addSubview:self.itemPatientSymptom];
+    [self.view addSubview:self.itemPatientDiagnosis];
+    [self.view addSubview:self.itemPatientSex];
+    [self.view addSubview:self.itemPatientAge];
+    [self.view addSubview:self.itemPatientHeight];
+    [self.view addSubview:self.itemPatientWeight];
+    [self.view addSubview:self.itemPatientArea];
+    [self.view addSubview:self.itemPatientAnnotation];
     
     if(![Tools isBlankString:self.recordModel.position_tag])  {
-        [self.scrollView addSubview:self.itempPositionTag];
-        self.itempPositionTag.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
-        self.itemPatientSymptom.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itempPositionTag, 0).heightIs(self.itemHeight);
+        [self.view addSubview:self.itempPositionTag];
+        self.itempPositionTag.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
+        self.itemPatientSymptom.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itempPositionTag, 0).heightIs(self.itemHeight);
     } else {
-        self.itemPatientSymptom.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
+        self.itemPatientSymptom.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
     }
     
     
     
-    self.itemPatientDiagnosis.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientSymptom, 0).heightIs(self.itemHeight);
-    self.itemPatientSex.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientDiagnosis, 0).heightIs(self.itemHeight);
-    self.itemPatientAge.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientSex, 0).heightIs(self.itemHeight);
-    self.itemPatientHeight.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientAge, 0).heightIs(self.itemHeight);
-    self.itemPatientWeight.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientHeight, 0).heightIs(self.itemHeight);
-    self.itemPatientArea.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientWeight, 0).heightIs(self.itemHeight);
-    self.itemPatientAnnotation.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientArea, 0).heightIs(self.itemHeight);
+    self.itemPatientDiagnosis.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientSymptom, 0).heightIs(self.itemHeight);
+    self.itemPatientSex.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientDiagnosis, 0).heightIs(self.itemHeight);
+    self.itemPatientAge.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientSex, 0).heightIs(self.itemHeight);
+    self.itemPatientHeight.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientAge, 0).heightIs(self.itemHeight);
+    self.itemPatientWeight.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientHeight, 0).heightIs(self.itemHeight);
+    self.itemPatientArea.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientWeight, 0).heightIs(self.itemHeight);
+    self.itemPatientAnnotation.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientArea, 0).heightIs(self.itemHeight);
     
-    [self.scrollView addSubview:self.viewSmallWave];
-    [self.scrollView addSubview:self.audioPlotView];
-    self.viewSmallWave.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(150.f*screenRatio);
-    self.audioPlotView.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(150.f*screenRatio);
+    [self.view addSubview:self.viewSmallWave];
+    [self.view addSubview:self.audioPlotView];
+    self.viewSmallWave.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(135.f*screenRatio);
+    self.audioPlotView.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(135.f*screenRatio);
     
-    [self.scrollView addSubview:self.buttonPlay];
-    self.buttonPlay.sd_layout.centerXEqualToView(self.scrollView).widthIs(Ratio44).heightIs(Ratio44).topSpaceToView(self.viewSmallWave, Ratio5);
-    [self.scrollView addSubview:self.buttonToAnnotation];
-    self.buttonToAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).heightIs(Ratio20).rightSpaceToView(self.scrollView, Ratio8).widthIs(Ratio77);
-    [self.scrollView addSubview:self.viewLine];
+    [self.view addSubview:self.buttonPlay];
+    self.buttonPlay.sd_layout.centerXEqualToView(self.view).widthIs(Ratio44).heightIs(Ratio44).topSpaceToView(self.viewSmallWave, Ratio5);
+    [self.view addSubview:self.buttonToAnnotation];
+    self.buttonToAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).heightIs(Ratio20).rightSpaceToView(self.view, Ratio8).widthIs(Ratio77);
+    [self.view addSubview:self.viewLine];
     if (self.saveLocation == 1) {
-        [self.scrollView addSubview:self.buttonSave];
-        self.buttonSave.sd_layout.leftSpaceToView(self.scrollView, Ratio22).rightSpaceToView(self.scrollView, Ratio22).topSpaceToView(self.buttonPlay, Ratio11).heightIs(Ratio36);
+        [self.view addSubview:self.buttonSave];
+        self.buttonSave.sd_layout.leftSpaceToView(self.view, Ratio22).rightSpaceToView(self.view, Ratio22).topSpaceToView(self.buttonPlay, Ratio11).heightIs(Ratio36);
     }
     
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         CGFloat maxY = CGRectGetMaxY(self.buttonSave.frame);
-        self.scrollView.contentSize = CGSizeMake(screenW, maxY + Ratio55);
+        //self.view.contentSize = CGSizeMake(screenW, maxY + Ratio55);
         self.startYLine = CGRectGetMinY(self.viewSmallWave.frame);
-        self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio150);
+        self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio135);
     });
     [self openFileWithFilePathURL];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES];
 }
 
 
@@ -307,13 +337,13 @@
     return YES;
 }
 
-- (UIScrollView *)scrollView{
-    if (!_scrollView) {
-        _scrollView = [[UIScrollView alloc] init];
-        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
-    }
-    return _scrollView;
-}
+//- (UIScrollView *)scrollView{
+//    if (!_scrollView) {
+//        _scrollView = [[UIScrollView alloc] init];
+//        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+//    }
+//    return _scrollView;
+//}
 
 
 - (LabelTextFieldItemView *)itemPatientId{
@@ -326,6 +356,7 @@
         }
         _itemPatientId.textFieldInfo.returnKeyType = UIReturnKeyDone;
         _itemPatientId.textFieldInfo.delegate = self;
+        _itemPatientId.textFieldInfo.tag = 111;
     }
     return _itemPatientId;
 }
@@ -396,7 +427,7 @@
 - (RightDirectionView *)itemPatientSex{
     if (!_itemPatientSex) {
         _itemPatientSex = [[RightDirectionView alloc] initWithTitle:@"性别"];
-        _itemPatientSex.labelInfo.text = self.recordModel.patient_sex == man ? @"女" : @"男";
+        _itemPatientSex.labelInfo.text = self.recordModel.patient_sex == man ? @"男" : @"女";
         __weak typeof(self) wself = self;
         _itemPatientSex.tapBlock = ^{
             wself.bChangeData = YES;
@@ -441,11 +472,12 @@
     if (!_itemPatientHeight) {
         _itemPatientHeight = [[LabelTextFieldItemView alloc] initWithTitle:@"身高" bMust:NO placeholder:@""];
         if (![Tools isBlankString:self.recordModel.patient_height]) {
-            _itemPatientHeight.textFieldInfo.enabled = NO;
+            //_itemPatientHeight.textFieldInfo.enabled = NO;
             _itemPatientHeight.textFieldInfo.text = self.recordModel.patient_height;
         } else {
-            _itemPatientHeight.textFieldInfo.placeholder = @"请输入患者的身高(cm)";
+            _itemPatientHeight.textFieldInfo.text = @"";
         }
+        _itemPatientHeight.textFieldInfo.placeholder = @"请输入患者的身高(cm)";
         _itemPatientHeight.textFieldInfo.keyboardType = UIKeyboardTypeNumberPad;
         _itemPatientHeight.textFieldInfo.returnKeyType = UIReturnKeyDone;
         _itemPatientHeight.textFieldInfo.delegate = self;
@@ -458,11 +490,12 @@
     if (!_itemPatientWeight) {
         _itemPatientWeight = [[LabelTextFieldItemView alloc] initWithTitle:@"体重" bMust:NO placeholder:@""];
         if (![Tools isBlankString:self.recordModel.patient_weight]) {
-            _itemPatientWeight.textFieldInfo.enabled = NO;
+           // _itemPatientWeight.textFieldInfo.enabled = NO;
             _itemPatientWeight.textFieldInfo.text = self.recordModel.patient_weight;
         } else {
-            _itemPatientWeight.textFieldInfo.placeholder = @"请输入患者的体重(kg)";
+            _itemPatientWeight.textFieldInfo.text = @"";
         }
+        _itemPatientWeight.textFieldInfo.placeholder = @"请输入患者的体重(kg)";
         _itemPatientWeight.textFieldInfo.returnKeyType = UIReturnKeyDone;
         _itemPatientWeight.textFieldInfo.keyboardType = UIKeyboardTypeNumberPad;
         _itemPatientWeight.textFieldInfo.delegate = self;
@@ -541,6 +574,12 @@
     //self.bCurrentView = YES;
     //[self.navigationController setNavigationBarHidden:NO animated:YES];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+    
+    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    // 关闭横屏仅允许竖屏
+    appDelegate.allowRotation = NO;
+    // 切换到竖屏
+    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
 }
 
 //切换页面时停止播放

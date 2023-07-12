@@ -2,7 +2,7 @@
 //  QuickRecordVC.m
 //  HanHong-Stethophone
 //  快速录音界面
-//  Created by 袁文斌 on 2023/6/16.
+//  Created by Hanhong on 2023/6/16.
 //
 
 #import "QuickRecordVC.h"
@@ -150,7 +150,7 @@
     [self.viewInfo addSubview:self.labelMessage];
 
 
-    self.labelStartRecord.sd_layout.leftSpaceToView(self.viewInfo, 0).rightSpaceToView(self.viewInfo, 0).autoHeightRatio(0).topSpaceToView(self.viewInfo, Ratio22);
+    self.labelStartRecord.sd_layout.leftSpaceToView(self.viewInfo, 0).rightSpaceToView(self.viewInfo, 0).heightIs(Ratio16).topSpaceToView(self.viewInfo, Ratio22);
     self.heartFilterLungView.sd_layout.leftSpaceToView(self.viewInfo, 0).rightSpaceToView(self.viewInfo, 0).topSpaceToView(self.labelStartRecord, Ratio22).heightIs(Ratio33);
 
     self.labelMessage.sd_layout.leftSpaceToView(self.viewInfo, 0).rightSpaceToView(self.viewInfo, 0).heightIs(Ratio18).topSpaceToView(self.heartFilterLungView, Ratio11);
@@ -234,6 +234,12 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self actionStartRecord];
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [[HHBlueToothManager shareManager] stop];
+    self.recordingState = recordingState_pause;
 }
 
 

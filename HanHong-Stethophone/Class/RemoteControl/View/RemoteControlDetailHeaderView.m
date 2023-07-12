@@ -2,14 +2,14 @@
 //  RemoteControlDetailHeaderView.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/7.
+//  Created by Hanhong on 2023/7/7.
 //
 
 #import "RemoteControlDetailHeaderView.h"
 #import "LabelTextFieldItemView.h"
 #import "HeartFilterLungView.h"
 
-@interface RemoteControlDetailHeaderView()<HeartFilterLungViewDelegate>
+@interface RemoteControlDetailHeaderView()<HeartFilterLungViewDelegate, UITextFieldDelegate>
 
 
 @property (retain, nonatomic) UILabel               *labelTitle;
@@ -47,6 +47,11 @@
         }
     }
     return self;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [self endEditing:YES];
+    return YES;
 }
 
 - (Boolean)actionHeartLungButtonClickCallback:(NSInteger)idx{
@@ -198,6 +203,8 @@
     if (!_itemTitle) {
         _itemTitle = [[LabelTextFieldItemView alloc] initWithTitle:@"会诊标题" bMust:NO placeholder:@""];
         _itemTitle.textFieldInfo.enabled = NO;
+        _itemTitle.textFieldInfo.delegate = self;
+        _itemTitle.textFieldInfo.returnKeyType = UIReturnKeyDone;
     }
     return _itemTitle;
 }

@@ -2,7 +2,7 @@
 //  AnnotationItemCell.h
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/6.
+//  Created by Hanhong on 2023/7/6.
 //
 
 #import <UIKit/UIKit.h>

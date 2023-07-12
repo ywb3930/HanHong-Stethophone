@@ -2,7 +2,7 @@
 //  RemoteControlTeacherVC.m
 //  HanHong-Stethophone
 //  听诊教学
-//  Created by 袁文斌 on 2023/6/25.
+//  Created by Hanhong on 2023/6/25.
 //
 
 #import "RemoteControlTeacherVC.h"

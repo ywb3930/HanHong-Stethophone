@@ -32,6 +32,7 @@
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        self.backgroundColor = UIColor.clearColor;
         [self setupView];
     }
     return self;
@@ -97,7 +98,7 @@
 }
 
 - (void)setupView{
-    self.contentView.backgroundColor = HEXCOLOR(0xE2E8F0, 1);
+    //self.contentView.backgroundColor = HEXCOLOR(0xE2E8F0, 1);
     [self.contentView addSubview:self.viewBg];
     self.viewBg.sd_layout.leftSpaceToView(self.contentView, 0).rightSpaceToView(self.contentView, 0).topSpaceToView(self.contentView, 0).bottomSpaceToView(self.contentView, Ratio9);
     

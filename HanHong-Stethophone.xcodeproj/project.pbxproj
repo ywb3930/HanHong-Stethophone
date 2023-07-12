@@ -737,10 +737,10 @@
 		9736554C2A5A5139006919AB /* UINavgationController */ = {
 			isa = PBXGroup;
 			children = (
-				9736554D2A5A5139006919AB /* ViewController+extension.m */,
 				9736554E2A5A5139006919AB /* UINavigationController+QMUI.h */,
-				9736554F2A5A5139006919AB /* ViewController+extension.h */,
 				973655502A5A5139006919AB /* UINavigationController+QMUI.m */,
+				9736554F2A5A5139006919AB /* ViewController+extension.h */,
+				9736554D2A5A5139006919AB /* ViewController+extension.m */,
 			);
 			path = UINavgationController;
 			sourceTree = "<group>";
@@ -749,11 +749,11 @@
 			isa = PBXGroup;
 			children = (
 				973655522A5A5139006919AB /* HBDNavigationBar.h */,
-				973655532A5A5139006919AB /* HBDNavigationController.h */,
-				973655542A5A5139006919AB /* UIViewController+HBD.m */,
 				973655552A5A5139006919AB /* HBDNavigationBar.m */,
-				973655562A5A5139006919AB /* UIViewController+HBD.h */,
+				973655532A5A5139006919AB /* HBDNavigationController.h */,
 				973655572A5A5139006919AB /* HBDNavigationController.m */,
+				973655562A5A5139006919AB /* UIViewController+HBD.h */,
+				973655542A5A5139006919AB /* UIViewController+HBD.m */,
 			);
 			path = NavgationBar;
 			sourceTree = "<group>";

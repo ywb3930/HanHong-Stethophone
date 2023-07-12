@@ -86,11 +86,15 @@
     }
 }
 
+- (void)dealloc{
+    [self.timer invalidate];
+    self.timer = nil;
+}
+
 - (void)deallocView{
     self.buttonGetCode.sd_layout.widthIs(Ratio55);
     [self.buttonGetCode setTitleColor:MainColor forState:UIControlStateNormal];
-    [self.timer invalidate];
-    self.timer = nil;
+
 }
 
 - (UILabel *)labelCode{

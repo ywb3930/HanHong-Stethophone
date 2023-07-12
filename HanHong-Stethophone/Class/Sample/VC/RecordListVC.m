@@ -392,6 +392,7 @@
     // tag: 0 本地录音 1 云标本库 2 我的收藏
     if (tag == 0) {
         if (index == 0) {
+            
             [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要上传%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
                 //将本地录音上传至云标本库
                 [self actionUploadToClound];
@@ -407,23 +408,31 @@
             
         }
     } else if(tag == 1) {
-        if (index == 0) {
-            [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要分享%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
-                //分享云标本库
-                [self actionToShareCloud];
-            } cancel:^{
-                
-            }];
-            
+        if (index == 0 || (index == 1 && model.shared)) {
+            [self actionToShareRecord:model];
         } else {
-            [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要删除%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
-                //删除云标本库
-                [self actionDeleteCloudData];
-            } cancel:^{
-                
-            }];
+            [self actionToDeleteRecord:model];
         }
     }
+}
+
+- (void)actionToShareRecord:(RecordModel *)model{
+    NSString *message = model.shared ? @"取消分享" : @"分享";
+    [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要%@%@的录音吗?", message,model.record_time] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+        //分享云标本库
+        [self actionToShareCloud];
+    } cancel:^{
+        
+    }];
+}
+
+- (void)actionToDeleteRecord:(RecordModel *)model{
+    [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要删除%@的录音吗?",model.record_time] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+        //删除云标本库
+        [self actionDeleteCloudData];
+    } cancel:^{
+        
+    }];
 }
 //上传本地录音至云标本库
 - (void)actionUploadToClound{
@@ -516,6 +525,8 @@
             } else {
                 model.share_code = @"";
             }
+           
+            [self.recordTableView reloadRowsAtIndexPaths:@[self.currentSelectIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
         }
     } failure:^(NSError * _Nonnull error) {
         
@@ -841,7 +852,11 @@
         RecordModel *model = [self.arrayData objectAtIndex:indexPath.row];
         NSArray *arrayTitle = @[@"加入云标本库", @"删除"];
         if (self.idx == 1) {
-            arrayTitle = @[model.shared ? @"取消分享": @"分享", @"删除"];
+            if(model.shared) {
+                arrayTitle = @[@"分享", @"取消分享", @"删除"];
+            } else {
+                arrayTitle = @[@"分享", @"删除"];
+            }
         }
         TTActionSheet *actionSheet = [TTActionSheet showActionSheet:arrayTitle cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
         actionSheet.delegate = self;

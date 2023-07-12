@@ -2,7 +2,7 @@
 //  GuideVC.h
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/8.
+//  Created by Hanhong on 2023/7/8.
 //
 
 #import <UIKit/UIKit.h>

@@ -2,7 +2,7 @@
 //  DeviceManagerVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/19.
+//  Created by Hanhong on 2023/6/19.
 //
 
 #import "DeviceManagerVC.h"
@@ -152,8 +152,9 @@
     if ([NSThread isMainThread]) {
         [self actionEventBluetoothMessageMain:event args1:args1 args2:args2];
     } else {
+        __weak typeof(self) wself = self;
         dispatch_sync(dispatch_get_main_queue(), ^{
-            [self actionEventBluetoothMessageMain:event args1:args1 args2:args2];
+            [wself actionEventBluetoothMessageMain:event args1:args1 args2:args2];
         });
     }
 }
@@ -180,8 +181,9 @@
     if ([NSThread isMainThread]) {
         [self actionEventSearchFound:device_name device_mac:device_mac];
     } else {
+        __weak typeof(self) wself = self;
         dispatch_sync(dispatch_get_main_queue(), ^{
-            [self actionEventSearchFound:device_name device_mac:device_mac];
+            [wself actionEventSearchFound:device_name device_mac:device_mac];
         });
     }
 }
@@ -255,7 +257,7 @@
         powerOnDefaultModelString = @"心肺音过滤模式";
     }
     if ([deviceMode isEqualToString:POPULAR3_btName]) {
-        NSArray *arrayTitle = @[@"自动连接", @"听诊器蓝牙默认状态", @"开机默认模式", @"开机默认音量", @"自动关机", @"电池型号设置", @"默认录音类型", @"默认滤波",@"录音时长", @"录音顺序开关", @"录音顺序设置", @"远程会诊录音最大时长"];
+        NSArray *arrayTitle = @[@"APP自动连接听诊器", @"听诊器蓝牙默认状态", @"听诊器开机默认模式", @"听诊器开机默认音量", @"听诊器自动关机", @"电池型号设置", @"默认录音类型", @"默认滤波",@"录音时长", @"录音顺序开关", @"录音顺序设置", @"远程会诊录音最大时长"];
         NSArray *arrayType = @[@"0", @"1", @"1", @"1", @"1", @"1", @"1", @"0", @"1", @"0", @"1", @"1"];
         NSArray *arrayDefault = @[autoConnectString, stehoscopeBtStateString, powerOnDefaultModelString, powerOnDefaultVolumeString, getAutoOffTimeString, batteryVersionString, quickRecordDefaultTypeString, openFiltrationString, recordDurationString,auscultationSequenceString, @"", remoteRecordDuration];
         self.deviceManagerSettingView.arrayType = arrayType;
@@ -266,9 +268,9 @@
     } else if ([deviceMode isEqualToString:POP3_btName]) {
         NSArray *arrayTitle = [NSArray array];
         if (self.loginType == login_type_teaching) {
-            arrayTitle = @[@"自动连接", @"自动关机", @"远程教学录音最大时长"];
+            arrayTitle = @[@"APP自动连接听诊器", @"听诊器自动关机", @"远程教学录音最大时长"];
         } else {
-            arrayTitle = @[@"自动连接", @"自动关机", @"远程会诊录音最大时长"];
+            arrayTitle = @[@"APP自动连接听诊器", @"听诊器自动关机", @"远程会诊录音最大时长"];
         }
         NSArray *arrayType = @[@"0", @"1", @"1"];
         NSArray *arrayDefault = @[autoConnectString, getAutoOffTimeString, remoteRecordDuration];

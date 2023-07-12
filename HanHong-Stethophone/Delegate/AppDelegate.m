@@ -18,6 +18,7 @@
 #import <UMAPM/UMCrashConfigure.h>
 #import <UMAPM/UMLaunch.h>
 #import <UMCommonLog/UMCommonLogHeaders.h>
+#import <UMAPM/UMAPMConfig.h>
 
 /**
 
@@ -42,7 +43,6 @@
     }
     
 }
-
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch. 18902400417
@@ -77,19 +77,42 @@
     [self.window makeKeyAndVisible];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginBroadcast:) name:login_broadcast object:nil];
- //
+ ////649e6e8cbd4b621232c434ed
     
 //    applinks:eba4fc5d76acfd96108720a7aadb21c5.share2dlink.com
     [WXApi registerApp:@"wx97eae6a515b782d3" universalLink:@"https://www.hedelongcloud.com/auscultationassistant/"];
-
+    [self initTestUM];
     return YES;
+}
+
+- (void)initTestUM{
+    [UMLaunch beginLaunch:@"intUmeng"];
+    //初始化友盟SDK
+    UMAPMConfig* config = [UMAPMConfig defaultConfig];
+    config.crashAndBlockMonitorEnable = YES;
+    config.launchMonitorEnable = YES;
+    config.memMonitorEnable = YES;
+    config.oomMonitorEnable = YES;
+    config.networkEnable = YES;
+    [UMCrashConfigure setAPMConfig:config];
+    [UMConfigure initWithAppkey:@"649e6e8cbd4b621232c434ed" channel:@"App Store"];
+    //设置启动模块自定义函数开始
+    [UMLaunch endLaunch:@"intUmeng"];
+    NSLog(@"UMAPM version:%@",[UMCrashConfigure getVersion]);
+    
+    //设置预定义DidFinishLaunchingEnd时间
+    [UMLaunch setPredefineLaunchType:UMPredefineLaunchType_DidFinishLaunchingEnd];
 }
 
 - (void)initBluetooth{
     NSString *defaultConnectPath = [[Constant shareManager] getPlistFilepathByName:@"connectDevice.plist"];
-    NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:defaultConnectPath];
-    if (data) {
-        NSString *bluetoothDeviceUUID = [data objectForKey:@"bluetoothDeviceUUID"];
+    NSString *deviceManagerPath =  [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
+    
+    NSDictionary *dataBluetooth = [NSDictionary dictionaryWithContentsOfFile:defaultConnectPath];
+    NSDictionary *deviceManage = [NSDictionary dictionaryWithContentsOfFile:deviceManagerPath];
+    Boolean autoConnect = [deviceManage[@"auto_connect_echometer"] boolValue];
+    if (dataBluetooth && autoConnect) {
+        NSString *bluetoothDeviceUUID = [dataBluetooth objectForKey:@"bluetoothDeviceUUID"];
         [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:bluetoothDeviceUUID];
         NSLog(@"bluetoothDeviceUUID 4 = %@", bluetoothDeviceUUID);
     }

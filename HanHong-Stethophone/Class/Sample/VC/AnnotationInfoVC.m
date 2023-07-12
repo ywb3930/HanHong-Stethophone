@@ -2,12 +2,12 @@
 //  AnnotationInfoVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/5.
+//  Created by Hanhong on 2023/7/5.
 //
 
 #import "AnnotationInfoVC.h"
-#import "AppDelegate.h"
-#import "UIDevice+HanHong.h"
+//#import "AppDelegate.h"
+//#import "UIDevice+HanHong.h"
 
 @interface AnnotationInfoVC ()
 
@@ -197,11 +197,11 @@
     //进入旋转
     //[self changeRotate:YES];
     
-    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    // 打开横屏开关
-    appDelegate.allowRotation = YES;
-    // 调用转屏代码
-    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationLandscapeRight];
+//    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+//    // 打开横屏开关
+//    appDelegate.allowRotation = YES;
+//    // 调用转屏代码
+//    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationLandscapeRight];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -209,11 +209,11 @@
     //退出恢复
     //self.bCurrentView = NO;
     //[self changeRotate:NO];
-    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    // 关闭横屏仅允许竖屏
-    appDelegate.allowRotation = NO;
-    // 切换到竖屏
-    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
+//    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+//    // 关闭横屏仅允许竖屏
+//    appDelegate.allowRotation = NO;
+//    // 切换到竖屏
+//    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
 
 }
 

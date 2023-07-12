@@ -35,7 +35,7 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-    self.navigationController.navigationBar.backgroundColor = WHITECOLOR;
+    //self.navigationController.navigationBar.backgroundColor = WHITECOLOR;
     //[self.navigationController.navigationBar setBackgroundImage:StatusBgViewImage forBarMetrics:UIBarMetricsDefault];
 }
 

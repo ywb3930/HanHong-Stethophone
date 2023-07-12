@@ -2,19 +2,20 @@
 //  WaveSmallView.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/4.
+//  Created by Hanhong on 2023/7/4.
 //
 
 #import "WaveSmallView.h"
 
-#define  ViewHeight     Ratio150
+#define  ViewHeight     Ratio135
+#define  smalllineCount         7
 
 @interface WaveSmallView()
 
 @property (retain, nonatomic) RecordModel           *recordModel;
 @property (retain, nonatomic) NSMutableArray        *arrayRowNumber;
 @property (assign, nonatomic) NSInteger             rowCount;
-@property (assign, nonatomic) Boolean               bSingeLine;
+//@property (assign, nonatomic) Boolean               bSingeLine;
 
 
 
@@ -34,7 +35,6 @@
 
 
 
-
 - (void)initLabel{
     CGFloat width = (screenW - Ratio22) / self.rowCount;
     for (NSInteger i = 0; i < self.rowCount; i++) {
@@ -45,7 +45,7 @@
         [label sizeToFit];
         label.textAlignment = NSTextAlignmentCenter;
         [self addSubview:label];
-        label.sd_layout.bottomSpaceToView(self, Ratio5).centerXIs((i+1) * width - Ratio11).heightIs(Ratio15).widthIs(Ratio44);
+        label.sd_layout.bottomSpaceToView(self, Ratio2).centerXIs((i+1) * width - Ratio11).heightIs(Ratio15).widthIs(Ratio44);
     }
     UILabel *labelTop = [self getLabelVertical:@" 1"];
     UILabel *labelCenter = [self getLabelVertical:@" 0"];
@@ -68,33 +68,73 @@
     return label;
 }
 
+
+- (void)getArrayData:(NSInteger)x count:(NSInteger)count{
+    //NSMutableArray *array = [NSMutableArray array];
+    NSInteger num = count / 8;
+    NSInteger f = ceil(num / (float)x) * x;
+    NSLog(@"11");
+    NSInteger number =  count/f;
+    for (NSInteger i = 0; i < number; i++) {
+        [self.arrayRowNumber addObject:[@((i+1)*f) stringValue]];
+    }
+    int last = [[self.arrayRowNumber lastObject] intValue];
+    if (count - last < f / 2) {
+        [self.arrayRowNumber replaceObjectAtIndex:number - 1 withObject:[@(count) stringValue]];
+    } else {
+        [self.arrayRowNumber addObject:[@(count) stringValue]];
+    }
+    self.rowCount = self.arrayRowNumber.count;
+}
+
+
 - (void)initData{
     NSInteger duration = self.recordModel.record_length;
     self.arrayRowNumber = [NSMutableArray array];
-    if (duration <= 8) {
-        self.rowCount = duration;
-        for (NSInteger i = 1; i <= duration; i++) {
+    if (duration <= 10) {
+        for (NSInteger i = 0; i < duration; i++) {
             [self.arrayRowNumber addObject:[@(i) stringValue]];
         }
-        self.bSingeLine = NO;
-    } else {
-        NSInteger interval = ceil(duration/8.f);
-        if(duration % interval == 0) {
-            self.rowCount = duration / interval;
-            for (NSInteger i = 1; i < self.rowCount; i++) {
-                [self.arrayRowNumber addObject:[@(i * interval) stringValue]];
-            }
-            self.bSingeLine = NO;
-        } else {
-            self.rowCount = duration / interval;
-            NSMutableArray *a = [NSMutableArray array];
-            for (NSInteger i = 0; i < self.rowCount; i++) {
-                [a addObject:[@(duration - i * interval) stringValue]];
-            }
-            self.bSingeLine = YES;
-            [self.arrayRowNumber addObjectsFromArray:[[a reverseObjectEnumerator] allObjects]];
-        }
+        self.rowCount = self.arrayRowNumber.count;
+    } else if (duration <= 50) {
+        [self getArrayData:5 count:duration];
+    } else if (duration <= 100) {
+        [self getArrayData:10 count:duration];
+    }  else if (duration <= 500) {
+        [self getArrayData:50 count:duration];
+    } else if (duration <= 1000) {
+        [self getArrayData:100 count:duration];
+    }else {
+        [self getArrayData:500 count:duration];
     }
+    
+    
+//    NSInteger duration = self.recordModel.record_length;
+//    self.arrayRowNumber = [NSMutableArray array];
+//    if (duration <= 8) {
+//        self.rowCount = duration;
+//        for (NSInteger i = 1; i <= duration; i++) {
+//            [self.arrayRowNumber addObject:[@(i) stringValue]];
+//        }
+//        self.bSingeLine = NO;
+//    } else {
+//        NSInteger interval = ceil(duration/8.f);
+//        if(duration % interval == 0) {
+//            self.rowCount = duration / interval;
+//            for (NSInteger i = 1; i < self.rowCount; i++) {
+//                [self.arrayRowNumber addObject:[@(i * interval) stringValue]];
+//            }
+//            self.bSingeLine = NO;
+//        } else {
+//            self.rowCount = duration / interval;
+//            NSMutableArray *a = [NSMutableArray array];
+//            for (NSInteger i = 0; i < self.rowCount; i++) {
+//                [a addObject:[@(duration - i * interval) stringValue]];
+//            }
+//            self.bSingeLine = YES;
+//            [self.arrayRowNumber addObjectsFromArray:[[a reverseObjectEnumerator] allObjects]];
+//        }
+//    }
     
 }
 
@@ -103,16 +143,16 @@
 }
 
 - (void)drawLine{
-    CGFloat height = ViewHeight/8;
-    for (NSInteger i = 0; i < 8; i++) {
+    CGFloat height = ViewHeight/(smalllineCount - 1);
+    for (NSInteger i = 0; i < (smalllineCount - 1); i++) {
         CGContextRef context = UIGraphicsGetCurrentContext();
         //2.设置当前上下问路径
         //设置起始点
-        if (i == 7) {
+        if (i == smalllineCount) {
             CGContextSetLineWidth(context, Ratio1);
-            CGContextMoveToPoint(context, 0, height * (1 + i) - Ratio1);
+            CGContextMoveToPoint(context, 0, height * (1 + i) - Ratio2);
             //增加点
-            CGContextAddLineToPoint(context, screenW - Ratio22, height * (1 + i) - Ratio1);
+            CGContextAddLineToPoint(context, screenW - Ratio22, height * (1 + i) - Ratio2);
         } else {
             CGContextMoveToPoint(context, 0, height * (1 + i));
             //增加点
@@ -123,7 +163,7 @@
         //关闭路径
         CGContextClosePath(context);
         
-        if(i == 7) {
+        if(i == smalllineCount) {
             [[UIColor whiteColor] setStroke];
         } else {
             [HEXCOLOR(0xFFFFFF, 0.5) setStroke];
@@ -140,11 +180,11 @@
             CGContextSetLineWidth(context, Ratio1);
             CGContextMoveToPoint(context, Ratio1, 0);
             //增加点
-            CGContextAddLineToPoint(context, Ratio1, Ratio150);
+            CGContextAddLineToPoint(context, Ratio1, Ratio135);
         } else {
             CGContextMoveToPoint(context, width * i, 0);
             //增加点
-            CGContextAddLineToPoint(context, width * i, Ratio150);
+            CGContextAddLineToPoint(context, width * i, Ratio135);
             CGContextSetLineWidth(context, Ratio0_5);
         }
         

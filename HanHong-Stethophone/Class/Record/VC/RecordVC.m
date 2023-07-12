@@ -51,6 +51,7 @@
 }
 
 - (void)actionFastRecord:(UIButton *)button{
+    NSLog(@"111111");
     if ([self checkConnetState]) {
         QuickRecordVC *quickRecord = [[QuickRecordVC alloc] init];
         [self.navigationController pushViewController:quickRecord animated:YES];

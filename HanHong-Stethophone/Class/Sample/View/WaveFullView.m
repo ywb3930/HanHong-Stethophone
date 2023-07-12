@@ -2,11 +2,12 @@
 //  WaveFullView.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/5.
+//  Created by Hanhong on 2023/7/5.
 //
 
 #import "WaveFullView.h"
 
+#define lineCount           9
 
 @interface WaveFullView()
 
@@ -34,7 +35,7 @@
 - (void)initData{
     self.rowCount = self.recordModel.record_length * 5;
     self.viewHeight = screenW - 2 *  kNavBarHeight - Ratio22;
-    self.rowWidth = self.viewHeight / 8.f;
+    self.rowWidth = self.viewHeight / (lineCount - 1);
     self.viewWidth = self.rowCount * self.rowWidth;
     
 }
@@ -58,15 +59,15 @@
     [self drawLine];
 }
 - (void)drawLine{
-    for (NSInteger i = 0; i < 9; i++) {
+    for (NSInteger i = 0; i < lineCount; i++) {
         CGContextRef context = UIGraphicsGetCurrentContext();
         //2.设置当前上下问路径
         //设置起始点
-        if (i == 8) {
+        if (i == (lineCount - 1)) {
             CGContextSetLineWidth(context, Ratio1);
-            CGContextMoveToPoint(context, 0, 8 * self.rowWidth  - Ratio1);
+            CGContextMoveToPoint(context, 0, (lineCount - 1) * self.rowWidth  - Ratio1);
             //增加点
-            CGContextAddLineToPoint(context, self.viewWidth, 8 * self.rowWidth  - Ratio1);
+            CGContextAddLineToPoint(context, self.viewWidth, (lineCount - 1) * self.rowWidth  - Ratio1);
         } else {
             CGContextMoveToPoint(context, 0,  i * self.rowWidth);
             //增加点
@@ -77,7 +78,7 @@
         //关闭路径
         CGContextClosePath(context);
         
-        if(i == 8) {
+        if(i == (lineCount - 1)) {
             [[UIColor whiteColor] setStroke];
         } else {
             [HEXCOLOR(0xFFFFFF, 0.2) setStroke];
@@ -86,7 +87,7 @@
         CGContextDrawPath(context, kCGPathFillStroke);
     }
     
-    for (NSInteger i = 0; i < self.rowCount; i++) {
+    for (NSInteger i = 1; i < self.rowCount; i++) {
         CGContextRef context = UIGraphicsGetCurrentContext();
         //2.设置当前上下问路径
         //设置起始点

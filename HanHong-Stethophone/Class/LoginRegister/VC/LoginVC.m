@@ -16,7 +16,7 @@
 #import "ForgetPasswordVC.h"
 #import "RightDirectionView.h"
 
-@interface LoginVC ()<CodeItemViewDelegate, SelectOrgVCDelegate>
+@interface LoginVC ()<CodeItemViewDelegate, SelectOrgVCDelegate, UITextFieldDelegate>
 
 @property (retain, nonatomic) UIImageView      *imageViewIcon;
 @property (retain, nonatomic) UILabel          *labelWelcome;
@@ -64,6 +64,7 @@
     // Do any additional setup after loading the view.
     self.delay = 0;
     self.autoLogining = NO;
+    
     self.view.backgroundColor = WHITECOLOR;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionGetLoginType:) name:login_type_broadcast object:nil];
     self.loginTypePassword = YES;
@@ -79,10 +80,10 @@
         self.teachRole = [[NSUserDefaults standardUserDefaults] integerForKey:@"teach_role"];
         self.org_type = [[NSUserDefaults standardUserDefaults] integerForKey:@"org_type"];
     }
-    
+
 
     self.autoLogin = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
-    
+    //self.autoLogin = YES;
     [self initView];
     [self reloadView:YES];
     
@@ -91,6 +92,25 @@
 //    self.itemPass.textFieldPass.text = @"123456";
     
 
+}
+
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if(textField.tag != 1000) {
+        return YES;
+    }
+    if (string.length == 0) return YES;
+    //第一个参数，被替换字符串的range，第二个参数，即将键入或者粘贴的string，返回的textfield的新的文本内容
+    NSString *checkStr = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    //正则表达式
+    NSString *regex = @"^[0-9]+$";
+    return [Tools validateStr:checkStr withRegex:regex];
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [self.view endEditing:YES];
+   // [self.itemPass.textFieldPass becomeFirstResponder];
+    return YES;
 }
 
 - (void)actionAutoLogin:(UIButton *)button {
@@ -171,9 +191,14 @@
        // self.buttonLogin.hidden = YES;
         self.viewUnionType.hidden = NO;
         self.viewUnionType.labelName.text = @"医院";
-        self.viewUnionType.labelInfo.text = self.orgModel.name;
+        if(self.orgModel.type == org_type_union) {
+            self.viewUnionType.labelInfo.text = self.orgModel.name;
+        } else {
+            self.viewUnionType.labelInfo.text = @"";
+        }
+       
         [self.buttonLogin updateLayout];
-        
+       
     } else if(self.loginType == login_type_teaching) {
         NSString *title = @"教学版";
         self.loginType = login_type_teaching;
@@ -188,7 +213,12 @@
         self.buttonLogin.sd_layout.topSpaceToView(self.viewPass, Ratio77);
         self.viewUnionType.hidden = NO;
         self.viewUnionType.labelName.text = @"院校";
-        self.viewUnionType.labelInfo.text = self.orgModel.name;
+        if(self.orgModel.type == org_type_teaching) {
+            self.viewUnionType.labelInfo.text = self.orgModel.name;
+        } else {
+            self.viewUnionType.labelInfo.text = @"";
+        }
+        //self.viewUnionType.labelInfo.text = self.orgModel.name;
     }
     
     NSData *data;
@@ -267,6 +297,7 @@
 }
 
 - (void)actionLogin:(UIButton *)button{
+    [self.view endEditing:YES];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     NSString *user = @"";
     if(self.loginTypePassword) {
@@ -279,7 +310,7 @@
     } else if([Tools IsPhoneNumber:user]) {
         params[@"phone"] = user;
     } else {
-        [self.view makeToast:@"请输入正确的手机号或邮箱"];
+        [self.view makeToast:@"请输入正确的手机号或邮箱" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
     
@@ -290,6 +321,10 @@
             pass = dic[@"password"];
         } else {
              pass = self.itemPass.textFieldPass.text;
+            if([Tools isBlankString:pass]) {
+                [self.view makeToast:@"请输入密码" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+                return;
+            }
         }
         
         NSString *passwordString = [NSString stringWithFormat:@"%@%@%@", saltnum1, pass, saltnum2];
@@ -311,6 +346,11 @@
     if(self.loginType == login_type_personal) {
         params[@"org"] = @"hanhong";
     } else {
+        if(self.org_type != self.orgModel.type) {
+            NSString *message = [NSString stringWithFormat:@"请选择%@",self.org_type == org_type_union ? @"医院" : @"院校"];
+            [self.view makeToast:message duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return;
+        }
         params[@"org"] = self.orgModel.code;
     }
     params[@"force"] = @"1";
@@ -424,7 +464,7 @@
     } else if([Tools IsPhoneNumber:user]) {
         [params addEntriesFromDictionary:@{@"phone": user}];
     } else {
-        [self.view makeToast:@"请输入正确的手机号或邮箱"];
+        [self.view makeToast:@"请输入正确的手机号或邮箱" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
     if(self.loginType == login_type_personal) {
@@ -594,8 +634,10 @@
     if(!_buttonAutoLoginText) {
         _buttonAutoLoginText = [[UIButton alloc] init];
         [_buttonAutoLoginText setTitle:@"我想以后自动登录" forState:UIControlStateNormal];
+        [_buttonAutoLoginText addTarget:self action:@selector(actionAutoLogin:) forControlEvents:UIControlEventTouchUpInside];
         [_buttonAutoLoginText setTitleColor:MainBlack forState:UIControlStateNormal];
         _buttonAutoLoginText.titleLabel.font = [UIFont systemFontOfSize:Ratio12];
+        //_buttonAutoLoginText.selected = YES;
     }
     return _buttonAutoLoginText;
 }
@@ -636,6 +678,8 @@
 - (LabelTextFieldItemView *)itemCodeUser{
     if(!_itemCodeUser) {
         _itemCodeUser = [[LabelTextFieldItemView alloc] initWithTitle:@"手机/邮箱" bMust:NO placeholder:@"请输入您的手机号或邮箱"];
+        _itemCodeUser.textFieldInfo.delegate = self;
+        _itemCodeUser.textFieldInfo.returnKeyType = UIReturnKeyDone;
     }
     return _itemCodeUser;
 }
@@ -643,6 +687,8 @@
 - (PasswordItemView *)itemPass{
     if(!_itemPass) {
         _itemPass = [[PasswordItemView alloc] initWithTitle:@"密码" bMust:NO placeholder:@"请输入密码"];
+        _itemPass.textFieldPass.delegate = self;
+        _itemPass.textFieldPass.returnKeyType = UIReturnKeyDone;
     }
     return _itemPass;
 }
@@ -651,6 +697,9 @@
     if(!_codeItemView) {
         _codeItemView = [[CodeItemView alloc] initWithTitle:@"动态密码" bMust:NO placeholder:@"请输入动态密码"];
         _codeItemView.delegate = self;
+        _codeItemView.textFieldCode.delegate = self;
+        _codeItemView.textFieldCode.tag = 1000;
+        _codeItemView.textFieldCode.returnKeyType = UIReturnKeyDone;
     }
     return _codeItemView;
 }
@@ -665,6 +714,8 @@
 - (LabelTextFieldItemView *)itemUser{
     if(!_itemUser) {
         _itemUser = [[LabelTextFieldItemView alloc] initWithTitle:@"用户" bMust:NO placeholder:@"请输入您的手机号或邮箱"];
+        _itemUser.textFieldInfo.returnKeyType = UIReturnKeyDone;
+        _itemUser.textFieldInfo.delegate = self;
     }
     return _itemUser;
 }

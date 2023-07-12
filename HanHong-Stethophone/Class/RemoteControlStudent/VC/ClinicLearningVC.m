@@ -2,7 +2,7 @@
 //  ClinicLearningVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/10.
+//  Created by Hanhong on 2023/7/10.
 //
 
 #import "ClinicLearningVC.h"
@@ -292,16 +292,12 @@
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
     ClinicCell *cell = (ClinicCell *)[collectionView dequeueReusableCellWithReuseIdentifier:NSStringFromClass([ClinicCell class]) forIndexPath:indexPath];
     cell.itemModel = self.arrayData[indexPath.row];
-    //NSInteger row = indexPath.row;
-    //cell.model = self.arrayData[row];
     return cell;
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section{
     return UIEdgeInsetsMake(0, Ratio11, 0, Ratio11);
 }
-
-
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath{
     UICollectionReusableView *reusableview = nil;
@@ -317,8 +313,6 @@
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section{
     return  CGSizeMake(screenW, 367.f*screenRatio);
 }
-
-
 
 - (UICollectionView *)collectionView{
     if (!_collectionView) {

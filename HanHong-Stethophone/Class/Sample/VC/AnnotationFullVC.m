@@ -2,7 +2,7 @@
 //  AnnotationFullVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/4.
+//  Created by Hanhong on 2023/7/4.
 //
 
 #import "AnnotationFullVC.h"
@@ -55,6 +55,8 @@
 @property (assign, nonatomic) CGFloat               endTime;
 @property (assign, nonatomic) CGFloat               statusBarHeight;
 
+@property (retain, nonatomic) UIView                *viewLeftView;
+
 
 @end
 
@@ -82,7 +84,7 @@
 - (void)actionShowTableView:(UITapGestureRecognizer *)tap{
     self.tableView.hidden = NO;
     NSInteger count = self.arrayCharacteristic.count > 5 ? 5 : self.arrayCharacteristic.count;
-    self.tableView.frame = CGRectMake(2*screenW/3.f-kBottomSafeHeight, kNavBarHeight + Ratio3, screenW / 3, Ratio30 * (count + 1));
+    self.tableView.frame = CGRectMake(2*screenW/3.f-self.statusBarHeight - Ratio11, kNavBarHeight + Ratio3, screenW / 3.0f, Ratio30 * (count + 1));
     [self.tableView reloadData];
 }
 
@@ -97,9 +99,10 @@
     Boolean bFirstLoadA = YES;
     Boolean bBirstLoadB = YES;
     CGFloat x = self.statusBarHeight;
-    if (width <= (screenW - x) / 2) {
+    
+    if (width <= screenW/2 - x) {
         self.viewLine.frame = CGRectMake(x + width, kNavBarHeight, Ratio1, self.viewHeight);
-    } else if (width >= self.viewWidth - (screenW - x) / 2) {
+    } else if (width >= self.viewWidth - screenW/2 + x) {
         if (bFirstLoadA) {
             CGPoint offset = CGPointMake(self.viewWidth-screenW+x, 0);
             [self.scrollView setContentOffset:offset animated:YES];
@@ -111,9 +114,28 @@
             self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
             bBirstLoadB = NO;
         }
-        CGPoint offset = CGPointMake(width - (screenW - x) / 2, 0);
+        CGPoint offset = CGPointMake(width - screenW/2 + x, 0);
         [self.scrollView setContentOffset:offset animated:YES];
     }
+    
+    
+//    if (width <= (screenW - x) / 2) {
+//        self.viewLine.frame = CGRectMake(x + width, kNavBarHeight, Ratio1, self.viewHeight);
+//    } else if (width >= self.viewWidth - (screenW - x) / 2) {
+//        if (bFirstLoadA) {
+//            CGPoint offset = CGPointMake(self.viewWidth-screenW+x, 0);
+//            [self.scrollView setContentOffset:offset animated:YES];
+//            bFirstLoadA = NO;
+//        }
+//        self.viewLine.frame = CGRectMake(screenW - x-(self.viewWidth - width), kNavBarHeight, Ratio1, self.viewHeight);
+//    } else {
+//        if (bBirstLoadB) {
+//            self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
+//            bBirstLoadB = NO;
+//        }
+//        CGPoint offset = CGPointMake(width - (screenW - x) / 2, 0);
+//        [self.scrollView setContentOffset:offset animated:YES];
+//    }
 }
 
 - (void)actionClickDeleteCallback:(UITableViewCell *)cell{
@@ -547,18 +569,18 @@
     [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationLandscapeRight];
 }
 
-- (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
+//- (void)viewWillDisappear:(BOOL)animated{
+//    [super viewWillDisappear:animated];
     //退出恢复
     //self.bCurrentView = NO;
     //[self changeRotate:NO];
-    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
-    // 关闭横屏仅允许竖屏
-    appDelegate.allowRotation = NO;
-    // 切换到竖屏
-    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
+//    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+//    // 关闭横屏仅允许竖屏
+//    appDelegate.allowRotation = NO;
+//    // 切换到竖屏
+//    [UIDevice deviceMandatoryLandscapeWithNewOrientation:UIInterfaceOrientationPortrait];
 
-}
+//}
 //
 //- (void)viewDidDisappear:(BOOL)animated{
 //
@@ -629,6 +651,10 @@
    [self.scrollView addSubview:self.viewTouchBg];
     self.viewTouchBg.frame = CGRectMake(0, self.viewHeight/3, self.viewWidth, self.viewHeight/3);
     
+    [self.view addSubview:self.viewLeftView];
+    self.viewLeftView.sd_layout.widthIs(Ratio1).heightIs(self.viewHeight).leftEqualToView(self.scrollView).topEqualToView(self.scrollView);
+    //self.viewLeftView.backgroundColor = UIColor.redColor;
+    
     [self.view addSubview:self.labelTop];
     [self.view addSubview:self.labelCenter];
     [self.view addSubview:self.labelBottom];
@@ -646,6 +672,14 @@
     
     [self openFileWithFilePathURL];
     
+}
+
+- (UIView *)viewLeftView{
+    if (!_viewLeftView) {
+        _viewLeftView = [[UIView alloc] init];
+        _viewLeftView.backgroundColor = WHITECOLOR;
+    }
+    return _viewLeftView;
 }
 
 

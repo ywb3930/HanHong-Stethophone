@@ -2,7 +2,7 @@
 //  CreateConsultationVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/21.
+//  Created by Hanhong on 2023/6/21.
 //
 
 #import "CreateConsultationVC.h"
@@ -10,6 +10,8 @@
 #import "CreateConsultationHeaderView.h"
 #import "FriendBookVC.h"
 #import "BRPickerView.h"
+#import "UINavigationController+QMUI.h"
+#import "UIViewController+HBD.h"
 
 @interface CreateConsultationVC ()<UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, FriendBookVCDelegate, UIGestureRecognizerDelegate, TTActionSheetDelegate, CreateConsultationHeaderViewDelegate>
 
@@ -172,7 +174,8 @@
     if (row == self.arrayData.count) {
         cell.image = [UIImage imageNamed:@"add_member"];
     } else {
-        cell.model = self.arrayData[row];
+        cell.createModel = self.arrayData[row];
+        
     }
     return cell;
 }
@@ -310,5 +313,21 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];
 }
+
+
+- (BOOL)shouldHoldBackButtonEvent {
+    return YES;
+}
+
+- (BOOL)canPopViewController {
+    // 这里不要做一些费时的操作，否则可能会卡顿。
+    [Tools showAlertView:nil andMessage:@"会诊未提交，是否退出？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+        [self.navigationController popViewControllerAnimated:YES];
+    } cancel:^{
+        
+    }];
+    return NO;
+}
+
 
 @end

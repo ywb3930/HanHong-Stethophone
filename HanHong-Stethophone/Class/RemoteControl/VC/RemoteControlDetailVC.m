@@ -2,7 +2,7 @@
 //  RemoteControlDetailVC.m
 //  HanHong-Stethophone
 //  
-//  Created by 袁文斌 on 2023/6/24.
+//  Created by Hanhong on 2023/6/24.
 //
 
 #import "RemoteControlDetailVC.h"
@@ -338,7 +338,10 @@
     if ([NSThread isMainThread]) {
         [self actionMeetingRoomEvent:event args1:args1 args2:args2 args3:args3];
     } else {
-        [self actionMeetingRoomEvent:event args1:args1 args2:args2 args3:args3];
+        __weak typeof(self) wself = self;
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [wself actionMeetingRoomEvent:event args1:args1 args2:args2 args3:args3];
+        });
     }
 }
 

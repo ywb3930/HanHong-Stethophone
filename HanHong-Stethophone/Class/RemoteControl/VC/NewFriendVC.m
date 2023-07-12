@@ -2,7 +2,7 @@
 //  NewFriendVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/21.
+//  Created by Hanhong on 2023/6/21.
 //
 
 #import "NewFriendVC.h"
@@ -51,7 +51,7 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     params[@"friend_id"] = [@(model.id) stringValue];
-    params[@"phone"] = model.phone;
+    params[@"friend_phone"] = model.phone;
     [Tools showWithStatus:@"正在发送添加请求"];
     __weak typeof(self) wself = self;
     [TTRequestManager friendRequest:params success:^(id  _Nonnull responseObject) {
@@ -136,7 +136,15 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 89.f*screenRatio;
+    if(self.data) {
+        FriendModel *searchModel = self.arrayData[indexPath.row];
+        return [self.tableView cellHeightForIndexPath:indexPath model:searchModel keyPath:@"searchModel" cellClass:[FriendCell class] contentViewWidth:screenW];
+    } else {
+        FriendModel *friendNewModel = self.arrayData[indexPath.row];
+        return [self.tableView cellHeightForIndexPath:indexPath model:friendNewModel keyPath:@"friendNewModel" cellClass:[FriendCell class] contentViewWidth:screenW];
+    }
+    
+    //return 89.f*screenRatio;
 }
 
 - (void)initData {

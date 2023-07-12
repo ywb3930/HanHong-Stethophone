@@ -2,7 +2,7 @@
 //  BeInviteConsultationView.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/20.
+//  Created by Hanhong on 2023/6/20.
 //
 
 #import "BeInviteConsultationView.h"
@@ -27,8 +27,17 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    ConsultationModel *model = self.arrayData[indexPath.row];
+    NSDate *endTimeDate = [Tools stringToDateYMDHM:model.end_time];
+    //NSString *endTime = [Tools convertTimestampToStringYMDHM:model.end_time];
+    long currentNow = [Tools getTimestampSecond:[NSDate now]];
+    long currentEnd = [Tools getTimestampSecond:endTimeDate] + 24 *3600;
+    if (currentNow > currentEnd) {
+        [kAppWindow makeToast:@"会诊时间已过期，修改时间后再进入" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
     if (self.beInviteConsultationViewDelegate && [self.beInviteConsultationViewDelegate respondsToSelector:@selector(actionTableViewCellClickCallback:)]) {
-        ConsultationModel *model = self.arrayData[indexPath.row];
+//        ConsultationModel *model = self.arrayData[indexPath.row];
         [self.beInviteConsultationViewDelegate actionTableViewCellClickCallback:model];
     }
 }

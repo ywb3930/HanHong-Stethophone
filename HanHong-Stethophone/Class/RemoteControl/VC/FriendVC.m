@@ -2,7 +2,7 @@
 //  FriendVC.m
 //  HanHong-Stethophone
 //  亦师亦友界面
-//  Created by 袁文斌 on 2023/6/20.
+//  Created by Hanhong on 2023/6/20.
 //
 
 #import "FriendVC.h"

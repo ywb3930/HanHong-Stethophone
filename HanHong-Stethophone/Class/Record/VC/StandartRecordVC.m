@@ -2,7 +2,7 @@
 //  StandartRecordVC.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/6/17.
+//  Created by Hanhong on 2023/6/17.
 //
 
 #import "StandartRecordVC.h"
@@ -397,9 +397,15 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
+    if (self.recordingState != recordingState_ing) {
         [self actionStartRecord];
     }
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    [[HHBlueToothManager shareManager] stop];
+    self.recordingState = recordingState_pause;
 }
 
 
