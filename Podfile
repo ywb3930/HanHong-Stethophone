@@ -21,11 +21,11 @@ target "HanHong-Stethophone" do
   pod 'SCIndexView'
   pod 'WechatOpenSDK-XCFramework'
   pod 'Socket.IO-Client-Swift'
-  
-  pod 'UMCommon'
-  pod 'UMDevice'
-  pod 'UMAPM'
-  pod 'UMCCommonLog'
+  pod 'iOSDFULibrary', '~> 4.13.0'
+  #pod 'UMCommon'
+  #pod 'UMDevice'
+  #pod 'UMAPM'
+  #pod 'UMCCommonLog'
   
 end
 

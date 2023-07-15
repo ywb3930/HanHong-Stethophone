@@ -8,8 +8,11 @@
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
+typedef void(^NoDataViewTapImageViewBlock)(void);
 
 @interface NoDataView : UIView
+
+@property (nonatomic, copy) NoDataViewTapImageViewBlock tapBloack;
 
 @end
 

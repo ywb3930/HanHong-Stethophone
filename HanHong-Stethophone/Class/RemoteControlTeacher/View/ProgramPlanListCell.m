@@ -32,10 +32,19 @@
     self.labelTitle.text = model.program_title;
     NSString *startTime = [Tools convertTimestampToStringYMDHMS:model.startTime];
     NSString *endTime = [Tools convertTimestampToStringYMDHMS:model.endTime];
+    
     self.labelDay.text = [startTime substringToIndex:10];
     NSString *startHM = [startTime substringWithRange:NSMakeRange(11, 5)];
     NSString *endHM = [endTime substringWithRange:NSMakeRange(11, 5)];
     self.labelDuration.text = [NSString stringWithFormat:@"%@-%@", startHM, endHM];
+}
+
+- (void)setTag:(NSInteger)tag{
+    if (tag == 1) {
+        self.labelDay.text = @"今天";
+    } else if (tag == 2) {
+        self.labelDay.text = @"明天";
+    }
 }
 
 - (void)setupView{

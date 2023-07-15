@@ -33,12 +33,17 @@
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-    if (string.length == 0) return YES;
-    //第一个参数，被替换字符串的range，第二个参数，即将键入或者粘贴的string，返回的textfield的新的文本内容
-    NSString *checkStr = [textField.text stringByReplacingCharactersInRange:range withString:string];
-    //正则表达式
-    NSString *regex = @"^[0-9]+$";
-    return [Tools validateStr:checkStr withRegex:regex];
+    if (textField.tag == 99) {
+        if (string.length == 0) return YES;
+        //第一个参数，被替换字符串的range，第二个参数，即将键入或者粘贴的string，返回的textfield的新的文本内容
+        NSString *checkStr = [textField.text stringByReplacingCharactersInRange:range withString:string];
+        //正则表达式
+        NSString *regex = @"^[0-9]+$";
+        return [Tools validateStr:checkStr withRegex:regex];
+    } else {
+        return YES;
+    }
+    
 }
 
 - (void)actionGetCode:(UIButton *)button{
@@ -102,19 +107,17 @@
 }
 
 - (void)initView{
-    UIBarButtonItem *item0 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    item0.width = Ratio11;
 
-    UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"confirm_icon"] style:UIBarButtonItemStylePlain target:self action:nil];
-    self.navigationItem.rightBarButtonItems = @[item0,item2];
-    item2.action = @selector(actionToCommit:);
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"confirm_icon"] style:UIBarButtonItemStylePlain target:self action:nil];
+    self.navigationItem.rightBarButtonItem = item;
+    item.action = @selector(actionToCommit:);
     
     [self.view addSubview:self.itemUser];
     [self.view addSubview:self.itemPass];
     [self.view addSubview:self.itemCode];
-    self.itemUser.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.view, kNavBarAndStatusBarHeight).heightIs(Ratio44);
-    self.itemPass.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemUser, Ratio11).heightIs(Ratio44);
-    self.itemCode.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPass, Ratio11).heightIs(Ratio44);
+    self.itemUser.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.view, kNavBarAndStatusBarHeight).heightIs(Ratio36);
+    self.itemPass.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemUser, Ratio11).heightIs(Ratio36);
+    self.itemCode.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPass, Ratio11).heightIs(Ratio36);
 }
 
 - (LabelTextFieldItemView *)itemUser{
@@ -138,7 +141,8 @@
     if(!_itemCode) {
         _itemCode = [[CodeItemView alloc] initWithTitle:@"验证码" bMust:NO placeholder:@"请输入验证码"];
         _itemCode.textFieldCode.delegate = self;
-        //_itemCode.textFieldCode.keyboardType = UIKeyboardTypePhonePad;
+        _itemCode.textFieldCode.tag = 99;
+        _itemCode.textFieldCode.keyboardType = UIKeyboardTypePhonePad;
     }
     return _itemCode;
 }

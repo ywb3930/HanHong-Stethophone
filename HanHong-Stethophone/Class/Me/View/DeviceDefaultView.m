@@ -32,32 +32,32 @@
     self.labelDeviceMac.text = deviceModel.bluetoothDeviceMac;
 }
 
+//
+//- (void)startTimer{
+//    if(!self.timer){
+//        self.timer = [NSTimer timerWithTimeInterval:1.0f target:self selector:@selector(showTime:) userInfo:nil repeats:YES];
+//        [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
+//
+//    } else {
+//        [self.timer setFireDate:[NSDate distantPast]];
+//    }
+//}
+//
+//- (void)showTime:(NSTimer *)timer {
+//    self.buttonBluetooth.selected = !self.buttonBluetooth.selected;
+//}
+//
+//- (void)stopTimer{
+//    [self.timer setFireDate:[NSDate distantFuture]];//停止时钟
+//}
 
-- (void)startTimer{
-    if(!self.timer){
-        self.timer = [NSTimer timerWithTimeInterval:1.0f target:self selector:@selector(showTime:) userInfo:nil repeats:YES];
-        [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
-        
-    } else {
-        [self.timer setFireDate:[NSDate distantPast]];
-    }
-}
-
-- (void)showTime:(NSTimer *)timer {
-    self.buttonBluetooth.selected = !self.buttonBluetooth.selected;
-}
-
-- (void)stopTimer{
-    [self.timer setFireDate:[NSDate distantFuture]];//停止时钟
-}
-
-- (void)removerTimer{
-    if (self.timer) {
-        [self.timer invalidate];
-        self.timer = nil;
-    }
-    
-}
+//- (void)removerTimer{
+//    if (self.timer) {
+//        [self.timer invalidate];
+//        self.timer = nil;
+//    }
+//    
+//}
 
 
 - (void)initView{
@@ -99,15 +99,22 @@
     return _labelDeviceMac;
 }
 
-- (UIButton *)buttonBluetooth{
-    if(!_buttonBluetooth) {
-        _buttonBluetooth = [[UIButton alloc] init];
-        [_buttonBluetooth setImage:[UIImage imageNamed:@"bluetooth_disconnect"] forState:UIControlStateNormal];
-        [_buttonBluetooth setImage:[UIImage imageNamed:@"bluetooth_connect"] forState:UIControlStateSelected];
-        //_buttonBluetooth.enabled = NO;
-        _buttonBluetooth.selected = NO;
+- (HHBluetoothButton *)buttonBluetooth{
+    if (!_buttonBluetooth) {
+        _buttonBluetooth = [[HHBluetoothButton alloc] init];
     }
     return _buttonBluetooth;
 }
+//
+//- (UIButton *)buttonBluetooth{
+//    if(!_buttonBluetooth) {
+//        _buttonBluetooth = [[UIButton alloc] init];
+//        [_buttonBluetooth setImage:[UIImage imageNamed:@"bluetooth_disconnect"] forState:UIControlStateNormal];
+//        [_buttonBluetooth setImage:[UIImage imageNamed:@"bluetooth_connect"] forState:UIControlStateSelected];
+//        //_buttonBluetooth.enabled = NO;
+//        _buttonBluetooth.selected = NO;
+//    }
+//    return _buttonBluetooth;
+//}
 
 @end

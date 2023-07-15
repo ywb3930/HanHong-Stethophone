@@ -15,6 +15,7 @@
 #import "OrgModel.h"
 #import "ForgetPasswordVC.h"
 #import "RightDirectionView.h"
+//#import "ShareDataModel.h"
 
 @interface LoginVC ()<CodeItemViewDelegate, SelectOrgVCDelegate, UITextFieldDelegate>
 
@@ -55,6 +56,8 @@
 @property (assign, nonatomic) NSInteger         delay;
 @property (assign, nonatomic) Boolean           autoLogining;
 
+//@property (retain, nonatomic) ShareDataModel    *shareDataModel;
+
 @end
 
 @implementation LoginVC
@@ -67,6 +70,7 @@
     
     self.view.backgroundColor = WHITECOLOR;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionGetLoginType:) name:login_type_broadcast object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecordShareBeforeLogin:) name:record_share_before_login object:nil];
     self.loginTypePassword = YES;
     NSInteger loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
     if(loginType == 0) {
@@ -93,6 +97,11 @@
     
 
 }
+
+//- (void)actionRecordShareBeforeLogin:(NSNotification *)notification{
+//    NSDictionary *data = notification.userInfo;
+//    self.shareDataModel = (ShareDataModel *)data[@"model"];
+//}
 
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
@@ -368,6 +377,7 @@
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
             NSDictionary *data = [responseObject objectForKey:@"data"];
             HHLoginData *loginData = [HHLoginData yy_modelWithDictionary:data];
+            loginData.userID = [data[@"id"] doubleValue];
             [[HHLoginManager sharedManager] setCurrentHHLoginData:loginData];
             
             if (wself.loginType == login_type_personal) {
@@ -422,7 +432,7 @@
 
 - (void)createUserDocument:(NSString *)code{
     [HHFileLocationHelper getAppDocumentPath:code];
-    NSString *pathUser = [NSString stringWithFormat:@"%@/%li",code, LoginData.id];
+    NSString *pathUser = [NSString stringWithFormat:@"%@/%li",code, LoginData.userID];
     [HHFileLocationHelper getAppDocumentPath:pathUser];
     
     NSString *pathUserDB = [NSString stringWithFormat:@"%@/db",pathUser];

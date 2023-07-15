@@ -10,7 +10,8 @@
 @interface HHBlueToothManager()
 
 @property (assign, nonatomic) NSInteger             last_second;
-@property (retain, nonatomic) NSString              *btDeviceMode;;
+@property (retain, nonatomic) NSString              *btDeviceMode;
+@property (retain, nonatomic) NSString              *imgMac;;
 
 @end
 
@@ -39,8 +40,34 @@ static HanhongDeviceHelper             *_hanhongDevice;
     if (args2) {
         userInfo[@"args2"] = args2;
     }
+    if (event == DeviceConnected) {
+//        dispatch_sync(dispatch_get_main_queue(), ^{
+//            [_hanhongDevice Disconnect];
+//        });
+        
+        if ([_hanhongDevice GetModel] == POPULAR3) {
+            NSString *deviceFirmwareVersion = [_hanhongDevice GetFirmwareVersion];
+            NSRange range = [deviceFirmwareVersion rangeOfString:@"."];
+            NSString *firstVersion = [deviceFirmwareVersion substringWithRange:NSMakeRange(0, range.location)];
+            
+            if ([firstVersion isEqualToString:@"V1"] || [firstVersion isEqualToString:@"V2"] || [firstVersion isEqualToString:@"V3"]) {
+                if([[Constant shareManager] checkDeviceIsUpdate:deviceFirmwareVersion])
+                {
+                    
+                    NSString *firstStr = [firstVersion substringFromIndex:1];
+                    //[self upUpdateFirmware:firstStr];
+                    
+                    [[Constant shareManager] upUpdateFirmware:firstStr imgMac:self.imgMac version:deviceFirmwareVersion];
+          
+                   
+                }
+            }
+        }
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:HHBluetoothMessage object:nil userInfo:userInfo];
 }
+
+
 
 - (NSString *)getProductionDate{
     return [_hanhongDevice GetProductionDate];
@@ -127,7 +154,8 @@ static HanhongDeviceHelper             *_hanhongDevice;
     [_hanhongDevice Search:ALL_MODEL];
 }
 
-- (void)actionConnectToBluetoothMacAddress:(NSString *)macAddress{
+- (void)connent:(NSString *)macAddress{
+    self.imgMac = macAddress;
     [_hanhongDevice Connect:macAddress];
 }
 
@@ -165,6 +193,12 @@ static HanhongDeviceHelper             *_hanhongDevice;
 
 - (void)writePlayBuffer:(NSData *)data{
     [_hanhongDevice WritePlayBuffer:data];
+}
+-(CBCentralManager *)getCentralManager{
+    return [_hanhongDevice getCentralManager];
+}
+-(CBPeripheral *)currentPeripheral{
+    return [_hanhongDevice currentPeripheral];
 }
 
 @end

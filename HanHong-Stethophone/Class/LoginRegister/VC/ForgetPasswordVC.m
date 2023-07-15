@@ -103,12 +103,9 @@
 }
 
 - (void)initView{
-    UIBarButtonItem *item0 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    item0.width = Ratio11;
-
-    UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"confirm_icon"] style:UIBarButtonItemStylePlain target:self action:nil];
-    self.navigationItem.rightBarButtonItems = @[item0,item2];
-    item2.action = @selector(actionToCommit:);
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"confirm_icon"] style:UIBarButtonItemStylePlain target:self action:nil];
+    self.navigationItem.rightBarButtonItem = item;
+    item.action = @selector(actionToCommit:);
  
     [self.view addSubview:self.itemViewUser];
     [self.view addSubview:self.itemViewPassword];

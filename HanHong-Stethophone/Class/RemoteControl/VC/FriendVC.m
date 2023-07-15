@@ -59,7 +59,7 @@
         [SVProgressHUD dismiss];
     }];
 }
-
+//
 - (void)actionToNewFriendVC:(NSArray *)array{
     NewFriendVC *newFriend = [[NewFriendVC alloc] init];
     newFriend.data = array;

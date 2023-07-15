@@ -47,7 +47,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)writePlayBuffer:(NSData *)data;
 
 - (void)actionSearchBluetoothList;//查找蓝牙列表
-- (void)actionConnectToBluetoothMacAddress:(NSString *)macAddress;//根据Mac地址连接蓝牙
+- (void)connent:(NSString *)macAddress;//根据Mac地址连接蓝牙
+-(CBCentralManager *)getCentralManager;
+-(CBPeripheral *)currentPeripheral;
 
 @end
 

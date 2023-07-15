@@ -105,7 +105,8 @@ typedef void(^FinishBlock)(NSInteger index);
     [self.viewBg addSubview:self.titleLabel];
     [self.viewBg addSubview:self.messageLabel];
     [self.viewBg addSubview:self.lineView];
-    self.viewBg.sd_layout.leftSpaceToView(self, Ratio18).rightSpaceToView(self, Ratio18).centerYEqualToView(self).autoHeightRatio(0);
+    CGFloat x = (screenW > screenH) ? screenH : screenW;
+    self.viewBg.sd_layout.centerXEqualToView(self).widthIs(x - Ratio36).centerYEqualToView(self).autoHeightRatio(0);
     if (!self.titleString.length && !self.messageString.length) {
         self.lineView.sd_layout.leftSpaceToView(self.viewBg, 0).rightSpaceToView(self.viewBg, 0).topSpaceToView(self.viewBg, Ratio50).heightIs(Ratio1);
         NSLog(@"没有title和message");
@@ -190,7 +191,8 @@ typedef void(^FinishBlock)(NSInteger index);
 
 
 - (void)creatButtonWithCount:(NSInteger)btncount{
-    CGFloat btnW = (screenW - Ratio36)/btncount;
+    CGFloat x = (screenW > screenH) ? screenH : screenW;
+    CGFloat btnW = (x - Ratio36)/btncount;
     
     for (int  i = 0; i < btncount; i ++) {
         UIButton *button = [[UIButton alloc] init];
@@ -310,8 +312,6 @@ typedef void(^FinishBlock)(NSInteger index);
     return _viewBg;
 }
 
-- (void)dealloc{
-    NSLog(@"-----dealloc----");
-}
+
 
 @end

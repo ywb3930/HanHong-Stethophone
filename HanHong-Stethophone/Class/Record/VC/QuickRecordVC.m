@@ -31,6 +31,7 @@
     self.view.backgroundColor = ViewBackGroundColor;
     self.title = @"便捷录音";
     self.recordType = QuickRecord;
+    self.recordmodel = RecordingUntilRecordDuration;
     self.bAutoSaveRecord = YES;
     [self initNavi:1];
     [self loadPlistData:YES];

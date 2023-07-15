@@ -55,7 +55,7 @@
         UIColor *selectTextColor = MainColor;
         UIColor *textColor = MainGray;
         UIColor *selectBgColor = ColorF5F5F5;
-        UIColor *bgColor = ColorF5F5F5;
+        UIColor *bgColor = ViewBackGroundColor;
         
         selectTextColorArray = [self getRGBArrayByColor:selectTextColor];
         NSArray<NSNumber *> *textColorArray = [self getRGBArrayByColor:textColor];

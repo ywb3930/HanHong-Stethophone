@@ -26,7 +26,7 @@
 #define REQUEST_URL                                     @"https://www.hedelongcloud.com/api/"
 #define app_download_url                                @"https://www.hedelongcloud.com/hanhong_stethoscope_assistant"
 
-#define AppId                                           @"6446353587"
+#define AppId                                           @"6451221569"//6451221569
 #define Shared_Secret_Key                               @"" //共享密钥
 #define saltnum1                                        @"A1453t3t3twy3y5433654321"
 #define saltnum2                                        @"1234562g3anjhsdfbbtr547i67i6"
@@ -99,22 +99,14 @@
 #define refresh_friendlist_broadcast                    @"refresh_friendlist_broadcast"
 #define add_program_broadcast                           @"add_program_broadcast"
 
+#define record_favorite_share                           @"record_favorite_share"
+#define record_share_before_login                       @"record_share_before_login"
 
 #define AddLocalRecordSuccess                           @"add_localrecord_success"//添加本地记录
 #define HHBluetoothMessage                              @"hh_bluetooth_message"//添加本地记录
 
-#define connectStateBR                                  @"ConnectState"//连接状态
-#define RecordBtnEvent_action                           @"RealtimeRecordBtn"//按键状态
-#define RecordStateEvent_action                         @"RealtimeRecordState"
-#define RecordLostEvent_action                          @"RecordLostState"// 信号状态
-#define RecordDuration_action                           @"RecordTime"// 当前录音时长
-#define StethoscopeEvent_action                         @"Stethoscope"// 听诊区状态
 
-#define Connect_Success                                 @"Connect_Success"//
-#define Connect_running                                 @"Connect_running"//
-#define Connect_fail                                    @"Connect_fail"//
-#define AutoDiscConnect                                 @"AutoDiscConnect"//
-#define Connection_EndEvent                             @"Connection_EndEvent"// 
+
 
 /************************************/
 

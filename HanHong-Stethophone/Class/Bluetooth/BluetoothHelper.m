@@ -97,11 +97,11 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
     NSArray *backgroundModes = [[[NSBundle mainBundle] infoDictionary]objectForKey:@"UIBackgroundModes"];
     if ([backgroundModes containsObject:@"bluetooth-central"]) {
         //后台模式
-        centralManager = [[CBCentralManager alloc]initWithDelegate:self queue:nil options:options];
+        centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:options];
     }
     else {
         //非后台模式
-        centralManager = [[CBCentralManager alloc]initWithDelegate:self queue:nil];
+        centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     }
     
     
@@ -429,7 +429,6 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
         device_connecting = false;
     }
 }
-
 -(void)setNotifyValue:(BOOL)flag forCharacteristic:(CBCharacteristic*)c{
     [device setNotifyValue:flag forCharacteristic:c];
 }
@@ -820,6 +819,12 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
             return line;
         }
     } while (true);
+}
+-(CBCentralManager *)getCentralManager{
+    return centralManager;
+}
+-(CBPeripheral *)currentPeripheral{
+    return device;
 }
 
 -(NSData *) ReadBytes:(int)length

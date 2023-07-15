@@ -128,7 +128,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *)convertTimestampToStringYMDHMS:(long)timestamp;
 + (NSString *)convertTimestampToStringYMDHM:(long)timestamp;
 
-+ (NSDate *)converAdd8HourNowDate;
 // 时间戳转时间dd HH:mm:ss
 + (NSString *)convertTimestampToStringD:(long)timestamp;
 // 当前时间转 yyyyMMdd
@@ -186,6 +185,7 @@ NS_ASSUME_NONNULL_BEGIN
 //计算两个时间的差
 + (NSInteger)insertStarTimeo:(NSString *)time1 andInsertEndTime:(NSString *)time2;
 + (BOOL)validateStr:(NSString *)string withRegex:(NSString *)regex;
++ (NSInteger)compareDate:(NSDate *)date;
 
 @end
 

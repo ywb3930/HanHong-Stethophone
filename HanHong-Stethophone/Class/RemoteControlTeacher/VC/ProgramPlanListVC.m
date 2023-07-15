@@ -6,7 +6,7 @@
 //
 
 #import "ProgramPlanListVC.h"
-#import "ProgramPlanListCell.h"
+
 #import "NewProgramVC.h"
 
 @interface ProgramPlanListVC ()<UITableViewDelegate, UITableViewDataSource, NewProgramVCDelgate>
@@ -31,6 +31,9 @@
     NSInteger row = [self.programListData indexOfObject:model];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (self.itemChangeBlock) {
+        self.itemChangeBlock(model, 1);
+    }
 }
 
 - (void)actionDeleteProgramCallback:(ProgramModel *)model{
@@ -38,6 +41,9 @@
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     [self.programListData removeObjectAtIndex:row];
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    if (self.itemChangeBlock) {
+        self.itemChangeBlock(model, 0);
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{

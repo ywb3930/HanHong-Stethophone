@@ -26,7 +26,7 @@
 
 @interface AnnotationVC ()<UITextFieldDelegate, TTActionSheetDelegate, UINavigationControllerBackButtonHandlerProtocol>
 
-//@property (retain, nonatomic) UIScrollView                  *scrollView;
+@property (retain, nonatomic) UIScrollView                  *scrollView;
 
 @property (assign, nonatomic) CGFloat                       itemHeight;
 
@@ -71,6 +71,29 @@
     [self reloadAnnotation];
 }
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if (textField.tag == 111) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>24){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    } else  if (textField.tag == 1) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>128){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    }  else  if (textField.tag == 2) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>32){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     if (textField.tag == 7) {
         [self actionSelectArea];
@@ -90,8 +113,11 @@
     }
     if (string.length > 0) {
         string = [string substringToIndex:string.length - 1];
+        self.itemPatientAnnotation.textFieldInfo.text = string;
+    } else {
+        self.itemPatientAnnotation.textFieldInfo.text = @"未标注";
     }
-    self.itemPatientAnnotation.textFieldInfo.text = string;
+    
 }
 
 - (void)actionClickSaveAnnotation:(UIButton *)button{
@@ -122,6 +148,7 @@
             [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
                 [wself.navigationController popViewControllerAnimated:YES];
             }];
+            wself.bChangeData = NO;
         } else {
             [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
         }
@@ -216,8 +243,11 @@
     }
     if (string.length > 0) {
         string = [string substringToIndex:string.length - 1];
+        self.itemPatientAnnotation.textFieldInfo.text = string;
+    } else {
+        self.itemPatientAnnotation.textFieldInfo.text = @"未标注";
     }
-    self.itemPatientAnnotation.textFieldInfo.text = string;
+    
     if(self.saveLocation == 0 && self.arrayCharacteristic.count > 0) {
         self.recordModel.characteristics = [Tools convertToJsonData:self.arrayCharacteristic];
         [self modifyDataLocal];
@@ -237,6 +267,7 @@
 }
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
+    [self.view endEditing:YES];
     self.itemPatientSex.labelInfo.text = index == man ? @"女" : @"男";
     self.itemPatientSex.labelInfo.textColor = MainBlack;
     
@@ -267,60 +298,60 @@
 }
 
 - (void)setupView{
-//    [self.view addSubview:self.view];
-//    self.view.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, kNavBarAndStatusBarHeight).bottomSpaceToView(self.view, 0);
+    [self.view addSubview:self.scrollView];
+    self.scrollView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, kNavBarAndStatusBarHeight).bottomSpaceToView(self.view, 0);
     
-    [self.view addSubview:self.itemPatientId];
-    self.itemPatientId.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.view, kNavBarAndStatusBarHeight).heightIs(self.itemHeight);
-    [self.view addSubview:self.itemHeartHungVoice];
-    self.itemHeartHungVoice.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientId, 0).heightIs(self.itemHeight);
+    [ self.scrollView addSubview:self.itemPatientId];
+    self.itemPatientId.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.scrollView, 0).heightIs(self.itemHeight);
+    [ self.scrollView addSubview:self.itemHeartHungVoice];
+    self.itemHeartHungVoice.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientId, 0).heightIs(self.itemHeight);
     
-    [self.view addSubview:self.itemPatientSymptom];
-    [self.view addSubview:self.itemPatientDiagnosis];
-    [self.view addSubview:self.itemPatientSex];
-    [self.view addSubview:self.itemPatientAge];
-    [self.view addSubview:self.itemPatientHeight];
-    [self.view addSubview:self.itemPatientWeight];
-    [self.view addSubview:self.itemPatientArea];
-    [self.view addSubview:self.itemPatientAnnotation];
+    [ self.scrollView addSubview:self.itemPatientSymptom];
+    [ self.scrollView addSubview:self.itemPatientDiagnosis];
+    [ self.scrollView addSubview:self.itemPatientSex];
+    [ self.scrollView addSubview:self.itemPatientAge];
+    [ self.scrollView addSubview:self.itemPatientHeight];
+    [ self.scrollView addSubview:self.itemPatientWeight];
+    [ self.scrollView addSubview:self.itemPatientArea];
+    [ self.scrollView addSubview:self.itemPatientAnnotation];
     
     if(![Tools isBlankString:self.recordModel.position_tag])  {
-        [self.view addSubview:self.itempPositionTag];
-        self.itempPositionTag.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
-        self.itemPatientSymptom.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itempPositionTag, 0).heightIs(self.itemHeight);
+        [ self.scrollView addSubview:self.itempPositionTag];
+        self.itempPositionTag.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
+        self.itemPatientSymptom.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itempPositionTag, 0).heightIs(self.itemHeight);
     } else {
-        self.itemPatientSymptom.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
+        self.itemPatientSymptom.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemHeartHungVoice, 0).heightIs(self.itemHeight);
     }
     
     
     
-    self.itemPatientDiagnosis.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientSymptom, 0).heightIs(self.itemHeight);
-    self.itemPatientSex.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientDiagnosis, 0).heightIs(self.itemHeight);
-    self.itemPatientAge.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientSex, 0).heightIs(self.itemHeight);
-    self.itemPatientHeight.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientAge, 0).heightIs(self.itemHeight);
-    self.itemPatientWeight.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientHeight, 0).heightIs(self.itemHeight);
-    self.itemPatientArea.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientWeight, 0).heightIs(self.itemHeight);
-    self.itemPatientAnnotation.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientArea, 0).heightIs(self.itemHeight);
+    self.itemPatientDiagnosis.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientSymptom, 0).heightIs(self.itemHeight);
+    self.itemPatientSex.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientDiagnosis, 0).heightIs(self.itemHeight);
+    self.itemPatientAge.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientSex, 0).heightIs(self.itemHeight);
+    self.itemPatientHeight.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientAge, 0).heightIs(self.itemHeight);
+    self.itemPatientWeight.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientHeight, 0).heightIs(self.itemHeight);
+    self.itemPatientArea.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientWeight, 0).heightIs(self.itemHeight);
+    self.itemPatientAnnotation.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientArea, 0).heightIs(self.itemHeight);
     
-    [self.view addSubview:self.viewSmallWave];
-    [self.view addSubview:self.audioPlotView];
-    self.viewSmallWave.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(135.f*screenRatio);
-    self.audioPlotView.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(135.f*screenRatio);
+    [ self.scrollView addSubview:self.viewSmallWave];
+    [ self.scrollView addSubview:self.audioPlotView];
+    self.viewSmallWave.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(135.f*screenRatio);
+    self.audioPlotView.sd_layout.leftSpaceToView( self.scrollView, Ratio11).rightSpaceToView( self.scrollView, Ratio11).topSpaceToView(self.itemPatientAnnotation, Ratio22).heightIs(135.f*screenRatio);
     
-    [self.view addSubview:self.buttonPlay];
-    self.buttonPlay.sd_layout.centerXEqualToView(self.view).widthIs(Ratio44).heightIs(Ratio44).topSpaceToView(self.viewSmallWave, Ratio5);
-    [self.view addSubview:self.buttonToAnnotation];
-    self.buttonToAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).heightIs(Ratio20).rightSpaceToView(self.view, Ratio8).widthIs(Ratio77);
-    [self.view addSubview:self.viewLine];
+    [ self.scrollView addSubview:self.buttonPlay];
+    self.buttonPlay.sd_layout.centerXEqualToView( self.scrollView).widthIs(Ratio44).heightIs(Ratio44).topSpaceToView(self.viewSmallWave, Ratio5);
+    [ self.scrollView addSubview:self.buttonToAnnotation];
+    self.buttonToAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).heightIs(Ratio20).rightSpaceToView( self.scrollView, Ratio8).widthIs(Ratio77);
+    [ self.scrollView addSubview:self.viewLine];
     if (self.saveLocation == 1) {
-        [self.view addSubview:self.buttonSave];
-        self.buttonSave.sd_layout.leftSpaceToView(self.view, Ratio22).rightSpaceToView(self.view, Ratio22).topSpaceToView(self.buttonPlay, Ratio11).heightIs(Ratio36);
+        [ self.scrollView addSubview:self.buttonSave];
+        self.buttonSave.sd_layout.leftSpaceToView( self.scrollView, Ratio22).rightSpaceToView( self.scrollView, Ratio22).topSpaceToView(self.buttonPlay, Ratio11).heightIs(Ratio36);
     }
     
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         CGFloat maxY = CGRectGetMaxY(self.buttonSave.frame);
-        //self.view.contentSize = CGSizeMake(screenW, maxY + Ratio55);
+        self.scrollView.contentSize = CGSizeMake(screenW, maxY + Ratio55);
         self.startYLine = CGRectGetMinY(self.viewSmallWave.frame);
         self.viewLine.frame = CGRectMake(Ratio11, self.startYLine, Ratio0_5, Ratio135);
     });
@@ -337,13 +368,13 @@
     return YES;
 }
 
-//- (UIScrollView *)scrollView{
-//    if (!_scrollView) {
-//        _scrollView = [[UIScrollView alloc] init];
-//        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
-//    }
-//    return _scrollView;
-//}
+- (UIScrollView *)scrollView{
+    if (!_scrollView) {
+        _scrollView = [[UIScrollView alloc] init];
+        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+    }
+    return _scrollView;
+}
 
 
 - (LabelTextFieldItemView *)itemPatientId{
@@ -351,9 +382,10 @@
         _itemPatientId = [[LabelTextFieldItemView alloc] initWithTitle:@"患者ID" bMust:NO placeholder:@""];
         if(![Tools isBlankString:self.recordModel.patient_id]) {
             _itemPatientId.textFieldInfo.text = self.recordModel.patient_id;
-            _itemPatientId.textFieldInfo.enabled = NO;
+//            _itemPatientId.textFieldInfo.enabled = NO;
             
         }
+        _itemPatientId.textFieldInfo.placeholder = @"请输入患者ID";
         _itemPatientId.textFieldInfo.returnKeyType = UIReturnKeyDone;
         _itemPatientId.textFieldInfo.delegate = self;
         _itemPatientId.textFieldInfo.tag = 111;

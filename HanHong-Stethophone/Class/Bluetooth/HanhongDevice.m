@@ -366,6 +366,12 @@ NSString *const POP3_btName = @"POP-3";
         }
     }
 }
+-(CBCentralManager *)getCentralManager{
+    return [bt_helper getCentralManager];
+}
+-(CBPeripheral *)currentPeripheral{
+    return [bt_helper currentPeripheral];
+}
 
 -(void)AbortSearch{
     [bt_helper AbortSearch];
@@ -751,7 +757,7 @@ NSString *const POP3_btName = @"POP-3";
 
                             [bt_helper WriteStr:@"DefaultVolume?\r"];
                             line = [bt_helper ReadLine:true];
-                            default_volume = [self matchAutoOffTime:line];
+                            default_volume = [self matchDefaultVolume:line];
 
                             if (new_default_volume != default_volume) {
                                 

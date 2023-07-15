@@ -81,14 +81,24 @@
     self.deviceDefaultView.hidden = NO;
     self.labelConnectRemind.hidden = YES;
     self.deviceDefaultView.deviceModel = model;
-    [self.deviceDefaultView startTimer];
+    //[self.deviceDefaultView startTimer];
     [[HHBlueToothManager shareManager] abortSearch];//停止搜索
     self.tableView.hidden = YES;
     self.deviceDefaultView.deviceModel = model;
     if([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED) {
         [[HHBlueToothManager shareManager] disconnect];
     }
-    [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:model.bluetoothDeviceUUID];
+    [[HHBlueToothManager shareManager] connent:model.bluetoothDeviceUUID];
+    [self actionSaveBlueToothData];
+    
+}
+
+- (void)actionSaveBlueToothData{
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    [data setObject:self.deviceModel.bluetoothDeviceName forKey:@"bluetoothDeviceName"];
+    [data setObject:self.deviceModel.bluetoothDeviceMac forKey:@"bluetoothDeviceMac"];
+    [data setObject:self.deviceModel.bluetoothDeviceUUID forKey:@"bluetoothDeviceUUID"];
+    [data writeToFile:self.defaultConnectPath atomically:YES];
 }
 
 - (void)actionTapDeviceDefault:(UITapGestureRecognizer *)tap{
@@ -121,9 +131,9 @@
         deviceMessage.arrayData = @[string1, string2, string3, string4, string5, string6, string7, string8, string9, string10, string11];
         [self.navigationController pushViewController:deviceMessage animated:YES];
     } else {
-        [self.deviceDefaultView startTimer];
+        //[self.deviceDefaultView startTimer];
         NSLog(@"bluetoothDeviceUUID 1 = %@", self.deviceModel.bluetoothDeviceUUID);
-        [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:self.deviceModel.bluetoothDeviceUUID];
+        [[HHBlueToothManager shareManager] connent:self.deviceModel.bluetoothDeviceUUID];
     }
     
 }
@@ -134,15 +144,16 @@
         [self onSearchFound:(NSString *)args1 device_mac:(NSString *)args2];
     } else if (event == DeviceConnected) {
         self.tableView.hidden = YES;
-        NSMutableDictionary *data = [NSMutableDictionary dictionary];
-        [data setObject:self.deviceModel.bluetoothDeviceName forKey:@"bluetoothDeviceName"];
-        [data setObject:self.deviceModel.bluetoothDeviceMac forKey:@"bluetoothDeviceMac"];
-        [data setObject:self.deviceModel.bluetoothDeviceUUID forKey:@"bluetoothDeviceUUID"];
-        [data writeToFile:self.defaultConnectPath atomically:YES];
+
         [self reloadView];
+       // [[HHBlueToothManager shareManager] disconnect];
         
+    } else if (event == DeviceDisconnected) {
+        self.deviceManagerSettingView.hidden = YES;
     }
 }
+
+
 
 - (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
     NSDictionary *userInfo = notification.userInfo;
@@ -217,7 +228,7 @@
     } else {
         [self.settingData addEntriesFromDictionary:data];
     }
-    [self.deviceDefaultView stopTimer];
+    //[self.deviceDefaultView stopTimer];
     NSString *deviceMode = [[HHBlueToothManager shareManager] getDeviceMessage];//获取设备信息
     NSInteger powerOnDefaultMode = [[HHBlueToothManager shareManager] getModeSeq];//开机默认模式
     NSInteger powerOnDefaultVolume = [[HHBlueToothManager shareManager] getDefaultVolume];//开机默认音量
@@ -290,7 +301,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     BluetoothDeviceModel *model = self.arrayData[indexPath.row];
-    [[HHBlueToothManager shareManager] actionConnectToBluetoothMacAddress:model.bluetoothDeviceUUID];
+    [[HHBlueToothManager shareManager] connent:model.bluetoothDeviceUUID];
     self.deviceModel = model;
     
     
@@ -298,8 +309,9 @@
     self.deviceDefaultView.hidden = NO;
     self.labelConnectRemind.hidden = YES;
     self.deviceDefaultView.deviceModel = model;
-    [self.deviceDefaultView startTimer];
+    //[self.deviceDefaultView startTimer];
     //[Tools showWithStatus:[NSString stringWithFormat:@"正在连接设备%@", model.bluetoothDeviceName]];
+    [self actionSaveBlueToothData];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -464,8 +476,8 @@
     [self.navigationController pushViewController:scanTeachCode animated:YES];
 }
 
-- (void)dealloc{
-    [self.deviceDefaultView removerTimer];
-}
+//- (void)dealloc{
+//    [self.deviceDefaultView removerTimer];
+//}
 
 @end

@@ -6,6 +6,7 @@
 //
 
 #import "Constant.h"
+#import "UpdateDeviceVC.h"
 
 NSString *const EarPhone_btName = @"EARPHONE_ER001";
 NSString *const DS88_btName = @"DS88";
@@ -168,7 +169,60 @@ NSString *const DS88_btName = @"DS88";
 
 // 底部导航栏高度（包括安全区）
 - (CGFloat)dev_tabBarFullHeight {
-    return [self dev_statusBarHeight] + [self dev_safeDistanceBottom];
+    return [self dev_tabBarHeight] + [self dev_safeDistanceBottom];
 }
+
+
+- (Boolean)checkDeviceIsUpdate:(NSString *)nowVersions{
+    NSString *appVersion = @"0.1.3";
+    //@"V2.1.2"
+    //当前版本
+    NSString *version = [nowVersions substringFromIndex:1];
+    
+    NSArray *appVersionArr = [appVersion componentsSeparatedByString:@"."];
+    NSArray *versionArr = [version componentsSeparatedByString:@"."];
+    NSInteger appVersionInt1 = [appVersionArr[1] integerValue];
+    NSInteger versionInt1 = [versionArr[1] integerValue];
+    NSInteger appVersionInt2 = [appVersionArr[2] integerValue];
+    NSInteger versionInt2 = [versionArr[2] integerValue];
+    
+    if (appVersionInt1 > versionInt1) {
+        return YES;
+    }else if ((appVersionInt1 == versionInt1) && (appVersionInt2 > versionInt2)) {
+        return YES;
+    }
+//    else if ((appVersionInt1 == versionInt1) && (appVersionInt2 == versionInt2)) {
+//        return YES;
+//    }
+    
+    
+    
+    return NO;
+}
+
+- (void)upUpdateFirmware:(NSString *)firmwareVersionFirstStr imgMac:(NSString *)mac version:(NSString *)version{
+    NSString *firmwareVersion = @"";
+    if ([firmwareVersionFirstStr isEqualToString:@"1"]) {
+        firmwareVersion = @"Popular-3_V1_1_3";
+    } else if ([firmwareVersionFirstStr isEqualToString:@"2"]) {
+        firmwareVersion = @"Popular-3_V2_1_3";
+    } else if ([firmwareVersionFirstStr isEqualToString:@"3"]) {
+        firmwareVersion = @"Popular-3_V3_1_3";
+    }
+    NSString *filepath = [[NSBundle mainBundle]pathForResource:firmwareVersion ofType:@"zip"];
+   
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        UIViewController *currentVC = [Tools currentViewController];
+        UpdateDeviceVC *updateDevice = [[UpdateDeviceVC alloc] init];
+        updateDevice.filepath = filepath;
+        updateDevice.mac = mac;
+        updateDevice.version = version;
+        [currentVC.navigationController pushViewController:updateDevice animated:YES];
+    });
+    
+}
+
+
+
 
 @end

@@ -66,8 +66,17 @@
         _labelTitle.font = Font15;
         _labelTitle.textColor = MainBlack;
         _labelTitle.text = self.title;
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionToHiddenKeybord:)];
+        _labelTitle.userInteractionEnabled = YES;
+        [_labelTitle addGestureRecognizer:tap];
     }
     return _labelTitle;
+}
+
+- (void)actionToHiddenKeybord:(UITapGestureRecognizer *)tap{
+    UIViewController *currentVC = [Tools currentViewController];
+    [currentVC.view endEditing:YES];
 }
 
 -(UIImageView *)imageViewRight{

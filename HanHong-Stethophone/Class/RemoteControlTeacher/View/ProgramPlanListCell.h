@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ProgramPlanListCell : UITableViewCell
 
 @property (retain, nonatomic) ProgramModel              *model;
+@property (assign, nonatomic) NSInteger                 iTag;
 
 @end
 

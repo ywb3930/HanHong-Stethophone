@@ -7,32 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7496020D-3329-4C79-B7AC-3425C24E1E34"
+            uuid = "FE2E743D-9287-41FA-8774-DE8F4DBFFC98"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Record/VC/HHBaseRecordVC.m"
-            startingColumnNumber = "9"
-            endingColumnNumber = "31"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
-            landmarkName = "-actionDeviceHelperEvent:args1:args2:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EB2E907A-9E9D-425E-8F92-6633EF42F394"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "HanHong-Stethophone/Class/Sample/View/WaveFullView.m"
+            filePath = "HanHong-Stethophone/Class/DB/HHDBHelper.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "70"
-            endingLineNumber = "70"
-            landmarkName = "-drawLine"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "-selectAllProgramData:endTime:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

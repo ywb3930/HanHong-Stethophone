@@ -108,6 +108,8 @@ typedef NS_ENUM(NSInteger, PLAY_MODE)
 -(NSString *)GetFirmwareVersion;
 -(NSString *)GetBootloaderVersion;
 -(NSString *)GetMac;
+-(CBCentralManager *)getCentralManager;
+-(CBPeripheral *)currentPeripheral;
 
 //
 -(BOOL)SetRecordDuration:(int)duration;

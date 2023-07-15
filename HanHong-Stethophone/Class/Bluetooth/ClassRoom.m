@@ -28,6 +28,8 @@
 
 @end
 
+static int classroom_enter_state = 0;
+
 @implementation ClassRoom {
     
     SocketManager *mSocketManager;
@@ -41,7 +43,7 @@
     
     Clients *clients;
     
-    BOOL classroom_entered;
+    //BOOL classroom_entered;
     
     BOOL data_service_connected;
      
@@ -57,7 +59,7 @@
         
         clients = [Clients new];
         
-        classroom_entered = false;
+        //classroom_entered = false;
         data_service_connected = false;
         
         _delegate = NULL;
@@ -121,12 +123,20 @@
 }
 
 -(BOOL)isEntered{
-    return classroom_entered;
+    
+    //return classroom_entered;
+    
+    return classroom_enter_state == 2;
 }
   
--(void)Enter:(NSString *)token classroom_url:(NSString *)classroom_url classroom_id:(int)classroom_id
+
+-(BOOL)Enter:(NSString *)token classroom_url:(NSString *)classroom_url classroom_id:(int)classroom_id
 {
     @try{
+        
+        if (classroom_enter_state != 0) {
+            return false;
+        }
         
         NSString *teaching_namespace = @"/api/teaching/classroom";
 
@@ -140,7 +150,7 @@
         } else {
             NSLog(@"ClassRoom url error");
             [self Event:ClassEnterFailed args1:NULL args2:NULL args3:NULL];
-            return;
+            return false;
         }
            
         NSURL *socketURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@", host]];
@@ -157,15 +167,20 @@
         }];
 
         [mSocket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            if (self->classroom_entered) {
+            
+            [self DisconnectDataService];
+            
+            // if (self->classroom_entered) {
+            if (classroom_enter_state == 2) {
+                classroom_enter_state = 0;
                 NSLog(@"ClassRoom exit");
                 [self Event:ClassExited args1:NULL args2:NULL args3:NULL];
             } else {
+                classroom_enter_state = 0;
                 NSLog(@"ClassRoom enter failed");
                 [self Event:ClassEnterFailed args1:NULL args2:NULL args3:NULL];
             }
-            self->classroom_entered = false;
-            [self DisconnectDataService];
+            //self->classroom_entered = false;
         }];
 
         [mSocket on:@"classroom" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -233,8 +248,11 @@
                     
                 }
                 
-                if (self->classroom_entered == false) {
-                    self->classroom_entered = true;
+                //if (self->classroom_entered == false) {
+                //    self->classroom_entered = true;
+                
+                if (classroom_enter_state < 2) {
+                    classroom_enter_state = 2;
                     
                     NSLog(@"ClassRoom enter room sucess");
                     
@@ -386,13 +404,16 @@
             [self Event:ClassEnterFailed args1:NULL args2:NULL args3:NULL];
         }];
   
+        classroom_enter_state = 1;
         [self->mSocket connect];
-     
+        return true;
     }
     @catch (NSException *e)
     {
         NSLog(@"ClassRoom enter error %@ %@", e.name, e.reason);
+        classroom_enter_state = 0;
     }
+    return false;
 }
 
 -(void)Exit

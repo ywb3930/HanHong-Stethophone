@@ -240,6 +240,22 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)recordFavoriteDelete:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
 
+/**
+ 获取APP要求（检测APP更新）
+ */
++ (void)appsRequirements:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
+
+/**
+ 获取分享的内容
+ */
++ (void)recordShareBrief:(NSString *)share_code success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
+
+/**
+ 收藏分享
+ */
++ (void)recordShareFavorite:(NSString *)share_code params:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

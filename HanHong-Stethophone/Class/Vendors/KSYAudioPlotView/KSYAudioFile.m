@@ -10,7 +10,7 @@
 #import "KSYAudioUtilities.h"
 #include <pthread.h>
 // constants
-static UInt32 KSYAudioFileWaveformDefaultResolution = 1024;
+static UInt32 KSYAudioFileWaveformDefaultResolution = 8192;
 static NSString *KSYAudioFileWaveformDataQueueIdentifier = @"com.KSYaudio.waveformQueue";
 
 //------------------------------------------------------------------------------

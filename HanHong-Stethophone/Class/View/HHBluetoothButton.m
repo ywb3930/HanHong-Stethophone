@@ -42,6 +42,7 @@
 }
 
 - (void)reloadButton{
+    
     CONNECT_STATE connect_state = [[HHBlueToothManager shareManager] getConnectState];
     if (connect_state == DEVICE_NOT_CONNECT) {//DeviceDisconnected
         [self Off];

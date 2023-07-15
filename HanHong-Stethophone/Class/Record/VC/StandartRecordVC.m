@@ -49,6 +49,7 @@
     self.autoIndex = 0;
     [self loadPlistData:YES];
     [self loadRecordTypeData];
+    self.recordmodel = RecordingUntilRecordDuration;
     [self initView];
     [self reloadView];
     self.recordBottomView.labelStartRecord.hidden = YES;
@@ -301,7 +302,7 @@
     [self.recordBottomView updateLayout];
     self.lungVoiceView.hidden = NO;
     [self loadRecordTypeData];
-    [self actionStartRecord];
+    //[self actionStartRecord];
 }
 
 - (void)initView {
@@ -397,7 +398,7 @@
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    if (self.recordingState != recordingState_ing) {
+    if (self.recordingState == recordingState_pause) {
         [self actionStartRecord];
     }
 }

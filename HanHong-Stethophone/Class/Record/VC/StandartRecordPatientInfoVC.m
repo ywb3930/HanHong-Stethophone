@@ -58,6 +58,29 @@
 //    return NO;
 //}
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
+    if (textField.tag == 1) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>128){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    } else if (textField.tag == 2) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>32){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    } else if (textField.tag == 13) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>32){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (void)actionGetPatientList{
     self.arrayData = [[HHDBHelper shareInstance] selectAllPatientHistory];
     NSInteger count = self.arrayData.count;
@@ -295,6 +318,8 @@
 - (LabelTextFieldItemView *)itemViewDisease{
     if(!_itemViewDisease) {
         _itemViewDisease = [[LabelTextFieldItemView alloc] initWithTitle:@"患者病症" bMust:NO placeholder:@"请输入患者的病症"];
+        _itemViewDisease.textFieldInfo.delegate = self;
+        _itemViewDisease.textFieldInfo.tag = 1;
     }
     return _itemViewDisease;
 }
@@ -302,6 +327,8 @@
 - (LabelTextFieldItemView *)itemViewDiagnose{
     if(!_itemViewDiagnose) {
         _itemViewDiagnose = [[LabelTextFieldItemView alloc] initWithTitle:@"诊断" bMust:NO placeholder:@"请输入诊断的结果"];
+        _itemViewDiagnose.textFieldInfo.delegate = self;
+        _itemViewDiagnose.textFieldInfo.tag = 2;
     }
     return _itemViewDiagnose;
 }

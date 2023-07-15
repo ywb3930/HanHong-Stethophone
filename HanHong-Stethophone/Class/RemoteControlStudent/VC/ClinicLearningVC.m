@@ -39,6 +39,7 @@
     // Do any additional setup after loading the view.
     self.title = @"临床学习";
     self.view.backgroundColor = WHITECOLOR;
+    self.recordmodel = RecordingWithRecordDurationMaximum;
     self.recordType = RemoteRecord;
     self.arrayData = [NSMutableArray array];
     self.itemWidth = (screenW-Ratio66)/5;

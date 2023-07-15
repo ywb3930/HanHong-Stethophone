@@ -20,7 +20,7 @@
 #define HMCompany                           @"company"
 #define HMDepartment                        @"department"
 #define HMEmail                             @"email"
-#define HMId                                @"id"
+#define HMUserID                            @"userID"
 #define HMInfo_modifiable                   @"info_modifiable"
 #define HMOrg                               @"org"
 #define HMRole                              @"role"
@@ -34,9 +34,36 @@
 @interface HHLoginData ()<NSCoding>
 
 
+
 @end
 
 @implementation HHLoginData
+
+- (instancetype)init{
+    self = [super init];
+    if (self) {
+        _area = @"";
+        _avatar = @"";
+        _name = @"";
+        _token = @"";
+        _phone = @"";
+        _birthday = @"";
+        _company = @"";
+        _department = @"";
+        _email = @"";
+       // _id = [aDecoder decodeDoubleForKey:HMId];
+        _info_modifiable = @"";
+        _org = @"";
+        //_role = [aDecoder decodeIntegerForKey:HMRole];
+        //_sex = [aDecoder decodeIntegerForKey:HMSex];
+        _title = @"";
+        _academy = @"";
+        _major = @"";
+        _class_ = @"";
+        _number = @"";
+    }
+    return self;
+}
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
@@ -50,7 +77,7 @@
         _company = [aDecoder decodeObjectForKey:HMCompany];
         _department = [aDecoder decodeObjectForKey:HMDepartment];
         _email = [aDecoder decodeObjectForKey:HMEmail];
-        _id = [aDecoder decodeDoubleForKey:HMId];
+        _userID = [aDecoder decodeDoubleForKey:HMUserID];
         _info_modifiable = [aDecoder decodeObjectForKey:HMInfo_modifiable];
         _org = [aDecoder decodeObjectForKey:HMOrg];
         _role = [aDecoder decodeIntegerForKey:HMRole];
@@ -161,7 +188,7 @@
     //[encoder encodeInteger:_org forKey:HMOrg];
     [encoder encodeInteger:_sex forKey:HMSex];
     [encoder encodeInteger:_role forKey:HMRole];
-    [encoder encodeDouble:_id forKey:HMId];
+    [encoder encodeDouble:_userID forKey:HMUserID];
     
     if (_title.length) {
         [encoder encodeObject:_title forKey:HMTitle];

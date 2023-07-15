@@ -83,7 +83,7 @@ typedef NS_ENUM(NSInteger, MEETINGROOM_EVENT)
 -(BOOL)SendWavFrame:(int)flag wav_frame:(NSData*)wav_frame;
 -(BOOL)SendCommand:(int)command data:(NSData*)data;
 -(BOOL)isEntered;
--(void)Enter:(NSString *)token meetingroom_url:(NSString *)meetingroom_url meetingroom_id:(int)meetingroom_id;
+-(BOOL)Enter:(NSString *)token meetingroom_url:(NSString *)meetingroom_url meetingroom_id:(int)meetingroom_id;
 -(void)Exit;
 -(void)SetCollector:(int)collector_id;
 -(void)ModifyMeeting:(NSString *)title begin:(NSString *)begin end:(NSString *)end collector_id:(NSString *)collector_id member_id:(NSArray<NSNumber *> *)member_id;

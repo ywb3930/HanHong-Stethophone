@@ -15,6 +15,8 @@
 
 @interface RegisterVC ()<UITextFieldDelegate, TTActionSheetDelegate, CodeItemViewDelegate, SettingDepartmentViewDelegate>
 
+@property (retain, nonatomic) UIScrollView      *scrollView;
+
 @property (retain, nonatomic) UIImageView       *imageViewBg;
 @property (retain, nonatomic) UIButton          *buttonBack;
 @property (retain, nonatomic) LabelTextFieldItemView  *itemViewInvite;//邀请码
@@ -54,6 +56,11 @@
     [self initView];
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    return YES;
+}
+
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -75,6 +82,18 @@
         NSString *s = [textField.text stringByAppendingString:string];
         if([Tools checkNameLength:s]>24){
             [self.view makeToast:@"您的姓名过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    } else if (textField.tag == 510 || textField.tag == 511 || textField.tag == 512 || textField.tag == 514 || textField.tag == 515) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>64){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return NO;
+        }
+    } else if (textField.tag == 513 || textField.tag == 516) {
+        NSString *s = [textField.text stringByAppendingString:string];
+        if([Tools checkNameLength:s]>32){
+            [self.view makeToast:@"你输入的内容过长" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return NO;
         }
     }
@@ -296,12 +315,18 @@
 }
 
 - (void)initView{
+
+    
     [self.view addSubview:self.imageViewBg];
     [self.view addSubview:self.buttonBack];
     self.imageViewBg.sd_layout.leftSpaceToView(self.view, 0).topSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).heightIs(320.f/1280*766);
     self.buttonBack.sd_layout.leftSpaceToView(self.view, Ratio5).topSpaceToView(self.view, kStatusBarHeight).heightIs(Ratio50).widthIs(41.f*screenRatio);
-    [self.view addSubview:self.itemViewInvite];
-    self.itemViewInvite.sd_layout.leftSpaceToView(self.view, Ratio20).topSpaceToView(self.imageViewBg, Ratio11).rightSpaceToView(self.view, Ratio20).heightIs(Ratio33);
+    
+    [self.view addSubview:self.scrollView];
+    self.scrollView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, kNavBarAndStatusBarHeight).bottomSpaceToView(self.view, kBottomSafeHeight);
+    
+    [self.scrollView addSubview:self.itemViewInvite];
+    self.itemViewInvite.sd_layout.leftSpaceToView(self.scrollView, Ratio20).topSpaceToView(self.scrollView, Ratio11 + 0.6*screenW - kNavBarAndStatusBarHeight).rightSpaceToView(self.scrollView, Ratio20).heightIs(Ratio33);
     
     if(self.loginType == login_type_personal) {
         self.itemViewInvite.sd_layout.heightIs(0);
@@ -311,30 +336,30 @@
     }
     
    
-    [self.view addSubview:self.itemViewName];
+    [self.scrollView addSubview:self.itemViewName];
     self.itemViewName.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewInvite, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
-    [self.view addSubview:self.itemViewSex];
+    [self.scrollView addSubview:self.itemViewSex];
     self.itemViewSex.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewName, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
     LabelTextFieldItemView *lastItemView = self.itemViewSex;
     if(self.loginType == login_type_personal) {
-        [self.view addSubview:self.itemViewBirthDay];
-        [self.view addSubview:self.itemViewArea];
+        [self.scrollView addSubview:self.itemViewBirthDay];
+        [self.scrollView addSubview:self.itemViewArea];
         self.itemViewBirthDay.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewSex, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
         self.itemViewArea.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewBirthDay, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
         lastItemView = self.itemViewArea;
     }
     
     
-    [self.view addSubview:self.itemViewCompany];
+    [self.scrollView addSubview:self.itemViewCompany];
     self.itemViewCompany.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(lastItemView, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
-    [self.view addSubview:self.itemViewDepartent];
+    [self.scrollView addSubview:self.itemViewDepartent];
     self.itemViewDepartent.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewCompany, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
-    [self.view addSubview:self.itemViewTechnical];
+    [self.scrollView addSubview:self.itemViewTechnical];
     self.itemViewTechnical.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewDepartent, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
     
     lastItemView = self.itemViewTechnical;
     if(self.loginType == login_type_teaching) {
-        [self.view addSubview:self.itemViewSchool];
+        [self.scrollView addSubview:self.itemViewSchool];
        
         
         if(self.teachRole == Student_role) {
@@ -346,9 +371,9 @@
             self.itemViewTechnical.hidden = YES;
             self.itemViewSchool.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewSex, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
             
-            [self.view addSubview:self.itemViewProfessional];
-            [self.view addSubview:self.itemViewClass];
-            [self.view addSubview:self.itemViewStudentNumber];
+            [self.scrollView addSubview:self.itemViewProfessional];
+            [self.scrollView addSubview:self.itemViewClass];
+            [self.scrollView addSubview:self.itemViewStudentNumber];
             self.itemViewProfessional.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewSchool, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
             self.itemViewClass.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewProfessional, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
             self.itemViewStudentNumber.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewClass, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
@@ -359,22 +384,28 @@
         }
         
     }
-    [self.view addSubview:self.itemViewPhone];
+    [self.scrollView addSubview:self.itemViewPhone];
     self.itemViewPhone.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(lastItemView, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
-    [self.view addSubview:self.itemViewEmail];
+    [self.scrollView addSubview:self.itemViewEmail];
     self.itemViewEmail.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewPhone, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
-    [self.view addSubview:self.itemViewPassword];
+    [self.scrollView addSubview:self.itemViewPassword];
     self.itemViewPassword.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewEmail, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
-    [self.view addSubview:self.itemViewCode];
+    [self.scrollView addSubview:self.itemViewCode];
     self.itemViewCode.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewPassword, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
     [self initYYLabel];
     
-    [self.view addSubview:self.buttonRegister];
-    self.buttonRegister.sd_layout.leftSpaceToView(self.view, Ratio22).rightSpaceToView(self.view, Ratio22).heightIs(Ratio36).topSpaceToView(self.yyLabel, Ratio15);
+    [self.scrollView addSubview:self.buttonRegister];
+    self.buttonRegister.sd_layout.leftSpaceToView(self.scrollView, Ratio22).rightSpaceToView(self.scrollView, Ratio22).heightIs(Ratio36).topSpaceToView(self.yyLabel, Ratio15);
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        CGFloat maxY = CGRectGetMaxY(self.buttonRegister.frame);
+        self.scrollView.contentSize = CGSizeMake(screenW, maxY + Ratio33);
+       
+    });
 }
 
 -(void)initYYLabel{
-    [self.view addSubview:self.yyLabel];
+    [self.scrollView addSubview:self.yyLabel];
     NSString *string = @"我已阅读并同意《用户协议》与《隐私政策》";
     CGFloat width = [Tools widthForString:string fontSize:Ratio11 andHeight:Ratio15];
     self.yyLabel.sd_layout.topSpaceToView(self.itemViewCode, Ratio22).centerXIs(screenW/2+Ratio10).heightIs(Ratio15).widthIs(width);
@@ -390,7 +421,7 @@
         [self.navigationController pushViewController:ttWebView animated:YES];
     }];
     self.yyLabel.attributedText = atext;
-   [self.view addSubview:self.btnAgree];
+   [self.scrollView addSubview:self.btnAgree];
     self.btnAgree.sd_layout.rightSpaceToView(self.yyLabel, 0).centerYEqualToView(self.yyLabel).heightIs(Ratio20).widthIs(Ratio20);
 }
 
@@ -439,6 +470,7 @@
     if(!_itemViewInvite) {
         _itemViewInvite = [[LabelTextFieldItemView alloc] initWithTitle:@"邀请码" bMust:YES placeholder:@"请输入邀请码"];
         _itemViewInvite.textFieldInfo.delegate = self;
+        _itemViewInvite.textFieldInfo.returnKeyType = UIReturnKeyDone;
     }
     return _itemViewInvite;
 }
@@ -448,6 +480,7 @@
         _itemViewName = [[LabelTextFieldItemView alloc] initWithTitle:@"姓名" bMust:YES placeholder:@"请输入您的真实姓名"];
         _itemViewName.textFieldInfo.delegate = self;
         _itemViewName.textFieldInfo.tag = 999;
+        _itemViewName.textFieldInfo.returnKeyType = UIReturnKeyDone;
     }
     return _itemViewName;
 }
@@ -472,6 +505,8 @@
     if(!_itemViewSchool) {
         _itemViewSchool = [[LabelTextFieldItemView alloc] initWithTitle:@"院校" bMust:YES placeholder:@"请输入您的院校"];
         _itemViewSchool.textFieldInfo.delegate = self;
+        _itemViewSchool.textFieldInfo.returnKeyType = UIReturnKeyDone;
+        _itemViewSchool.textFieldInfo.tag = 512;
     }
     return _itemViewSchool;
 }
@@ -488,6 +523,8 @@
     if(!_itemViewCompany) {
         _itemViewCompany = [[LabelTextFieldItemView alloc] initWithTitle:@"企业(医院)" bMust:NO placeholder:@"请输入您就职的企业(医院)"];
         _itemViewCompany.textFieldInfo.delegate = self;
+        _itemViewCompany.textFieldInfo.returnKeyType = UIReturnKeyDone;
+        _itemViewCompany.textFieldInfo.tag = 510;
     }
     return _itemViewCompany;
 }
@@ -496,6 +533,8 @@
     if(!_itemViewProfessional) {
         _itemViewProfessional = [[LabelTextFieldItemView alloc] initWithTitle:@"专业" bMust:YES placeholder:@"请输入您的专业"];
         _itemViewProfessional.textFieldInfo.delegate = self;
+        _itemViewProfessional.textFieldInfo.returnKeyType = UIReturnKeyDone;
+        _itemViewProfessional.textFieldInfo.tag = 514;
     }
     return _itemViewProfessional;
 }
@@ -504,6 +543,8 @@
     if(!_itemViewClass) {
         _itemViewClass = [[LabelTextFieldItemView alloc] initWithTitle:@"班级" bMust:YES placeholder:@"请输入您的班级"];
         _itemViewClass.textFieldInfo.delegate = self;
+        _itemViewClass.textFieldInfo.returnKeyType = UIReturnKeyDone;
+        _itemViewClass.textFieldInfo.tag = 515;
     }
     return _itemViewClass;
 }
@@ -512,14 +553,17 @@
     if(!_itemViewStudentNumber) {
         _itemViewStudentNumber = [[LabelTextFieldItemView alloc] initWithTitle:@"学号" bMust:YES placeholder:@"请输入您的学号"];
         _itemViewStudentNumber.textFieldInfo.delegate = self;
+        _itemViewStudentNumber.textFieldInfo.returnKeyType = UIReturnKeyDone;
+        _itemViewStudentNumber.textFieldInfo.tag = 516;
     }
     return _itemViewStudentNumber;
 }
 
 - (LabelTextFieldItemView *)itemViewDepartent{
     if(!_itemViewDepartent) {
-        _itemViewDepartent = [[LabelTextFieldItemView alloc] initWithTitle:@"部门(科室)" bMust:NO placeholder:@"请输入您的部门(科室)"];
+        _itemViewDepartent = [[LabelTextFieldItemView alloc] initWithTitle:@"部门(科室)" bMust:NO placeholder:@"请选择您的部门(科室)"];
         _itemViewDepartent.textFieldInfo.delegate = self;
+        _itemViewDepartent.textFieldInfo.tag = 511;
     }
     return _itemViewDepartent;
 }
@@ -528,6 +572,8 @@
     if(!_itemViewTechnical) {
         _itemViewTechnical = [[LabelTextFieldItemView alloc] initWithTitle:@"职称" bMust:NO placeholder:@"请输入您的职称"];
         _itemViewTechnical.textFieldInfo.delegate = self;
+        _itemViewTechnical.textFieldInfo.returnKeyType = UIReturnKeyDone;
+        _itemViewTechnical.textFieldInfo.tag = 513;
     }
     return _itemViewTechnical;
 }
@@ -537,6 +583,7 @@
         _itemViewPhone = [[LabelTextFieldItemView alloc] initWithTitle:@"手机" bMust:YES placeholder:@"请输入您的手机号码"];
         _itemViewPhone.textFieldInfo.delegate = self;
         _itemViewPhone.textFieldInfo.keyboardType = UIKeyboardTypePhonePad;
+        _itemViewPhone.textFieldInfo.returnKeyType = UIReturnKeyDone;
         _itemViewPhone.textFieldInfo.tag = 1001;
     }
     return _itemViewPhone;
@@ -546,6 +593,7 @@
     if(!_itemViewEmail) {
         _itemViewEmail = [[LabelTextFieldItemView alloc] initWithTitle:@"邮箱" bMust:YES placeholder:@"请输入您的邮箱"];
         _itemViewEmail.textFieldInfo.delegate = self;
+        _itemViewEmail.textFieldInfo.returnKeyType = UIReturnKeyDone;
     }
     return _itemViewEmail;
 }
@@ -554,6 +602,7 @@
     if(!_itemViewPassword){
         _itemViewPassword = [[PasswordItemView alloc] initWithTitle:@"登录密码" bMust:YES placeholder:@"请设置您的登录密码"];
         _itemViewPassword.textFieldPass.delegate = self;
+        _itemViewPassword.textFieldPass.returnKeyType = UIReturnKeyDone;
     }
     return _itemViewPassword;
 }
@@ -565,6 +614,7 @@
         _itemViewCode.delegate = self;
         _itemViewCode.textFieldCode.tag = 1000;
         self.currentTextField = _itemViewCode.textFieldCode;
+        _itemViewCode.textFieldCode.returnKeyType = UIReturnKeyDone;
     }
     return _itemViewCode;
 }
@@ -599,7 +649,7 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification{
 
-    CGRect rect = [self.currentTextField.superview convertRect:self.currentTextField.frame toView:self.view];//获取相对于self.view的位置
+    CGRect rect = [self.currentTextField.superview convertRect:self.currentTextField.frame toView:self.scrollView];//获取相对于self.view的位置
     NSDictionary *userInfo = [notification userInfo];
     NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];//获取弹出键盘的fame的value值
     CGRect keyboardRect = [aValue CGRectValue];
@@ -633,6 +683,12 @@
     [self.view endEditing:YES];
 }
 
-
+- (UIScrollView *)scrollView{
+    if (!_scrollView) {
+        _scrollView = [[UIScrollView alloc] init];
+        _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+    }
+    return _scrollView;
+}
 
 @end

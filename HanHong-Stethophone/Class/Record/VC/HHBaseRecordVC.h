@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) NSInteger             successCount;
 @property (retain, nonatomic) NSString              *currentPositon;
 @property (assign, nonatomic) Boolean               bAutoSaveRecord;//是否自动保存录音
+@property (assign, nonatomic) RECORD_MODE            recordmodel;
 
 - (void)initNavi:(NSInteger)number;
 - (void)actionDeviceHelperRecordReady;
@@ -49,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 //- (void)actionStopRecord;
 - (void)loadPlistData:(Boolean)firstLoadData;
 - (void)realodFilerView;
+
 
 @end
 

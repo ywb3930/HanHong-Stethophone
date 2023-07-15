@@ -28,6 +28,8 @@
 
 @end
 
+static int meetingroom_enter_state = 0;
+
 @implementation MeetingRoom {
     
     SocketManager *mSocketManager;
@@ -37,11 +39,10 @@
     
 //    SocketManager *mSocket_data_serviceManager;
 //    SocketIOClient *mSocket_data_service;
- 
-    
+  
     Clients *clients;
     
-    BOOL meetingroom_entered;
+    //BOOL meetingroom_entered;
     
     BOOL data_service_connected;
      
@@ -57,7 +58,8 @@
         
         clients = [Clients new];
         
-        meetingroom_entered = false;
+        //meetingroom_entered = false;
+        
         data_service_connected = false;
         
         _delegate = NULL;
@@ -121,12 +123,17 @@
 }
 
 -(BOOL)isEntered{
-    return meetingroom_entered;
+   // return meetingroom_entered;
+    return meetingroom_enter_state == 2;
 }
   
--(void)Enter:(NSString *)token meetingroom_url:(NSString *)meetingroom_url meetingroom_id:(int)meetingroom_id
+-(BOOL)Enter:(NSString *)token meetingroom_url:(NSString *)meetingroom_url meetingroom_id:(int)meetingroom_id
 {
     @try{
+        
+        if (meetingroom_enter_state != 0) {
+            return false;
+        }
         
         NSString *teaching_namespace = @"/api/meeting/meetingroom";
 
@@ -140,7 +147,7 @@
         } else {
             NSLog(@"MeetingRoom url error");
             [self Event:MeetingEnterFailed args1:NULL args2:NULL args3:NULL];
-            return;
+            return false;
         }
            
         NSURL *socketURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@", host]];
@@ -157,15 +164,20 @@
         }];
 
         [mSocket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            if (self->meetingroom_entered) {
+           
+            [self DisconnectDataService];
+            
+            //if (self->meetingroom_entered) {
+            if (meetingroom_enter_state == 2) {
+                meetingroom_enter_state = 0;
                 NSLog(@"MeetingRoom exit");
                 [self Event:MeetingExited args1:NULL args2:NULL args3:NULL];
             } else {
+                meetingroom_enter_state = 0;
                 NSLog(@"MeetingRoom enter failed");
                 [self Event:MeetingEnterFailed args1:NULL args2:NULL args3:NULL];
             }
-            self->meetingroom_entered = false;
-            [self DisconnectDataService];
+            //self->meetingroom_entered = false;
         }];
 
         [mSocket on:@"meetingroom" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -224,8 +236,12 @@
                     
                 }
                 
-                if (self->meetingroom_entered == false) {
-                    self->meetingroom_entered = true;
+                //if (self->meetingroom_entered == false) {
+                //    self->meetingroom_entered = true;
+                    
+                if (meetingroom_enter_state < 2) {
+                    
+                    meetingroom_enter_state = 2;
                     
                     NSLog(@"MeetingRoom enter room sucess");
                     
@@ -377,13 +393,19 @@
             [self Event:MeetingEnterFailed args1:NULL args2:NULL args3:NULL];
         }];
   
+        meetingroom_enter_state = 1;
         [self->mSocket connect];
      
+        return true;
+        
     }
     @catch (NSException *e)
     {
         NSLog(@"MeetingRoom enter error %@ %@", e.name, e.reason);
+        meetingroom_enter_state = 0;
     }
+    
+    return false;
 }
 
 -(void)Exit

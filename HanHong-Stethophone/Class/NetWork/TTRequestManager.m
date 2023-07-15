@@ -576,4 +576,40 @@
     }];
 }
 
+/**
+ 获取APP要求（检测APP更新）
+ */
++ (void)appsRequirements:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
+    NSString *requestUrl = [NSString stringWithFormat:@"%@apps/requirements", REQUEST_URL];
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
+        completion(responseObject);
+    } failure:^(NSError * _Nonnull error) {
+        failure(error);
+    }];
+}
+
+/**
+ 获取分享的内容
+ */
++ (void)recordShareBrief:(NSString *)share_code success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
+    NSString *requestUrl = [NSString stringWithFormat:@"%@record/share_brief/%@", REQUEST_URL, share_code];
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
+        completion(responseObject);
+    } failure:^(NSError * _Nonnull error) {
+        failure(error);
+    }];
+}
+/**
+ 收藏分享
+ */
++ (void)recordShareFavorite:(NSString *)share_code params:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
+    NSString *requestUrl = [NSString stringWithFormat:@"%@record/share_favorite/%@", REQUEST_URL, share_code];
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
+        completion(responseObject);
+    } failure:^(NSError * _Nonnull error) {
+        failure(error);
+    }];
+}
+
 @end

@@ -9,8 +9,10 @@
 #import "ClinicTeachingVC.h"
 #import "TeachingProgramView.h"
 #import "TeachingRecordView.h"
+#import "ProgramPlanListCell.h"
+#import "NewProgramVC.h"
 
-@interface RemoteControlTeacherVC ()
+@interface RemoteControlTeacherVC ()<UITableViewDelegate, UITableViewDataSource,NewProgramVCDelgate>
 
 @property (retain, nonatomic) UIView                *viewNavi;
 @property (retain, nonatomic) UIButton              *buttonTeachingProgram;
@@ -19,6 +21,8 @@
 @property (retain, nonatomic) TeachingProgramView   *teachingProgramView;
 @property (retain, nonatomic) TeachingRecordView    *teachingRecordView;
 @property (assign, nonatomic) Boolean               bLoadRecordView;
+@property (retain, nonatomic) UITableView           *tableView;
+@property (retain, nonatomic) NSMutableArray        *arrayData;
 
 @end
 
@@ -28,8 +32,22 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = WHITECOLOR;
+    self.arrayData = [NSMutableArray array];
     [self setupView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCalender:) name:add_program_broadcast object:nil];
+}
+
+- (void)actionEditProgramCallback:(ProgramModel *)model{
+    NSInteger row = [self.arrayData indexOfObject:model];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+    [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)actionDeleteProgramCallback:(ProgramModel *)model{
+    NSInteger row = [self.arrayData indexOfObject:model];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+    [self.arrayData removeObjectAtIndex:row];
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void)reloadCalender:(NSNotification *)noti{
@@ -83,14 +101,73 @@
     [self.view addSubview:self.teachingProgramView];
     self.teachingProgramView.sd_layout.leftSpaceToView(self.view, 0).topSpaceToView(self.viewNavi, 0).rightSpaceToView(self.view, 0).bottomSpaceToView(self.view, 0);
     self.teachingRecordView.sd_layout.leftSpaceToView(self.view, 0).topSpaceToView(self.viewNavi, 0).rightSpaceToView(self.view, 0).bottomSpaceToView(self.view, 0);
+    [self.view addSubview:self.tableView];
 }
+
+- (UITableView *)tableView{
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] init];
+        _tableView.delegate = self;
+        _tableView.dataSource = self;
+        _tableView.backgroundColor = ViewBackGroundColor;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        _tableView.hidden = YES;
+        [_tableView registerClass:[ProgramPlanListCell class] forCellReuseIdentifier:NSStringFromClass([ProgramPlanListCell class])];
+    }
+    return _tableView;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    NewProgramVC *newProgram = [[NewProgramVC alloc] init];
+    newProgram.programModel = self.arrayData[indexPath.row];
+    newProgram.bCreate = NO;
+    newProgram.delegate = self;
+    [self.navigationController pushViewController:newProgram animated:YES];
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.arrayData.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    ProgramPlanListCell *cell = (ProgramPlanListCell *)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ProgramPlanListCell class])];
+    ProgramModel *model = self.arrayData[indexPath.row];
+    cell.model = model;
+    cell.tag = model.tag;
+    
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return Ratio77;
+}
+
 
 - (TeachingProgramView *)teachingProgramView{
     if (!_teachingProgramView) {
         _teachingProgramView = [[TeachingProgramView alloc] init];
+        __weak typeof(self) wself = self;
+        _teachingProgramView.dataBlock = ^(NSMutableArray * _Nonnull arrayData, CGFloat maxY) {
+            wself.arrayData = arrayData;
+            [wself.tableView reloadData];
+            wself.tableView.hidden = NO;
+            wself.tableView.sd_layout.topSpaceToView(wself.view, kNavBarAndStatusBarHeight + maxY + Ratio11).leftSpaceToView(wself.view, 0).rightSpaceToView(wself.view, 0).bottomSpaceToView(wself.view, 0);
+            [wself.tableView updateLayout];
+            
+        };
+        _teachingProgramView.itemChangeBlock = ^(ProgramModel * _Nonnull model, NSInteger tag) {
+            if (tag == 0) {
+                [wself actionDeleteProgramCallback:model];
+            } else {
+                [wself actionEditProgramCallback:model];
+            }
+        };
     }
     return _teachingProgramView;
 }
+
+
 
 - (TeachingRecordView *)teachingRecordView{
     if (!_teachingRecordView) {

@@ -20,6 +20,7 @@
 @property (retain, nonatomic) NSString              *currentTime;
 @property (retain, nonatomic) HHCalendarManager     *calendarManager;
 @property (retain, nonatomic) NSMutableArray        *programListData;
+@property (retain, nonatomic) NSMutableArray        *programTTListData;
 
 @end
 
@@ -29,7 +30,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = ViewBackGroundColor;
-        
+        self.programListData = [NSMutableArray array];
         self.calendarManager = [HHCalendarManager shareManage];
         [self setupView];
         [self initData:[NSDate now]];
@@ -48,6 +49,12 @@
     ProgramPlanListVC *programPlanList = [[ProgramPlanListVC alloc] init];
     programPlanList.programListData = self.programListData;
     [currentVC.navigationController pushViewController:programPlanList animated:YES];
+    __weak typeof(self) wself = self;
+    programPlanList.itemChangeBlock = ^(ProgramModel * _Nonnull model, NSInteger tag) {
+        if (wself.itemChangeBlock) {
+            wself.itemChangeBlock(model, tag);
+        }
+    };
 }
 
 - (void)initData:(NSDate *)date{
@@ -55,6 +62,7 @@
     [self.calendarManager checkThisMonthRecordFromToday:date];
     long startTime = [Tools getTimestampSecond:self.calendarManager.startDate];
     long endTime = [Tools getTimestampSecond:self.calendarManager.endDate];
+    self.programTTListData = [NSMutableArray array];
     self.programListData = [[HHDBHelper shareInstance] selectAllProgramData:startTime endTime:endTime];
     NSInteger programCount = self.programListData.count;
     NSInteger programTimeTotal = 0;
@@ -71,18 +79,37 @@
                 [calendarDayModel.modelList addObject:programModel];
             }
         }
+        NSString *ss = [Tools convertTimestampToStringYMDHM:programModel.startTime];
+        NSDate *date = [Tools stringToDateYMDHM:ss];
+        NSInteger ii = [Tools compareDate:date];
+        
+        if (ii == 1 || ii == 2) {
+            programModel.tag = ii;
+            [self.programTTListData addObject:programModel];
+        }
     }
     self.calendarView.calendarManager = self.calendarManager;
     self.labelProgramCount.text = [NSString stringWithFormat:@"该月计划次数:%li次", programCount];
     self.labelProgramTime.text = [NSString stringWithFormat:@"该月计划时长:%li分钟", programTimeTotal];
     CGFloat width1 = (screenW-Ratio44)/7;
     NSInteger count = ceil((self.calendarView.calendarManager.days + self.calendarView.calendarManager.dayInWeek)/7.0f) + 1;
-    self.calendarView.frame = CGRectMake(0, Ratio66, screenW, width1 * count);
+    self.calendarView.frame = CGRectMake(0, Ratio55, screenW, width1 * count);
     
 
     [self.labelProgramCount updateLayout];
     [self.labelProgramTime updateLayout];
+    if(self.programTTListData.count > 0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (self.dataBlock) {
+                CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
+                self.dataBlock(self.programTTListData, maxY);
+            }
+        });
+        
+    }
 }
+
+
 
 - (void)actionClickCalendarItemCallback:(HHCalendarDayModel *)model{
     NSString *day = [@(model.dayValue) stringValue];
@@ -134,8 +161,8 @@
     
     [self addSubview:self.labelProgramCount];
     [self addSubview:self.labelProgramTime];
-    self.labelProgramCount.sd_layout.leftSpaceToView(self, Ratio18).widthIs(screenW/2-Ratio18).topSpaceToView(self.calendarView, Ratio22).heightIs(Ratio22);
-    self.labelProgramTime.sd_layout.rightSpaceToView(self, Ratio18).widthIs(screenW/2+Ratio18).topSpaceToView(self.calendarView, Ratio22).heightIs(Ratio22);
+    self.labelProgramCount.sd_layout.leftSpaceToView(self, Ratio18).widthIs(screenW/2-Ratio18).topSpaceToView(self.calendarView, Ratio11).heightIs(Ratio22);
+    self.labelProgramTime.sd_layout.rightSpaceToView(self, Ratio18).widthIs(screenW/2+Ratio18).topSpaceToView(self.calendarView, Ratio11).heightIs(Ratio22);
 }
 
 
@@ -186,5 +213,6 @@
     }
     return _labelProgramCount;
 }
+
 
 @end

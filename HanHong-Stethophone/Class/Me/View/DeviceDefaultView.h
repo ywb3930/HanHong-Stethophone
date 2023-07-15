@@ -13,10 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DeviceDefaultView : UIView
 
 @property (retain, nonatomic) BluetoothDeviceModel        *deviceModel;
-@property (retain, nonatomic) UIButton                    *buttonBluetooth;
-- (void)startTimer;
-- (void)stopTimer;
-- (void)removerTimer;
+@property (retain, nonatomic) HHBluetoothButton           *buttonBluetooth;
+//- (void)startTimer;
+//- (void)stopTimer;
+//- (void)removerTimer;
 
 @end
 

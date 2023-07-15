@@ -69,13 +69,29 @@
             wself.arrayData = [NSArray yy_modelArrayWithClass:[ConsultationModel class] json:data];
             if(wself.arrayData.count == 0) {
                 wself.noDataView.hidden = NO;
+            } else {
+                wself.noDataView.hidden = YES;
             }
             [wself reloadData];
         }
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
+        if(error.code == -1009 || error.code == -1008){
+            [self actionNoNetWork];
+        }
         [SVProgressHUD dismiss];
     }];
+    
+}
+
+- (void)actionNoNetWork{
+    if (self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+        __weak typeof(self) wself = self;
+        self.noDataView.tapBloack = ^{
+            [wself initData];
+        };
+    }
 }
 
 - (void)setupView{

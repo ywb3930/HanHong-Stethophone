@@ -47,6 +47,8 @@
     if (self.idx == 0) {
         //录音成功事件广播，用于刷新本地数据
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initLocalData) name:AddLocalRecordSuccess object:nil];
+    } else if (self.idx == 2) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecordFavoriteShare:) name:record_favorite_share object:nil];
     }
 }
 //输入框return事件处理
@@ -108,12 +110,13 @@
         default:
             break;
     }
-    if(self.arrayData.count == 0) {
-        self.noDataView.hidden = NO;
-    } else {
-        self.noDataView.hidden = YES;
-    }
+    [self actionHiddenNoDataView];
     return YES;
+}
+
+- (void)actionRecordFavoriteShare:(NSNotification *)notification{
+    [self initCollectData];
+    [self initCouldData];
 }
 //根据是否分享选择
 - (void)getShareRecordFiltrate:(NSString *)string {
@@ -327,11 +330,7 @@
             [self getLungRecordFiltrate:@""];
         }
     }
-    if(self.arrayData.count == 0) {
-        self.noDataView.hidden = NO;
-    } else {
-        self.noDataView.hidden = YES;
-    }
+    [self actionHiddenNoDataView];
 }
 
 //点击播放按钮事件处理
@@ -414,19 +413,42 @@
             
         }
     } else if(tag == 1) {
-        if (index == 0 || (index == 1 && model.shared)) {
-            [self actionToShareRecord:model];
+        if (index == 0) {
+            [self actionToShareRecord:model message:YES];
+        } else  if (index == 1 && model.shared){
+            [self actionToShareRecord:model message:NO];
         } else {
             [self actionToDeleteRecord:model];
+        }
+    } if (tag == 2) {
+        if (index == 0) {
+            
+            [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要上传%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+                //将本地录音上传至云标本库
+                [self actionAfterUploadRecordSuccess];
+            } cancel:^{
+            }];
+            
+        } else {
+            [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要删除%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+                //删除本地录音
+                [self actionDeleteLocalData];
+            } cancel:^{
+            }];
+            
         }
     }
 }
 
-- (void)actionToShareRecord:(RecordModel *)model{
-    NSString *message = model.shared ? @"取消分享" : @"分享";
+- (void)actionUploadCollectToClound{
+    
+}
+
+- (void)actionToShareRecord:(RecordModel *)model message:(Boolean )bShared{
+    NSString *message = bShared ? @"分享" : @"取消分享";
     [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要%@%@的录音吗?", message,model.record_time] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
         //分享云标本库
-        [self actionToShareCloud];
+        [self actionToShareCloud:bShared];
     } cancel:^{
         
     }];
@@ -500,6 +522,16 @@
     [self.arrayData insertObject:model atIndex:0];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.recordTableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self actionHiddenNoDataView];
+}
+
+- (void)actionHiddenNoDataView{
+    if(self.arrayData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
+        [self.recordTableView reloadData];
+    }
 }
 //上传成功后的事件处理
 - (void)actionAfterUploadRecordSuccess{
@@ -512,21 +544,23 @@
     }
 }
 //分享云标本库
-- (void)actionToShareCloud{
+- (void)actionToShareCloud:(Boolean)bShared{
     
     RecordModel *model = self.arrayData[self.currentSelectIndexPath.row];
-    Boolean shared = !model.shared;
+    //Boolean shared = !model.shared;
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     params[@"tag"] = model.tag;
-    params[@"shared"] = [@(shared) stringValue];
+    params[@"shared"] = [@(bShared) stringValue];
     [TTRequestManager recordShare:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
             NSDictionary *data = responseObject[@"data"];
             Boolean shared = [data[@"shared"] boolValue];
+            model.shared = shared;
             if (shared) {
                 NSString *shareCode = data[@"share_code"];
                 model.share_code = shareCode;
+                
                 [self shareWX:shareCode];
             } else {
                 model.share_code = @"";
@@ -540,6 +574,13 @@
 }
 //分享
 - (void)shareWX:(NSString *)shareCode{
+//    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+//    req.bText = YES;
+//    req.text = @"分享的内容";
+//    req.scene = WXSceneSession;
+//    [WXApi sendReq:req completion:^(BOOL success) {
+//
+//    }];
     WXWebpageObject *webpageObject = [WXWebpageObject object];
     webpageObject.webpageUrl = [NSString stringWithFormat:@"%@%@",[[Constant shareManager] getRecordShareBrief], shareCode];
     WXMediaMessage *message = [WXMediaMessage message];
@@ -676,12 +717,7 @@
     NSArray *data = [[HHDBHelper shareInstance] selectRecord:mode_select mode:mode typeSelect:type_select type:type];
     [self.arrayData addObjectsFromArray:data];
     [self.allData addObjectsFromArray:data];
-    if (self.arrayData.count == 0) {
-        self.noDataView.hidden = NO;
-    } else {
-        self.noDataView.hidden = YES;
-        [self.recordTableView reloadData];
-    }
+    [self actionHiddenNoDataView];
     
 }
 
@@ -701,12 +737,7 @@
             NSArray *data = [NSArray yy_modelArrayWithClass:[RecordModel class] json:responseObject[@"data"]];
             [wself.arrayData addObjectsFromArray:data];
             [wself.allData addObjectsFromArray:data];
-            if(wself.arrayData.count == 0) {
-                wself.noDataView.hidden = NO;
-            } else {
-                wself.noDataView.hidden = YES;
-                [wself.recordTableView reloadData];
-            }
+            [wself actionHiddenNoDataView];
         }
         [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
@@ -730,12 +761,7 @@
             NSArray *data = [NSArray yy_modelArrayWithClass:[RecordModel class] json:responseObject[@"data"]];
             [wself.arrayData addObjectsFromArray:data];
             [wself.allData addObjectsFromArray:data];
-            if(wself.arrayData.count == 0) {
-                wself.noDataView.hidden = NO;
-            } else {
-                wself.noDataView.hidden = YES;
-                [wself.recordTableView reloadData];
-            }
+            [wself actionHiddenNoDataView];
             
         }
         [SVProgressHUD dismiss];

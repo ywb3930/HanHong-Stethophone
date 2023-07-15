@@ -47,7 +47,7 @@
             self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ?  @"男" : @"女", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
         }
     }
-    
+    [[HHBlueToothManager shareManager] disconnect];
     [self initView];
 }
 
@@ -323,7 +323,7 @@
 
 - (void)refreshData:(NSDictionary *)data{
     HHLoginData *loginData = [HHLoginData yy_modelWithDictionary:data];
-    LoginData.id = loginData.id;
+    LoginData.userID = loginData.userID;
     LoginData.sex = loginData.sex;
     if(![Tools isBlankString:loginData.phone]){
         LoginData.phone = loginData.phone;

@@ -51,6 +51,10 @@
     NSString *value = @"";
     Boolean saveDictionary = NO;
     if (tag == 4) {
+        if(time<1 || time>30000000){
+            [kAppWindow makeToast:@"范围值为：0-30000000" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return;
+        }
         value = [NSString stringWithFormat:@"%li分钟", time];
         [[HHBlueToothManager shareManager] setAutoOffTime:(int)time];
         saveDictionary = NO;

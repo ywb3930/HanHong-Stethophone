@@ -186,15 +186,16 @@
                 for (NSString *title in wself.listTitle) {
                     [indexViewDataSource addObject:title];
                 }
-     
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     [wself reloadColorForHeaderView];
                 });
                 wself.tableView.sc_indexViewDataSource = indexViewDataSource;
                 wself.tableView.sc_startSection = 0;
-                
-                [wself.tableView reloadData];
+
             }
+            
+            
+            [wself.tableView reloadData];
             
         }
         [SVProgressHUD dismiss];

@@ -73,7 +73,6 @@
     if ([Tools isBlankString:recordModel.characteristics]) {
         self.lblTag.text = @"未标注";
     } else {
-        NSLog(@"recordModel.characteristics = %@", recordModel.characteristics);
         NSArray *array = [Tools jsonData2Array:recordModel.characteristics];
         if(array.count > 0) {
             NSDictionary *dictionary = array[0];
@@ -101,6 +100,9 @@
     [self.imageViewShare updateLayout];
     self.lblTimeStart.text = @"00:00";
     self.lblTimeEnd.text = [Tools getMMSSFromSS:recordModel.record_length];
+    CGFloat widht = [Tools widthForString:self.recordModel.record_time fontSize:Ratio12 andHeight:Ratio13];
+    self.lblTime.sd_layout.widthIs(widht);
+    [self.lblTime updateLayout];
 }
 
 - (void)setupView{
@@ -113,9 +115,10 @@
     [self.viewBg addSubview:self.lblName];
     [self.viewBg addSubview:self.lblTag];
     [self.viewBg addSubview:self.lblType];
+    
     self.imageViewShare.sd_layout.leftSpaceToView(self.viewBg, 0).widthIs(0).heightIs(Ratio18).topSpaceToView(self.viewBg, Ratio11);
-    self.lblTime.sd_layout.leftSpaceToView(self.imageViewShare, Ratio8).topSpaceToView(self.viewBg, Ratio11).widthIs(Ratio135 * 1.4).heightIs(Ratio17);
-    self.lblName.sd_layout.centerYEqualToView(self.lblTime).rightSpaceToView(self.viewBg, Ratio11).heightIs(Ratio17).leftSpaceToView(self.lblTime, Ratio35);
+    self.lblTime.sd_layout.leftSpaceToView(self.imageViewShare, Ratio8).topSpaceToView(self.viewBg, Ratio11).widthIs(Ratio99).heightIs(Ratio17);
+    self.lblName.sd_layout.centerYEqualToView(self.lblTime).rightSpaceToView(self.viewBg, Ratio11).heightIs(Ratio17).leftSpaceToView(self.lblTime, Ratio15);
     self.lblTag.sd_layout.leftSpaceToView(self.viewBg, Ratio8).widthIs(Ratio135).heightIs(Ratio17).bottomSpaceToView(self.viewBg, Ratio11);
     self.lblType.sd_layout.rightSpaceToView(self.viewBg, Ratio11).centerYEqualToView(self.lblTag).heightIs(Ratio17).widthIs(Ratio135);
     
@@ -123,11 +126,12 @@
     self.viewRecord.sd_layout.leftSpaceToView(self.viewBg, Ratio8).rightEqualToView(self.lblName).topSpaceToView(self.lblTime, Ratio9).bottomSpaceToView(self.lblTag, Ratio9);
     [self.viewRecord addSubview:self.buttonPlay];
     self.buttonPlay.sd_layout.leftSpaceToView(self.viewRecord, Ratio8).topSpaceToView(self.viewRecord, Ratio8).bottomSpaceToView(self.viewRecord, Ratio8).widthEqualToHeight();
+    CGFloat width = [Tools widthForString:@"99:99" fontSize:Ratio12 andHeight:Ratio17];
     
     [self.viewRecord addSubview:self.lblTimeStart];
     [self.viewRecord addSubview:self.lblTimeEnd];
-    self.lblTimeStart.sd_layout.leftSpaceToView(self.buttonPlay, Ratio8).centerYEqualToView(self.buttonPlay).heightIs(Ratio17).widthIs(Ratio33);
-    self.lblTimeEnd.sd_layout.rightSpaceToView(self.viewRecord, Ratio11).centerYEqualToView(self.buttonPlay).heightIs(Ratio17).widthIs(Ratio33);
+    self.lblTimeStart.sd_layout.leftSpaceToView(self.buttonPlay, Ratio8).centerYEqualToView(self.buttonPlay).heightIs(Ratio17).widthIs(width);
+    self.lblTimeEnd.sd_layout.rightSpaceToView(self.viewRecord, Ratio11).centerYEqualToView(self.buttonPlay).heightIs(Ratio17).widthIs(width);
     
     [self.viewRecord addSubview:self.slider];
     self.slider.sd_layout.leftSpaceToView(self.lblTimeStart, Ratio5).rightSpaceToView(self.lblTimeEnd, Ratio5).heightIs(Ratio5).centerYEqualToView(self.lblTimeStart);
@@ -152,6 +156,7 @@
         _lblTime = [[UILabel alloc] init];
         _lblTime.font = Font12;
         _lblTime.textColor = MainBlack;
+        
     }
     return _lblTime;
 }
@@ -209,6 +214,7 @@
         _lblTimeStart = [[UILabel alloc] init];
         _lblTimeStart.textColor = MainColor;
         _lblTimeStart.font = Font12;
+        [_lblTimeStart sizeToFit];
     }
     return _lblTimeStart;
 }
@@ -219,6 +225,7 @@
         _lblTimeEnd.textColor = MainColor;
         _lblTimeEnd.font = Font12;
         _lblTimeEnd.textAlignment = NSTextAlignmentRight;
+        [_lblTimeEnd sizeToFit];
     }
     return _lblTimeEnd;
 }

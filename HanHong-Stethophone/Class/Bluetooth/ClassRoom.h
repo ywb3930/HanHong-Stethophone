@@ -87,7 +87,7 @@ typedef NS_ENUM(NSInteger, CLASSROOM_EVENT)
 -(BOOL)SendWavFrame:(int)flag wav_frame:(NSData*)wav_frame;
 -(BOOL)SendCommand:(int)command data:(NSData*)data;
 -(BOOL)isEntered;
--(void)Enter:(NSString *)token classroom_url:(NSString *)classroom_url classroom_id:(int)classroom_id;
+-(BOOL)Enter:(NSString *)token classroom_url:(NSString *)classroom_url classroom_id:(int)classroom_id;
 -(void)Exit;
 -(void)ClassBegin;
 -(void)ClassEnd;

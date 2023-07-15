@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 @interface HHLoginData : NSObject
 /**
 * 账号
@@ -33,7 +34,7 @@
 /*
 * 用户id
 */
-@property (assign, nonatomic) long id;
+@property (assign, nonatomic) long  userID;
 /**
 * version
 */

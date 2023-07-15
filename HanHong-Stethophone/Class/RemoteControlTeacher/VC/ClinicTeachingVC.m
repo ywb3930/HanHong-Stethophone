@@ -37,6 +37,7 @@
     // Do any additional setup after loading the view.
     self.title = @"临床教学";
     self.arrayData = [NSMutableArray array];
+    self.recordmodel = RecordingWithRecordDurationMaximum;
     self.recordType = RemoteRecord;
     self.bAutoSaveRecord = NO;
     self.itemWidth = (screenW-Ratio66)/5;
@@ -48,9 +49,9 @@
     
     [self getTeachingClassroom];
     [self initClassRoom];
-    if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_NOT_CONNECT) {
-        [self actionDeviceHelperRecordReady];
-    }
+//    if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_NOT_CONNECT) {
+//        [self actionDeviceHelperRecordReady];
+//    }
 }
 
 
@@ -125,7 +126,7 @@
     NSLog(@"教室状态:当前教室在线人数：%i", memberList.count);
     for (Member *member in memberList.members) {
         int user_id = member.user_id;
-        if (user_id == LoginData.id) {
+        if (user_id == LoginData.userID) {
             continue;//不能插入自己
         }
         Boolean isExist = NO;
@@ -212,7 +213,7 @@
         self.bDataServiceReady = NO;
     }
     self.headerView.roomMessage = @"临床教学进行中";
-    self.headerView.recordMessage = @"按听诊器录音键可开始录音";
+    //self.headerView.recordMessage = @"按听诊器录音键可开始录音";
     
 }
 
@@ -283,6 +284,11 @@
     } else if (event == ClassDataServiceConnecting) {
         NSLog(@"远程听诊连接中");
         self.headerView.roomMessage = @"临床教学已服务器连接中";
+    } else if (event == ClassDataServiceDisconnected) {
+        self.headerView.recordMessage = @"请连接听诊器";
+    } else if (event == ClassDataServiceConnectFailed) {
+        //self.headerView.recordMessage = @"请连接听诊器";
+        self.headerView.recordMessage = @"听诊器连接失败";
     } else if (event == ClassDataServiceConnectSuccess) {
         NSLog(@"远程听诊连接成功");
         [self actionClassDataServiceConnectSuccess];

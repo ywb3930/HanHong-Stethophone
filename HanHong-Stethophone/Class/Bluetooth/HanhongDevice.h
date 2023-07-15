@@ -149,6 +149,8 @@ typedef NS_ENUM(NSInteger, CONNECT_STATE){
 -(NSString *)GetFirmwareVersion;
 -(NSString *)GetBootloaderVersion;
 -(NSString *)GetMac;
+-(CBCentralManager *)getCentralManager;
+-(CBPeripheral *)currentPeripheral;
  
 
 -(BOOL)RealtimeStartPlay:(BOOL)enable_realtimeplay_delay_limit;

@@ -116,15 +116,16 @@
         _audioPlotView.backgroundColor = UIColor.clearColor;
         _audioPlotView.color = MainColor;
         _audioPlotView.plotType = KSYPlotTypeBuffer;
-        _audioPlotView.shouldFill = YES;
+        _audioPlotView.shouldFill = NO;
         _audioPlotView.shouldMirror = YES;
-        _audioPlotView.shouldOptimizeForRealtimePlot = NO;
+        //_audioPlotView.shouldCenterYAxis = YES;
+        _audioPlotView.shouldOptimizeForRealtimePlot = YES;
         
         _audioPlotView.waveformLayer.shadowOffset = CGSizeMake(0.0, 1.0);
-        _audioPlotView.waveformLayer.shadowRadius = 0.0;
+        _audioPlotView.waveformLayer.shadowRadius = 1;
         _audioPlotView.waveformLayer.shadowColor = MainColor.CGColor;
-        _audioPlotView.waveformLayer.shadowOpacity = 5.0;
-        _audioPlotView.waveformLayer.lineWidth = Ratio3;
+        _audioPlotView.waveformLayer.shadowOpacity = 1.0;
+        _audioPlotView.waveformLayer.lineWidth = Ratio0_5;
         
     }
     return _audioPlotView;
@@ -136,6 +137,11 @@
 {
     NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
     NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
+    if([Tools isBlankString:self.recordModel.tag]) {
+        NSArray *array = [self.recordModel.url componentsSeparatedByString:@"/"];
+        self.recordModel.tag = [array lastObject];
+        filePath = [NSString stringWithFormat:@"%@audio/%@", path,self.recordModel.tag];
+    }
     
     if ([HHFileLocationHelper fileExistsAtPath:filePath]) {
         [self showWaveView:filePath];
@@ -154,9 +160,8 @@
 
 - (void)showWaveView:(NSString *)path{
     self.audioFile = [KSYAudioFile audioFileWithURL:[NSURL fileURLWithPath:path]];
-    self.audioPlotView.plotType = KSYPlotTypeBuffer;
-    self.audioPlotView.shouldFill = YES;
-    self.audioPlotView.shouldMirror = YES;
+
+
     __weak typeof (self) weakSelf = self;
     [Tools showWithStatus:@"正在加载音频数据"];
     [self.audioFile getWaveformDataWithCompletionBlock:^(float **waveformData, int length) {

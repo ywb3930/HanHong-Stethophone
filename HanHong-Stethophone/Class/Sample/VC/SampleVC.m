@@ -60,10 +60,7 @@
 //    [self.bluetoothButton star];
 //}
 
-- (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    [self.bluetoothButton stop];
-}
+
 
 - (HHBluetoothButton *)bluetoothButton{
     if(!_bluetoothButton) {

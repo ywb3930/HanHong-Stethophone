@@ -35,8 +35,18 @@
     if (!_imageViewNoData) {
         _imageViewNoData = [[UIImageView alloc] init];
         _imageViewNoData.image = [UIImage imageNamed:@"no-data"];
+        
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionTapView:)];
+        _imageViewNoData.userInteractionEnabled = YES;
+        [_imageViewNoData addGestureRecognizer:tapGesture];
     }
     return _imageViewNoData;
+}
+
+- (void)actionTapView:(UITapGestureRecognizer *)tap{
+    if (self.tapBloack) {
+        self.tapBloack();
+    }
 }
 
 - (UILabel *)labelNoData{

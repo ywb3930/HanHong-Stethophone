@@ -837,19 +837,6 @@ static id _instance;
     return image;
 }
 
-+ (NSDate *)converAdd8HourNowDate{
-    NSDate *currentDate  = [NSDate date];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    // ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
-    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    //现在时间,你可以输出来看下是什么格式
-    //----------将nsdate按formatter格式转成nsstring
-    NSTimeZone* timeZone = [NSTimeZone timeZoneForSecondsFromGMT:8*60*60];
-    [formatter setTimeZone:timeZone];;
-    NSString *s = [formatter stringFromDate:currentDate];
-    NSDate *date = [Tools stringToDateYMDHMS:s];
-    return date;
-}
 
 
 + (NSString *)converDataToMacStr:(NSString *)mac{
@@ -1329,5 +1316,24 @@ static id _instance;
     return [resultStr evaluateWithObject:string];
 }
 
+
++ (NSInteger)compareDate:(NSDate *)date{
+   NSTimeInterval secondsPerDay = 24 * 60 * 60;
+   NSDate *today = [[NSDate alloc] init];
+   NSDate *tomorrow, *yesterday;
+   tomorrow = [today dateByAddingTimeInterval: secondsPerDay];
+   yesterday = [today dateByAddingTimeInterval: -secondsPerDay];
+// 10 first characters of description is the calendar date:
+   NSString *todayString = [[today description] substringToIndex:10];
+   NSString *dateString = [[date description] substringToIndex:10];
+   NSString * tomorrowString = [[tomorrow description] substringToIndex:10];
+
+   if ([dateString isEqualToString:todayString]){
+       return 1;
+   } else if ([dateString isEqualToString:tomorrowString]){
+       return 2;
+   }
+   return 0;
+}
 
 @end

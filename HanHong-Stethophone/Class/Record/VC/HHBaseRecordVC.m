@@ -203,7 +203,7 @@
 - (void)saveSuccess{
     [[HHBlueToothManager shareManager] stop];
     RecordModel *recordModel = [[RecordModel alloc] init];
-    recordModel.user_id = [@(LoginData.id) stringValue];
+    recordModel.user_id = [@(LoginData.userID) stringValue];
     recordModel.record_mode = self.recordType;
     recordModel.type_id = self.soundsType;
     recordModel.record_filter = self.isFiltrationRecord;
@@ -325,8 +325,8 @@
     
     if (self.recordingState != recordingState_ing) {
         [[HHBlueToothManager shareManager] setRecordDuration:(int)self.recordDurationAll];//设置录音时长
-        [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:RecordingWithRecordDurationMaximum];
-       // self.recordingState = recordingState_prepare;
+        [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:self.recordmodel];
+       // self.recordingState = recordingState_prepare;RecordingWithRecordDurationMaximum
     }
     
     

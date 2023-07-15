@@ -45,6 +45,7 @@
     // Do any additional setup after loading the view.
     self.title = @"远程会诊";
     self.view.backgroundColor = WHITECOLOR;
+    self.recordmodel = RecordingWithRecordDurationMaximum;
     self.collector_id = self.consultationModel.collector_id;
     [self loadPlistData:YES];
     self.bAutoSaveRecord = NO;
@@ -136,7 +137,7 @@
 
 - (void)actionMeetingInfoUpdate:(MeetingRoomInfo *)roomInfo{
     self.collector_id = roomInfo.collector_id;
-    if (self.collector_id == LoginData.id) {//自己是采集者 显示采集界面
+    if (self.collector_id == LoginData.userID) {//自己是采集者 显示采集界面
         self.bCollector = YES;
     } else {
         self.bCollector = NO;
@@ -223,7 +224,7 @@
 }
 
 - (void)actionMeetingDataServiceCmdReceived:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
-    if (self.collector_id != LoginData.id) {//自己不是采集者
+    if (self.collector_id != LoginData.userID) {//自己不是采集者
         NSString *sargs1 = [NSString stringWithFormat:@"%@", args1];
         int cmd = [sargs1 intValue];
         if (cmd == 1) {
@@ -307,7 +308,7 @@
         self.headerView.bStartRecord = YES;
         self.headerView.titleMessage = @"远程会诊进行中";
         
-        if (self.collector_id == LoginData.id && !self.bDataServiceRecording) {
+        if (self.collector_id == LoginData.userID && !self.bDataServiceRecording) {
             [self.meetingRoom SendCommand:1 data:NULL];
             [self actionStartRecord];
             self.bDataServiceRecording = YES;
@@ -500,7 +501,7 @@
     if (indexPath == nil){
         NSLog(@"couldn't find index path");
     } else {
-        if (self.consultationModel.creator_id == LoginData.id) {
+        if (self.consultationModel.creator_id == LoginData.userID) {
             self.currentIndexPath = indexPath;
             
             TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"设为采集人"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
@@ -519,7 +520,7 @@
         [self.view makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return NO;
     } else if ([[HHBlueToothManager shareManager] getDeviceType] != STETHOSCOPE) {
-        [self.view makeToast:@"您连接的设备不是听诊区" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        [self.view makeToast:@"您连接的设备不是听诊器" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return NO;
     }
     return YES;

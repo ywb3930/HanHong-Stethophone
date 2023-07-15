@@ -18,6 +18,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"选择身份";
     self.view.backgroundColor = WHITECOLOR;
     [self initView];
 }

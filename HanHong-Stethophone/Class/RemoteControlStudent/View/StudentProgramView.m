@@ -11,6 +11,7 @@
 #import "NewProgramVC.h"
 #import "ProgramPlanListVC.h"
 
+
 @interface StudentProgramView()<HHCalendarViewDelegate>
 
 @property (retain, nonatomic) HHCalendarView        *calendarView;
@@ -20,6 +21,7 @@
 @property (retain, nonatomic) NSString              *currentTime;
 @property (retain, nonatomic) HHCalendarManager     *calendarManager;
 @property (retain, nonatomic) NSMutableArray        *programListData;
+@property (retain, nonatomic) NSMutableArray        *programTTListData;
 
 @end
 
@@ -43,6 +45,7 @@
     long startTime = [Tools getTimestampSecond:self.calendarManager.startDate];
     long endTime = [Tools getTimestampSecond:self.calendarManager.endDate];
     self.programListData = [[HHDBHelper shareInstance] selectAllProgramData:startTime endTime:endTime];
+    self.programTTListData = [NSMutableArray array];
     NSInteger programCount = self.programListData.count;
     NSInteger programTimeTotal = 0;
     for (int i = 0; i < self.programListData.count; i++) {
@@ -58,6 +61,15 @@
                 [calendarDayModel.modelList addObject:programModel];
             }
         }
+        
+        NSString *ss = [Tools convertTimestampToStringYMDHM:programModel.startTime];
+        NSDate *date = [Tools stringToDateYMDHM:ss];
+        NSInteger ii = [Tools compareDate:date];
+        
+        if (ii == 1 || ii == 2) {
+            programModel.tag = ii;
+            [self.programTTListData addObject:programModel];
+        }
     }
     self.calendarView.calendarManager = self.calendarManager;
     self.labelProgramCount.text = [NSString stringWithFormat:@"该月计划次数:%li次", programCount];
@@ -69,6 +81,16 @@
 
     [self.labelProgramCount updateLayout];
     [self.labelProgramTime updateLayout];
+    
+    if(self.programTTListData.count > 0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (self.dataBlock) {
+                CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
+                self.dataBlock(self.programTTListData, maxY);
+            }
+        });
+        
+    }
 }
 
 
@@ -80,6 +102,12 @@
     ProgramPlanListVC *programPlanList = [[ProgramPlanListVC alloc] init];
     programPlanList.programListData = self.programListData;
     [currentVC.navigationController pushViewController:programPlanList animated:YES];
+    __weak typeof(self) wself = self;
+    programPlanList.itemChangeBlock = ^(ProgramModel * _Nonnull model, NSInteger tag) {
+        if (wself.itemChangeBlock) {
+            wself.itemChangeBlock(model, tag);
+        }
+    };
 }
 
 

@@ -73,7 +73,7 @@
     self.secondCellCount = 5;
     self.view.backgroundColor = MainBlack;
     self.statusBarHeight = kStatusBarHeight;
-    NSLog(@"self.statusBarHeight = %f", self.statusBarHeight);
+    NSLog(@"self.statusBarHeight = %@", self.recordModel.url);
     self.startTime = 0;
     self.endTime = 0;
     self.allTime = [NSString stringWithFormat:@"0:000-%li:000 全部", self.recordModel.record_length];
@@ -244,6 +244,20 @@
     return cell;
 }
 
+- (UIButton *)buttonReduce{
+    if (!_buttonReduce) {
+        _buttonReduce = [[UIButton alloc] init];
+        [_buttonReduce setTitle:@"缩小" forState:UIControlStateNormal];
+        _buttonReduce.titleLabel.textColor = WHITECOLOR;
+        _buttonReduce.titleLabel.font = Font13;
+        _buttonReduce.backgroundColor = HEXCOLOR(0x232323, 0.5);
+        _buttonReduce.layer.cornerRadius = Ratio4;
+        _buttonReduce.clipsToBounds = YES;
+        [_buttonReduce addTarget:self action:@selector(actionToReduce:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _buttonReduce;
+}
+
 - (UIButton *)buttonAdd{
     if (!_buttonAdd) {
         _buttonAdd = [[UIButton alloc] init];
@@ -252,13 +266,39 @@
         _buttonAdd.titleLabel.font = Font13;
         _buttonAdd.backgroundColor = HEXCOLOR(0x232323, 0.5);
         [_buttonAdd addTarget:self action:@selector(actionToAdd:) forControlEvents:UIControlEventTouchUpInside];
-        _buttonAdd.hidden = YES;
+        _buttonAdd.layer.cornerRadius = Ratio4;
+        _buttonAdd.clipsToBounds = YES;
+        //_buttonAdd.hidden = YES;
     }
     return _buttonAdd;
 }
 
+- (void)actionToReduce:(UIButton *)button{
+    if(self.secondCellCount == 1) {
+        return;
+    }
+    if(self.secondCellCount<=5){
+        self.secondCellCount --;
+    } else {
+        self.secondCellCount /= 2;
+    }
+    self.secondCellCount --;
+    if(self.waveFullView) {
+        [self.waveFullView removeFromSuperview];
+        self.waveFullView = nil;
+    }
+    [self initWaveRowData];
+    [self initWaveView];
+    [self reloadAnnotationAreaView];
+}
+
 - (void)actionToAdd:(UIButton *)button{
-    self.secondCellCount ++;
+    if(self.secondCellCount<5){
+        self.secondCellCount ++;
+    } else {
+        self.secondCellCount *= 2;
+    }
+   
     if(self.waveFullView) {
         [self.waveFullView removeFromSuperview];
         self.waveFullView = nil;
@@ -611,6 +651,11 @@
     [self.viewNavi addSubview:self.bluetoothButton];
     self.bluetoothButton.sd_layout.leftSpaceToView(self.buttonBack, Ratio33).heightIs(Ratio22).widthIs(Ratio22).centerYEqualToView(self.viewNavi);
     
+    [self.viewNavi addSubview:self.buttonReduce];
+    [self.viewNavi addSubview:self.buttonAdd];
+    self.buttonReduce.sd_layout.centerYEqualToView(self.viewNavi).leftSpaceToView(self.bluetoothButton, Ratio33).widthIs(Ratio66).heightIs(Ratio30);
+    self.buttonAdd.sd_layout.centerYEqualToView(self.buttonReduce).leftSpaceToView(self.buttonReduce, Ratio11).widthIs(Ratio66).heightIs(Ratio30);
+    
     [self.viewNavi addSubview:self.viewSelectAnnotation];
     self.viewSelectAnnotation.sd_layout.centerYEqualToView(self.viewNavi).rightSpaceToView(self.viewNavi, kBottomSafeHeight + Ratio22).heightIs(Ratio28).widthIs(screenH/3);
     [self.viewSelectAnnotation addSubview:self.imageViewDown];
@@ -631,7 +676,7 @@
     [self.view addSubview:self.labelCenter];
     [self.view addSubview:self.labelBottom];
     [self.view addSubview:self.buttonPlay];
-    [self.view addSubview:self.buttonAdd];
+    
     [self.view addSubview:self.buttonAnnotation];
     [self.view addSubview:self.viewLine];
     self.labelTop.sd_layout.topSpaceToView(self.viewNavi, Ratio5).leftSpaceToView(self.view, self.statusBarHeight + Ratio2).widthIs(Ratio33).heightIs(Ratio16);
@@ -640,7 +685,7 @@
     
     self.buttonPlay.sd_layout.centerXEqualToView(self.view).topSpaceToView(self.scrollView, Ratio11).widthIs(Ratio66).heightIs(Ratio28);
     self.buttonAnnotation.sd_layout.centerYEqualToView(self.buttonPlay).rightSpaceToView(self.view, Ratio22).heightIs(Ratio28).widthIs(Ratio66);
-    self.buttonAdd.sd_layout.centerYEqualToView(self.buttonPlay).leftSpaceToView(self.view, Ratio55).widthIs(Ratio44).heightIs(Ratio22);
+    
     self.viewLine.frame = CGRectMake(self.statusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
     
     [self.view addSubview:self.tableView];

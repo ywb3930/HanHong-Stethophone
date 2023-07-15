@@ -168,7 +168,7 @@ static FMDatabase *_db;
         
     });
     NSString *pathDB = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
-    NSString *path = [NSString stringWithFormat:@"%@db/%@_%li.db", pathDB, LoginData.phone,LoginData.id];//[
+    NSString *path = [NSString stringWithFormat:@"%@db/%@_%li.db", pathDB, LoginData.phone,LoginData.userID];//[
     NSLog(@"db_path:%@",path);
     _db = [FMDatabase databaseWithPath:path];
     [_db open];

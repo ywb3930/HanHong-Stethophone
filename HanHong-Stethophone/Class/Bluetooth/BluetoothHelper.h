@@ -47,6 +47,8 @@ extern NSArray const *default_name_filter;
 -(NSData *)ReadBytes: (int)length;
 -(void)WriteStr:(NSString *)str;
 -(void)WriteBytes:(NSData *)data;
+-(CBCentralManager *)getCentralManager;
+-(CBPeripheral *)currentPeripheral;
 
 +(NSString *)convertDataToHexStr:(NSData *)data;
 

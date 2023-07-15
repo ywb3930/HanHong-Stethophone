@@ -775,6 +775,13 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
     return [hanhongDevice GetFirmwareVersion];
 }
 
+-(CBCentralManager *)getCentralManager{
+    return [hanhongDevice getCentralManager];
+}
+-(CBPeripheral *)currentPeripheral{
+    return [hanhongDevice currentPeripheral];
+}
+
 -(NSString *)GetBootloaderVersion{
     return [hanhongDevice GetBootloaderVersion];
 }

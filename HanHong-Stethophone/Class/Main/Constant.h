@@ -46,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
 /** 底部导航栏高度（包括安全区） **/
 - (CGFloat)dev_tabBarFullHeight;
 
+- (Boolean)checkDeviceIsUpdate:(NSString *)nowVersions;
+- (void)upUpdateFirmware:(NSString *)firmwareVersionFirstStr imgMac:(NSString *)mac version:(NSString *)version;
 
 @end
 
