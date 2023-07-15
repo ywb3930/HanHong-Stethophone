@@ -6,25 +6,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HHBodyView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol LungBodySideViewDelegate <NSObject>
 
-- (void)actionClickButtonLungCallBack:(NSString *)string tag:(NSInteger)tag position:(NSInteger)position;
-
-@end
-
-@interface LungBodySideView : UIView
-
-@property (weak, nonatomic) id<LungBodySideViewDelegate>   delegate;
-@property (assign, nonatomic) NSInteger    recordingStae;
-@property (retain, nonatomic) NSDictionary     *positionValue;
-@property (assign, nonatomic) Boolean      autoAction;
-- (void)recordingStart;
-- (void)recordingStop;
-- (void)recordingPause;
-- (void)recordingRestar;
+@interface LungBodySideView : HHBodyView
 
 @end
 

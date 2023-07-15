@@ -23,23 +23,23 @@
 - (void)actionSwitchChangeCallback:(Boolean)value cell:(UITableViewCell *)cell{
     NSIndexPath *indexPath = [self indexPathForCell:cell];
     NSInteger row = indexPath.row;
-    Boolean bRecording =  (self.recordingState == recordingState_ing || self.recordingState == recordingState_pause|| self.bStandart);
+    Boolean bRecording =  (self.recordingState == recordingState_ing || self.recordingState == recordingState_pause);
     if (row == 0) {
         [self.settingData setObject:[@(value) stringValue] forKey:@"auto_connect_echometer"];
     } else if(row == 9) {
-       if (bRecording) {
-            [kAppWindow makeToast:@"标准录音模式进行中，该设置不会马上生效，，需要重新进入标准录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-            ItemSwitchCell *switchCell = (ItemSwitchCell *)cell;
-            switchCell.switchButton.on = NO;
+       if (bRecording && self.bStandart) {
+            [kAppWindow makeToast:@"标准录音模式进行中，该设置不会马上生效，需要重新进入标准录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            //ItemSwitchCell *switchCell = (ItemSwitchCell *)cell;
+            //switchCell.switchButton.on = NO;
             //return;
         }
         [self.settingData setObject:[@(value) stringValue] forKey:@"auscultation_sequence"];
     } else if (row == 7) {
         if ( self.recordingState) {
-             [kAppWindow makeToast:@"正在录音中，修改不能马上生效" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-             ItemSwitchCell *switchCell = (ItemSwitchCell *)cell;
-             switchCell.switchButton.on = NO;
-             return;
+             [kAppWindow makeToast:@"录音模式进行中，该设置不会马上生效，需要重新进入标准录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+//             ItemSwitchCell *switchCell = (ItemSwitchCell *)cell;
+//             switchCell.switchButton.on = NO;
+             //return;
          }
         [self.settingData setObject:[@(value) stringValue] forKey:@"is_filtration_record"];
     }

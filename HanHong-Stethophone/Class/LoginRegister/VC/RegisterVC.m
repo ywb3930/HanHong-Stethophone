@@ -12,6 +12,8 @@
 #import "TTWebVC.h"
 #import "BRPickerView.h"
 #import "SettingDepartmentVC.h"
+#import "UIView+ConvertRect.h"
+
 
 @interface RegisterVC ()<UITextFieldDelegate, TTActionSheetDelegate, CodeItemViewDelegate, SettingDepartmentViewDelegate>
 
@@ -43,6 +45,7 @@
 @property (retain, nonatomic) YYLabel                          *yyLabel;
 @property (retain, nonatomic) UIButton                          *buttonRegister;
 
+
 @end
 
 @implementation RegisterVC
@@ -51,8 +54,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = UIColor.whiteColor;
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     [self initView];
 }
 
@@ -61,14 +64,34 @@
     return YES;
 }
 
-- (void)dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
+//- (void)dealloc{
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//}
 
 - (void)actionSettingDepartmentCallback:(NSString *)string{
     self.itemViewDepartent.textFieldInfo.text = string;
 }
 
+#pragma mark - UITextFieldDelegate
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    CGPoint point = [textField.superview frameOriginFromView:self.scrollView];
+    [UIView animateWithDuration:0.4f animations:^{
+        self.scrollView.contentOffset = CGPointMake(0, point.y - 320.f/1280*766);
+    }];
+}
+//
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self scrollViewScrollInInnerArea];
+}
+
+- (void)scrollViewScrollInInnerArea {
+    if (self.scrollView.contentOffset.y + self.view.height > self.scrollView.contentSize.height) {
+        [UIView animateWithDuration:0.4f animations:^{
+            self.scrollView.contentOffset = CGPointMake(0, self.scrollView.contentSize.height - self.view.height);
+        }];
+    }
+}
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     if(textField.tag == 1000 || textField.tag == 1001) {
@@ -129,6 +152,7 @@
 }
 
 - (void)actionRegister:(UIButton *)button {
+    
     NSString *invite = self.itemViewInvite.textFieldInfo.text;//邀请码
     if(self.loginType != login_type_personal) {
         if([Tools isBlankString:invite]) {
@@ -326,7 +350,7 @@
     self.scrollView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, kNavBarAndStatusBarHeight).bottomSpaceToView(self.view, kBottomSafeHeight);
     
     [self.scrollView addSubview:self.itemViewInvite];
-    self.itemViewInvite.sd_layout.leftSpaceToView(self.scrollView, Ratio20).topSpaceToView(self.scrollView, Ratio11 + 0.6*screenW - kNavBarAndStatusBarHeight).rightSpaceToView(self.scrollView, Ratio20).heightIs(Ratio33);
+    self.itemViewInvite.sd_layout.leftSpaceToView(self.scrollView, Ratio20).topSpaceToView(self.scrollView, Ratio11 + 0.4*screenW - kNavBarAndStatusBarHeight).rightSpaceToView(self.scrollView, Ratio20).heightIs(Ratio33);
     
     if(self.loginType == login_type_personal) {
         self.itemViewInvite.sd_layout.heightIs(0);
@@ -338,6 +362,8 @@
    
     [self.scrollView addSubview:self.itemViewName];
     self.itemViewName.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewInvite, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
+   
+    
     [self.scrollView addSubview:self.itemViewSex];
     self.itemViewSex.sd_layout.leftEqualToView(self.itemViewInvite).topSpaceToView(self.itemViewName, Ratio5).rightEqualToView(self.itemViewInvite).heightIs(Ratio33);
     LabelTextFieldItemView *lastItemView = self.itemViewSex;
@@ -646,38 +672,38 @@
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
-
-- (void)keyboardWillShow:(NSNotification *)notification{
-
-    CGRect rect = [self.currentTextField.superview convertRect:self.currentTextField.frame toView:self.scrollView];//获取相对于self.view的位置
-    NSDictionary *userInfo = [notification userInfo];
-    NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];//获取弹出键盘的fame的value值
-    CGRect keyboardRect = [aValue CGRectValue];
-    keyboardRect = [self.view convertRect:keyboardRect fromView:self.view.window];//获取键盘相对于self.view的frame ，传window和传nil是一样的
-    CGFloat keyboardTop = keyboardRect.origin.y - Ratio18;
-    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘弹出动画时间值
-    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
-    if (keyboardTop < CGRectGetMaxY(rect)) {//如果键盘盖住了输入框
-        CGFloat gap = keyboardTop - CGRectGetMaxY(rect) - 50;//计算需要网上移动的偏移量（输入框底部离键盘顶部为10的间距）
-        __weak typeof(self)weakSelf = self;
-        [UIView animateWithDuration:animationDuration animations:^{
-            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, gap, screenW, screenH);
-        }];
-    } else {
-        self.view.frame = CGRectMake(0, 0, screenW, screenH);
-    }
-}
-- (void)keyboardWillHide:(NSNotification *)notification{
-    NSDictionary *userInfo = [notification userInfo];
-    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘隐藏动画时间值
-    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
-    if (self.view.frame.origin.y < 0) {//如果有偏移，当影藏键盘的时候就复原
-        __weak typeof(self)weakSelf = self;
-        [UIView animateWithDuration:animationDuration animations:^{
-            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, 0, screenW, screenH);
-        }];
-    }
-}
+//
+//- (void)keyboardWillShow:(NSNotification *)notification{
+//
+//    CGRect rect = [self.currentTextField.superview convertRect:self.currentTextField.frame toView:self.scrollView];//获取相对于self.view的位置
+//    NSDictionary *userInfo = [notification userInfo];
+//    NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];//获取弹出键盘的fame的value值
+//    CGRect keyboardRect = [aValue CGRectValue];
+//    keyboardRect = [self.view convertRect:keyboardRect fromView:self.view.window];//获取键盘相对于self.view的frame ，传window和传nil是一样的
+//    CGFloat keyboardTop = keyboardRect.origin.y - Ratio18;
+//    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘弹出动画时间值
+//    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
+//    if (keyboardTop < CGRectGetMaxY(rect)) {//如果键盘盖住了输入框
+//        CGFloat gap = keyboardTop - CGRectGetMaxY(rect) - 50;//计算需要网上移动的偏移量（输入框底部离键盘顶部为10的间距）
+//        __weak typeof(self)weakSelf = self;
+//        [UIView animateWithDuration:animationDuration animations:^{
+//            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, gap, screenW, screenH);
+//        }];
+//    } else {
+//        self.view.frame = CGRectMake(0, 0, screenW, screenH);
+//    }
+//}
+//- (void)keyboardWillHide:(NSNotification *)notification{
+//    NSDictionary *userInfo = [notification userInfo];
+//    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘隐藏动画时间值
+//    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
+//    if (self.view.frame.origin.y < 0) {//如果有偏移，当影藏键盘的时候就复原
+//        __weak typeof(self)weakSelf = self;
+//        [UIView animateWithDuration:animationDuration animations:^{
+//            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, 0, screenW, screenH);
+//        }];
+//    }
+//}
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];
@@ -687,6 +713,7 @@
     if (!_scrollView) {
         _scrollView = [[UIScrollView alloc] init];
         _scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
+        _scrollView.showsVerticalScrollIndicator = NO;
     }
     return _scrollView;
 }

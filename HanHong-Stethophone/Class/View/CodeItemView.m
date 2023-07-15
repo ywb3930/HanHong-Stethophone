@@ -6,6 +6,7 @@
 //
 
 #import "CodeItemView.h"
+#import "UITextField+UsefulMethod.h"
 
 @interface CodeItemView()
 
@@ -115,6 +116,7 @@
         _textFieldCode.textColor = MainBlack;
         _textFieldCode.textAlignment = NSTextAlignmentRight;
         _textFieldCode.keyboardType = UIKeyboardTypeNumberPad;
+        [_textFieldCode addInputAccessoryViewButtonWithTitle:@"收起键盘"];
     }
     return _textFieldCode;
 }

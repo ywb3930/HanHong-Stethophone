@@ -61,6 +61,7 @@
     if(!_switchButton) {
         _switchButton = [[UISwitch alloc] init];
         [_switchButton addTarget:self action:@selector(actionSwitchChange:) forControlEvents:UIControlEventValueChanged];
+        _switchButton.onTintColor = MainColor;
     }
     return _switchButton;
 }

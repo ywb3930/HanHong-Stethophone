@@ -185,7 +185,7 @@
 
 - (void)actionMeetingStartAuscultationControlResult:(int)args{
     if (args == 1) {
-        [self.view makeToast:@"会诊开始" duration:showToastViewSuccessTime position:CSToastPositionCenter];
+        //[self.view makeToast:@"会诊开始" duration:showToastViewSuccessTime position:CSToastPositionCenter];
     } else {
         [self.view makeToast:@"开始会诊操作失败" duration:showToastViewWarmingTime position:CSToastPositionCenter];
     }
@@ -259,6 +259,7 @@
 }
 
 - (void)actionMeetingRoomEvent:(MEETINGROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
+    NSLog(@"MEETINGROOM_EVENT = %li", event);
     if (event == MeetingEntering) {
         NSLog(@"正在连接");
     } else if (event == MeetingEnterSuccess) {

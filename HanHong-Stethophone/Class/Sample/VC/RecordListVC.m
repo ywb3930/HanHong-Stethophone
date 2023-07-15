@@ -11,6 +11,7 @@
 #import "AnnotationVC.h"
 #import "TTActionSheet.h"
 #import "WXApi.h"
+#import "UITextField+UsefulMethod.h"
 
 @interface RecordListVC ()<TTPopViewDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, TTActionSheetDelegate, RecordListCellDelegate, UITextFieldDelegate>
 
@@ -805,6 +806,7 @@
 }
 
 - (void)actionCilckSelect:(UIButton *)button{
+    [self.view endEditing:YES];
     self.popView.hidden = NO;
 }
 
@@ -850,6 +852,7 @@
         _textField.layer.borderWidth = Ratio1;
         _textField.layer.borderColor = ViewBackGroundColor.CGColor;
         _textField.backgroundColor = WHITECOLOR;
+        [_textField addInputAccessoryViewButtonWithTitle:@"收起键盘"];
     }
     return _textField;
 }

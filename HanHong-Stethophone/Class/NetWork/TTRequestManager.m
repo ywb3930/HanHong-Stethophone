@@ -340,7 +340,7 @@
  请求好友
  */
 + (void)friendRequest:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
-    NSString *requestUrl = [NSString stringWithFormat:@"%@friend/reuqest", REQUEST_URL];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@friend/request", REQUEST_URL];
     [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {

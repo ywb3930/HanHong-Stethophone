@@ -11,9 +11,11 @@
 #import "ItemAgeView.h"
 #import "BRPickerView.h"
 #import "StandartRecordVC.h"
-
+#import "UIView+ConvertRect.h"
 
 @interface StandartRecordPatientInfoVC ()<TTActionSheetDelegate, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource>
+
+@property (retain, nonatomic) UIScrollView                  *scrollView;
 
 @property (retain, nonatomic) LabelTextFieldItemView          *itemViewId;
 @property (retain, nonatomic) LabelTextFieldItemView        *itemViewSex;
@@ -43,20 +45,16 @@
     [self initView];
     
 }
-//
-//- (void)viewDidAppear:(BOOL)animated
-//{
-//    [super viewDidAppear:animated];
-//    // 为当前控制器禁用👉右滑返回手势
-//    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
-//        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
-//    }
-//}
-//
-//- (BOOL)currentViewControllerShouldPop
-//{
-//    return NO;
-//}
+
+
+
+- (UIScrollView *)scrollView{
+    if (!_scrollView) {
+        _scrollView = [[UIScrollView alloc] init];
+        _scrollView.showsVerticalScrollIndicator = NO;
+    }
+    return _scrollView;
+}
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
     if (textField.tag == 1) {
@@ -214,34 +212,44 @@
 }
 
 - (void)initView{
-    [self.view addSubview:self.itemViewId];
-    self.itemViewId.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.view, kNavBarAndStatusBarHeight ).heightIs(Ratio44);
-    [self.view addSubview:self.itemViewSex];
-    self.itemViewSex.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewId, 0 ).heightIs(Ratio44);
-    [self.view addSubview:self.itemAgeView];
-    self.itemAgeView.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewSex, 0 ).heightIs(Ratio44);
-    [self.view addSubview:self.itemViewHeight];
-    [self.view addSubview:self.itemViewWeight];
-    [self.view addSubview:self.itemViewDisease];
-    [self.view addSubview:self.itemViewDiagnose];
-    [self.view addSubview:self.itemViewArea];
-    self.itemViewHeight.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemAgeView, 0 ).heightIs(Ratio44);
-    self.itemViewWeight.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewHeight, 0 ).heightIs(Ratio44);
-    self.itemViewDisease.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewWeight, 0 ).heightIs(Ratio44);
-    self.itemViewDiagnose.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewDisease, 0 ).heightIs(Ratio44);
-    self.itemViewArea.sd_layout.leftSpaceToView(self.view, Ratio11).rightSpaceToView(self.view, Ratio11).topSpaceToView(self.itemViewDiagnose, 0 ).heightIs(Ratio44);
+    [self.view addSubview:self.scrollView];
+    self.scrollView.sd_layout.leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).topSpaceToView(self.view, kNavBarAndStatusBarHeight).bottomSpaceToView(self.view, 0);
+    
+    [self.scrollView addSubview:self.itemViewId];
+    self.itemViewId.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.scrollView, 0 ).heightIs(Ratio44);
+    [self.scrollView addSubview:self.itemViewSex];
+    self.itemViewSex.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewId, 0 ).heightIs(Ratio44);
+    [self.scrollView addSubview:self.itemAgeView];
+    self.itemAgeView.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewSex, 0 ).heightIs(Ratio44);
+    [self.scrollView addSubview:self.itemViewHeight];
+    [self.scrollView addSubview:self.itemViewWeight];
+    [self.scrollView addSubview:self.itemViewDisease];
+    [self.scrollView addSubview:self.itemViewDiagnose];
+    [self.scrollView addSubview:self.itemViewArea];
+    self.itemViewHeight.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemAgeView, 0 ).heightIs(Ratio44);
+    self.itemViewWeight.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewHeight, 0 ).heightIs(Ratio44);
+    self.itemViewDisease.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewWeight, 0 ).heightIs(Ratio44);
+    self.itemViewDiagnose.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewDisease, 0 ).heightIs(Ratio44);
+    self.itemViewArea.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewDiagnose, 0 ).heightIs(Ratio44);
     [self.view addSubview:self.viewTop];
     [self.viewTop addSubview:self.tableView];
     [self.viewTop addSubview:self.buttonClearHistory];
+    [self.scrollView addSubview:self.buttonNext];
+    self.buttonNext.sd_layout.leftSpaceToView(self.scrollView, Ratio22).rightSpaceToView(self.scrollView, Ratio22).heightIs(Ratio44).topSpaceToView(self.itemViewArea, Ratio33);
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         //CGFloat y = CGRectGetMaxY(self.itemViewId.frame);
         self.viewTop.frame = CGRectMake(screenW/2, kNavBarAndStatusBarHeight + Ratio44, screenW/2 - Ratio22, Ratio33);
         self.tableView.sd_layout.leftSpaceToView(self.viewTop, 0).topSpaceToView(self.viewTop, 0).rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, Ratio33);
         self.buttonClearHistory.sd_layout.rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, 0).heightIs(Ratio33).widthIs(Ratio55);
+//        CGFloat maxYButtonNextHeight = CGRectGetMaxY(self.buttonNext.frame);
+//        CGFloat scorllViewHeight = CGRectGetHeight(self.scrollView.frame);
+//        if (scorllViewHeight < maxYButtonNextHeight+Ratio44) {
+//            self.scrollView.contentSize = CGSizeMake(screenW, maxYButtonNextHeight + Ratio44);
+//        }
     });
     
-    [self.view addSubview:self.buttonNext];
-    self.buttonNext.sd_layout.leftSpaceToView(self.view, Ratio22).rightSpaceToView(self.view, Ratio22).heightIs(Ratio44).topSpaceToView(self.itemViewArea, Ratio33);
+    
 }
 
 - (UIView *)viewTop{
@@ -417,5 +425,23 @@
 }
 
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    CGPoint point = [textField.superview frameOriginFromView:self.scrollView];
+    [UIView animateWithDuration:0.4f animations:^{
+        self.scrollView.contentOffset = CGPointMake(0, point.y - kNavBarAndStatusBarHeight);
+    }];
+}
+//
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    [self scrollViewScrollInInnerArea];
+}
+
+- (void)scrollViewScrollInInnerArea {
+    if (self.scrollView.contentOffset.y + self.view.height > self.scrollView.contentSize.height) {
+        [UIView animateWithDuration:0.4f animations:^{
+            self.scrollView.contentOffset = CGPointMake(0, 0);
+        }];
+    }
+}
 
 @end

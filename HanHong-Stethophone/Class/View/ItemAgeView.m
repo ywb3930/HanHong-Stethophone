@@ -6,6 +6,7 @@
 //
 
 #import "ItemAgeView.h"
+#import "UITextField+UsefulMethod.h"
 
 @interface ItemAgeView()
 
@@ -58,6 +59,7 @@
         _textFieldAge.textColor = MainBlack;
         _textFieldAge.keyboardType = UIKeyboardTypeNumberPad;
         _textFieldAge.textAlignment = NSTextAlignmentCenter;
+        [_textFieldAge addInputAccessoryViewButtonWithTitle:@"收起键盘"];
     }
     return _textFieldAge;
 }
@@ -78,6 +80,7 @@
         _textFieldMonth.textColor = MainBlack;
         _textFieldMonth.keyboardType = UIKeyboardTypeNumberPad;
         _textFieldMonth.textAlignment = NSTextAlignmentCenter;
+        [_textFieldMonth addInputAccessoryViewButtonWithTitle:@"收起键盘"];
     }
     return _textFieldMonth;
 }

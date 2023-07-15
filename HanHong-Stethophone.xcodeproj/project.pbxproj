@@ -119,6 +119,9 @@
 		9765E0852A3DB54C00181452 /* LungBodyBackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0842A3DB54C00181452 /* LungBodyBackView.m */; };
 		97A4117E2A616CF9006F5C4A /* WaveView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A4117C2A616CF8006F5C4A /* WaveView.m */; };
 		97A411812A624787006F5C4A /* HHBodyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411802A624786006F5C4A /* HHBodyView.m */; };
+		97A411982A627825006F5C4A /* UITextField+UsefulMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411972A627825006F5C4A /* UITextField+UsefulMethod.m */; };
+		97A411EF2A627CC2006F5C4A /* UIButton+Style.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411ED2A627CC1006F5C4A /* UIButton+Style.m */; };
+		97A411F22A627F6A006F5C4A /* UIView+ConvertRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411F12A627F6A006F5C4A /* UIView+ConvertRect.m */; };
 		97ED415C2A4A63DF0055D1C4 /* TeachingHistoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */; };
 		97ED41622A4A7BD70055D1C4 /* RecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41612A4A7BD70055D1C4 /* RecordModel.m */; };
 		97ED41682A4A8E0D0055D1C4 /* PatientModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41672A4A8E0D0055D1C4 /* PatientModel.m */; };
@@ -440,6 +443,12 @@
 		97A4117D2A616CF9006F5C4A /* WaveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveView.h; sourceTree = "<group>"; };
 		97A4117F2A624786006F5C4A /* HHBodyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHBodyView.h; sourceTree = "<group>"; };
 		97A411802A624786006F5C4A /* HHBodyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHBodyView.m; sourceTree = "<group>"; };
+		97A411962A627825006F5C4A /* UITextField+UsefulMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+UsefulMethod.h"; sourceTree = "<group>"; };
+		97A411972A627825006F5C4A /* UITextField+UsefulMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+UsefulMethod.m"; sourceTree = "<group>"; };
+		97A411ED2A627CC1006F5C4A /* UIButton+Style.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Style.m"; sourceTree = "<group>"; };
+		97A411EE2A627CC2006F5C4A /* UIButton+Style.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Style.h"; sourceTree = "<group>"; };
+		97A411F02A627F69006F5C4A /* UIView+ConvertRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ConvertRect.h"; sourceTree = "<group>"; };
+		97A411F12A627F6A006F5C4A /* UIView+ConvertRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ConvertRect.m"; sourceTree = "<group>"; };
 		97ED415A2A4A63DF0055D1C4 /* TeachingHistoryModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TeachingHistoryModel.h; sourceTree = "<group>"; };
 		97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TeachingHistoryModel.m; sourceTree = "<group>"; };
 		97ED41602A4A7BD70055D1C4 /* RecordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordModel.h; sourceTree = "<group>"; };
@@ -975,6 +984,19 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		97A411822A6275E6006F5C4A /* ResponsibilityChain */ = {
+			isa = PBXGroup;
+			children = (
+				97A411F02A627F69006F5C4A /* UIView+ConvertRect.h */,
+				97A411F12A627F6A006F5C4A /* UIView+ConvertRect.m */,
+				97A411EE2A627CC2006F5C4A /* UIButton+Style.h */,
+				97A411ED2A627CC1006F5C4A /* UIButton+Style.m */,
+				97A411962A627825006F5C4A /* UITextField+UsefulMethod.h */,
+				97A411972A627825006F5C4A /* UITextField+UsefulMethod.m */,
+			);
+			path = ResponsibilityChain;
+			sourceTree = "<group>";
+		};
 		97ED416F2A4AC89D0055D1C4 /* Bluetooth */ = {
 			isa = PBXGroup;
 			children = (
@@ -1063,6 +1085,7 @@
 		9B29B2322A3C0F89008DCFE7 /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				97A411822A6275E6006F5C4A /* ResponsibilityChain */,
 				973655512A5A5139006919AB /* NavgationBar */,
 				9736554C2A5A5139006919AB /* UINavgationController */,
 				972CBF552A54177900B8F8DE /* KSYAudioPlotView */,
@@ -1821,13 +1844,16 @@
 				97296C812A405525001EAD3A /* ItemSwitchCell.m in Sources */,
 				9736556E2A5D0AB7006919AB /* UIButton+WXD.m in Sources */,
 				9B29B3282A3C0F89008DCFE7 /* UIView+MLExtension.m in Sources */,
+				97A411982A627825006F5C4A /* UITextField+UsefulMethod.m in Sources */,
 				9B29B3082A3C0F89008DCFE7 /* KSMediaViewerController.m in Sources */,
 				9B29B3432A3C0F89008DCFE7 /* UserInfoVC.m in Sources */,
+				97A411EF2A627CC2006F5C4A /* UIButton+Style.m in Sources */,
 				973655592A5A5139006919AB /* UINavigationController+QMUI.m in Sources */,
 				9721E0AF2A427E5600B68939 /* FriendBookVC.m in Sources */,
 				9B29B3542A3C0F89008DCFE7 /* HHTabBarController.m in Sources */,
 				9751BDA62A480A3600787A5A /* HHCalendarCell.m in Sources */,
 				9B29B30D2A3C0F89008DCFE7 /* KSNavigationController.m in Sources */,
+				97A411F22A627F6A006F5C4A /* UIView+ConvertRect.m in Sources */,
 				9720B9342A5D638300C6B4F6 /* UIDevice+HanHong.m in Sources */,
 				9721E0B82A4288DD00B68939 /* FriendCell.m in Sources */,
 				9721E0A32A41AADF00B68939 /* MyCreateConsultationView.m in Sources */,

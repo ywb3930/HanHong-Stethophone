@@ -43,11 +43,13 @@
     self.title = @"标准录音";
     self.view.backgroundColor = WHITECOLOR;
     self.bAutoSaveRecord = YES;
+    self.bStandart = YES;
     [self initNavi:1];
     self.selectIndex = 0;
     self.recordType = StanarRecord;
     self.autoIndex = 0;
     [self loadPlistData:YES];
+    
     [self loadRecordTypeData];
     self.recordmodel = RecordingUntilRecordDuration;
     [self initView];

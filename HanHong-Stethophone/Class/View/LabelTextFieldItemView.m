@@ -6,6 +6,7 @@
 //
 
 #import "LabelTextFieldItemView.h"
+#import "UITextField+UsefulMethod.h"
 
 @interface LabelTextFieldItemView()
 
@@ -104,6 +105,7 @@
         _textFieldInfo.font = Font15;
         _textFieldInfo.textColor = MainBlack;
         _textFieldInfo.textAlignment = NSTextAlignmentRight;
+        [_textFieldInfo addInputAccessoryViewButtonWithTitle:@"收起键盘"];
     }
     return _textFieldInfo;
 }

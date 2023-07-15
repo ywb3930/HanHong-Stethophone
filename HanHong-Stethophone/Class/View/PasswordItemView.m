@@ -6,6 +6,7 @@
 //
 
 #import "PasswordItemView.h"
+#import "UITextField+UsefulMethod.h"
 
 @interface PasswordItemView()
 
@@ -78,6 +79,7 @@
         _textFieldPass.textColor = MainBlack;
         _textFieldPass.textAlignment = NSTextAlignmentRight;
         _textFieldPass.secureTextEntry = YES;
+        [_textFieldPass addInputAccessoryViewButtonWithTitle:@"收起键盘"];
     }
     return _textFieldPass;
 }

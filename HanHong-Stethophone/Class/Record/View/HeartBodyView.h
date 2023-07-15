@@ -6,26 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HHBodyView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol HeartBodyViewDelegate <NSObject>
-
-- (void)actionClickButtonHeartBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag;
-
-@end
-
-@interface HeartBodyView : UIView
-
-@property (weak, nonatomic) id<HeartBodyViewDelegate>    delegate;
-
-@property (assign, nonatomic) NSInteger    recordingStae;
-@property (retain, nonatomic) NSDictionary     *positionValue;
-@property (assign, nonatomic) Boolean      autoAction;
-- (void)recordingStart;
-- (void)recordingStop;
-- (void)recordingPause;
-- (void)recordingRestar;
+@interface HeartBodyView : HHBodyView
 
 @end
 

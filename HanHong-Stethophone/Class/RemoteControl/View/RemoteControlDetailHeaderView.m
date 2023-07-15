@@ -318,6 +318,7 @@
 - (HeartFilterLungView *)heartFilterLungView{
     if (!_heartFilterLungView) {
         _heartFilterLungView = [[HeartFilterLungView alloc] init];
+        _heartFilterLungView.delegate = self;
     }
     return _heartFilterLungView;
 }

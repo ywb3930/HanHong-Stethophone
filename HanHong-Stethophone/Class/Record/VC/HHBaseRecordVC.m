@@ -86,6 +86,7 @@
 }
 
 - (void)actionDeviceHelperEvent:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 {
+    NSLog(@"DEVICE_HELPER_EVENT = %li", event);
     if (event == DeviceConnecting) {
         [self actionDeviceConnecting];
     } else if (event == DeviceConnected) {
@@ -285,7 +286,7 @@
 - (void)actionToDeviceManagerVC{
     DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
     deviceManager.recordingState = self.recordingState;
-    deviceManager.bStandart = YES;
+    deviceManager.bStandart = self.bStandart;
     [self.navigationController pushViewController:deviceManager animated:YES];
 }
 

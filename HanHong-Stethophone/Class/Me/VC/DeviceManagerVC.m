@@ -33,9 +33,12 @@
 @property (retain, nonatomic) NSString                  *defaultConnectPath;
 @property (retain, nonatomic) BluetoothDeviceModel      *deviceModel;
 @property (retain, nonatomic) UILabel                   *labelTableViewTitle;
+@property (retain, nonatomic) UIActivityIndicatorView   *indicatorView;
 
 @property (retain, nonatomic) UIButton                  *buttonGuide;
 @property (assign, nonatomic) NSInteger                 loginType;
+@property (assign, nonatomic) NSInteger                 searchState;
+@property (retain, nonatomic) UIView                    *viewSearch;
 
 @end
 
@@ -68,10 +71,15 @@
         [self.view makeToast:@"无效二维码" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
+    
 
     
     NSString *macStr = [scanCodeResult substringFromIndex:2];
     NSString *mac = [Tools converDataToMacStr:macStr];
+    if ([[HHBlueToothManager shareManager] getConnectState] == DeviceConnected && [mac isEqualToString:self.deviceModel.bluetoothDeviceMac]) {
+        [self.view makeToast:@"该设备已连接" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
     BluetoothDeviceModel *model = [[BluetoothDeviceModel alloc] init];
     model.bluetoothDeviceName = deviceName;
     model.bluetoothDeviceMac = mac;
@@ -139,8 +147,12 @@
 }
 
 - (void)actionEventBluetoothMessageMain:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
-    if (event == SearchFound) {
-        self.labelTableViewTitle.text = @"已发现设备";
+    if (event == SearchStart) {
+        self.searchState = SearchStart;
+        [self.indicatorView startAnimating];
+        self.viewSearch.hidden = NO;
+    } else if (event == SearchFound) {
+        self.labelTableViewTitle.text = @"已发现的设备：";
         [self onSearchFound:(NSString *)args1 device_mac:(NSString *)args2];
     } else if (event == DeviceConnected) {
         self.tableView.hidden = YES;
@@ -150,6 +162,11 @@
         
     } else if (event == DeviceDisconnected) {
         self.deviceManagerSettingView.hidden = YES;
+    } else if (event == SearchEnd) {
+        self.searchState = SearchEnd;
+        self.labelTableViewTitle.text = @"搜索已完成：";
+        [self.indicatorView stopAnimating];
+        self.viewSearch.hidden = YES;
     }
 }
 
@@ -199,8 +216,13 @@
     }
 }
 
-
+//ResponsibilityChain
 - (void)actionToSearch:(UIBarButtonItem *)item{
+    if(self.searchState == SearchStart) {
+        [self.view makeToast:@"正在搜索设备中，请勿重复点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+   
     if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED) {
         self.deviceManagerSettingView.hidden = YES;
         self.tableView.hidden = NO;
@@ -348,6 +370,7 @@
         _labelTableViewTitle = [[UILabel alloc] initWithFrame:CGRectMake(Ratio11, 0, screenW - Ratio11, Ratio33)];
         _labelTableViewTitle.font = Font15;
         _labelTableViewTitle.textColor = MainBlack;
+        _labelTableViewTitle.text = @"";
     }
     return _labelTableViewTitle;
 }
@@ -385,7 +408,8 @@
         self.deviceDefaultView.hidden = NO;
         self.deviceDefaultView.deviceModel = self.deviceModel;
     }
-    
+    [self.view addSubview:self.viewSearch];
+    self.viewSearch.sd_layout.centerXEqualToView(self.view).topSpaceToView(self.view, kNavBarAndStatusBarHeight + Ratio77).widthIs(Ratio66).heightIs(Ratio55);
     
 }
 
@@ -411,6 +435,35 @@
     return _tableView;
 }
 
+- (UIView *)viewSearch{
+    if (!_viewSearch) {
+        _viewSearch = [[UIView alloc] init];
+        _viewSearch.backgroundColor = ViewBackGroundColor;
+        _viewSearch.layer.cornerRadius = Ratio5;
+        _viewSearch.clipsToBounds = YES;
+        _viewSearch.hidden = YES;
+        [_viewSearch addSubview:self.indicatorView];
+        
+        UILabel *label = [[UILabel alloc] init];
+        [_viewSearch addSubview:label];
+        label.text = @"设备搜索中";
+        label.font = [UIFont systemFontOfSize:Ratio10];
+        label.textAlignment = NSTextAlignmentCenter;
+        label.textColor = MainNormal;
+        label.sd_layout.bottomSpaceToView(_viewSearch, Ratio5).heightIs(Ratio12).rightSpaceToView(_viewSearch, 0).leftSpaceToView(_viewSearch, 0);
+    }
+    return _viewSearch;
+}
+
+- (UIActivityIndicatorView *)indicatorView{
+    if (!_indicatorView) {
+        _indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
+        _indicatorView.center = CGPointMake(Ratio33, Ratio22);
+        _indicatorView.hidesWhenStopped = YES;
+    }
+    return _indicatorView;
+}
+
 
 - (DeviceDefaultView *)deviceDefaultView{
     if (!_deviceDefaultView) {
@@ -429,6 +482,15 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
+
+- (void)dealloc{
+    [[HHBlueToothManager shareManager] abortSearch];
+}
+
+//- (void)viewWillDisappear:(BOOL)animated{
+//    [super viewWillDisappear:animated];
+//    
+//}
 
 - (void)initNaviView{
     UIBarButtonItem *item0 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
