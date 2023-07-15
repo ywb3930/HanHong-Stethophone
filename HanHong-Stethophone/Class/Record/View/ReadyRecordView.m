@@ -77,7 +77,7 @@
         _labelReadyRecord = [[UILabel alloc] init];
         _labelReadyRecord.textColor = MainColor;
         _labelReadyRecord.text = @"准备录音";
-        _labelReadyRecord.font = Font18;
+        _labelReadyRecord.font = Font15;
         _labelReadyRecord.textAlignment = NSTextAlignmentCenter;
     }
     return _labelReadyRecord;

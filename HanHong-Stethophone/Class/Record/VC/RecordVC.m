@@ -59,7 +59,21 @@
 }
 
 - (void)actionStandertRecord:(UIButton *)button{
+    
     if ([self checkConnetState]) {
+        NSString *path = [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
+        NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:path];
+
+        Boolean aSequence = [data[@"auscultation_sequence"] boolValue];
+        if (aSequence) {
+            NSArray *a = data[@"heartReorcSequence"];
+            NSArray *b = data[@"lungReorcSequence"];
+            if (a.count + b.count == 0) {
+                [self.view makeToast:@"已开启录音顺序，但您未设置具体的录音位置，请到设备页面进行设置" duration:showToastViewErrorTime position:CSToastPositionCenter];
+                return;
+            }
+        }
+        
         StandartRecordPatientInfoVC *standartRecord = [[StandartRecordPatientInfoVC alloc] init];
         [self.navigationController pushViewController:standartRecord animated:YES];
     }

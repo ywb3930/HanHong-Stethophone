@@ -18,13 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 @interface LungVoiceView : UIView
 
 @property (weak, nonatomic) id<LungVoiceViewDelegate>  delegate;
-@property (assign, nonatomic) NSInteger    recordingStae;
+@property (assign, nonatomic) NSInteger    recordingState;
 @property (assign, nonatomic) Boolean      autoAction;
 @property (retain, nonatomic) NSDictionary     *positionValue;
 - (void)recordingStart;
 - (void)recordingStop;
 - (void)recordingPause;
 - (void)recordingRestar;
+- (void)actionClearSelectButton;
 
 @end
 

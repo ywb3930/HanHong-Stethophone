@@ -17,13 +17,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HeartVoiceView : UIView
 
 @property (weak, nonatomic) id<HeartVoiceViewDelegate> delegate;
-@property (assign, nonatomic) NSInteger    recordingStae;
+@property (assign, nonatomic) NSInteger    recordingState;
 @property (retain, nonatomic) NSDictionary     *positionValue;
 @property (assign, nonatomic) Boolean      autoAction;
 - (void)recordingStart;
 - (void)recordingStop;
 - (void)recordingPause;
 - (void)recordingRestar;
+- (void)actionClearSelectButton;
+
 @end
 
 NS_ASSUME_NONNULL_END

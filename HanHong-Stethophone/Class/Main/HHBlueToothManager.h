@@ -23,7 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (Boolean)getAdvStartState;//听诊器蓝牙默认状态
 - (CONNECT_STATE)getConnectState;//获取设备的连接状态
 - (NSInteger)getDeviceType;//获取设备类型
-- (void)startRecord:(RECORD_TYPE)record_type record_mode:(RECORD_MODE)record_mode; //2
+- (void)startRecord:(RECORD_TYPE)record_type record_mode:(RECORD_MODE)record_mode;
+- (Boolean)isRecording;//2
 - (NSArray *)getRecordFile;//获取录音文件
 - (NSArray *)getRecordData;
 - (NSString *)getSerialNumber;
@@ -31,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)getBootloaderVersion;
 - (NSString *)getProductionDate;
 - (double)getBatteryState;
+
 
 - (void)setBatteryType:(BOOL) normal;
 - (void)setAdvStartState:(Boolean)state;//设置听诊器蓝牙默认状态

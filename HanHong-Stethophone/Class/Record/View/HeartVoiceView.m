@@ -10,7 +10,7 @@
 #import "HeartBodyView.h"
 
 
-@interface HeartVoiceView ()<HeartBodyViewDelegate>
+@interface HeartVoiceView ()<HHBodyViewDelegate>
 
 @property (retain, nonatomic) AusultaionView            *ausultaionView;
 @property (retain, nonatomic) HeartBodyView             *heartBodyView;
@@ -34,8 +34,8 @@
     self.heartBodyView.positionValue = positionValue;
 }
 
-- (void)setRecordingStae:(NSInteger)recordingStae{
-    self.heartBodyView.recordingStae = recordingStae;
+- (void)setrecordingState:(NSInteger)recordingState{
+    self.heartBodyView.recordingState = recordingState;
 }
 
 - (void)recordingStart{
@@ -57,11 +57,21 @@
     [self.heartBodyView recordingRestar];
 }
 
-- (void)actionClickButtonHeartBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag{
+- (void)actionClearSelectButton{
+    [self.heartBodyView actionClearSelectButton];
+}
+
+- (void)actionClickButtonBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag position:(NSInteger)position{
     if (self.delegate && [self.delegate respondsToSelector:@selector(actionClickHeartButtonBodyPositionCallBack:tag:)]) {
         [self.delegate actionClickHeartButtonBodyPositionCallBack:string tag:tag];
     }
 }
+
+//- (void)actionClickButtonHeartBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag{
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(actionClickHeartButtonBodyPositionCallBack:tag:)]) {
+//        [self.delegate actionClickHeartButtonBodyPositionCallBack:string tag:tag];
+//    }
+//}
 
 - (void)setupView{
     [self addSubview:self.ausultaionView];

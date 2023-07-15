@@ -2,7 +2,7 @@
 //  ShareDataModel.m
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/13.
+//  Created by HanHong on 2023/7/13.
 //
 
 #import "ShareDataModel.h"

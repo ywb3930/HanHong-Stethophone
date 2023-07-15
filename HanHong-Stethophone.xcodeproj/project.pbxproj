@@ -118,6 +118,7 @@
 		9765E0822A3DB53A00181452 /* LungBodySideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0812A3DB53A00181452 /* LungBodySideView.m */; };
 		9765E0852A3DB54C00181452 /* LungBodyBackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0842A3DB54C00181452 /* LungBodyBackView.m */; };
 		97A4117E2A616CF9006F5C4A /* WaveView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A4117C2A616CF8006F5C4A /* WaveView.m */; };
+		97A411812A624787006F5C4A /* HHBodyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411802A624786006F5C4A /* HHBodyView.m */; };
 		97ED415C2A4A63DF0055D1C4 /* TeachingHistoryModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */; };
 		97ED41622A4A7BD70055D1C4 /* RecordModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41612A4A7BD70055D1C4 /* RecordModel.m */; };
 		97ED41682A4A8E0D0055D1C4 /* PatientModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41672A4A8E0D0055D1C4 /* PatientModel.m */; };
@@ -437,6 +438,8 @@
 		9798E1D52A53B63C00710AFA /* HanHong-Stethophone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "HanHong-Stethophone.entitlements"; sourceTree = "<group>"; };
 		97A4117C2A616CF8006F5C4A /* WaveView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WaveView.m; sourceTree = "<group>"; };
 		97A4117D2A616CF9006F5C4A /* WaveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveView.h; sourceTree = "<group>"; };
+		97A4117F2A624786006F5C4A /* HHBodyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHBodyView.h; sourceTree = "<group>"; };
+		97A411802A624786006F5C4A /* HHBodyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHBodyView.m; sourceTree = "<group>"; };
 		97ED415A2A4A63DF0055D1C4 /* TeachingHistoryModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TeachingHistoryModel.h; sourceTree = "<group>"; };
 		97ED415B2A4A63DF0055D1C4 /* TeachingHistoryModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TeachingHistoryModel.m; sourceTree = "<group>"; };
 		97ED41602A4A7BD70055D1C4 /* RecordModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordModel.h; sourceTree = "<group>"; };
@@ -966,6 +969,8 @@
 				9765E0652A3D40E600181452 /* HeartVoiceView.m */,
 				9765E0672A3D40F600181452 /* LungVoiceView.h */,
 				9765E0682A3D40F600181452 /* LungVoiceView.m */,
+				97A4117F2A624786006F5C4A /* HHBodyView.h */,
+				97A411802A624786006F5C4A /* HHBodyView.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1912,6 +1917,7 @@
 				97ED418D2A4BB2870055D1C4 /* Constant.m in Sources */,
 				9720B9492A5FD75300C6B4F6 /* UpdateDeviceVC.m in Sources */,
 				9721E0AC2A41BBF400B68939 /* FriendVC.m in Sources */,
+				97A411812A624787006F5C4A /* HHBodyView.m in Sources */,
 				9B29B34F2A3C0F89008DCFE7 /* LRTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

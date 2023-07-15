@@ -2,7 +2,7 @@
 //  ShareAnnotationVC.h
 //  HanHong-Stethophone
 //
-//  Created by 袁文斌 on 2023/7/13.
+//  Created by HanHong on 2023/7/13.
 //
 
 #import <UIKit/UIKit.h>

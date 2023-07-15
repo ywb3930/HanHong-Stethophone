@@ -141,6 +141,10 @@ static HanhongDeviceHelper             *_hanhongDevice;
    [_hanhongDevice StartRecord:record_type record_mode:record_mode];
 }
 
+- (Boolean)isRecording{
+    return [_hanhongDevice IsRecording];
+}
+
 - (void)stop{
     [_hanhongDevice Stop];
 }

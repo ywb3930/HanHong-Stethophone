@@ -126,6 +126,7 @@
         [self actionDeviceHelperRecordPause];
     } else if (event == DeviceHelperRecordResume) {
         NSLog(@"录音恢复");
+        self.recordingState = recordingState_ing;
         [self actionDeviceHelperRecordResume];
     } else if (event == DeviceHelperRecordEnd) {
         NSLog(@"录音结束");

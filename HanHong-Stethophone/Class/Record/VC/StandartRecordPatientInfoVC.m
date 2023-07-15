@@ -248,7 +248,7 @@
     if(!_viewTop) {
         _viewTop = [[UIView alloc] init];
         _viewTop.layer.cornerRadius = Ratio8;
-        _viewTop.layer.borderColor = MainNormal.CGColor;
+        _viewTop.layer.borderColor = ViewBackGroundColor.CGColor;
         _viewTop.layer.borderWidth = Ratio1;
         _viewTop.backgroundColor = WHITECOLOR;
         _viewTop.hidden = YES;

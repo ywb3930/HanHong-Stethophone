@@ -69,9 +69,11 @@
 }
 
 - (void)actionClickButtonLungBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag position:(NSInteger)position{
+    //if(self.recordingState == record)
     self.soundsType = lung_sounds;
     self.currentPositon = string;
     [self actionAfterButtonTypeClick];
+    
 }
 
 - (void)actionAfterButtonTypeClick{
@@ -103,9 +105,9 @@
 
 - (void)actionDeviceHelperRecordReady{
     if (self.soundsType == heart_sounds) {
-        self.heartVoiceView.recordingStae = recordingState_prepare;
+        self.heartVoiceView.recordingState = recordingState_prepare;
     } else if (self.soundsType == lung_sounds) {
-        self.lungVoiceView.recordingStae = recordingState_prepare;
+        self.lungVoiceView.recordingState = recordingState_prepare;
     }
     self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
     
@@ -113,10 +115,10 @@
 
 - (void)actionDeviceHelperRecordBegin{
     if (self.soundsType == heart_sounds) {
-        self.heartVoiceView.recordingStae = recordingState_ing;
+        self.heartVoiceView.recordingState = recordingState_ing;
         [self.heartVoiceView recordingStart];
     } else if (self.soundsType == lung_sounds) {
-        self.lungVoiceView.recordingStae = recordingState_ing;
+        self.lungVoiceView.recordingState = recordingState_ing;
         [self.lungVoiceView recordingStart];
     }
     
@@ -127,9 +129,9 @@
 
 - (void)actionDeviceHelperRecordingTime:(float)number{
     if (self.soundsType == heart_sounds) {
-        self.heartVoiceView.recordingStae = recordingState_ing;
+        self.heartVoiceView.recordingState = recordingState_ing;
     } else if(self.soundsType == lung_sounds) {
-        self.lungVoiceView.recordingStae = recordingState_ing;
+        self.lungVoiceView.recordingState = recordingState_ing;
     }
     self.readyRecordView.recordTime = number;
     self.readyRecordView.progress = number / self.recordDurationAll;
@@ -142,9 +144,9 @@
 
 - (void)actionDeviceHelperRecordPause{
     if (self.soundsType == heart_sounds) {
-        self.heartVoiceView.recordingStae = recordingState_pause;
+        self.heartVoiceView.recordingState = recordingState_pause;
     } else if (self.soundsType == lung_sounds) {
-        self.lungVoiceView.recordingStae = recordingState_pause;
+        self.lungVoiceView.recordingState = recordingState_pause;
     }
     self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
     if (self.soundsType == heart_sounds) {
@@ -157,10 +159,10 @@
 
 - (void)actionDeviceHelperRecordEnd{
     if (self.soundsType == heart_sounds) {
-        self.heartVoiceView.recordingStae = recordingState_stop;
+        self.heartVoiceView.recordingState = recordingState_stop;
         [self.heartVoiceView recordingStop];
     } else if (self.soundsType == lung_sounds) {
-        self.lungVoiceView.recordingStae = recordingState_stop;
+        self.lungVoiceView.recordingState = recordingState_stop;
         [self.lungVoiceView recordingStop];
     }
     [self reloadViewRecordView];
@@ -168,6 +170,7 @@
     self.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
     self.readyRecordView.recordCode = @"--";
     self.readyRecordView.startTime = @"00:00";
+    self.recordBottomView.positionName = @"请选择采集位置";
     if (self.bAuscultationSequence) {
         self.autoIndex++;
         NSLog(@"autoIndex = %li", self.autoIndex);
@@ -255,7 +258,7 @@
         }
         if (button.selected) {
             return;
-        } else if(self.recordingState == recordingState_ing) {
+        } else if(self.recordingState == recordingState_ing || self.recordingState == recordingState_pause) {
             [kAppWindow makeToast:@"正在录音中，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
@@ -274,7 +277,7 @@
     self.lungVoiceView.hidden = YES;
     [self loadRecordTypeData];
     [self actionStartRecord];
-
+    [self.lungVoiceView actionClearSelectButton];
 }
 
 - (void)actionClickButtonLung:(UIButton *)button{
@@ -285,7 +288,7 @@
         }
         if (button.selected) {
             return;
-        } else if(self.recordingState == recordingState_ing) {
+        } else if(self.recordingState == recordingState_ing || self.recordingState == recordingState_pause) {
             [kAppWindow makeToast:@"正在录音中，不可点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
             return;
         }
@@ -302,6 +305,7 @@
     [self.recordBottomView updateLayout];
     self.lungVoiceView.hidden = NO;
     [self loadRecordTypeData];
+    [self.heartVoiceView actionClearSelectButton];
     //[self actionStartRecord];
 }
 
