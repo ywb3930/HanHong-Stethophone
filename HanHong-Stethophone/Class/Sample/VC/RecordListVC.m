@@ -422,27 +422,37 @@
             [self actionToDeleteRecord:model];
         }
     } if (tag == 2) {
-        if (index == 0) {
-            
-            [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要上传%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
-                //将本地录音上传至云标本库
-                [self actionAfterUploadRecordSuccess];
-            } cancel:^{
-            }];
-            
-        } else {
-            [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要删除%@的录音吗?",fileName] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
-                //删除本地录音
-                [self actionDeleteLocalData];
-            } cancel:^{
-            }];
-            
-        }
+        [self actionToCancelCollectRecord:model];
     }
 }
 
-- (void)actionUploadCollectToClound{
-    
+- (void)actionToCancelCollectRecord:(RecordModel *)model{
+    [Tools showAlertView:nil andMessage:[NSString stringWithFormat:@"您确定要取消收藏%@的录音吗?",model.record_time] andTitles:@[@"取消", @"确定"] andColors:@[MainNormal, MainColor] sure:^{
+        //删除云标本库
+        [self actionDeleteFavorateData:model];
+    } cancel:^{
+        
+    }];
+}
+
+- (void)actionDeleteFavorateData:(RecordModel *)model{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"token"] = LoginData.token;
+    params[@"favorite_id"] = model.favorite_id;
+    [Tools showWithStatus:@"正在删除"];
+    __weak typeof(self) wself = self;
+    [TTRequestManager recordFavoriteDelete:params success:^(id  _Nonnull responseObject) {
+        if ([responseObject[@"errorCode"] integerValue] == 0) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //寻找本地缓存文件，如果有先删除，再刷新
+                [wself deleteAndRefrshLocalRecordData];
+            });
+        }
+        [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        [SVProgressHUD dismiss];
+    } failure:^(NSError * _Nonnull error) {
+        [SVProgressHUD dismiss];
+    }];
 }
 
 - (void)actionToShareRecord:(RecordModel *)model message:(Boolean )bShared{
@@ -899,6 +909,8 @@
             } else {
                 arrayTitle = @[@"分享", @"删除"];
             }
+        } else if (self.idx == 2){
+            arrayTitle = @[@"删除"];
         }
         TTActionSheet *actionSheet = [TTActionSheet showActionSheet:arrayTitle cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
         actionSheet.delegate = self;
@@ -910,8 +922,6 @@
 //切换页面时停止播放
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    //self.bCurrentView = NO;
-    //[self stopPlayRecord];
     
 }
 

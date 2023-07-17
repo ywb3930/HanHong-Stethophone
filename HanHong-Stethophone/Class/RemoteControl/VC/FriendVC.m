@@ -108,7 +108,7 @@
         
         JXCategoryIndicatorLineView *lineView = [[JXCategoryIndicatorLineView alloc] init];
         lineView.indicatorColor = MainColor;//indicatorLineViewColor
-        lineView.indicatorWidth = Ratio55;//indicatorLineWidth
+        lineView.indicatorWidth = Ratio50;//indicatorLineWidth
         lineView.indicatorHeight = Ratio2;
         lineView.verticalMargin = Ratio5;
         

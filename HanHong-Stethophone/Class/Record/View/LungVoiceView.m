@@ -155,6 +155,7 @@
     self.lungBodyBackView.hidden = YES;
     self.viewLine.sd_layout.centerXEqualToView(self.buttonFront);
     [self.viewLine updateLayout];
+    [[HHBlueToothManager shareManager] stop];
 }
 
 - (void)actionClickSide:(UIButton *)button{
@@ -180,6 +181,7 @@
     self.lungBodyBackView.hidden = YES;
     self.viewLine.sd_layout.centerXEqualToView(self.buttonSide);
     [self.viewLine updateLayout];
+    [[HHBlueToothManager shareManager] stop];
 }
 
 - (void)actionClickBack:(UIButton *)button{
@@ -204,6 +206,7 @@
     self.lungBodyBackView.hidden = NO;
     self.viewLine.sd_layout.centerXEqualToView(self.buttonBack);
     [self.viewLine updateLayout];
+    [[HHBlueToothManager shareManager] stop];
 }
 
 - (void)setupView{

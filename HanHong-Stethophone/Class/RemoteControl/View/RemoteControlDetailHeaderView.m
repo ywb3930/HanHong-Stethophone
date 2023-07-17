@@ -104,9 +104,16 @@
     }
 }
 
-- (void)setBStartRecord:(Boolean)bStartRecord{
-    self.buttonConsultation.selected = bStartRecord;
+
+- (void)setBButtonSelected:(Boolean)bButtonSelected{
+    _bButtonSelected = bButtonSelected;
+    if (bButtonSelected) {
+        [_buttonConsultation setTitle:@"暂停会诊" forState:UIControlStateNormal];
+    } else {
+        [_buttonConsultation setTitle:@"开始会诊" forState:UIControlStateNormal];
+    }
 }
+
 
 - (void)setUserModel:(FriendModel *)userModel{
     self.labelPatientName.text = userModel.name;
@@ -128,7 +135,7 @@
 
 - (void)actionButtonConsultationClick:(UIButton *)button{
     if (self.delegate && [self.delegate respondsToSelector:@selector(actionConsultationButtonClick:)]) {
-        [self.delegate actionConsultationButtonClick:!button.selected];
+        [self.delegate actionConsultationButtonClick:!self.bButtonSelected];
     }
 }
 
@@ -158,7 +165,7 @@
     [self addSubview:self.labelPatientName];
     self.labelPatientName.sd_layout.leftSpaceToView(self, 0).rightSpaceToView(self, 0).heightIs(Ratio14).topSpaceToView(self.imageViewPatient, Ratio4);
     [self addSubview:self.imageViewTag];
-    self.imageViewTag.sd_layout.rightEqualToView(self.imageViewPatient).bottomEqualToView(self.imageViewPatient).heightIs(Ratio12).widthIs(Ratio12);
+    self.imageViewTag.sd_layout.rightEqualToView(self.imageViewPatient).bottomEqualToView(self.imageViewPatient).heightIs(Ratio15).widthIs(Ratio15);
     [self addSubview:self.buttonConsultation];
     self.buttonConsultation.sd_layout.topSpaceToView(self.labelPatient, 0).rightSpaceToView(self, Ratio11).widthIs(Ratio88).heightIs(Ratio33);
     
@@ -376,7 +383,6 @@
     if (!_buttonConsultation) {
         _buttonConsultation = [[UIButton alloc] init];
         [_buttonConsultation setTitle:@"开始会诊" forState:UIControlStateNormal];
-        [_buttonConsultation setTitle:@"暂停会诊" forState:UIControlStateSelected];
         [_buttonConsultation setTitleColor:WHITECOLOR forState:UIControlStateNormal];
         _buttonConsultation.backgroundColor = MainColor;
         _buttonConsultation.layer.cornerRadius = Ratio4;

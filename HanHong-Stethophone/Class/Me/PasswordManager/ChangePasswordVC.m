@@ -48,13 +48,24 @@
     [TTRequestManager userModifyPassword:params success:^(id  _Nonnull responseObject) {
         [SVProgressHUD dismiss];
         if([responseObject[@"errorCode"] integerValue] == 0) {
-            
+            [self actionChangeSuccess];
             [self.navigationController popViewControllerAnimated:YES];
         }
         [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
     }];
+}
+
+- (void)actionChangeSuccess{
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    NSDictionary *p = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
+    [params addEntriesFromDictionary:p];
+    params[@"password"] = self.itemViewNew.textFieldPass.text;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:params forKey:@"user"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (void)initView{

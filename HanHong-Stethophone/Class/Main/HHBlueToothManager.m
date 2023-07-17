@@ -41,9 +41,7 @@ static HanhongDeviceHelper             *_hanhongDevice;
         userInfo[@"args2"] = args2;
     }
     if (event == DeviceConnected) {
-//        dispatch_sync(dispatch_get_main_queue(), ^{
-//            [_hanhongDevice Disconnect];
-//        });
+
         
         if ([_hanhongDevice GetModel] == POPULAR3) {
             NSString *deviceFirmwareVersion = [_hanhongDevice GetFirmwareVersion];

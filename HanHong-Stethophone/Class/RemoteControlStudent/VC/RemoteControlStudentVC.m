@@ -59,27 +59,27 @@
         }
     }
     if (urlValid) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            ClinicLearningVC *clinicLearning = [[ClinicLearningVC alloc] init];
-            clinicLearning.classroomUrl = [NSString stringWithFormat:@"%@/api/teaching/classroom", urlArray[0]];
-            clinicLearning.classroomId = urlArray[1];
-            [self.navigationController pushViewController:clinicLearning animated:YES];
-        });
-        
+        [self performSelector:@selector(delayedMethodWithParameter:) withObject:urlArray afterDelay:1.0];
     } else {
         [self.view makeToast:@"无效的临床学习二维码" duration:showToastViewWarmingTime position:CSToastPositionCenter];
     }
-    
-    
+}
+
+- (void)delayedMethodWithParameter:(NSArray *)urlArray{
+    ClinicLearningVC *clinicLearning = [[ClinicLearningVC alloc] init];
+    clinicLearning.classroomUrl = [NSString stringWithFormat:@"%@/api/teaching/classroom", urlArray[0]];
+    clinicLearning.classroomId = urlArray[1];
+    [self.navigationController pushViewController:clinicLearning animated:YES];
 }
 
 - (void)reloadCalender:(NSNotification *)noti{
     if ([NSThread isMainThread]) {
         [self.studentProgramView initData:self.studentProgramView.currentDate];
     } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+        [mainQueue addOperationWithBlock:^{
             [self.studentProgramView initData:self.studentProgramView.currentDate];
-        });
+        }];
     }
     
 }

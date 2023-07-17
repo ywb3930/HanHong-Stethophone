@@ -650,14 +650,14 @@
     annotationFull.saveLocation = self.saveLocation;
     annotationFull.arrayCharacteristic = self.arrayCharacteristic;
     __weak typeof(self) wself = self;
-    annotationFull.resultBlock = ^{
-        wself.bChangeData = YES;
+    annotationFull.resultBlock = ^(Boolean bChangeValue) {
+        wself.bChangeData = bChangeValue;
         [wself reloadAnnotationView];
     };
     [self.navigationController pushViewController:annotationFull animated:NO];
 }
-
-
+//https://www.hedelongcloud.com/api/record/share_brief/IX93fzFS3Ilo2Tey5aq3SQ==
+//https://www.hedelongcloud.com/api/record/share_brief/oUcU3NzUdxipYKXOSlR6hg==
 - (UIButton *)buttonSave{
     if (!_buttonSave) {
         _buttonSave = [[UIButton alloc] init];

@@ -205,7 +205,7 @@
     if (indexPath.row == self.arrayData.count) {
         FriendBookVC *friendBook = [[FriendBookVC alloc] init];
         friendBook.selectModel = self.arrayData;
-        friendBook.bAdd = YES;
+        friendBook.bAddFriend = YES;
         friendBook.delegate = self;
         [self.navigationController pushViewController:friendBook animated:YES];
     }
@@ -267,7 +267,7 @@
     } else {
         self.currentIndexPath = indexPath;
         
-        TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"设为采集人", @"删除"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
+        TTActionSheet *actionSheet = [TTActionSheet showActionSheet:@[@"设置为采集人", @"删除"] cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
         actionSheet.delegate = self;
         [actionSheet showInView:kAppWindow];
         

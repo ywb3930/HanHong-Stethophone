@@ -233,7 +233,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
                     macStr = [BluetoothHelper convertDataToHexStr:advertisementData[@"kCBAdvDataManufacturerData"]];
                     
                     NSLog(@"Connect Search found %@ %@", peripheral.name, macStr);
-                    
+                    NSLog(@"macStr = %@, deviceMacAddr = %@", macStr, deviceMacAddr);
                     if ([macStr isEqualToString:deviceMacAddr]) {
                         
                         device = peripheral;

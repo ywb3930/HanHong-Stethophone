@@ -44,22 +44,23 @@
         [self.view makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return NO;
     } else if ([[HHBlueToothManager shareManager] getDeviceType] != STETHOSCOPE) {
-        [self.view makeToast:@"您连接的设备不是听诊区" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        [self.view makeToast:@"您连接的设备不是听诊器" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return NO;
     }
     return YES;
 }
 
 - (void)actionFastRecord:(UIButton *)button{
-    NSLog(@"111111");
     if ([self checkConnetState]) {
         QuickRecordVC *quickRecord = [[QuickRecordVC alloc] init];
         [self.navigationController pushViewController:quickRecord animated:YES];
     }
+    
+    
+    
 }
 
 - (void)actionStandertRecord:(UIButton *)button{
-    
     if ([self checkConnetState]) {
         NSString *path = [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
         NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:path];

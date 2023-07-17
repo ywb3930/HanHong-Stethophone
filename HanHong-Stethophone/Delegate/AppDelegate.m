@@ -14,7 +14,6 @@
 #import <CoreTelephony/CTCellularData.h>
 #import "ToolsCheckUpdate.h"
 #import "ShareAnnotationVC.h"
-#import "TestVC.h"
 
 //#import <UMCommon/UMCommon.h>
 //#import <UMAPM/UMCrashConfigure.h>
@@ -24,11 +23,11 @@
 
 /**
  Andoird 问题
-1.自动录音
+1.标准录音时，录音顺序开关打开，选择多个位置，自动录音时只显示第一个位置，不会自动跳到其它位置录音
 2.心音选中，不录音，点击肺音，不选位置，按听诊器会开始录音
-3.肺音正面选中 不录音，点击背面，正面的选中不取消
- iOS问题 暂停会诊卡死
- 
+3.第一次画新选区时不会出现标注按钮
+ iOS问题
+1.远程会诊时，暂停会诊卡死
  */
 
 @interface AppDelegate ()
@@ -43,11 +42,7 @@
 - (void)loginBroadcast:(NSNotification *)userIfo{
     NSDictionary *data = userIfo.userInfo;
     [self actionSetRootView:data];
-   
-    
 }
-
-
 
 - (void)actionSetRootView:(NSDictionary *)data{
     if([data[@"type"] isEqualToString:@"1"]) {//登录成功
@@ -76,40 +71,14 @@
                 self.window.rootViewController = navigation;
             });
         }
-        
-        
     }
 }
 
-- (Boolean)checkDeviceIsUpdate:(NSString *)nowVersions{
-    NSString *appVersion = @"0.1.3";
-    //@"V2.1.2"
-    //当前版本
-    NSString *version = [nowVersions substringFromIndex:1];
-    
-    NSArray *appVersionArr = [appVersion componentsSeparatedByString:@"."];
-    NSArray *versionArr = [version componentsSeparatedByString:@"."];
-    NSInteger appVersionInt1 = [appVersionArr[1] integerValue];
-    NSInteger versionInt1 = [versionArr[1] integerValue];
-    NSInteger appVersionInt2 = [appVersionArr[2] integerValue];
-    NSInteger versionInt2 = [versionArr[2] integerValue];
-    
-    if (appVersionInt1 > versionInt1) {
-        return YES;
-    }else if ((appVersionInt1 == versionInt1) && (appVersionInt2 > versionInt2)) {
-        return YES;
-    }else if ((appVersionInt1 == versionInt1) && (appVersionInt2 == versionInt2)) {
-        return YES;
-    }
-    
-    
-    
-    return NO;
-}
+
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch. 18902400417
-    //[self checkDeviceIsUpdate:@"0.1.4"];
     [self checkNetConnect];
     LoginData = nil;
     [[ToolsCheckUpdate getInstance] actionToCheckUpdate:NO];
@@ -136,34 +105,9 @@
     [self.window makeKeyAndVisible];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginBroadcast:) name:login_broadcast object:nil];
- ////649e6e8cbd4b621232c434ed
-    
-//    applinks:eba4fc5d76acfd96108720a7aadb21c5.share2dlink.com
-//    [WXApi startLogByLevel:WXLogLevelDetail logBlock:^(NSString *log) {
-//        NSLog(@"WeChatSDK: %@", log);
-//    }];
+ 
     [WXApi registerApp:@"wx97eae6a515b782d3" universalLink:@"https://www.hedelongcloud.com/auscultationassistant/"];
-    //[self initTestUM];
-    //在register之前打开log, 后续可以根据log排查问题
-   
-
-    //务必在调用自检函数前注册
-
-
-//    //调用自检函数
-//    [WXApi checkUniversalLinkReady:^(WXULCheckStep step, WXCheckULStepResult* result) {
-//        NSLog(@"WeChatSDK = %@, %u, %@, %@", @(step), result.success, result.errorInfo, result.suggestion);
-//    }];
-    
-//    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenW, screenH)];
-//    view.backgroundColor = UIColor.redColor;
-//
-//    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screenW, screenH)];
-//    imageView.image = [UIImage imageNamed:@"hanhong_bg.jpg"];
-//    imageView.contentMode = UIViewContentModeScaleAspectFill;
-//    [view addSubview:imageView];
-//
-//    [kAppWindow addSubview:view];
+ 
     
     [NSThread sleepForTimeInterval:1.0];//设置启动页面时间
 
@@ -171,10 +115,15 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application{
+    NSLog(@"applicationDidBecomeActive");
     Boolean needUpdateApp = [[NSUserDefaults standardUserDefaults] boolForKey:@"needUpdateApp"];
     if (needUpdateApp) {
         [[ToolsCheckUpdate getInstance] actionToCheckUpdate:NO];
     }
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application{
+    NSLog(@"applicationDidEnterBackground");
 }
 
 //- (void)initTestUM{
@@ -204,8 +153,7 @@
     NSDictionary *deviceManage = [NSDictionary dictionaryWithContentsOfFile:deviceManagerPath];
     Boolean autoConnect = [deviceManage[@"auto_connect_echometer"] boolValue];
     if (dataBluetooth && autoConnect) {
-        NSString *bluetoothDeviceUUID = [dataBluetooth objectForKey:@"bluetoothDeviceUUID"];
-        [[HHBlueToothManager shareManager] connent:bluetoothDeviceUUID];
+        NSString *bluetoothDeviceUUID = [dataBluetooth objectForKey:@"bluetoothDeviceUUID"];        [[HHBlueToothManager shareManager] connent:bluetoothDeviceUUID];
         NSLog(@"bluetoothDeviceUUID 4 = %@", bluetoothDeviceUUID);
     }
 }
@@ -236,19 +184,17 @@
 
 
 - (void)onReq:(BaseReq *)req{
-    NSLog(@"43");
     if([req isKindOfClass:[LaunchFromWXReq class]]) {
         LaunchFromWXReq *wxReq = (LaunchFromWXReq *)req;
         WXMediaMessage *message = wxReq.message;
         NSString *messageExt = message.messageExt;
-        messageExt = @"{\"share_type\": \"record\", \"share_code\": \"kdtMytTjVlLVMSfxeVDMnA==\"}";
-        
+        messageExt = [messageExt stringByReplacingOccurrencesOfString:@"'" withString:@"\""];
         NSDictionary *data = [Tools jsonData2Dictionary:messageExt];
-        
         [TTRequestManager recordShareBrief:data[@"share_code"] success:^(id  _Nonnull responseObject) {
             if ([responseObject[@"errorCode"] integerValue] == 0) {
                 NSDictionary *data = responseObject[@"data"];
                 ShareDataModel *model = [ShareDataModel yy_modelWithDictionary:data];
+                NSLog(@"url = %@", model.url);
                 if ([NSThread isMainThread]) {
                     [self actionToShareAnnotationVC:model];
                 } else {

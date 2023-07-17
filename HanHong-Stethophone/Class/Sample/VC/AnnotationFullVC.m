@@ -61,7 +61,7 @@
 
 @property (retain, nonatomic) UIView                *viewLeftView;
 @property (assign, nonatomic) NSInteger             secondCellCount;
-
+@property (assign, nonatomic) Boolean               bChangeAnnotation;;
 
 @end
 
@@ -71,6 +71,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.secondCellCount = 5;
+    self.bChangeAnnotation = NO;
     self.view.backgroundColor = MainBlack;
     self.statusBarHeight = kStatusBarHeight;
     NSLog(@"self.statusBarHeight = %@", self.recordModel.url);
@@ -254,6 +255,7 @@
         _buttonReduce.layer.cornerRadius = Ratio4;
         _buttonReduce.clipsToBounds = YES;
         [_buttonReduce addTarget:self action:@selector(actionToReduce:) forControlEvents:UIControlEventTouchUpInside];
+        ///_buttonReduce.hidden = YES;
     }
     return _buttonReduce;
 }
@@ -277,11 +279,7 @@
     if(self.secondCellCount == 1) {
         return;
     }
-    if(self.secondCellCount<=5){
-        self.secondCellCount --;
-    } else {
-        self.secondCellCount /= 2;
-    }
+
     self.secondCellCount --;
     if(self.waveFullView) {
         [self.waveFullView removeFromSuperview];
@@ -293,10 +291,8 @@
 }
 
 - (void)actionToAdd:(UIButton *)button{
-    if(self.secondCellCount<5){
+    if(self.secondCellCount<15){
         self.secondCellCount ++;
-    } else {
-        self.secondCellCount *= 2;
     }
    
     if(self.waveFullView) {
@@ -461,7 +457,7 @@
 - (void)actionViewBack:(UIButton *)button{
     [Tools showAlertView:nil andMessage:@"是否退出" andTitles:@[@"取消",@"确定"] andColors:@[MainGray, MainColor] sure:^{
         if (self.resultBlock) {
-            self.resultBlock();
+            self.resultBlock(self.bChangeAnnotation);
         }
         [self.navigationController popViewControllerAnimated:YES];
     } cancel:^{
@@ -552,6 +548,7 @@
     AnnotationInfoVC *annotationInfoVC = [[AnnotationInfoVC alloc] init];
     annotationInfoVC.soundType = self.recordModel.type_id;
     annotationInfoVC.resultBlock = ^(NSString * _Nonnull selectValue) {
+        self.bChangeAnnotation = YES;
         NSString *start = [NSString stringWithFormat:@"%@", self.startTimeDecimalNumber];
         NSString *end = [NSString stringWithFormat:@"%@",self.endTimeDecimalNumber];
         NSRange startRange = [start rangeOfString:@"."];

@@ -59,7 +59,9 @@
     __weak typeof(self) wself = self;
     [TTRequestManager userForgetPassword:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
+            
             dispatch_async(dispatch_get_main_queue(), ^{
+                [wself actionGetNewPassword];
                 [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
                     [wself.navigationController popViewControllerAnimated:YES];
                 }];
@@ -72,6 +74,16 @@
     } failure:^(NSError * _Nonnull error) {
         [SVProgressHUD dismiss];
     }];
+}
+
+- (void)actionGetNewPassword{
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    NSDictionary *p = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
+    [params addEntriesFromDictionary:p];
+    params[@"password"] = self.itemViewPassword.textFieldPass.text;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:params forKey:@"user"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 //获取验证码

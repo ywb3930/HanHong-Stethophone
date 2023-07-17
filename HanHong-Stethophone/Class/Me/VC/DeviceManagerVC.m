@@ -123,7 +123,7 @@
         NSString *firmwareVersion = [[HHBlueToothManager shareManager] getFirmwareVersion];
         NSArray *stringUrlOne = [firmwareVersion componentsSeparatedByString:@"."];
         NSString *string4 = [stringUrlOne objectAtIndex:0];
-        NSString *string5 = [NSString stringWithFormat:@"V%@", [[HHBlueToothManager shareManager] getBootloaderVersion]];
+        NSString *string5 = [NSString stringWithFormat:@"%@", [[HHBlueToothManager shareManager] getBootloaderVersion]];
         NSString *pd = [[HHBlueToothManager shareManager] getProductionDate];
         NSLog(@"ProductionDate = %@", pd);
         NSString *pd1 = [pd substringWithRange:NSMakeRange(0, 4)];
@@ -230,26 +230,27 @@
         [[HHBlueToothManager shareManager] disconnect];
     }
     
-    self.labelTableViewTitle.text = @"搜索设备中...";
+    self.labelTableViewTitle.text = @"搜索设备中......";
     [[HHBlueToothManager shareManager] actionSearchBluetoothList];
 }
 
 - (void)reloadView{
     NSString *filePath =  [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
     NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    [self.settingData addEntriesFromDictionary:data];
     
-    if (!data) {
-        [self.settingData setObject:[@(NO) stringValue] forKey:@"auto_connect_echometer"];//自动连接
-        [self.settingData setObject:[@(NO) stringValue] forKey:@"auscultation_sequence"];//录音顺序开关
-        [self.settingData setObject:@"15" forKey:@"record_duration"];//录音时长
-        [self.settingData setObject:@"60" forKey:@"remote_record_duration"];//远程录音时长
-        [self.settingData setObject:@"1" forKey:@"battery_version"];//电池信号
-        [self.settingData setObject:[@(open_filtration) stringValue] forKey:@"is_filtration_record"];//滤波
-        [self.settingData setObject:[@(heart_sounds) stringValue] forKey:@"quick_record_default_type"];//快速录音类型
-        [self.settingData writeToFile:filePath atomically:YES];
-    } else {
-        [self.settingData addEntriesFromDictionary:data];
-    }
+//    if (!data) {
+//        [self.settingData setObject:[@(NO) stringValue] forKey:@"auto_connect_echometer"];//自动连接
+//        [self.settingData setObject:[@(NO) stringValue] forKey:@"auscultation_sequence"];//录音顺序开关
+//        [self.settingData setObject:@"15" forKey:@"record_duration"];//录音时长
+//        [self.settingData setObject:@"60" forKey:@"remote_record_duration"];//远程录音时长
+//        [self.settingData setObject:@"1" forKey:@"battery_version"];//电池信号
+//        [self.settingData setObject:[@(open_filtration) stringValue] forKey:@"is_filtration_record"];//滤波
+//        [self.settingData setObject:[@(heart_sounds) stringValue] forKey:@"quick_record_default_type"];//快速录音类型
+//        [self.settingData writeToFile:filePath atomically:YES];
+//    } else {
+//        [self.settingData addEntriesFromDictionary:data];
+//    }
     //[self.deviceDefaultView stopTimer];
     NSString *deviceMode = [[HHBlueToothManager shareManager] getDeviceMessage];//获取设备信息
     NSInteger powerOnDefaultMode = [[HHBlueToothManager shareManager] getModeSeq];//开机默认模式
@@ -323,6 +324,13 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     BluetoothDeviceModel *model = self.arrayData[indexPath.row];
+    if ([[HHBlueToothManager shareManager] getConnectState] == DeviceConnected && [self.deviceModel.bluetoothDeviceUUID isEqualToString:model.bluetoothDeviceUUID]) {
+        [self.view makeToast:@"该设备已连接" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    
+    
+    
     [[HHBlueToothManager shareManager] connent:model.bluetoothDeviceUUID];
     self.deviceModel = model;
     

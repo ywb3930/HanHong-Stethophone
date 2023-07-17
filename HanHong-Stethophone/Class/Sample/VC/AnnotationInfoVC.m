@@ -32,6 +32,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = WHITECOLOR;
+    self.selectIdx = -1;
     if (self.soundType == heart_sounds) {
         self.arrayData = heart_PathologyTypes;
     } else {
@@ -44,7 +45,7 @@
 
 - (void)actionCommit:(UIButton *)button{
     
-    if (self.resultBlock) {
+    if (self.resultBlock&&self.selectIdx>=0) {
         
         NSString *result = self.arrayData[self.selectIdx];
         self.resultBlock(result);

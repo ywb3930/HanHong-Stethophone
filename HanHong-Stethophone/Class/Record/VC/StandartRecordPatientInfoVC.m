@@ -26,12 +26,15 @@
 @property (retain, nonatomic) LabelTextFieldItemView          *itemViewDiagnose;
 @property (retain, nonatomic) LabelTextFieldItemView        *itemViewArea;
 
-@property (retain, nonatomic) UIView                    *viewTop;
 @property (retain, nonatomic) UITableView               *tableView;
 @property (retain, nonatomic) UIButton                  *buttonClearHistory;
+@property (retain, nonatomic) UILabel                   *labelTitle;
+@property (retain, nonatomic) UIView                   *viewHeader;
+@property (retain, nonatomic) UIView                   *viewBottom;
 
 @property (retain, nonatomic) UIButton                  *buttonNext;
 @property (retain, nonatomic) NSMutableArray            *arrayData;
+
 
 @end
 
@@ -43,10 +46,7 @@
     self.view.backgroundColor = WHITECOLOR;
     self.title = @"标准录音";
     [self initView];
-    
 }
-
-
 
 - (UIScrollView *)scrollView{
     if (!_scrollView) {
@@ -83,10 +83,12 @@
     self.arrayData = [[HHDBHelper shareInstance] selectAllPatientHistory];
     NSInteger count = self.arrayData.count;
     if (count > 0) {
-        CGFloat height = Ratio33+self.arrayData.count * Ratio28;
+        CGFloat height = Ratio50+self.arrayData.count * Ratio33;
         CGFloat showHeight = (height > screenH / 3) ? screenH / 3 : height;
-        self.viewTop.hidden = NO;
-        self.viewTop.frame = CGRectMake(screenW/2, kNavBarAndStatusBarHeight + Ratio44, screenW/2 - Ratio22, showHeight);
+        self.tableView.hidden = NO;
+       // CGRectMake(screenW/2, kNavBarAndStatusBarHeight + Ratio44, screenW/2 - Ratio22, Ratio33)
+        
+        self.tableView.frame = CGRectMake(screenW/2, kNavBarAndStatusBarHeight + Ratio44, screenW/2 - Ratio22, showHeight);
         [self.tableView reloadData];
     }
 }
@@ -94,6 +96,9 @@
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     NSInteger tag = textField.tag;
     [self.view endEditing:YES];
+    if(tag != 13) {
+        self.tableView.hidden = YES;
+    }
     if (tag == 11) {
         [self actionSelectArea];
         return NO;
@@ -107,9 +112,9 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    self.viewTop.hidden = YES;
+    self.tableView.hidden = YES;
     [self.view endEditing:YES];
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+   // [tableView deselectRowAtIndexPath:indexPath animated:YES];
     PatientModel *model = self.arrayData[indexPath.row];
     self.itemViewId.textFieldInfo.text = model.patient_id;
     self.itemViewSex.textFieldInfo.text = (model.patient_sex == man) ? @"女" : @"男";
@@ -231,37 +236,10 @@
     self.itemViewDisease.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewWeight, 0 ).heightIs(Ratio44);
     self.itemViewDiagnose.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewDisease, 0 ).heightIs(Ratio44);
     self.itemViewArea.sd_layout.leftSpaceToView(self.scrollView, Ratio11).rightSpaceToView(self.scrollView, Ratio11).topSpaceToView(self.itemViewDiagnose, 0 ).heightIs(Ratio44);
-    [self.view addSubview:self.viewTop];
-    [self.viewTop addSubview:self.tableView];
-    [self.viewTop addSubview:self.buttonClearHistory];
+    [self.view addSubview:self.tableView];
     [self.scrollView addSubview:self.buttonNext];
     self.buttonNext.sd_layout.leftSpaceToView(self.scrollView, Ratio22).rightSpaceToView(self.scrollView, Ratio22).heightIs(Ratio44).topSpaceToView(self.itemViewArea, Ratio33);
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        //CGFloat y = CGRectGetMaxY(self.itemViewId.frame);
-        self.viewTop.frame = CGRectMake(screenW/2, kNavBarAndStatusBarHeight + Ratio44, screenW/2 - Ratio22, Ratio33);
-        self.tableView.sd_layout.leftSpaceToView(self.viewTop, 0).topSpaceToView(self.viewTop, 0).rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, Ratio33);
-        self.buttonClearHistory.sd_layout.rightSpaceToView(self.viewTop, 0).bottomSpaceToView(self.viewTop, 0).heightIs(Ratio33).widthIs(Ratio55);
-//        CGFloat maxYButtonNextHeight = CGRectGetMaxY(self.buttonNext.frame);
-//        CGFloat scorllViewHeight = CGRectGetHeight(self.scrollView.frame);
-//        if (scorllViewHeight < maxYButtonNextHeight+Ratio44) {
-//            self.scrollView.contentSize = CGSizeMake(screenW, maxYButtonNextHeight + Ratio44);
-//        }
-    });
-    
-    
-}
-
-- (UIView *)viewTop{
-    if(!_viewTop) {
-        _viewTop = [[UIView alloc] init];
-        _viewTop.layer.cornerRadius = Ratio8;
-        _viewTop.layer.borderColor = ViewBackGroundColor.CGColor;
-        _viewTop.layer.borderWidth = Ratio1;
-        _viewTop.backgroundColor = WHITECOLOR;
-        _viewTop.hidden = YES;
-    }
-    return _viewTop;
 }
 
 - (UIButton *)buttonClearHistory{
@@ -279,7 +257,7 @@
      [[HHDBHelper shareInstance] deleteAllPatientData];
     [self.arrayData removeAllObjects];
     [self.tableView reloadData];
-    self.viewTop.hidden = YES;
+    self.tableView.hidden = YES;
 }
 
 
@@ -305,6 +283,10 @@
 - (ItemAgeView *)itemAgeView{
     if(!_itemAgeView) {
         _itemAgeView = [[ItemAgeView alloc] init];
+        _itemAgeView.textFieldAge.delegate = self;
+        _itemAgeView.textFieldMonth.delegate = self;
+        _itemAgeView.textFieldAge.placeholder = @"0";
+        _itemAgeView.textFieldMonth.placeholder = @"0";
     }
     return _itemAgeView;
 }
@@ -312,6 +294,7 @@
 - (LabelTextFieldItemView *)itemViewHeight{
     if(!_itemViewHeight) {
         _itemViewHeight = [[LabelTextFieldItemView alloc] initWithTitle:@"身高" bMust:NO placeholder:@"请输入患者的身高(cm)"];
+        _itemViewHeight.textFieldInfo.delegate = self;
     }
     return _itemViewHeight;
 }
@@ -319,6 +302,7 @@
 - (LabelTextFieldItemView *)itemViewWeight{
     if(!_itemViewWeight) {
         _itemViewWeight = [[LabelTextFieldItemView alloc] initWithTitle:@"体重" bMust:NO placeholder:@"请输入患者的体重(kg)"];
+        _itemViewWeight.textFieldInfo.delegate = self;
     }
     return _itemViewWeight;
 }
@@ -372,16 +356,18 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];
-    self.viewTop.hidden = YES;
+    self.tableView.hidden = YES;
 }
 
 - (UITableView *)tableView{
     if(!_tableView) {
-        _tableView = [[UITableView alloc] init];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
         _tableView.delegate = self;
         _tableView.dataSource = self;
-        //_tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-
+        _tableView.sectionHeaderTopPadding = 0;
+        _tableView.layer.cornerRadius = Ratio8;
+        _tableView.layer.borderColor = HEXCOLOR(0x0081FF,0.5).CGColor;
+        _tableView.layer.borderWidth = Ratio1;
     }
     return _tableView;
 }
@@ -404,11 +390,58 @@
     return cell;
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return Ratio22;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    [self.viewBottom addSubview:self.buttonClearHistory];
+    self.buttonClearHistory.sd_layout.rightSpaceToView(self.viewBottom, 0).bottomSpaceToView(self.viewBottom, 0).heightIs(Ratio22).widthIs(Ratio55);
+    return self.viewBottom;
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return Ratio28;
+    return Ratio33;
 }
 
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return Ratio28;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
+    [self.viewHeader addSubview:self.labelTitle];
+    self.labelTitle.sd_layout.leftSpaceToView(self.viewHeader, 0).rightSpaceToView(self.viewHeader, 0).topSpaceToView(self.viewHeader, 0).bottomSpaceToView(self.viewHeader, 0);
+    return self.viewHeader;
+}
+
+
+- (UIView *)viewBottom{
+    if (!_viewBottom) {
+        _viewBottom = [[UIView alloc] init];
+        _viewBottom.backgroundColor = WHITECOLOR;
+    }
+    return _viewBottom;
+}
+
+- (UIView *)viewHeader{
+    if (!_viewHeader) {
+        _viewHeader = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenW/2 - Ratio22, Ratio28)];
+        _viewHeader.backgroundColor = WHITECOLOR;
+    }
+    return _viewHeader;
+}
+
+- (UILabel *)labelTitle{
+    if (!_labelTitle) {
+        _labelTitle = [[UILabel alloc] init];
+        _labelTitle.font = Font13;
+        _labelTitle.textColor = MainBlack;
+        _labelTitle.textAlignment = NSTextAlignmentCenter;
+        _labelTitle.text = @"历史记录";
+    }
+    return _labelTitle;
+}
 
 - (BOOL)shouldHoldBackButtonEvent {
     return YES;
@@ -426,9 +459,12 @@
 
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if(textField.tag != 13){
+        self.tableView.hidden = YES;
+    }
     CGPoint point = [textField.superview frameOriginFromView:self.scrollView];
     [UIView animateWithDuration:0.4f animations:^{
-        self.scrollView.contentOffset = CGPointMake(0, point.y - kNavBarAndStatusBarHeight);
+        self.scrollView.contentOffset = CGPointMake(0, point.y);
     }];
 }
 //

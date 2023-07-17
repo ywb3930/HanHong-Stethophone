@@ -89,7 +89,7 @@
 
 - (UIView *)viewBattery{
     if (!_viewBattery) {
-        _viewBattery = [[UIView alloc] initWithFrame:CGRectMake(0, 0, Ratio66, Ratio33)];
+        _viewBattery = [[UIView alloc] initWithFrame:CGRectMake(0, 0, Ratio44, Ratio28)];
         
         [_viewBattery addSubview:self.imageViewBattery];
         [_viewBattery addSubview:self.labelBattery];
@@ -99,7 +99,7 @@
 
 - (UIImageView *)imageViewBattery{
     if (!_imageViewBattery) {
-        _imageViewBattery = [[UIImageView alloc] initWithFrame:CGRectMake(0, Ratio3, Ratio28, Ratio28)];
+        _imageViewBattery = [[UIImageView alloc] initWithFrame:CGRectMake(0, Ratio3, Ratio22, Ratio22)];
         _imageViewBattery.image = [UIImage imageNamed:@"battery"];
     }
     return _imageViewBattery;
@@ -107,10 +107,10 @@
 
 - (UILabel *)labelBattery{
     if (!_labelBattery) {
-        _labelBattery = [[UILabel alloc] initWithFrame:CGRectMake(Ratio33, 0, Ratio44, Ratio33)];
+        _labelBattery = [[UILabel alloc] initWithFrame:CGRectMake(Ratio26, 0, Ratio33, Ratio28)];
         _labelBattery.hidden = YES;
         _labelBattery.textColor = MainBlack;
-        _labelBattery.font =Font13;
+        _labelBattery.font =Font11;
     }
     return _labelBattery;
 }

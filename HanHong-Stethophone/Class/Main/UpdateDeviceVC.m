@@ -50,14 +50,19 @@
     if (event == DeviceDisconnected && !self.bUpdate) {
         NSLog(@"Device didDisconnectPeripheral 1");
         self.bUpdate = YES;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            //[SVProgressHUD showProgress:0];
+        NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+        [mainQueue addOperationWithBlock:^{
             [SVProgressHUD showProgress:0 status:@"当前进度：0%"];
-            [self initData];
-            self.controller = [self.dfuInitiator start];
-        });
+        }];
+        [self performSelector:@selector(delayedMethod) withObject:nil afterDelay:1.0];
+        
         
     }
+}
+
+- (void)delayedMethod{
+    [self initData];
+    self.controller = [self.dfuInitiator start];
 }
 
 - (void)viewWillAppear:(BOOL)animated{
@@ -109,17 +114,18 @@
        NSLog(@"断开DFUStateDisconnecting");
    }else if(state == DFUStateCompleted){
        self.labelMessage.text = @"升级完成";
+       self.labelMessage.sd_layout.centerYIs(0.4*screenH);
+       [self.labelMessage updateLayout];
        self.labelMessage.font = Font20;
        [SVProgressHUD dismiss];
-       
-       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-           NSLog(@"完成 %@, 状态 = %li", [[HHBlueToothManager shareManager] getFirmwareVersion], [[HHBlueToothManager shareManager] getConnectState]);
-           NSLog(@"mac = %@", self.mac);
-           [[HHBlueToothManager shareManager] connent:self.mac];
-          
-       });
-       
+       //重新连接蓝牙
+       [self performSelector:@selector(delayedMethodReconnect) withObject:nil afterDelay:1.0];
    }
+}
+
+- (void)delayedMethodReconnect{
+    [[HHBlueToothManager shareManager] initDevice];
+    [[HHBlueToothManager shareManager] connent:self.mac];
 }
 
 -(void)dfuError:(enum DFUError)error didOccurWithMessage:(NSString *)message{

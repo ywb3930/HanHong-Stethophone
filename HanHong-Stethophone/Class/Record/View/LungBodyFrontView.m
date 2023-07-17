@@ -88,15 +88,15 @@
         UIButton *buttonCollected = [[UIButton alloc] init];
         [self addSubview:buttonCollected];
         [buttonCollected setTitleColor:MainColor forState:UIControlStateNormal];
-        [buttonCollected setTitle:@"已采" forState:UIControlStateNormal];
+        //[buttonCollected setTitle:@"已采" forState:UIControlStateNormal];
         [buttonCollected setImage:[UIImage imageNamed:@"check_true"] forState:UIControlStateNormal];
         buttonCollected.enabled = NO;
         buttonCollected.titleLabel.font = Font11;
         buttonCollected.hidden = YES;
-        buttonCollected.cs_imageSize = CGSizeMake(Ratio10, Ratio10);
-        buttonCollected.cs_middleDistance = Ratio2;
+        buttonCollected.cs_imageSize = CGSizeMake(Ratio8, Ratio8);
+        buttonCollected.cs_middleDistance = Ratio3;
         [self.arrayButtonsCollected addObject:buttonCollected];
-        buttonCollected.sd_layout.centerXEqualToView(buttonType).widthIs(imageWidth*2).heightIs(Ratio13).topSpaceToView(buttonType, Ratio3);
+        buttonCollected.sd_layout.centerXEqualToView(buttonType).widthIs(imageWidth*2).heightIs(Ratio17).topSpaceToView(buttonType, Ratio1);
     }
     
     [self addSubview:self.viewBody];

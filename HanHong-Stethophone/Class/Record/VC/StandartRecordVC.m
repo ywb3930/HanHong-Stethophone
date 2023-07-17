@@ -84,6 +84,7 @@
     self.recordBottomView.positionName = [NSString stringWithFormat:@"准备开始采集%@",name];
     self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
     [self actionStartRecord];
+    
 }
 
 
@@ -181,6 +182,7 @@
         });
         
     }
+    [[HHBlueToothManager shareManager] stop];
 }
 
 - (void)actionCancelClickBluetooth{
@@ -278,7 +280,7 @@
     [self.recordBottomView updateLayout];
     self.lungVoiceView.hidden = YES;
     [self loadRecordTypeData];
-    [self actionStartRecord];
+    //[self actionStartRecord];
     [self.lungVoiceView actionClearSelectButton];
 }
 
@@ -405,23 +407,23 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     if (self.recordingState == recordingState_pause) {
-        [self actionStartRecord];
+        //[self actionStartRecord];
     }
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    [[HHBlueToothManager shareManager] stop];
-    self.recordingState = recordingState_pause;
+    //[[HHBlueToothManager shareManager] stop];
+    //self.recordingState = recordingState_pause;
 }
 
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
+    //if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
         [[HHBlueToothManager shareManager] stop];
-    }
-    self.recordingState = recordingState_stop;
+    //}
+    //self.recordingState = recordingState_stop;
 }
 
 

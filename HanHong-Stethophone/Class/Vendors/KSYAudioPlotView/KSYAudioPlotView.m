@@ -13,10 +13,10 @@
 #pragma mark - Constants
 //------------------------------------------------------------------------------
 
-UInt32 const kKSYAudioPlotMaxHistoryBufferLength = 8192;
+UInt32 const kKSYAudioPlotMaxHistoryBufferLength = 8192*2;
 UInt32 const kKSYAudioPlotDefaultHistoryBufferLength = 512;
 UInt32 const KSYAudioPlotDefaultHistoryBufferLength = 512;
-UInt32 const KSYAudioPlotDefaultMaxHistoryBufferLength = 8192;
+UInt32 const KSYAudioPlotDefaultMaxHistoryBufferLength = 8192*2;
 
 //------------------------------------------------------------------------------
 #pragma mark - KSYAudioPlot (Implementation)

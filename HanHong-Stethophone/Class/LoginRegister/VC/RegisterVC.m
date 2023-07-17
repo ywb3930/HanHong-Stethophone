@@ -629,6 +629,7 @@
         _itemViewPassword = [[PasswordItemView alloc] initWithTitle:@"登录密码" bMust:YES placeholder:@"请设置您的登录密码"];
         _itemViewPassword.textFieldPass.delegate = self;
         _itemViewPassword.textFieldPass.returnKeyType = UIReturnKeyDone;
+        _itemViewPassword.textFieldPass.textContentType = UITextContentTypeOneTimeCode;
     }
     return _itemViewPassword;
 }

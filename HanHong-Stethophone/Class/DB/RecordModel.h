@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) NSString          *modify_time;//修改时间
 @property (assign, nonatomic) NSInteger         shared;//设置为全局分享
 @property (retain, nonatomic) NSString          *create_time;//上传时间
-
+@property (retain, nonatomic) NSString          *favorite_id;//录音时间
 @property (retain, nonatomic) NSString          *url;//
 
 

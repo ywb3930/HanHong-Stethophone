@@ -47,7 +47,7 @@
             self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ?  @"男" : @"女", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
         }
     }
-    [[HHBlueToothManager shareManager] disconnect];
+    //[[HHBlueToothManager shareManager] disconnect];
     [self initView];
 }
 

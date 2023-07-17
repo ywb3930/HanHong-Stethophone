@@ -29,7 +29,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = WHITECOLOR;
-    if (self.bAdd) {
+    if (self.bAddFriend) {
         self.title = @"师友录";
         [self.navigationController setNavigationBarHidden:NO animated:YES];
         UIBarButtonItem *item0 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
@@ -183,6 +183,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    FriendCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    [cell actionButtonClick:cell.buttonClick];
 }
 
 
@@ -196,7 +198,7 @@
     NSInteger section = indexPath.section;
     NSArray *list = self.arrayData[section];
     FriendCell *cell = (FriendCell *)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass([FriendCell class])];
-    cell.bShowCheck = self.bAdd;
+    cell.bShowCheck = self.bAddFriend;
     cell.friendModel = list[row];
     return cell;
 }
@@ -208,6 +210,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
     return 0;
 }
+
 
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
@@ -252,7 +255,7 @@
     }
     
     double diff = fabs(headerView.frame.origin.y - self.tableView.contentOffset.y);
-    CGFloat headerHeight = HeaderViewHeight;
+    CGFloat headerHeight = Ratio22;
     double progress;
     if (diff >= headerHeight) {
         progress = 1;
@@ -267,7 +270,9 @@
 
 - (UITableView *)tableView{
     if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screenW, screenH - kNavBarAndStatusBarHeight - kBottomSafeHeight - Ratio55)];
+        CGFloat y = self.bAddFriend ? kNavBarAndStatusBarHeight : 0;
+        CGFloat height = self.bAddFriend ? screenH - y -kBottomSafeHeight : screenH - Ratio44 - kBottomSafeHeight - y;
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, y, screenW, height)];
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.backgroundColor = WHITECOLOR;

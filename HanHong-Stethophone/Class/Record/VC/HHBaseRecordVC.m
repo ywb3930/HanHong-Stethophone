@@ -233,7 +233,7 @@
 }
 
 - (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel{
-    if (self.recordingState == recordingState_ing) {
+    if (self.recordingState == recordingState_ing || self.recordingState == recordingState_pause) {
         [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return NO;
     }
@@ -330,8 +330,6 @@
         [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:self.recordmodel];
        // self.recordingState = recordingState_prepare;RecordingWithRecordDurationMaximum
     }
-    
-    
 }
 
 - (void)reloadView{

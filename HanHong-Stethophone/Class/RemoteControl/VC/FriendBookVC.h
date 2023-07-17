@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FriendBookVC : UIViewController
 
 @property (weak, nonatomic) id<FriendBookVCDelegate>    delegate;
-@property (assign, nonatomic) Boolean                   bAdd;
+@property (assign, nonatomic) Boolean                   bAddFriend;
 @property (retain, nonatomic) NSArray                   *selectModel;
 
 @end

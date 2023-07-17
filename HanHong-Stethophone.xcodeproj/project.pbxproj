@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		8DBA27D822BC906F9C5B10F9 /* libPods-HanHong-Stethophone.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E291D06D172C87C1B1DAC722 /* libPods-HanHong-Stethophone.a */; };
 		9700E0372A5D4AEC00DEDCF9 /* ToolsCheckUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9700E0362A5D4AEC00DEDCF9 /* ToolsCheckUpdate.m */; };
-		9715C9902A616260007B0248 /* 1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9715C98F2A61625F007B0248 /* 1.wav */; };
-		9715C9932A616275007B0248 /* TestVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 9715C9922A616274007B0248 /* TestVC.m */; };
 		9720B9342A5D638300C6B4F6 /* UIDevice+HanHong.m in Sources */ = {isa = PBXBuildFile; fileRef = 9720B9332A5D638300C6B4F6 /* UIDevice+HanHong.m */; };
 		9720B9372A5FAC7600C6B4F6 /* hanhong_bg.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9720B9362A5FAC7600C6B4F6 /* hanhong_bg.jpg */; };
 		9720B9392A5FACC900C6B4F6 /* hanhong.png in Resources */ = {isa = PBXBuildFile; fileRef = 9720B9382A5FACC800C6B4F6 /* hanhong.png */; };
@@ -46,11 +44,6 @@
 		97296C842A40660F001EAD3A /* HHPopEditView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97296C832A40660F001EAD3A /* HHPopEditView.m */; };
 		97296C872A406D40001EAD3A /* ChangePasswordVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97296C862A406D40001EAD3A /* ChangePasswordVC.m */; };
 		97296C8A2A407129001EAD3A /* ChangePhoneVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97296C892A407129001EAD3A /* ChangePhoneVC.m */; };
-		972CBF612A54177900B8F8DE /* KSYPlotCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 972CBF5C2A54177900B8F8DE /* KSYPlotCircularBuffer.c */; };
-		972CBF622A54177900B8F8DE /* KSYAudioFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CBF5D2A54177900B8F8DE /* KSYAudioFile.m */; };
-		972CBF632A54177900B8F8DE /* KSYAudioPlotView.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CBF5E2A54177900B8F8DE /* KSYAudioPlotView.m */; };
-		972CBF642A54177900B8F8DE /* KSYAudioDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CBF5F2A54177900B8F8DE /* KSYAudioDisplayLink.m */; };
-		972CBF652A54177900B8F8DE /* KSYAudioUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CBF602A54177900B8F8DE /* KSYAudioUtilities.m */; };
 		972CC0A22A54327500B8F8DE /* WaveSmallView.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0A12A54327500B8F8DE /* WaveSmallView.m */; };
 		972CC0A52A545DDD00B8F8DE /* AnnotationFullVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0A42A545DDD00B8F8DE /* AnnotationFullVC.m */; };
 		972CC0AB2A54F52700B8F8DE /* NoDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = 972CC0AA2A54F52700B8F8DE /* NoDataView.m */; };
@@ -117,7 +110,6 @@
 		9765E0792A3DA15200181452 /* LungBodyFrontView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0782A3DA15200181452 /* LungBodyFrontView.m */; };
 		9765E0822A3DB53A00181452 /* LungBodySideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0812A3DB53A00181452 /* LungBodySideView.m */; };
 		9765E0852A3DB54C00181452 /* LungBodyBackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9765E0842A3DB54C00181452 /* LungBodyBackView.m */; };
-		97A4117E2A616CF9006F5C4A /* WaveView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A4117C2A616CF8006F5C4A /* WaveView.m */; };
 		97A411812A624787006F5C4A /* HHBodyView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411802A624786006F5C4A /* HHBodyView.m */; };
 		97A411982A627825006F5C4A /* UITextField+UsefulMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411972A627825006F5C4A /* UITextField+UsefulMethod.m */; };
 		97A411EF2A627CC2006F5C4A /* UIButton+Style.m in Sources */ = {isa = PBXBuildFile; fileRef = 97A411ED2A627CC1006F5C4A /* UIButton+Style.m */; };
@@ -132,6 +124,11 @@
 		97ED41AC2A4C5E710055D1C4 /* AuscultatoryAreaVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41AB2A4C5E710055D1C4 /* AuscultatoryAreaVC.m */; };
 		97ED41AF2A4D21AA0055D1C4 /* HHBluetoothButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41AE2A4D21A90055D1C4 /* HHBluetoothButton.m */; };
 		97ED41B22A4D62A10055D1C4 /* UIViewController+Swizzling.m in Sources */ = {isa = PBXBuildFile; fileRef = 97ED41B12A4D62A10055D1C4 /* UIViewController+Swizzling.m */; };
+		97FDC4522A6527B700810BC3 /* KSYPlotCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 97FDC44D2A6527B700810BC3 /* KSYPlotCircularBuffer.c */; };
+		97FDC4532A6527B700810BC3 /* KSYAudioFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 97FDC44E2A6527B700810BC3 /* KSYAudioFile.m */; };
+		97FDC4542A6527B700810BC3 /* KSYAudioPlotView.m in Sources */ = {isa = PBXBuildFile; fileRef = 97FDC44F2A6527B700810BC3 /* KSYAudioPlotView.m */; };
+		97FDC4552A6527B700810BC3 /* KSYAudioDisplayLink.m in Sources */ = {isa = PBXBuildFile; fileRef = 97FDC4502A6527B700810BC3 /* KSYAudioDisplayLink.m */; };
+		97FDC4562A6527B700810BC3 /* KSYAudioUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 97FDC4512A6527B700810BC3 /* KSYAudioUtilities.m */; };
 		9B29B3022A3C0F89008DCFE7 /* BRStringPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B2362A3C0F89008DCFE7 /* BRStringPickerView.m */; };
 		9B29B3032A3C0F89008DCFE7 /* NSDate+BRPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B23B2A3C0F89008DCFE7 /* NSDate+BRPickerView.m */; };
 		9B29B3042A3C0F89008DCFE7 /* BRDatePickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B29B23C2A3C0F89008DCFE7 /* BRDatePickerView.m */; };
@@ -226,12 +223,8 @@
 		7C7B449998C3E53CDDED91D8 /* Pods-HM-Stethophone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HM-Stethophone.debug.xcconfig"; path = "Target Support Files/Pods-HM-Stethophone/Pods-HM-Stethophone.debug.xcconfig"; sourceTree = "<group>"; };
 		9700E0352A5D4AEC00DEDCF9 /* ToolsCheckUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToolsCheckUpdate.h; sourceTree = "<group>"; };
 		9700E0362A5D4AEC00DEDCF9 /* ToolsCheckUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToolsCheckUpdate.m; sourceTree = "<group>"; };
-		9715C98F2A61625F007B0248 /* 1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = 1.wav; sourceTree = "<group>"; };
-		9715C9912A616274007B0248 /* TestVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestVC.h; sourceTree = "<group>"; };
-		9715C9922A616274007B0248 /* TestVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestVC.m; sourceTree = "<group>"; };
 		9720B9322A5D638300C6B4F6 /* UIDevice+HanHong.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIDevice+HanHong.h"; sourceTree = "<group>"; };
 		9720B9332A5D638300C6B4F6 /* UIDevice+HanHong.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+HanHong.m"; sourceTree = "<group>"; };
-		9720B9352A5F8EB500C6B4F6 /* test.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
 		9720B9362A5FAC7600C6B4F6 /* hanhong_bg.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = hanhong_bg.jpg; sourceTree = "<group>"; };
 		9720B9382A5FACC800C6B4F6 /* hanhong.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = hanhong.png; sourceTree = "<group>"; };
 		9720B9412A5FD4F900C6B4F6 /* Popular-3_V1_1_3.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "Popular-3_V1_1_3.zip"; sourceTree = "<group>"; };
@@ -295,17 +288,6 @@
 		97296C862A406D40001EAD3A /* ChangePasswordVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangePasswordVC.m; sourceTree = "<group>"; };
 		97296C882A407129001EAD3A /* ChangePhoneVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangePhoneVC.h; sourceTree = "<group>"; };
 		97296C892A407129001EAD3A /* ChangePhoneVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangePhoneVC.m; sourceTree = "<group>"; };
-		972CBF562A54177900B8F8DE /* KSYAudioFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioFile.h; sourceTree = "<group>"; };
-		972CBF572A54177900B8F8DE /* KSYPlotCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYPlotCircularBuffer.h; sourceTree = "<group>"; };
-		972CBF582A54177900B8F8DE /* KSYAudioDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioDisplayLink.h; sourceTree = "<group>"; };
-		972CBF592A54177900B8F8DE /* KSYAudioPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioPlot.h; sourceTree = "<group>"; };
-		972CBF5A2A54177900B8F8DE /* KSYAudioPlotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioPlotView.h; sourceTree = "<group>"; };
-		972CBF5B2A54177900B8F8DE /* KSYAudioUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioUtilities.h; sourceTree = "<group>"; };
-		972CBF5C2A54177900B8F8DE /* KSYPlotCircularBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSYPlotCircularBuffer.c; sourceTree = "<group>"; };
-		972CBF5D2A54177900B8F8DE /* KSYAudioFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioFile.m; sourceTree = "<group>"; };
-		972CBF5E2A54177900B8F8DE /* KSYAudioPlotView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioPlotView.m; sourceTree = "<group>"; };
-		972CBF5F2A54177900B8F8DE /* KSYAudioDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioDisplayLink.m; sourceTree = "<group>"; };
-		972CBF602A54177900B8F8DE /* KSYAudioUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioUtilities.m; sourceTree = "<group>"; };
 		972CC0A02A54327500B8F8DE /* WaveSmallView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WaveSmallView.h; sourceTree = "<group>"; };
 		972CC0A12A54327500B8F8DE /* WaveSmallView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WaveSmallView.m; sourceTree = "<group>"; };
 		972CC0A32A545DDD00B8F8DE /* AnnotationFullVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnnotationFullVC.h; sourceTree = "<group>"; };
@@ -439,8 +421,6 @@
 		9765E0832A3DB54C00181452 /* LungBodyBackView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LungBodyBackView.h; sourceTree = "<group>"; };
 		9765E0842A3DB54C00181452 /* LungBodyBackView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LungBodyBackView.m; sourceTree = "<group>"; };
 		9798E1D52A53B63C00710AFA /* HanHong-Stethophone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "HanHong-Stethophone.entitlements"; sourceTree = "<group>"; };
-		97A4117C2A616CF8006F5C4A /* WaveView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WaveView.m; sourceTree = "<group>"; };
-		97A4117D2A616CF9006F5C4A /* WaveView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveView.h; sourceTree = "<group>"; };
 		97A4117F2A624786006F5C4A /* HHBodyView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HHBodyView.h; sourceTree = "<group>"; };
 		97A411802A624786006F5C4A /* HHBodyView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHBodyView.m; sourceTree = "<group>"; };
 		97A411962A627825006F5C4A /* UITextField+UsefulMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+UsefulMethod.h"; sourceTree = "<group>"; };
@@ -469,6 +449,17 @@
 		97ED41AE2A4D21A90055D1C4 /* HHBluetoothButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HHBluetoothButton.m; sourceTree = "<group>"; };
 		97ED41B02A4D62A10055D1C4 /* UIViewController+Swizzling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Swizzling.h"; sourceTree = "<group>"; };
 		97ED41B12A4D62A10055D1C4 /* UIViewController+Swizzling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Swizzling.m"; sourceTree = "<group>"; };
+		97FDC4472A6527B700810BC3 /* KSYAudioFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioFile.h; sourceTree = "<group>"; };
+		97FDC4482A6527B700810BC3 /* KSYPlotCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYPlotCircularBuffer.h; sourceTree = "<group>"; };
+		97FDC4492A6527B700810BC3 /* KSYAudioDisplayLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioDisplayLink.h; sourceTree = "<group>"; };
+		97FDC44A2A6527B700810BC3 /* KSYAudioPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioPlot.h; sourceTree = "<group>"; };
+		97FDC44B2A6527B700810BC3 /* KSYAudioPlotView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioPlotView.h; sourceTree = "<group>"; };
+		97FDC44C2A6527B700810BC3 /* KSYAudioUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KSYAudioUtilities.h; sourceTree = "<group>"; };
+		97FDC44D2A6527B700810BC3 /* KSYPlotCircularBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = KSYPlotCircularBuffer.c; sourceTree = "<group>"; };
+		97FDC44E2A6527B700810BC3 /* KSYAudioFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioFile.m; sourceTree = "<group>"; };
+		97FDC44F2A6527B700810BC3 /* KSYAudioPlotView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioPlotView.m; sourceTree = "<group>"; };
+		97FDC4502A6527B700810BC3 /* KSYAudioDisplayLink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioDisplayLink.m; sourceTree = "<group>"; };
+		97FDC4512A6527B700810BC3 /* KSYAudioUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KSYAudioUtilities.m; sourceTree = "<group>"; };
 		9B29B2352A3C0F89008DCFE7 /* BRStringPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRStringPickerView.h; sourceTree = "<group>"; };
 		9B29B2362A3C0F89008DCFE7 /* BRStringPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRStringPickerView.m; sourceTree = "<group>"; };
 		9B29B2372A3C0F89008DCFE7 /* BRPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRPickerView.h; sourceTree = "<group>"; };
@@ -757,24 +748,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		972CBF552A54177900B8F8DE /* KSYAudioPlotView */ = {
-			isa = PBXGroup;
-			children = (
-				972CBF582A54177900B8F8DE /* KSYAudioDisplayLink.h */,
-				972CBF5F2A54177900B8F8DE /* KSYAudioDisplayLink.m */,
-				972CBF562A54177900B8F8DE /* KSYAudioFile.h */,
-				972CBF5D2A54177900B8F8DE /* KSYAudioFile.m */,
-				972CBF592A54177900B8F8DE /* KSYAudioPlot.h */,
-				972CBF5A2A54177900B8F8DE /* KSYAudioPlotView.h */,
-				972CBF5E2A54177900B8F8DE /* KSYAudioPlotView.m */,
-				972CBF5B2A54177900B8F8DE /* KSYAudioUtilities.h */,
-				972CBF602A54177900B8F8DE /* KSYAudioUtilities.m */,
-				972CBF5C2A54177900B8F8DE /* KSYPlotCircularBuffer.c */,
-				972CBF572A54177900B8F8DE /* KSYPlotCircularBuffer.h */,
-			);
-			path = KSYAudioPlotView;
-			sourceTree = "<group>";
-		};
 		97349E032A40007800AF5A06 /* PrivacyPermission */ = {
 			isa = PBXGroup;
 			children = (
@@ -1058,11 +1031,27 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		97FDC4462A6527B700810BC3 /* KSYAudioPlotView */ = {
+			isa = PBXGroup;
+			children = (
+				97FDC4472A6527B700810BC3 /* KSYAudioFile.h */,
+				97FDC4482A6527B700810BC3 /* KSYPlotCircularBuffer.h */,
+				97FDC4492A6527B700810BC3 /* KSYAudioDisplayLink.h */,
+				97FDC44A2A6527B700810BC3 /* KSYAudioPlot.h */,
+				97FDC44B2A6527B700810BC3 /* KSYAudioPlotView.h */,
+				97FDC44C2A6527B700810BC3 /* KSYAudioUtilities.h */,
+				97FDC44D2A6527B700810BC3 /* KSYPlotCircularBuffer.c */,
+				97FDC44E2A6527B700810BC3 /* KSYAudioFile.m */,
+				97FDC44F2A6527B700810BC3 /* KSYAudioPlotView.m */,
+				97FDC4502A6527B700810BC3 /* KSYAudioDisplayLink.m */,
+				97FDC4512A6527B700810BC3 /* KSYAudioUtilities.m */,
+			);
+			path = KSYAudioPlotView;
+			sourceTree = "<group>";
+		};
 		9B29B2312A3C0F89008DCFE7 /* Class */ = {
 			isa = PBXGroup;
 			children = (
-				97A4117D2A616CF9006F5C4A /* WaveView.h */,
-				97A4117C2A616CF8006F5C4A /* WaveView.m */,
 				97ED416F2A4AC89D0055D1C4 /* Bluetooth */,
 				9751BDB52A490F1500787A5A /* DB */,
 				9751BD932A47DF9E00787A5A /* RemoteControlStudent */,
@@ -1085,10 +1074,10 @@
 		9B29B2322A3C0F89008DCFE7 /* Vendors */ = {
 			isa = PBXGroup;
 			children = (
+				97FDC4462A6527B700810BC3 /* KSYAudioPlotView */,
 				97A411822A6275E6006F5C4A /* ResponsibilityChain */,
 				973655512A5A5139006919AB /* NavgationBar */,
 				9736554C2A5A5139006919AB /* UINavgationController */,
-				972CBF552A54177900B8F8DE /* KSYAudioPlotView */,
 				9751BD9D2A47F12400787A5A /* HHCalendar */,
 				97349E032A40007800AF5A06 /* PrivacyPermission */,
 				9B29B2332A3C0F89008DCFE7 /* BRPickerView */,
@@ -1576,8 +1565,6 @@
 				97ED41A52A4C0FE20055D1C4 /* HHBlueToothManager.m */,
 				9720B9472A5FD75300C6B4F6 /* UpdateDeviceVC.h */,
 				9720B9482A5FD75300C6B4F6 /* UpdateDeviceVC.m */,
-				9715C9912A616274007B0248 /* TestVC.h */,
-				9715C9922A616274007B0248 /* TestVC.m */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -1607,7 +1594,6 @@
 				9798E1D52A53B63C00710AFA /* HanHong-Stethophone.entitlements */,
 				9B5528142A36C48200F02950 /* HHPrefixHeader.pch */,
 				9B5528152A36C48200F02950 /* common.h */,
-				9715C98F2A61625F007B0248 /* 1.wav */,
 				9B29B2312A3C0F89008DCFE7 /* Class */,
 				9765E0512A3C303E00181452 /* Delegate */,
 				9B5528052A36C14C00F02950 /* Assets.xcassets */,
@@ -1617,7 +1603,6 @@
 				9B5528AB2A396E6700F02950 /* city.json */,
 				9B5528072A36C14C00F02950 /* LaunchScreen.storyboard */,
 				9B55280A2A36C14C00F02950 /* Info.plist */,
-				9720B9352A5F8EB500C6B4F6 /* test.html */,
 			);
 			path = "HanHong-Stethophone";
 			sourceTree = "<group>";
@@ -1682,7 +1667,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9715C9902A616260007B0248 /* 1.wav in Resources */,
 				9B5528092A36C14C00F02950 /* LaunchScreen.storyboard in Resources */,
 				9720B9452A5FD4F900C6B4F6 /* Popular-3_V2_1_3.zip in Resources */,
 				9720B9392A5FACC900C6B4F6 /* hanhong.png in Resources */,
@@ -1744,9 +1728,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				972CBF652A54177900B8F8DE /* KSYAudioUtilities.m in Sources */,
 				972CC0AB2A54F52700B8F8DE /* NoDataView.m in Sources */,
 				9B29B31F2A3C0F89008DCFE7 /* KSImagePickerItemCell.m in Sources */,
+				97FDC4532A6527B700810BC3 /* KSYAudioFile.m in Sources */,
 				97469CDC2A4FA7DE0091A3F3 /* HHDBHelper.m in Sources */,
 				9721E0C12A42D8C400B68939 /* CreateConsultationVC.m in Sources */,
 				9B29B3402A3C0F89008DCFE7 /* InteriorCell.m in Sources */,
@@ -1800,9 +1784,7 @@
 				9765E0852A3DB54C00181452 /* LungBodyBackView.m in Sources */,
 				9765E0692A3D40F600181452 /* LungVoiceView.m in Sources */,
 				9B29B33A2A3C0F89008DCFE7 /* TeachingTypeVC.m in Sources */,
-				972CBF612A54177900B8F8DE /* KSYPlotCircularBuffer.c in Sources */,
 				9736553D2A595164006919AB /* HanhongDeviceHelper.m in Sources */,
-				9715C9932A616275007B0248 /* TestVC.m in Sources */,
 				97ED41A62A4C0FE20055D1C4 /* HHBlueToothManager.m in Sources */,
 				9B29B3452A3C0F89008DCFE7 /* MeHeaderView.m in Sources */,
 				97349E0C2A40211200AF5A06 /* DeviceDefaultView.m in Sources */,
@@ -1834,12 +1816,14 @@
 				9B29B30B2A3C0F89008DCFE7 /* KSMediaViewerView.m in Sources */,
 				9765E05D2A3C5A8100181452 /* ItemAgeView.m in Sources */,
 				9B29B3122A3C0F89008DCFE7 /* KSImagePickerNavigationView.m in Sources */,
+				97FDC4542A6527B700810BC3 /* KSYAudioPlotView.m in Sources */,
 				9751BDB42A48495F00787A5A /* NewProgramVC.m in Sources */,
 				9751BDA02A47F15200787A5A /* HHCalendarDayModel.m in Sources */,
 				9765E0762A3D9B8200181452 /* HeartBodyView.m in Sources */,
 				97296C872A406D40001EAD3A /* ChangePasswordVC.m in Sources */,
 				973655422A59553C006919AB /* GuideVC.m in Sources */,
 				9751BD9C2A47F11C00787A5A /* HHCalendarView.m in Sources */,
+				97FDC4552A6527B700810BC3 /* KSYAudioDisplayLink.m in Sources */,
 				9B29B33F2A3C0F89008DCFE7 /* InteriorHeaderView.m in Sources */,
 				97296C812A405525001EAD3A /* ItemSwitchCell.m in Sources */,
 				9736556E2A5D0AB7006919AB /* UIButton+WXD.m in Sources */,
@@ -1857,7 +1841,6 @@
 				9720B9342A5D638300C6B4F6 /* UIDevice+HanHong.m in Sources */,
 				9721E0B82A4288DD00B68939 /* FriendCell.m in Sources */,
 				9721E0A32A41AADF00B68939 /* MyCreateConsultationView.m in Sources */,
-				972CBF622A54177900B8F8DE /* KSYAudioFile.m in Sources */,
 				97ED41682A4A8E0D0055D1C4 /* PatientModel.m in Sources */,
 				9765E0702A3D44D000181452 /* ReadyRecordView.m in Sources */,
 				972CC0AE2A550DC900B8F8DE /* WaveFullView.m in Sources */,
@@ -1882,11 +1865,9 @@
 				9B29B3192A3C0F89008DCFE7 /* KSImagePickerToolBar.m in Sources */,
 				972CC0A22A54327500B8F8DE /* WaveSmallView.m in Sources */,
 				9B29B3222A3C0F89008DCFE7 /* KSGradientButton.m in Sources */,
-				97A4117E2A616CF9006F5C4A /* WaveView.m in Sources */,
 				9B29B30C2A3C0F89008DCFE7 /* KSImagePickerViewerController.m in Sources */,
 				9B29B3052A3C0F89008DCFE7 /* BRBaseView.m in Sources */,
 				9B29B32A2A3C0F89008DCFE7 /* NSString+AttributedString.m in Sources */,
-				972CBF642A54177900B8F8DE /* KSYAudioDisplayLink.m in Sources */,
 				97469CC12A4DC7F60091A3F3 /* DeviceMessageCell.m in Sources */,
 				97349E0F2A402A1F00AF5A06 /* BluetoothDeviceModel.m in Sources */,
 				9B29B3202A3C0F89008DCFE7 /* KSImagePickerVideoItemCell.m in Sources */,
@@ -1895,6 +1876,7 @@
 				97ED41872A4B16D50055D1C4 /* AnnotationVC.m in Sources */,
 				97ED41622A4A7BD70055D1C4 /* RecordModel.m in Sources */,
 				9720B94E2A5FE4AB00C6B4F6 /* MeetingRoom.m in Sources */,
+				97FDC4562A6527B700810BC3 /* KSYAudioUtilities.m in Sources */,
 				9B29B3262A3C0F89008DCFE7 /* KSVideoPlayerLiteView.m in Sources */,
 				97349E062A40007800AF5A06 /* PrivacyPermission.m in Sources */,
 				973655362A591792006919AB /* HanhongDevice.m in Sources */,
@@ -1905,7 +1887,6 @@
 				972CC0BA2A5592D000B8F8DE /* AnnotationInfoVC.m in Sources */,
 				9736555A2A5A5139006919AB /* UIViewController+HBD.m in Sources */,
 				973655582A5A5139006919AB /* ViewController+extension.m in Sources */,
-				972CBF632A54177900B8F8DE /* KSYAudioPlotView.m in Sources */,
 				9751BDA32A47F28500787A5A /* HHCalendarManager.m in Sources */,
 				9B29B3152A3C0F89008DCFE7 /* KSImagePickerViewerNavigationView.m in Sources */,
 				9B29B3422A3C0F89008DCFE7 /* MeVC.m in Sources */,
@@ -1920,6 +1901,7 @@
 				9721E0B22A427F5E00B68939 /* NewFriendVC.m in Sources */,
 				9B29B31A2A3C0F89008DCFE7 /* KSImagePickerEditPictureView.m in Sources */,
 				9B29B34C2A3C0F89008DCFE7 /* RightDirectionView.m in Sources */,
+				97FDC4522A6527B700810BC3 /* KSYPlotCircularBuffer.c in Sources */,
 				9B29B3182A3C0F89008DCFE7 /* KSImagePickerAlbumCell.m in Sources */,
 				9751BDCD2A498C9600787A5A /* ProgramPlanListCell.m in Sources */,
 				9B29B34A2A3C0F89008DCFE7 /* HMEditView.m in Sources */,

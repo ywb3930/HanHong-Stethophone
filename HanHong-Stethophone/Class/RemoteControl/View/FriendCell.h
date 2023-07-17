@@ -26,7 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) FriendModel           *searchModel;
 @property (retain, nonatomic) FriendModel           *friendNewModel;
 @property (assign, nonatomic) Boolean               bShowCheck;
-
+@property (retain, nonatomic) UIButton                  *buttonClick;
+- (void)actionButtonClick:(UIButton *)button;
 
 @end
 

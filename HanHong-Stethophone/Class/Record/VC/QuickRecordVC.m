@@ -115,11 +115,11 @@
 //点击心音肺音按钮事件
 - (Boolean)actionHeartLungButtonClickCallback:(NSInteger)idx{
 
-    if (self.recordingState == recordingState_ing) {
+    if (self.recordingState == recordingState_ing || self.recordingState == recordingState_pause) {
         //self.recordingState = recordingState_pause;
         //[[HHBlueToothManager shareManager] stop];
         [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-        return YES;
+        return NO;
     }
     
     if (idx == 1) {
@@ -264,9 +264,9 @@
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
+    //if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
         [[HHBlueToothManager shareManager] stop];
-    }
+    //}
     self.recordingState = recordingState_stop;
 }
 

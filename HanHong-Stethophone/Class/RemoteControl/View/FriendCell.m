@@ -19,7 +19,7 @@
 @property (retain, nonatomic) UILabel                   *labelStateTitle;
 @property (retain, nonatomic) FriendModel               *currentModel;
 
-@property (retain, nonatomic) UIButton                  *buttonClick;
+
 
 @end
 

@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, MEETINGROOM_EVENT)
     MeetingEntering = 0, //正在连接
     MeetingEnterSuccess = 1, //连接成功
     MeetingEnterFailed = 2,//连接失败
-    MeetingExited = 3,//连接断开了
+    MeetingExited = 3,//连接断开了 做重连
     MeetingInfoUpdate = 4, //房间状态变更 1个参数 meetingroom_info(MeetingRoomInfo)，里面有房间的基本信息，具体查看 MeetingRoomInfo 类
     MeetingMemberUpdate = 5, //房间人员变更 3个参数
     // type(int)                    0 首次进入房间，获取的清单    1 新成员上线         -1 成员下线

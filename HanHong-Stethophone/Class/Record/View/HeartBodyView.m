@@ -62,15 +62,14 @@
     NSInteger count = self.arrayButtonInfo.count;
     CGFloat imageWidth = Ratio30;
     CGFloat width = (screenW - Ratio30 - imageWidth * count) / (count - 1);
+    UIImage *imageMainColor = [Tools viewImageFromColor:MainColor rect:CGRectMake(0, 0, Ratio44, Ratio44)];
     for(NSInteger i = 0; i < count; i++) {
         UIButton *buttonType = [[UIButton alloc] init];
         buttonType.tag = 100 + i;
         [buttonType setTitle:self.arrayButtonInfo[i] forState:UIControlStateNormal];
         [buttonType setBackgroundImage:[UIImage imageNamed:@"circle_false"] forState:UIControlStateNormal];
-        [buttonType setBackgroundImage:[Tools viewImageFromColor:MainColor rect:CGRectMake(0, 0, Ratio44, Ratio44)]
-                          forState:UIControlStateSelected];
-        [buttonType setBackgroundImage:[Tools viewImageFromColor:MainColor rect:CGRectMake(0, 0, Ratio44, Ratio44)]
-                          forState:UIControlStateDisabled];
+        [buttonType setBackgroundImage:imageMainColor forState:UIControlStateSelected];
+        [buttonType setBackgroundImage:imageMainColor forState:UIControlStateDisabled];
         [buttonType setTitleColor:MainNormal forState:UIControlStateNormal];
         [buttonType setTitleColor:WHITECOLOR forState:UIControlStateSelected];
         [buttonType setTitleColor:AlreadyColor forState:UIControlStateDisabled];
@@ -89,13 +88,15 @@
         [buttonCollected setTitle:@"已采" forState:UIControlStateNormal];
         [buttonCollected setImage:[UIImage imageNamed:@"check_true"] forState:UIControlStateNormal];
         buttonCollected.enabled = NO;
+        buttonCollected.imageView.clipsToBounds = YES;
+        buttonCollected.contentMode = UIViewContentModeScaleAspectFit;
         buttonCollected.titleLabel.font = Font11;
         buttonCollected.cs_imagePositionMode = ImagePositionModeDefault;
         buttonCollected.cs_imageSize = CGSizeMake(Ratio8, Ratio8);
         buttonCollected.cs_middleDistance = Ratio3;
         buttonCollected.hidden = YES;
         [self.arrayButtonsCollected addObject:buttonCollected];
-        buttonCollected.sd_layout.centerXEqualToView(buttonType).widthIs(imageWidth*2).heightIs(Ratio13).topSpaceToView(buttonType, Ratio3);
+        buttonCollected.sd_layout.centerXEqualToView(buttonType).widthIs(imageWidth*2).heightIs(Ratio17).topSpaceToView(buttonType, Ratio1);
     }
     
     [self addSubview:self.viewBody];

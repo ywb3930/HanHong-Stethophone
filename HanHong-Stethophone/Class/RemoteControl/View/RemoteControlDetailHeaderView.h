@@ -29,7 +29,7 @@ typedef void(^RemoteControlDetailHeaderSyncSaveBlock)(Boolean bSyncSave);
 @property (assign, nonatomic) Boolean               bCollector;//是否是采集者
 @property (retain, nonatomic) NSString              *titleMessage;
 @property (retain, nonatomic) NSString              *recordMessage;
-@property (assign, nonatomic) Boolean               bStartRecord;//是已开始录音，用于显示按钮
+@property (assign, nonatomic) Boolean               bButtonSelected;//是已开始录音，用于显示按钮
 //@property (assign, nonatomic) Boolean               bOnline;//是否是在线状态
 
 @end

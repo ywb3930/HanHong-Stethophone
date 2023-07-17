@@ -54,7 +54,7 @@
 @property (assign, nonatomic) Boolean           autoLogin;
 
 @property (assign, nonatomic) NSInteger         delay;
-@property (assign, nonatomic) Boolean           autoLogining;
+@property (assign, nonatomic) Boolean          canBAutoLogin;//判断是否满足自动登录条件
 
 //@property (retain, nonatomic) ShareDataModel    *shareDataModel;
 
@@ -66,7 +66,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.delay = 0;
-    self.autoLogining = NO;
+    self.canBAutoLogin = NO;//判断是否可以自动登录
     
     self.view.backgroundColor = WHITECOLOR;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionGetLoginType:) name:login_type_broadcast object:nil];
@@ -124,6 +124,8 @@
 
 - (void)actionAutoLogin:(UIButton *)button {
     button.selected = !button.selected;
+    self.autoLogin = button.selected;
+    //self.canBAutoLogin = self.autoLogin;
     [[NSUserDefaults standardUserDefaults] setBool:button.selected forKey:@"auto_login"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -245,7 +247,7 @@
         self.orgModel = (OrgModel *)[NSKeyedUnarchiver unarchiveObjectWithData:data];
         self.viewUnionType.labelInfo.text = self.orgModel.name;
     }
-
+    
     
     NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
     if(dic) {
@@ -257,15 +259,15 @@
             self.itemUser.textFieldInfo.text = number;
             //self.itemPass.textFieldPass.text = password;
             if(self.autoLogin && bLogin && ![Tools isBlankString:number] && ![Tools isBlankString:password]) {
-                self.autoLogining = YES;
+                self.canBAutoLogin = YES;
                 self.delay = 0;
                 [self actionLogin:self.buttonLoginPass];
             } else {
-                self.autoLogining = NO;
+                self.canBAutoLogin = NO;
             }
         } else if([type isEqualToString:@"code"] && [loginType integerValue] == self.loginType) {
             self.itemCodeUser.textFieldInfo.text = dic[@"number"];
-            self.autoLogining = NO;
+            self.canBAutoLogin = NO;
         }
     }
     
@@ -304,6 +306,7 @@
             [self reloadView:NO];
         });
     }
+
     
 }
 
@@ -332,9 +335,16 @@
     
     if(self.loginTypePassword) {
         NSString *pass = @"";
-        if(self.autoLogining) {
+        if(self.canBAutoLogin) {
             NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
             pass = dic[@"password"];
+//            if ([Tools isBlankString:pass]) {
+//                pass = self.itemPass.textFieldPass.text;
+//               if([Tools isBlankString:pass]) {
+//                   [self.view makeToast:@"请输入密码" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+//                   return;
+//               }
+//            }
         } else {
              pass = self.itemPass.textFieldPass.text;
             if([Tools isBlankString:pass]) {
@@ -342,7 +352,7 @@
                 return;
             }
         }
-        
+       // pass = self.itemPass.textFieldPass.text;
         NSString *passwordString = [NSString stringWithFormat:@"%@%@%@", saltnum1, pass, saltnum2];
         NSString *password = [Tools md5:passwordString];
         params[@"password"] = password;
@@ -444,6 +454,20 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
     [Constant shareManager].userInfoPath = pathUser;
     [self saveUserInfo];
+    
+    NSString *filePath = [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        NSMutableDictionary *data = [NSMutableDictionary dictionary];
+        [data setObject:[@(NO) stringValue] forKey:@"auto_connect_echometer"];//自动连接
+        [data setObject:[@(NO) stringValue] forKey:@"auscultation_sequence"];//录音顺序开关
+        [data setObject:@"15" forKey:@"record_duration"];//录音时长
+        [data setObject:@"60" forKey:@"remote_record_duration"];//远程录音时长
+        [data setObject:@"1" forKey:@"battery_version"];//电池信号
+        [data setObject:[@(open_filtration) stringValue] forKey:@"is_filtration_record"];//滤波
+        [data setObject:[@(heart_sounds) stringValue] forKey:@"quick_record_default_type"];//快速录音类型
+        [data writeToFile:filePath atomically:YES];
+        //[[NSUserDefaults standardUserDefaults] setObject:data forKey:@""];
+    }
    
 }
 
@@ -455,7 +479,7 @@
     } else {
         params[@"type"] = @"password";
         params[@"number"] = self.itemUser.textFieldInfo.text;
-        if (!self.autoLogining) {
+        if (!self.canBAutoLogin) {
             params[@"password"] = self.itemPass.textFieldPass.text;
         } else {
             NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];

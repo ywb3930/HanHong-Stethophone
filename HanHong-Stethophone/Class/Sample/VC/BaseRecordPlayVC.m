@@ -116,16 +116,17 @@
         _audioPlotView.backgroundColor = UIColor.clearColor;
         _audioPlotView.color = MainColor;
         _audioPlotView.plotType = KSYPlotTypeBuffer;
-        _audioPlotView.shouldFill = NO;
+        _audioPlotView.shouldFill = YES;
         _audioPlotView.shouldMirror = YES;
-        //_audioPlotView.shouldCenterYAxis = YES;
-        _audioPlotView.shouldOptimizeForRealtimePlot = YES;
+        //_audioPlotView.shouldCenterYAxis = NO;
+        _audioPlotView.shouldOptimizeForRealtimePlot = NO;
+       // _audioPlotView.
         
-        _audioPlotView.waveformLayer.shadowOffset = CGSizeMake(0.0, 1.0);
-        _audioPlotView.waveformLayer.shadowRadius = 1;
+        _audioPlotView.waveformLayer.shadowOffset = CGSizeMake(0.0, 0.0);
+        _audioPlotView.waveformLayer.shadowRadius = 0;
         _audioPlotView.waveformLayer.shadowColor = MainColor.CGColor;
-        _audioPlotView.waveformLayer.shadowOpacity = 1.0;
-        _audioPlotView.waveformLayer.lineWidth = Ratio0_5;
+        _audioPlotView.waveformLayer.shadowOpacity = 0;
+        _audioPlotView.waveformLayer.lineWidth = 0.01f*screenRatio;
         
     }
     return _audioPlotView;
@@ -160,8 +161,22 @@
 
 - (void)showWaveView:(NSString *)path{
     self.audioFile = [KSYAudioFile audioFileWithURL:[NSURL fileURLWithPath:path]];
-
-
+   // NSData *data = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:path]];
+//    int32_t bytes;
+//        [data getBytes:&bytes length:sizeof(bytes)];
+//        bytes = OSSwapBigToHostInt32(bytes);
+//    float number;
+//        memcpy(&number, &bytes, sizeof(bytes));
+//    [self.audioPlotView updateBuffer:&number withBufferSize:data.length];
+    
+    //NSString * str  =[data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
+//    Byte *bs = (Byte *)[data bytes];
+//    NSMutableArray *array = [NSMutableArray array];
+//    for (int i = 0; i < 1000; i++) {
+//        [array addObject:[@(bs[i]) stringValue]];
+//    }
+//    NSLog(@"%@", array);
+//
     __weak typeof (self) weakSelf = self;
     [Tools showWithStatus:@"正在加载音频数据"];
     [self.audioFile getWaveformDataWithCompletionBlock:^(float **waveformData, int length) {

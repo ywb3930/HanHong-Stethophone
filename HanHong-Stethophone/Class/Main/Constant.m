@@ -191,10 +191,6 @@ NSString *const DS88_btName = @"DS88";
     }else if ((appVersionInt1 == versionInt1) && (appVersionInt2 > versionInt2)) {
         return YES;
     }
-//    else if ((appVersionInt1 == versionInt1) && (appVersionInt2 == versionInt2)) {
-//        return YES;
-//    }
-    
     
     
     return NO;
@@ -211,14 +207,15 @@ NSString *const DS88_btName = @"DS88";
     }
     NSString *filepath = [[NSBundle mainBundle]pathForResource:firmwareVersion ofType:@"zip"];
    
-    dispatch_sync(dispatch_get_main_queue(), ^{
+    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+    [mainQueue addOperationWithBlock:^{
         UIViewController *currentVC = [Tools currentViewController];
         UpdateDeviceVC *updateDevice = [[UpdateDeviceVC alloc] init];
         updateDevice.filepath = filepath;
         updateDevice.mac = mac;
         updateDevice.version = version;
         [currentVC.navigationController pushViewController:updateDevice animated:YES];
-    });
+    }];
     
 }
 

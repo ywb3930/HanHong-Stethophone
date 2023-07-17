@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)getBootloaderVersion;
 - (NSString *)getProductionDate;
 - (double)getBatteryState;
+- (void)initDevice;
 
 
 - (void)setBatteryType:(BOOL) normal;

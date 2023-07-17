@@ -166,7 +166,7 @@
         if(i == smalllineCount) {
             [[UIColor whiteColor] setStroke];
         } else {
-            [HEXCOLOR(0xFFFFFF, 0.5) setStroke];
+            [HEXCOLOR(0xFFFFFF, 0.2) setStroke];
         }
 
         CGContextDrawPath(context, kCGPathFillStroke);

@@ -54,9 +54,10 @@
     if ([NSThread isMainThread]) {
         [self.teachingProgramView initData:self.teachingProgramView.currentDate];
     } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
+        NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+        [mainQueue addOperationWithBlock:^{
             [self.teachingProgramView initData:self.teachingProgramView.currentDate];
-        });
+        }];
     }
     
 }
