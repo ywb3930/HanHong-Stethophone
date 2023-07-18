@@ -14,6 +14,7 @@
 #import <CoreTelephony/CTCellularData.h>
 #import "ToolsCheckUpdate.h"
 #import "ShareAnnotationVC.h"
+#import "LoginTypeVC.h"
 
 //#import <UMCommon/UMCommon.h>
 //#import <UMAPM/UMCrashConfigure.h>
@@ -98,15 +99,16 @@
     
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];//创建一个Window
+    
     HHNavigationController *navigation = [[HHNavigationController alloc] initWithRootViewController:[[LoginVC alloc] init]];
     self.window.rootViewController = navigation;
-//    }
+    
     self.window.backgroundColor = UIColor.whiteColor;
     [self.window makeKeyAndVisible];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginBroadcast:) name:login_broadcast object:nil];
  
-    [WXApi registerApp:@"wx97eae6a515b782d3" universalLink:@"https://www.hedelongcloud.com/auscultationassistant/"];
+    [WXApi registerApp:WXAppID universalLink:UniversalLink];
  
     
     [NSThread sleepForTimeInterval:1.0];//设置启动页面时间

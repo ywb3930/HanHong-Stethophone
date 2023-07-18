@@ -26,8 +26,11 @@
 #define REQUEST_URL                                     @"https://www.hedelongcloud.com/api/"
 #define app_download_url                                @"https://www.hedelongcloud.com/hanhong_stethoscope_assistant"
 
+
 #define AppId                                           @"6451221569"//6451221569
+#define WXAppID                                         @"wx97eae6a515b782d3"
 #define Shared_Secret_Key                               @"" //共享密钥
+#define UniversalLink                                   @"https://www.hedelongcloud.com/auscultationassistant/"
 #define saltnum1                                        @"A1453t3t3twy3y5433654321"
 #define saltnum2                                        @"1234562g3anjhsdfbbtr547i67i6"
 

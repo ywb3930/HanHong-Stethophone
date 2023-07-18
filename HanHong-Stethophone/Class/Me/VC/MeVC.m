@@ -15,7 +15,7 @@
 #import "RegisterInviteVC.h"
 #import "ToolsCheckUpdate.h"
 //#import "DeviceManagerSettingView.h"
-
+//https://github.com/ywb3930/HanHong-Stethophone.git
 @interface MeVC ()<UITableViewDelegate, UITableViewDataSource>
 
 @property (retain, nonatomic) UITableView               *tableView;
@@ -34,11 +34,11 @@
     self.view.backgroundColor = WHITECOLOR;
     self.loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
     if(self.loginType == login_type_personal) {
-        self.arrayImage = @[@"personal_information", @"password_manager", @"device_manager", @"about_us", @"about_us",  @"signout", @"logout"];
+        self.arrayImage = @[@"personal_information", @"password_manager", @"device_manager", @"check_update", @"about_us",  @"signout", @"logout"];
         self.arrayTitle = @[@"个人信息", @"密码管理", @"设备管理", @"检测更新",  @"关于我们", @"注销用户", @"退出登录"];
         
     } else {
-        self.arrayImage = @[@"personal_information", @"password_manager", @"device_manager", @"about_us", @"about_us", @"about_us", @"signout", @"logout"];
+        self.arrayImage = @[@"personal_information", @"password_manager", @"device_manager", @"check_update", @"tianxieyaoqingma", @"about_us", @"signout", @"logout"];
         self.arrayTitle = @[@"个人信息", @"密码管理", @"设备管理", @"检测更新",@"注册邀请", @"关于我们", @"注销用户", @"退出登录"];
     }
     [self initView];
