@@ -2078,9 +2078,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "HanHong-Stethophone/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "汉泓听诊工具";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "蓝牙打开";
-				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "蓝牙打开";
-				INFOPLIST_KEY_NSCameraUsageDescription = "用于扫描二维码";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "用于连接听诊器";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "用于连接听诊器";
+				INFOPLIST_KEY_NSCameraUsageDescription = "用于扫描蓝牙设备和教室的二维码";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "方便保存您的图片信息";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "方便保存您的图片信息";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -2125,9 +2125,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "HanHong-Stethophone/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "汉泓听诊工具";
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "蓝牙打开";
-				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "蓝牙打开";
-				INFOPLIST_KEY_NSCameraUsageDescription = "用于扫描二维码";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "用于连接听诊器";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "用于连接听诊器";
+				INFOPLIST_KEY_NSCameraUsageDescription = "用于扫描蓝牙设备和教室的二维码";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "方便保存您的图片信息";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "方便保存您的图片信息";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

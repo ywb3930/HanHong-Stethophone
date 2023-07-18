@@ -387,7 +387,6 @@
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
             NSDictionary *data = [responseObject objectForKey:@"data"];
             HHLoginData *loginData = [HHLoginData yy_modelWithDictionary:data];
-            loginData.userID = [data[@"id"] doubleValue];
             [[HHLoginManager sharedManager] setCurrentHHLoginData:loginData];
             
             if (wself.loginType == login_type_personal) {

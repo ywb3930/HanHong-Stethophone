@@ -25,6 +25,7 @@
 - (instancetype)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if(self) {
+        self.positionIndex = 3;
         self.backgroundColor = WHITECOLOR;
         [self initData];
         [self initView];

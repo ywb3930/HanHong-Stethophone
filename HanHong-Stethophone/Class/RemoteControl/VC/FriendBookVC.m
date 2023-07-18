@@ -70,7 +70,7 @@
     FriendModel *model = array[indexPath.row];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
-    params[@"friend_id"] = [@(model.id) stringValue];
+    params[@"friend_id"] = [@(model.userId) stringValue];
     [Tools showWithStatus:@"正在删除"];
     __weak typeof(self) wself = self;
     [TTRequestManager friendDelete:params success:^(id  _Nonnull responseObject) {
@@ -110,9 +110,7 @@
     for (NSString *title in self.listTitle) {
         [indexViewDataSource addObject:title];
     }
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.001 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self reloadColorForHeaderView];
-    });
+    [self performSelector:@selector(reloadColorForHeaderView) withObject:nil afterDelay:0.1f];
     self.tableView.sc_indexViewDataSource = indexViewDataSource;
     self.tableView.sc_startSection = 0;
 }
@@ -132,7 +130,7 @@
             if (wself.selectModel.count > 0) {
                 for (FriendModel *model1 in wself.selectModel) {
                     for (FriendModel *model2 in list) {
-                        if (model1.id == model2.id) {
+                        if (model1.userId == model2.userId) {
                             model2.bSelected = YES;
                         }
                     }

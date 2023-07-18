@@ -98,18 +98,15 @@
 
     [self.labelProgramCount updateLayout];
     [self.labelProgramTime updateLayout];
-    if(self.programTTListData.count > 0) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            if (self.dataBlock) {
-                CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
-                self.dataBlock(self.programTTListData, maxY);
-            }
-        });
-        
+    if(self.programTTListData.count > 0 && self.dataBlock) {
+        [self performSelector:@selector(actionReloadView) withObject:nil afterDelay:0.2f];
     }
 }
 
-
+- (void)actionReloadView{
+    CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
+    self.dataBlock(self.programTTListData, maxY);
+}
 
 - (void)actionClickCalendarItemCallback:(HHCalendarDayModel *)model{
     NSString *day = [@(model.dayValue) stringValue];

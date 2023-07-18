@@ -39,11 +39,17 @@
 
 - (void)setPositionValue:(NSDictionary *)positionValue{
     NSInteger index = [[positionValue objectForKey:@"id"] integerValue];
-    UIButton *button = [self.arrayButtonsTpye objectAtIndex:index];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.bActionFromAuto = YES;
+    self.bActionFromAuto = YES;
+    if (self.positionIndex == 2) {
+        UIButton *button = [self.arrayButtonsTpye objectAtIndex:index-8];
         [self actionButtonClick:button];
-    });
+    } else if(self.positionIndex == 3) {
+        UIButton *button = [self.arrayButtonsTpye objectAtIndex:index-10];
+        [self actionButtonClick:button];
+    } else {
+        UIButton *button = [self.arrayButtonsTpye objectAtIndex:index];
+        [self actionButtonClick:button];
+    }
     
 }
 

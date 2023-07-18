@@ -44,7 +44,7 @@
 @property (retain, nonatomic) UIView                *viewTouchBg;//由于事件处理
 
 @property (retain, nonatomic) UIView                *clipView;
-@property (assign, nonatomic) CGPoint               startP;
+@property (assign, nonatomic) CGPoint               startPoint;//
 
 
 @property (retain, nonatomic) NSDecimalNumber       *startTimeDecimalNumber;
@@ -58,10 +58,12 @@
 @property (assign, nonatomic) CGFloat               startTime;
 @property (assign, nonatomic) CGFloat               endTime;
 @property (assign, nonatomic) CGFloat               statusBarHeight;
+@property (assign, nonatomic) CGFloat               currentPlayWidth;
 
 @property (retain, nonatomic) UIView                *viewLeftView;
 @property (assign, nonatomic) NSInteger             secondCellCount;
-@property (assign, nonatomic) Boolean               bChangeAnnotation;;
+@property (assign, nonatomic) Boolean               bFirstPlay;
+@property (retain, nonatomic) NSMutableArray        *arrayBefore;//进入页面之前的数据，用于判断数据是否发生了改变
 
 @end
 
@@ -71,7 +73,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.secondCellCount = 5;
-    self.bChangeAnnotation = NO;
     self.view.backgroundColor = MainBlack;
     self.statusBarHeight = kStatusBarHeight;
     NSLog(@"self.statusBarHeight = %@", self.recordModel.url);
@@ -82,6 +83,13 @@
     
     [self initView];
     [self reloadAnnotationAreaView];
+    [self initData];
+}
+
+- (void)initData{
+    self.arrayBefore = [NSMutableArray array];
+    self.arrayBefore = [self.arrayCharacteristic copy];
+    NSLog(@"%@", self.arrayBefore);
 }
 
 - (void)actionShowTableView:(UITapGestureRecognizer *)tap{
@@ -94,41 +102,73 @@
 - (void)actionDeviceHelperPlayBegin{
     self.viewLine.frame = CGRectMake(self.statusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
     self.viewLine.hidden = NO;
+    self.bFirstPlay = YES;
 }
 
 - (void)actionDeviceHelperPlayingTime:(float)value{
     NSLog(@"self.statusBarHeight = %f", self.statusBarHeight);
     CGFloat width = value / self.recordModel.record_length * self.viewWidth;
-    Boolean bFirstLoadA = YES;
-    Boolean bBirstLoadB = YES;
+
     CGFloat x = self.statusBarHeight;
-    
-    if (width <= screenW/2 - x) {
-        self.viewLine.frame = CGRectMake(x + width, kNavBarHeight, Ratio1, self.viewHeight);
-    } else if (width >= self.viewWidth - screenW/2 + x) {
-        if (bFirstLoadA) {
-            CGPoint offset = CGPointMake(self.viewWidth-screenW+x, 0);
+    CGFloat startPointX = self.startTime/self.recordModel.record_length * self.viewWidth;
+    CGFloat endPointX = self.endTime/self.recordModel.record_length * self.viewWidth;
+    CGFloat scrollViewX = self.scrollView.contentOffset.x;
+    CGFloat scrollViewWidth = self.scrollView.frame.size.width;
+    if (startPointX > scrollViewX && endPointX < scrollViewX + scrollViewWidth) {//整个图在屏幕上
+        self.viewLine.frame = CGRectMake(x + width - scrollViewX, kNavBarHeight, Ratio1, self.viewHeight);
+    } else if (startPointX > scrollViewX  && startPointX < scrollViewWidth + scrollViewX) {//起始点在屏幕上
+        if (self.bFirstPlay) {
+            
+            self.viewLine.frame = CGRectMake(startPointX - scrollViewX + x, kNavBarHeight, Ratio1, self.viewHeight);
+        } else {
+            CGPoint offset = CGPointMake(scrollViewX + (width - startPointX), 0);
             [self.scrollView setContentOffset:offset animated:YES];
-            bFirstLoadA = NO;
         }
-        self.viewLine.frame = CGRectMake(screenW - x-(self.viewWidth - width), kNavBarHeight, Ratio1, self.viewHeight);
+        
     } else {
-        if (bBirstLoadB) {
+        if (self.bFirstPlay) {
             self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
-            bBirstLoadB = NO;
         }
         CGPoint offset = CGPointMake(width - screenW/2 + x, 0);
         [self.scrollView setContentOffset:offset animated:YES];
+        
     }
+    self.bFirstPlay = NO;
+    
+//    if (width <= screenW/2 - x) {
+//        self.viewLine.frame = CGRectMake(x + width, kNavBarHeight, Ratio1, self.viewHeight);
+//    } else if (width >= self.viewWidth - screenW/2 + x) {
+//        if (bFirstLoadA) {
+//            CGPoint offset = CGPointMake(self.viewWidth-screenW+x, 0);
+//            [self.scrollView setContentOffset:offset animated:YES];
+//            bFirstLoadA = NO;
+//        }
+//        self.viewLine.frame = CGRectMake(screenW - x-(self.viewWidth - width), kNavBarHeight, Ratio1, self.viewHeight);
+//    } else {
+//        if (bBirstLoadB) {
+//            self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
+//            bBirstLoadB = NO;
+//        }
+//        CGPoint offset = CGPointMake(width - screenW/2 + x, 0);
+//        [self.scrollView setContentOffset:offset animated:YES];
+//    }
     
 }
 
 - (void)actionClickDeleteCallback:(UITableViewCell *)cell{
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-    [self.arrayCharacteristic removeObjectAtIndex:indexPath.row];
-    //[self.tableView reloadData];
-    [self reloadAnnotationAreaView];
-    self.tableView.hidden = YES;
+    NSDictionary *info = [self.arrayCharacteristic objectAtIndex:indexPath.row];
+    NSString *message = [NSString stringWithFormat:@"您确定要删除(%@ %@)的标注吗?", info[@"time"], info[@"characteristic"]];
+    [Tools showAlertView:nil andMessage:message andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+        [self.arrayCharacteristic removeObjectAtIndex:indexPath.row];
+        [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [self reloadAnnotationAreaView];
+        NSInteger count = self.arrayCharacteristic.count > 5 ? 5 : self.arrayCharacteristic.count;
+        self.tableView.frame = CGRectMake(2*screenW/3.f-self.statusBarHeight - Ratio11, kNavBarHeight + Ratio3, screenW / 3.0f, Ratio30 * (count + 1));
+    } cancel:^{
+        
+    }];
+    
 }
 
 - (void)reloadAnnotationAreaView{
@@ -143,12 +183,13 @@
 
 - (void)actionDeviceHelperPlayEnd{
     self.buttonPlay.selected = NO;
+    self.bFirstPlay = NO;
     //[self.viewSmallWave actionStop];
     self.viewLine.frame = CGRectMake(self.statusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
     self.viewLine.hidden = YES;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-    });
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [self.scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+//    });
     
 }
 
@@ -255,7 +296,7 @@
         _buttonReduce.layer.cornerRadius = Ratio4;
         _buttonReduce.clipsToBounds = YES;
         [_buttonReduce addTarget:self action:@selector(actionToReduce:) forControlEvents:UIControlEventTouchUpInside];
-        ///_buttonReduce.hidden = YES;
+        _buttonReduce.hidden = YES;
     }
     return _buttonReduce;
 }
@@ -270,7 +311,7 @@
         [_buttonAdd addTarget:self action:@selector(actionToAdd:) forControlEvents:UIControlEventTouchUpInside];
         _buttonAdd.layer.cornerRadius = Ratio4;
         _buttonAdd.clipsToBounds = YES;
-        //_buttonAdd.hidden = YES;
+        _buttonAdd.hidden = YES;
     }
     return _buttonAdd;
 }
@@ -457,11 +498,11 @@
 - (void)actionViewBack:(UIButton *)button{
     [Tools showAlertView:nil andMessage:@"是否退出" andTitles:@[@"取消",@"确定"] andColors:@[MainGray, MainColor] sure:^{
         if (self.resultBlock) {
-            self.resultBlock(self.bChangeAnnotation);
+            self.resultBlock([self.arrayBefore isEqualToArray:self.arrayCharacteristic]);
         }
         [self.navigationController popViewControllerAnimated:YES];
     } cancel:^{
-        
+       
     }];
 }
 
@@ -519,24 +560,24 @@
     self.tableView.hidden = YES;
     if (gesture.state == UIGestureRecognizerStateBegan) {
         [self.clipView removeFromSuperview];
-        self.startP = [gesture locationInView:self.scrollView];
+        self.startPoint = [gesture locationInView:self.scrollView];
         self.labelAnnotation.text = @"新选区";
         self.startTime = 0;
         self.endTime = 0;
-        NSLog(@"startTime x = %f , %f", self.startP.x, self.startP.x/self.viewWidth*self.recordModel.record_length);
+        NSLog(@"startTime x = %f , %f", self.startPoint.x, self.startPoint.x/self.viewWidth*self.recordModel.record_length);
         UIView *clipView = [[UIView alloc] init];
         clipView.backgroundColor = HEXCOLOR(0x7AE300, 0.5);//FFFF33
         clipView.alpha = 0.5;
         [self.viewAnnotationArea addSubview:clipView];
         self.clipView = clipView;
     } else if (gesture.state == UIGestureRecognizerStateChanged) {
-        CGPoint curP = [gesture locationInView:self.scrollView];
-        self.clipView.frame = CGRectMake(self.startP.x, 0, curP.x - self.startP.x, self.viewHeight);
+        CGPoint currentPoint = [gesture locationInView:self.scrollView];
+        self.clipView.frame = CGRectMake(self.startPoint.x, 0, currentPoint.x - self.startPoint.x, self.viewHeight);
     } else if (gesture.state == UIGestureRecognizerStateEnded) {
         self.buttonAnnotation.hidden = NO;
-        CGPoint endP = [gesture locationInView:self.scrollView];
-        CGFloat startX = MIN(self.startP.x, endP.x);
-        CGFloat endX = MAX(self.startP.x, endP.x);
+        CGPoint endPoint = [gesture locationInView:self.scrollView];
+        CGFloat startX = MIN(self.startPoint.x, endPoint.x);
+        CGFloat endX = MAX(self.startPoint.x, endPoint.x);
         self.startTimeDecimalNumber = [self changeNumber3Point:startX / self.viewWidth * self.recordModel.record_length];
         self.endTimeDecimalNumber = [self changeNumber3Point:endX / self.viewWidth * self.recordModel.record_length];
         self.startTime= [self.startTimeDecimalNumber floatValue];
@@ -545,10 +586,11 @@
 }
 //标注时间
 - (void)actionToSelctAnnotaion:(UIButton *)button{
+    self.tableView.hidden = YES;
     AnnotationInfoVC *annotationInfoVC = [[AnnotationInfoVC alloc] init];
     annotationInfoVC.soundType = self.recordModel.type_id;
     annotationInfoVC.resultBlock = ^(NSString * _Nonnull selectValue) {
-        self.bChangeAnnotation = YES;
+        //self.bChangeAnnotation = YES;
         NSString *start = [NSString stringWithFormat:@"%@", self.startTimeDecimalNumber];
         NSString *end = [NSString stringWithFormat:@"%@",self.endTimeDecimalNumber];
         NSRange startRange = [start rangeOfString:@"."];

@@ -1023,6 +1023,9 @@ static id _instance;
     [SVProgressHUD dismiss];
     LoginData = nil;
     [[HHLoginManager sharedManager] setCurrentHHLoginData:nil];
+    if ([[HHBlueToothManager shareManager] getConnectState] == DeviceConnected) {
+        [[HHBlueToothManager shareManager] disconnect];
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type": @"0"}];
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"auto_login"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -1224,7 +1227,7 @@ static id _instance;
     alert.itemTitleColorArr = !colors ? @[MainGray, MainRed] : colors;
 
     //副标题或描述的颜色
-    alert.messageLabelColor = MainGray;
+    alert.messageLabelColor = MainBlack;
     alert.frame = CGRectMake(0, 0, screenW, screenH);
     [kAppWindow addSubview:alert];
 }

@@ -13,7 +13,7 @@
 @property (retain, nonatomic) UIButton          *buttonAdd;
 @property (retain, nonatomic) NSIndexPath       *currentIndexPath;
 @property (retain, nonatomic) NoDataView        *noDataView;
-
+@property (assign, nonatomic) Boolean        bSelected;
 
 @end
 
@@ -48,10 +48,13 @@
     __weak typeof(self) wself = self;
     [TTRequestManager meetingDeleteMeeting:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [wself reloadDataTableView];
-            });
+            if([NSThread isMainThread]) {
+                [self reloadDataTableView];
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [wself reloadDataTableView];
+                });
+            }
         }
         [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
         [SVProgressHUD dismiss];
@@ -72,19 +75,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    ConsultationModel *model = self.arrayData[indexPath.row];
-    NSDate *endTimeDate = [Tools stringToDateYMDHM:model.end_time];
-    //NSString *endTime = [Tools convertTimestampToStringYMDHM:model.end_time];
-    long currentNow = [Tools getTimestampSecond:[NSDate now]];
-    long currentEnd = [Tools getTimestampSecond:endTimeDate] + 24 *3600;
-    if (currentNow > currentEnd) {
-        [kAppWindow makeToast:@"会诊时间已过期，修改时间后再进入" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-        return;
+    if (!self.bSelected) {
+        self.bSelected = YES;
+        ConsultationModel *model = self.arrayData[indexPath.row];
+        NSDate *endTimeDate = [Tools stringToDateYMDHM:model.end_time];
+        //NSString *endTime = [Tools convertTimestampToStringYMDHM:model.end_time];
+        long currentNow = [Tools getTimestampSecond:[NSDate now]];
+        long currentEnd = [Tools getTimestampSecond:endTimeDate] + 24 *3600;
+        if (currentNow > currentEnd) {
+            [kAppWindow makeToast:@"会诊时间已过期，修改时间后再进入" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+            return;
+        }
+        if (self.createConsultationDelegate && [self.createConsultationDelegate respondsToSelector:@selector(actionTableViewCellClickCallback:)]) {
+            
+            [self.createConsultationDelegate actionTableViewCellClickCallback:model];
+        }
+        self.bSelected = NO;
     }
-    if (self.createConsultationDelegate && [self.createConsultationDelegate respondsToSelector:@selector(actionTableViewCellClickCallback:)]) {
-        
-        [self.createConsultationDelegate actionTableViewCellClickCallback:model];
-    }
+    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{

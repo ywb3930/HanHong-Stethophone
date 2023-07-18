@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) id<HMEditViewDelegate> delegate;
 - (instancetype)initWithTitle:(NSString *)title info:(nullable NSString *)info placeholder:(NSString *)placeholder idx:(NSInteger)idx;
 @property (retain, nonatomic) LRTextField               *textField;
+@property (retain, nonatomic) NSString                  *cancelTitle;
+@property (retain, nonatomic) NSString                  *okTitle;
 
 @end
 

@@ -43,25 +43,27 @@
         [kAppWindow makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
-    if (self.delegate && [self.delegate respondsToSelector:@selector(actionRecordListCellItemClick:bSelected:idx:)]) {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(actionRecordListCellItemClick:bSelected:numberOfPage:)]) {
         
-        Boolean bPlaying = [self.delegate actionRecordListCellItemClick:self.recordModel bSelected:button.selected idx:self.idx];
+        Boolean bPlaying = [self.delegate actionRecordListCellItemClick:self.recordModel bSelected:button.selected numberOfPage:self.numberOfPage];
         button.selected = bPlaying;
     }
 }
 
-- (void)setIdx:(NSInteger)idx{
-    _idx= idx;
+- (void)setNumberOfPage:(NSInteger)numberOfPage{
+    _numberOfPage = numberOfPage;
 }
 
+
 - (void)setPlayProgess:(float)playProgess{
-    NSLog(@"progress = %f", playProgess / self.recordModel.record_length);
     self.slider.value = playProgess / self.recordModel.record_length;
 }
 
-- (void)setBStop:(Boolean)bStop{
-    self.buttonPlay.selected = bStop;
+- (void)setBPlayButtonSelected:(Boolean)bPlayButtonSelected{
+    self.buttonPlay.selected = bPlayButtonSelected;
 }
+
+
 
 - (void)setRecordModel:(RecordModel *)recordModel{
     _recordModel = recordModel;

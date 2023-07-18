@@ -33,6 +33,7 @@ static HanhongDeviceHelper             *_hanhongDevice;
 - (void)on_device_helper_event:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
     //收数据
     NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+    //NSLog(@"EVENT = %li", event);
     userInfo[@"event"] = [@(event) stringValue];
     if (args1) {
         userInfo[@"args1"] = args1;
@@ -89,6 +90,10 @@ static HanhongDeviceHelper             *_hanhongDevice;
 
 - (NSInteger)getModeSeq{
     return [_hanhongDevice GetModeSeq];;
+}
+
+- (Boolean)isPlaying{
+    return [_hanhongDevice IsPlaying];
 }
 
 - (NSInteger)getDefaultVolume{

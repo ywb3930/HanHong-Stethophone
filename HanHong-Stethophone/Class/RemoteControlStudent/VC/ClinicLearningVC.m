@@ -26,9 +26,10 @@
 
 @property (assign, nonatomic) Boolean                       bClassroomEnter;
 @property (assign, nonatomic) Boolean                       bDataServiceReady;
-@property (assign, nonatomic) Boolean                       bDataServicePlay;
+@property (assign, nonatomic) Boolean                       bDataServiceRecording;
 @property (assign, nonatomic) int                           classroomState;
 @property (retain, nonatomic) ClassRoomInfo                 *classRoomInfo;
+@property (retain, nonatomic) NSOperationQueue              *mainQueue;
 
 @end
 
@@ -38,6 +39,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"临床学习";
+    self.mainQueue = [NSOperationQueue mainQueue];
     self.view.backgroundColor = WHITECOLOR;
     self.recordmodel = RecordingWithRecordDurationMaximum;
     self.recordType = RemoteRecord;
@@ -50,14 +52,17 @@
 }
 
 - (void)actionClassExited{
-    int classroomIdInt = [self.classroomId intValue];
     if (self.bClassroomEnter) {
-        self.headerView.recordMessage = @"教室已断开，正在重连";
-        [self.classRoom Enter:LoginData.token classroom_url:self.classroomUrl classroom_id:classroomIdInt];
+        [self actionShowRoomMessage:@"教室已断开，正在重连"];
+        [self performSelector:@selector(actionEnterRoom) withObject:nil afterDelay:1.0f];
     } else {
-        self.headerView.recordMessage = @"教室已断开";
-        [self.view makeToast:@"教室已断开" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        [self actionShowRoomMessage:@"教室已断开"];
     }
+}
+
+- (void)actionEnterRoom{
+    int classroomIdInt = [self.classroomId intValue];
+    [self.classRoom Enter:LoginData.token classroom_url:self.classroomUrl classroom_id:classroomIdInt];
 }
 
 - (void)actionClassInfoUpdate:(NSObject *)args1{
@@ -66,16 +71,10 @@
     self.classroomState = self.classRoomInfo.class_state;
     NSLog(@"教室状态：%i", self.classroomState);
     NSString *stateStr = (self.classroomState == 1) ? @"进行中" : (self.classroomState == 2) ? @"已结束" : @"未开始";
-    self.headerView.roomState = stateStr;
     Boolean bStart = self.classroomState >= 1;
-    self.headerView.startTime = bStart ? self.classRoomInfo.class_begin_time : @"--";
     NSString *teachingTimes = bStart ? [@(self.classRoomInfo.teaching_times) stringValue] : @"--";
-    self.headerView.learnCount = teachingTimes;
     NSString *numbersOfStudents = bStart ? [@(self.classRoomInfo.number_of_learners) stringValue] : @"--";
-    self.headerView.learnMember = numbersOfStudents;
-    NSLog(@"teacher_avatar = %@", self.classRoomInfo.teacher_avatar);
-    self.headerView.teachAvatar = self.classRoomInfo.teacher_avatar;
-    self.headerView.teachName = self.classRoomInfo.teacher_name;
+    
     MemberList *memberList = (MemberList *)self.classRoomInfo.students_list;
     Boolean bChange = NO;
     for (Member *member in memberList.members) {
@@ -92,14 +91,23 @@
             [self.arrayData addObject:itemModel];
         }
     }
-    if (bChange) {
-        [self.collectionView reloadData];
-    }
-    
-    
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.headerView.roomState = stateStr;
+        wself.headerView.startTime = bStart ? wself.classRoomInfo.class_begin_time : @"--";
+        wself.headerView.learnCount = teachingTimes;
+        wself.headerView.learnMember = numbersOfStudents;
+        NSLog(@"teacher_avatar = %@", wself.classRoomInfo.teacher_avatar);
+        wself.headerView.teachAvatar = wself.classRoomInfo.teacher_avatar;
+        wself.headerView.teachName = wself.classRoomInfo.teacher_name;
+        if (bChange) {
+            [wself.collectionView reloadData];
+        }
+        
+    }];
     
     if(self.classroomState == 1 && [[HHBlueToothManager shareManager] getConnectState] != BtDevice_connected_state){
-        self.headerView.recordMessage = @"请先连接设备";
+        [self actionShowRoomMessage:@"请先连接设备"];
     }
 }
 
@@ -125,19 +133,23 @@
         }
         itemModel.bOnline = bOnline;
     }
-    [self.collectionView reloadData];
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        [wself.collectionView reloadData];
+    }];
+    
 }
 
 - (void)actionClassStartAuscultationControlResult:(NSObject *)args1{
     NSString *sargs1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sargs1 boolValue];
-    self.headerView.roomMessage = success ? @"开始临床教学操作成功" : @"开始临床教学操作失败";
+    [self actionShowRoomMessage:success ? @"临床教学开始" : @"开始临床教学操作失败"];
 }
 
 - (void)actionClassStopAuscultationControlResult:(NSObject *)args1{
     NSString *sargs1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sargs1 boolValue];
-    self.headerView.roomMessage = success ? @"暂停临床教学操作成功" : @"暂停临床教学操作失败";
+    [self actionShowRoomMessage:success ? @"临床教学已暂停" : @"暂停临床教学操作失败"];
 }
 
 - (void)actionClassBeginControlResult:(NSObject *)args1{
@@ -145,7 +157,11 @@
     Boolean success = [sargs1 boolValue];
     NSLog(@"课堂开始:%@", success ? @"成功" : @"失败");
     if (!success) {
-        [self.view makeToast:@"操作失败" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        __weak typeof(self) wself = self;
+        [self.mainQueue addOperationWithBlock:^{
+            [wself.view makeToast:@"操作失败" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        }];
+        
     }
 }
 
@@ -154,20 +170,22 @@
     Boolean success = [sargs1 boolValue];
     NSLog(@"课堂结束:%@", success ? @"成功" : @"失败");
     if (!success) {
-        [self.view makeToast:@"操作失败" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        __weak typeof(self) wself = self;
+        [self.mainQueue addOperationWithBlock:^{
+            [wself.view makeToast:@"操作失败" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        }];
     }
 }
 
 - (void)actionClassDataServiceWavFrameReceived:(NSObject *)args1 args2:(NSObject *)args2{
     NSString *flag = [NSString stringWithFormat:@"%@", args1];
     NSData *wav_frame = (NSData *)args2;
-    if (!self.bDataServicePlay) {
-        self.bDataServicePlay = YES;
+    [[HHBlueToothManager shareManager] writePlayBuffer:wav_frame];
+    if (!self.bDataServiceRecording) {
+        self.bDataServiceRecording = YES;
         NSLog(@"播放中 ---");
         [[HHBlueToothManager shareManager] startPlay:PlayingWithRealtimeData];
-        self.headerView.recordMessage = @"正在听诊";
     }
-    [[HHBlueToothManager shareManager] writePlayBuffer:wav_frame];
 }
 
 
@@ -175,18 +193,52 @@
     NSString *sargs1 = [NSString stringWithFormat:@"%@", args1];
     int cmd = [sargs1 intValue];
     if (cmd == 1) {
-        if (!self.bDataServicePlay) {
-            self.bDataServicePlay = YES;
-            self.headerView.recordMessage = @"正在听诊";
+        if (!self.bDataServiceRecording) {
+            self.bDataServiceRecording = YES;
             [[HHBlueToothManager shareManager] startPlay:PlayingWithRealtimeData];
         }
     } else {
-        if (self.bDataServicePlay) {
-            self.bDataServicePlay = NO;
-            self.headerView.recordMessage = @"听诊结束";
+        if (self.bDataServiceRecording) {
+            self.bDataServiceRecording = NO;
             [[HHBlueToothManager shareManager] stop];
         }
     }
+}
+
+- (void)actionDeviceConnecting{
+    [self actionShowRecordMessage:@"设备正在连接"];
+}
+
+- (void)actionDeviceConnected{
+    if (self.bDataServiceRecording) {
+        [self actionStartRecord];
+    } else {
+        [self actionShowRecordMessage:@""];
+    }
+}
+
+- (void)actionDeviceDisconnected{
+    [self actionShowRecordMessage:@"设备已断开"];
+    [self actionStop];
+}
+
+- (void)actionDeviceConnectFailed{
+    [self actionShowRecordMessage:@"设备连接失败"];
+}
+
+- (void)actionDeviceHelperPlayBegin {
+    [self actionShowRecordMessage:@"正在听诊"];
+}
+
+- (void)actionDeviceHelperPlayEnd{
+    [self actionShowRecordMessage:@""];
+}
+
+- (void)actionDeviceRecordPlayInstable{
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        [wself.view makeToast:@"无线数据传输不稳定" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+    }];
 }
 
 - (void)actionClassDataServiceClientInfoReceived:(Clients *)clients{
@@ -210,16 +262,35 @@
             break;
         }
     }
-    self.headerView.bOnline = bTeachOnline;
-    [self.collectionView reloadData];
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.headerView.bOnline = bTeachOnline;
+        [wself.collectionView reloadData];
+    }];
+    
 }
 
-- (void)actionClassRoomEvent:(CLASSROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
+- (void)actionShowRoomMessage:(NSString *)messaage{
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.headerView.roomMessage = messaage;
+    }];
+}
+
+- (void)actionShowRecordMessage:(NSString *)messaage{
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.headerView.recordMessage = messaage;
+    }];
+}
+
+- (void)on_classroom_event:(CLASSROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
+    NSLog(@"event = %@, args1 = %@ , args2 = %@, args3 = %@", [@(event) stringValue], args1, args2, args3);
     if (event == ClassEntering) {
         NSLog(@"正在进入教室");
     } else if (event == ClassEnterSuccess) {
         NSLog(@"进入教室成功");
-        self.headerView.recordMessage = @"进入教室成功";
+        [self actionShowRoomMessage:@"进入教室成功"];
         self.bClassroomEnter = NO;
     } else if (event == ClassExited) {
         NSLog(@"退出教室");
@@ -237,19 +308,22 @@
     } else if (event == ClassEndControlResult) {
         [self actionClassEndControlResult:args1];
     } else if (event == ClassStartAuscultation) {
-        self.headerView.roomMessage = @"临床教学开始";
+        [self actionShowRoomMessage:@"临床教学开始"];
     } else if (event == ClassStopAuscultation) {
-        self.headerView.roomMessage = (self.classroomState == 2) ? @"临床教学已结束" : @"临床教学已暂停";
+        [self actionShowRoomMessage:(self.classroomState == 2) ? @"临床教学已结束" : @"临床教学已暂停"];
     } else if (event == ClassDataServiceConnecting) {
-        self.headerView.roomMessage = @"临床教学服务器连接中";
+        [self actionShowRoomMessage:@"临床教学服务器连接中"];
     } else if (event == ClassDataServiceConnectSuccess) {
-        self.headerView.roomMessage = @"临床教学进行中";
+        [self actionShowRoomMessage:@"临床教学进行中"];
         self.bDataServiceReady = YES;
     } else if (event == ClassDataServiceConnectFailed) {
-        self.headerView.roomMessage = [NSString stringWithFormat:@"临床教学服务器连接失败: %@", args1];
+        NSString *message = [NSString stringWithFormat:@"临床教学服务器连接失败: %@", args1];
+        [self actionShowRoomMessage:message];
     } else if (event == ClassDataServiceDisconnected) {
         self.bDataServiceReady = NO;
-        self.headerView.roomMessage = @"临床教学服务器连接断开";
+        self.bDataServiceRecording = NO;
+        [self actionClearConnectState];
+        [self actionShowRoomMessage:@"临床教学服务器连接断开"];
     } else if (event == ClassDataServiceWavFrameReceived) {
         [self actionClassDataServiceWavFrameReceived:args1 args2:args2];
     } else if (event == ClassDataServiceCmdReceived) {
@@ -258,18 +332,17 @@
         Clients *clients = (Clients *)args3;
         [self actionClassDataServiceClientInfoReceived:clients];
     }
+    
 }
 
-- (void)on_classroom_event:(CLASSROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
-    NSLog(@"event = %@, args1 = %@ , args2 = %@, args3 = %@", [@(event) stringValue], args1, args2, args3);
-    if([NSThread isMainThread]) {
-        [self actionClassRoomEvent:event args1:args1 args2:args2 args3:args3];
-    } else {
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [self actionClassRoomEvent:event args1:args1 args2:args2 args3:args3];
-        });
+- (void)actionClearConnectState{
+    for (MemberItemModel *itemModel in self.arrayData) {
+        itemModel.bConnect = NO;
     }
-    
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        [wself.collectionView reloadData];
+    }];
 }
 
 - (void)enterClassroom{

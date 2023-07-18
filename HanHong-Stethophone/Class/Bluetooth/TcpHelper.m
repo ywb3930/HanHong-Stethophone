@@ -230,7 +230,7 @@
     }
 }
 
--(BOOL)ReadBytes:(NSMutableData *)tcp_data len:(int)len timeout:(float)timeout
+-(void)ReadBytes:(NSMutableData *)tcp_data len:(int)len timeout:(float)timeout
 {
 //    @try {
          

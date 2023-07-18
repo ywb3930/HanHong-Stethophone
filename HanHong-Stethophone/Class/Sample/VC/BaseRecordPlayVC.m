@@ -35,7 +35,7 @@
         NSNumber *number = (NSNumber *)args1;
         float value = [number floatValue];
         [wself actionDeviceHelperPlayingTime:value];
-        NSLog(@"startTime 播放进度：%f", value);
+        //NSLog(@"startTime 播放进度：%f", value);
         
     } else if (event == DeviceHelperPlayEnd) {
         NSLog(@"播放结束");
@@ -161,21 +161,7 @@
 
 - (void)showWaveView:(NSString *)path{
     self.audioFile = [KSYAudioFile audioFileWithURL:[NSURL fileURLWithPath:path]];
-   // NSData *data = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:path]];
-//    int32_t bytes;
-//        [data getBytes:&bytes length:sizeof(bytes)];
-//        bytes = OSSwapBigToHostInt32(bytes);
-//    float number;
-//        memcpy(&number, &bytes, sizeof(bytes));
-//    [self.audioPlotView updateBuffer:&number withBufferSize:data.length];
-    
-    //NSString * str  =[data base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
-//    Byte *bs = (Byte *)[data bytes];
-//    NSMutableArray *array = [NSMutableArray array];
-//    for (int i = 0; i < 1000; i++) {
-//        [array addObject:[@(bs[i]) stringValue]];
-//    }
-//    NSLog(@"%@", array);
+
 //
     __weak typeof (self) weakSelf = self;
     [Tools showWithStatus:@"正在加载音频数据"];

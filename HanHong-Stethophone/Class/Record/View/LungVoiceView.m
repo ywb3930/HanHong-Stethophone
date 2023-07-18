@@ -144,7 +144,9 @@
         }
         
     }
-    
+    if (self.bodyPositionBlock) {
+        self.bodyPositionBlock();
+    }
     self.bActionFromAuto = NO;
     self.lungSelectPositionIndex = Lung_front_bodyType;
     self.buttonFront.selected = YES;
@@ -169,6 +171,9 @@
             return;
         }
         
+    }
+    if (self.bodyPositionBlock) {
+        self.bodyPositionBlock();
     }
     [self actionClearSelectButton];
     self.bActionFromAuto = NO;
@@ -195,6 +200,9 @@
             return;
         }
         
+    }
+    if (self.bodyPositionBlock) {
+        self.bodyPositionBlock();
     }
     self.bActionFromAuto = NO;
     self.lungSelectPositionIndex = Lung_back_bodyType;

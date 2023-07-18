@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Reachability.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(instancetype)shareManager;
 
 @property (retain, nonatomic) NSString      *userInfoPath;//个人信息保存路径
+@property (assign, nonatomic) Boolean       bNetworkConnected;//个人信息保存路径
 
 - (NSString *)getPlistFilepathByName:(NSString *)plistName;
 - (NSArray *)positionModeSeqArray;
@@ -23,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)positionVolumesString:(NSInteger )idx;
 - (NSString *)getRecordShareBrief;
 - (NSString *)checkScanCode:(NSString *)scanCode;
-
+- (NetworkStatus)getNetwordStatus;
 
 /** 顶部安全区高度 **/
 - (CGFloat)dev_safeDistanceTop;

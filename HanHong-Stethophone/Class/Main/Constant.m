@@ -8,6 +8,7 @@
 #import "Constant.h"
 #import "UpdateDeviceVC.h"
 
+
 NSString *const EarPhone_btName = @"EARPHONE_ER001";
 NSString *const DS88_btName = @"DS88";
 
@@ -18,8 +19,28 @@ NSString *const DS88_btName = @"DS88";
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         cs = [[Constant alloc] init];
+//        Reachability *reachability = [Reachability reachabilityForInternetConnection];
+//
+//        // 如果你希望在网络状态发生变化时接收通知，可以注册通知
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChanged:) name:kReachabilityChangedNotification object:nil];
+//        [reachability startNotifier];
     });
     return cs;
+}
+
+- (void)networkStatusChanged:(NSNotification *)notification {
+    Reachability *reachability = (Reachability *)notification.object;
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    
+    if (networkStatus != NotReachable) {
+        // 设备有可用的网络连接
+        // 执行相关操作
+        self.bNetworkConnected = YES;
+    } else {
+        // 设备无可用网络连接
+        // 执行相关操作
+        self.bNetworkConnected = NO;
+    }
 }
 
 - (NSString *)getPlistFilepathByName:(NSString *)plistName{
@@ -109,7 +130,10 @@ NSString *const DS88_btName = @"DS88";
     return deviceName;
 }
 
-
+- (NetworkStatus)getNetwordStatus{
+    Reachability *reachability = [Reachability reachabilityWithHostname:@"www.baidu.com"];
+    return [reachability currentReachabilityStatus];
+}
 
 // 顶部安全区高度
 - (CGFloat)dev_safeDistanceTop {

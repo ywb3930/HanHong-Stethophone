@@ -323,7 +323,6 @@
 
 - (void)refreshData:(NSDictionary *)data{
     HHLoginData *loginData = [HHLoginData yy_modelWithDictionary:data];
-    LoginData.userID = loginData.userID;
     LoginData.sex = loginData.sex;
     if(![Tools isBlankString:loginData.phone]){
         LoginData.phone = loginData.phone;

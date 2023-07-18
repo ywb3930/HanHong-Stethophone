@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSInteger)getDeviceType;//获取设备类型
 - (void)startRecord:(RECORD_TYPE)record_type record_mode:(RECORD_MODE)record_mode;
 - (Boolean)isRecording;//2
+- (Boolean)isPlaying;//2
 - (NSArray *)getRecordFile;//获取录音文件
 - (NSArray *)getRecordData;
 - (NSString *)getSerialNumber;

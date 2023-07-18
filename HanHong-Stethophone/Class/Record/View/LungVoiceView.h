@@ -9,6 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void(^LungVoiceViewBodyPositionBlock)(void);
+
 @protocol LungVoiceViewDelegate <NSObject>
 
 - (void)actionClickButtonLungBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag position:(NSInteger)position;
@@ -21,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) NSInteger    recordingState;
 @property (assign, nonatomic) Boolean      autoAction;
 @property (retain, nonatomic) NSDictionary     *positionValue;
+@property (nonatomic, copy) LungVoiceViewBodyPositionBlock bodyPositionBlock;
 - (void)recordingStart;
 - (void)recordingStop;
 - (void)recordingPause;

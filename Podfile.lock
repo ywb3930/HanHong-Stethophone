@@ -30,9 +30,9 @@ PODS:
   - ReactiveObjC (3.1.1)
   - SCIndexView (2.2.4)
   - SDAutoLayout (2.2.1)
-  - SDWebImage (5.16.0):
-    - SDWebImage/Core (= 5.16.0)
-  - SDWebImage/Core (5.16.0)
+  - SDWebImage (5.17.0):
+    - SDWebImage/Core (= 5.17.0)
+  - SDWebImage/Core (5.17.0)
   - Socket.IO-Client-Swift (15.2.0):
     - Starscream (~> 3.1)
   - Starscream (3.1.1)
@@ -65,7 +65,7 @@ DEPENDENCIES:
   - YYText
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - AFNetworking
     - Appirater
     - CocoaLumberjack
@@ -101,7 +101,7 @@ SPEC CHECKSUMS:
   ReactiveObjC: 011caa393aa0383245f2dcf9bf02e86b80b36040
   SCIndexView: 20eba7a5ba1ffdf49a208031a82bf0549c0f9935
   SDAutoLayout: 8bf6b3bbc8b01f775d4defbb4fda2ace805461be
-  SDWebImage: 2aea163b50bfcb569a2726b6a754c54a4506fcf6
+  SDWebImage: 750adf017a315a280c60fde706ab1e552a3ae4e9
   Socket.IO-Client-Swift: 1e3e3a1f09f3312a167f0d781eb2f383d477357c
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   SVProgressHUD: 1428aafac632c1f86f62aa4243ec12008d7a51d6
@@ -111,6 +111,6 @@ SPEC CHECKSUMS:
   YYText: 5c461d709e24d55a182d1441c41dc639a18a4849
   ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
 
-PODFILE CHECKSUM: 5b05b6f550d252f1fbea27a3b95911f9ce798d40
+PODFILE CHECKSUM: 7a5806e11fa1ace68d528bbff6b4db4a2d392338
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

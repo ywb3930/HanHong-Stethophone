@@ -28,10 +28,11 @@
 @property (assign, nonatomic) Boolean                       bAuscultationSequence;//是否自动录音
 @property (retain, nonatomic) NSArray                      *arrayHeartReorcSequence;//心音自动录音顺序
 @property (retain, nonatomic) NSArray                       *arrayLungReorcSequence;//肺音自动录音顺序
-@property (retain, nonatomic) ReadyRecordView       *readyRecordView;
+@property (retain, nonatomic) ReadyRecordView               *readyRecordView;
 @property (assign, nonatomic) NSInteger                     autoIndex;
 @property (assign, nonatomic) Boolean                       bActionFromAuto;//事件来自自动事件
-
+@property (assign, nonatomic) Boolean                       bPositionReady;//事件来自自动事件
+@property (retain, nonatomic) NSOperationQueue              *mainQueue;
 
 @end
 
@@ -41,6 +42,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.title = @"标准录音";
+    self.mainQueue = [NSOperationQueue mainQueue];
     self.view.backgroundColor = WHITECOLOR;
     self.bAutoSaveRecord = YES;
     self.bStandart = YES;
@@ -53,21 +55,23 @@
     [self loadRecordTypeData];
     self.recordmodel = RecordingUntilRecordDuration;
     [self initView];
-    [self reloadView];
     self.recordBottomView.labelStartRecord.hidden = YES;
+    [self actionConfigRecordDuration];
 }
 
-- (void)reloadView{
-    [super reloadView];
+- (void)actionConfigRecordDuration{
+    [super actionConfigRecordDuration];
     self.readyRecordView.duration = self.recordDurationAll;//录音总时长
-    
 }
+
+
 
 - (void)actionClickHeartButtonBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag{
     self.soundsType = heart_sounds;
     self.currentPositon = string;
     [self actionAfterButtonTypeClick];
     self.recordBottomView.labelStartRecord.hidden = NO;
+    self.bPositionReady = YES;
 }
 
 - (void)actionClickButtonLungBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag position:(NSInteger)position{
@@ -75,6 +79,7 @@
     self.soundsType = lung_sounds;
     self.currentPositon = string;
     [self actionAfterButtonTypeClick];
+    self.bPositionReady = YES;
     
 }
 
@@ -87,23 +92,34 @@
     
 }
 
+- (void)showRecordBottomViewRecordMessage:(NSString *)message {
+    if ([NSThread isMainThread]) {
+        self.recordBottomView.recordMessage = message;
+    } else {
+        __weak typeof(self) wself = self;
+        [self.mainQueue addOperationWithBlock:^{
+            wself.recordBottomView.recordMessage = message;
+        }];
+    }
+}
+
 
 - (void)actionDeviceConnecting{
-    self.recordBottomView.recordMessage = @"设备正在连接";
+    [self showRecordBottomViewRecordMessage:@"设备正在连接"];
 }
 
 - (void)actionDeviceConnectFailed{
-    self.recordBottomView.recordMessage = @"设备连接失败";
+    [self showRecordBottomViewRecordMessage:@"设备连接失败"];
 }
 
 - (void)actionDeviceConnected{
     if ([[HHBlueToothManager shareManager] getDeviceType] != STETHOSCOPE) {
-        self.recordBottomView.recordMessage = @"连接的设备不是听诊器，无录音功能";
+        [self showRecordBottomViewRecordMessage:@"连接的设备不是听诊器，无录音功能"];
     }
 }
 
 - (void)actionDeviceDisconnected{
-    self.recordBottomView.recordMessage = @"设备已断开";
+    [self showRecordBottomViewRecordMessage:@"设备已断开"];
 }
 
 - (void)actionDeviceHelperRecordReady{
@@ -112,22 +128,25 @@
     } else if (self.soundsType == lung_sounds) {
         self.lungVoiceView.recordingState = recordingState_prepare;
     }
-    self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
+    [self showRecordBottomViewRecordMessage:@"按听诊器录音键开始录音"];
     
 }
 
 - (void)actionDeviceHelperRecordBegin{
-    if (self.soundsType == heart_sounds) {
-        self.heartVoiceView.recordingState = recordingState_ing;
-        [self.heartVoiceView recordingStart];
-    } else if (self.soundsType == lung_sounds) {
-        self.lungVoiceView.recordingState = recordingState_ing;
-        [self.lungVoiceView recordingStart];
-    }
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        if (wself.soundsType == heart_sounds) {
+            wself.heartVoiceView.recordingState = recordingState_ing;
+            [wself.heartVoiceView recordingStart];
+        } else if (wself.soundsType == lung_sounds) {
+            wself.lungVoiceView.recordingState = recordingState_ing;
+            [wself.lungVoiceView recordingStart];
+        }
+        NSString *name = [[Constant shareManager] positionTagPositionCn:wself.currentPositon];
+        wself.readyRecordView.recordCode = wself.recordCode;
+        wself.recordBottomView.positionName = [NSString stringWithFormat:@"正在采集%@",name];
+    }];
     
-    NSString *name = [[Constant shareManager] positionTagPositionCn:self.currentPositon];
-    self.readyRecordView.recordCode = self.recordCode;
-    self.recordBottomView.positionName = [NSString stringWithFormat:@"正在采集%@",name];
 }
 
 - (void)actionDeviceHelperRecordingTime:(float)number{
@@ -136,13 +155,17 @@
     } else if(self.soundsType == lung_sounds) {
         self.lungVoiceView.recordingState = recordingState_ing;
     }
-    self.readyRecordView.recordTime = number;
-    self.readyRecordView.progress = number / self.recordDurationAll;
-    self.recordBottomView.recordMessage = @"";
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.readyRecordView.recordTime = number;
+        wself.readyRecordView.progress = number / self.recordDurationAll;
+    }];
+    
+    [self showRecordBottomViewRecordMessage:@""];
 }
 
 - (void)actionDeviceHelperRecordResume{
-    self.recordBottomView.recordMessage = @"";
+    [self showRecordBottomViewRecordMessage:@""];
 }
 
 - (void)actionDeviceHelperRecordPause{
@@ -151,45 +174,55 @@
     } else if (self.soundsType == lung_sounds) {
         self.lungVoiceView.recordingState = recordingState_pause;
     }
-    self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
-    if (self.soundsType == heart_sounds) {
-        [self.heartVoiceView recordingPause];
-    } else if (self.soundsType == lung_sounds) {
-        [self.lungVoiceView recordingPause];
-    }
-    self.readyRecordView.stop = YES;
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        [wself showRecordBottomViewRecordMessage:@"按听诊器录音键开始录音"];
+        if (wself.soundsType == heart_sounds) {
+            [wself.heartVoiceView recordingPause];
+        } else if (wself.soundsType == lung_sounds) {
+            [wself.lungVoiceView recordingPause];
+        }
+        wself.readyRecordView.stop = YES;
+    }];
 }
 
 - (void)actionDeviceHelperRecordEnd{
-    if (self.soundsType == heart_sounds) {
-        self.heartVoiceView.recordingState = recordingState_stop;
-        [self.heartVoiceView recordingStop];
-    } else if (self.soundsType == lung_sounds) {
-        self.lungVoiceView.recordingState = recordingState_stop;
-        [self.lungVoiceView recordingStop];
-    }
-    [self reloadViewRecordView];
-    self.recordBottomView.recordMessage = @"";
-    self.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
-    self.readyRecordView.recordCode = @"--";
-    self.readyRecordView.startTime = @"00:00";
-    self.recordBottomView.positionName = @"请选择采集位置";
-    if (self.bAuscultationSequence) {
-        self.autoIndex++;
-        NSLog(@"autoIndex = %li", self.autoIndex);
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self autoSelectNexrPositionSequence];
-        });
+    
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        if (wself.soundsType == heart_sounds) {
+            wself.heartVoiceView.recordingState = recordingState_stop;
+            [wself.heartVoiceView recordingStop];
+        } else if (wself.soundsType == lung_sounds) {
+            wself.lungVoiceView.recordingState = recordingState_stop;
+            [wself.lungVoiceView recordingStop];
+        }
         
-    }
+        [wself reloadViewRecordView];
+        wself.recordBottomView.recordMessage = @"";
+        wself.readyRecordView.labelReadyRecord.text = @"保存成功，请选择下一个位置";
+        wself.readyRecordView.recordCode = @"--";
+        wself.readyRecordView.startTime = @"00:00";
+        wself.recordBottomView.positionName = @"请选择采集位置";
+        if (wself.bAuscultationSequence) {
+            wself.autoIndex++;
+            [wself performSelector:@selector(actionNextPosition) withObject:nil afterDelay:1.f];
+            
+        }
+    }];
+    
     [[HHBlueToothManager shareManager] stop];
 }
 
+- (void)actionNextPosition{
+    [self autoSelectNexrPositionSequence];
+}
+
 - (void)actionCancelClickBluetooth{
-    //self.recordBottomView.recordMessage = @"按听诊器录音键开始录音";
-    [self reloadViewRecordView];
-    self.readyRecordView.labelReadyRecord.text = @"准备录音";
-    self.readyRecordView.recordCode = @"--";
+  
+//    [self reloadViewRecordView];
+//    self.readyRecordView.labelReadyRecord.text = @"准备录音";
+//    self.readyRecordView.recordCode = @"--";
 }
 
 - (void)loadPlistData:(Boolean)firstLoadData{
@@ -212,10 +245,11 @@
 - (void)autoSelectNexrPositionSequence{
     NSInteger heartCount = self.arrayHeartReorcSequence.count;
     if(self.autoIndex == heartCount + self.arrayLungReorcSequence.count) {
+        __weak typeof(self) wself = self;
         [self.view makeToast:@"录音已完成" duration:showToastViewSuccessTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
             RecordFinishVC *finishVC = [[RecordFinishVC alloc] init];
-            finishVC.recordCount = [@(self.autoIndex) integerValue];
-            [self.navigationController pushViewController:finishVC animated:YES];
+            finishVC.recordCount = [@(wself.autoIndex) integerValue];
+            [wself.navigationController pushViewController:finishVC animated:YES];
         }];
         return;
     }
@@ -226,17 +260,16 @@
     
     if (self.autoIndex >= heartCount) {
         if (self.autoIndex == heartCount) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.bActionFromAuto = YES;
-                [self actionClickButtonLung:self.buttonLung];
-            });
-            
+            [self performSelector:@selector(actionClickLung) withObject:nil afterDelay:0.5];
         }
-
         NSDictionary *positionValue = self.arrayLungReorcSequence[self.autoIndex - heartCount];
         self.lungVoiceView.positionValue = positionValue;
-        
     }
+}
+
+- (void)actionClickLung{
+    self.bActionFromAuto = YES;
+    [self actionClickButtonLung:self.buttonLung];
 }
 
 //重新加载录音界面
@@ -268,6 +301,7 @@
         }
         
     }
+    self.bPositionReady = NO;
     self.bActionFromAuto = NO;
     self.selectIndex = 0;
     self.soundsType = heart_sounds;
@@ -297,6 +331,7 @@
             return;
         }
     }
+    self.bPositionReady = NO;
     self.bActionFromAuto = NO;
     self.selectIndex = 1;
     self.soundsType = lung_sounds;
@@ -400,15 +435,23 @@
         _lungVoiceView = [[LungVoiceView alloc] init];
         _lungVoiceView.hidden = YES;
         _lungVoiceView.delegate = self;
+        __weak typeof(self) wself = self;
+        _lungVoiceView.bodyPositionBlock = ^{
+            wself.bPositionReady = NO;
+        };
     }
     return _lungVoiceView;
 }
 
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    if (self.recordingState == recordingState_pause) {
-        //[self actionStartRecord];
+    if (self.bPositionReady) {
+        [self actionStartRecord];
     }
+//
+//    if (self.recordingState == recordingState_pause) {
+//        //
+//    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -424,6 +467,21 @@
         [[HHBlueToothManager shareManager] stop];
     //}
     //self.recordingState = recordingState_stop;
+}
+
+- (BOOL)shouldHoldBackButtonEvent {
+    return YES;
+}
+
+- (BOOL)canPopViewController {
+    // 这里不要做一些费时的操作，否则可能会卡顿。
+    __weak typeof(self) wself = self;
+    [Tools showAlertView:nil andMessage:@"确定退出吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+        [wself.navigationController popViewControllerAnimated:YES];
+    } cancel:^{
+        
+    }];
+    return NO;
 }
 
 

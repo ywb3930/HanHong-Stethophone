@@ -70,6 +70,8 @@
 - (void)actionToAddFriend:(UIBarButtonItem *)item{
     self.editView = [[HMEditView alloc] initWithTitle:@"请输入好友的手机号" info:nil placeholder:@"请输入好友的手机号" idx:0];
     self.editView.delegate = self;
+    self.editView.cancelTitle = @"关闭";
+    self.editView.okTitle = @"查找";
     self.editView.textField.keyboardType = UIKeyboardTypePhonePad;
     [kAppWindow addSubview:self.editView];
 }

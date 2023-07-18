@@ -39,6 +39,12 @@
 
 @implementation HHLoginData
 
++ (NSDictionary *)modelCustomPropertyMapper {
+    return @{
+        @"userID" : @"id"
+    };
+}
+
 - (instancetype)init{
     self = [super init];
     if (self) {

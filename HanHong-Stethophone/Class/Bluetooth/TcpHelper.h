@@ -14,7 +14,7 @@
 
 -(void)Connect:(NSString *)domain_or_ip port:(int)port;
 -(void)WriteBytes:(NSData *)tcp_data;
--(BOOL)ReadBytes:(NSMutableData *)tcp_data len:(int)len timeout:(float)timeout;
+-(void)ReadBytes:(NSMutableData *)tcp_data len:(int)len timeout:(float)timeout;
 -(void)Disconnect;
 
 @end

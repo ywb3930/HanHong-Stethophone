@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^AnnotationFullResultBlock)(Boolean bChangeValue);
+typedef void(^AnnotationFullResultBlock)(Boolean bArrayEqual);
 
 @interface AnnotationFullVC : BaseRecordPlayVC
 

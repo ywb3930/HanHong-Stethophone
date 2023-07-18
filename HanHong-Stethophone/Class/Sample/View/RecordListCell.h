@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol RecordListCellDelegate <NSObject>
 
-- (Boolean)actionRecordListCellItemClick:(RecordModel *)model bSelected:(Boolean)bSelected idx:(NSInteger)idx;
+- (Boolean)actionRecordListCellItemClick:(RecordModel *)model bSelected:(Boolean)bSelected numberOfPage:(NSInteger)numberOfPage;
 
 @end
 
@@ -20,8 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (weak, nonatomic) id<RecordListCellDelegate> delegate;
 @property (retain, nonatomic) RecordModel       *recordModel;
 @property (assign, nonatomic) float           playProgess;
-@property (assign, nonatomic) Boolean         bStop;
-@property (assign, nonatomic) NSInteger           idx;
+@property (assign, nonatomic) Boolean         bPlayButtonSelected;
+@property (assign, nonatomic) NSInteger       numberOfPage;
 
 @end
 

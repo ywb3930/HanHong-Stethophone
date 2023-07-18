@@ -53,8 +53,6 @@
         label.text = [NSString stringWithFormat:@"%i.0", i];
         label.sd_layout.centerXIs(i * self.rowWidth * self.cellCount - Ratio10).widthIs(Ratio44).heightIs(Ratio13).bottomSpaceToView(self, Ratio3);
     }
-    
-
 }
 
 

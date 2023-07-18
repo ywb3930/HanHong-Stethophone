@@ -38,6 +38,14 @@
     return self;
 }
 
+- (void)setCancelTitle:(NSString *)cancelTitle{
+    [self.buttonCancel setTitle:cancelTitle forState:UIControlStateNormal];
+}
+
+- (void)setOkTitle:(NSString *)okTitle{
+    [self.buttonCommit setTitle:okTitle forState:UIControlStateNormal];
+}
+
 - (void)disappear{
     [self removeFromSuperview];
 }

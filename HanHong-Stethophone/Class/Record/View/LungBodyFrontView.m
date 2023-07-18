@@ -38,6 +38,7 @@
 - (instancetype)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if(self) {
+        self.positionIndex = 1;
         self.backgroundColor = WHITECOLOR;
         [self initData];
         [self initView];
@@ -88,7 +89,7 @@
         UIButton *buttonCollected = [[UIButton alloc] init];
         [self addSubview:buttonCollected];
         [buttonCollected setTitleColor:MainColor forState:UIControlStateNormal];
-        //[buttonCollected setTitle:@"已采" forState:UIControlStateNormal];
+        [buttonCollected setTitle:@"已采" forState:UIControlStateNormal];
         [buttonCollected setImage:[UIImage imageNamed:@"check_true"] forState:UIControlStateNormal];
         buttonCollected.enabled = NO;
         buttonCollected.titleLabel.font = Font11;

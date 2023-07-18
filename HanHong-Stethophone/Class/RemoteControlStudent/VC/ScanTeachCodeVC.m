@@ -85,9 +85,12 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:NO];
-    if (self.captureSession) {
-        [self.captureSession startRunning];
-    }
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (self.captureSession) {
+            [self.captureSession startRunning];
+        }
+    });
+    
 }
 
 //- (void)viewDidDisappear:(BOOL)animated{
@@ -202,7 +205,10 @@
     self.capturePreview.videoGravity = AVLayerVideoGravityResizeAspectFill ;
     self.capturePreview.frame = self.view.layer.bounds ;
     [self.view.layer insertSublayer: self.capturePreview atIndex: 0];
-    [self.captureSession startRunning];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self.captureSession startRunning];
+    });
+    
 }
  
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects fromConnection:(AVCaptureConnection *)connection

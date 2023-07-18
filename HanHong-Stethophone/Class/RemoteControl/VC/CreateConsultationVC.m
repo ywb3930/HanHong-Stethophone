@@ -41,14 +41,14 @@
     self.arrayData = [NSMutableArray array];
     if (self.bModify) {
         for (FriendModel *model in self.consultationModel.members) {
-            if (model.id == self.consultationModel.collector_id) {
+            if (model.userId == self.consultationModel.collector_id) {
                 model.bCollect = YES;
             }
         }
        [self.arrayData addObjectsFromArray:self.consultationModel.members];
     } else {
         FriendModel *model = [[FriendModel alloc] init];
-        model.id = LoginData.userID;
+        model.userId = LoginData.userID;
         model.name = LoginData.name;
         model.phone = LoginData.phone;
         model.avatar = LoginData.avatar;
@@ -81,7 +81,7 @@
         Boolean bAdd = YES;
         for (FriendModel *model1 in self.arrayData) {
             
-            if (model1.id == model2.id) {
+            if (model1.userId == model2.userId) {
                 bAdd = NO;
             }
         }
@@ -120,9 +120,9 @@
     //NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     for (FriendModel *model in self.arrayData) {
         if (model.bCollect) {
-            collector_id = [@(model.id) stringValue];
+            collector_id = [@(model.userId) stringValue];
         }
-        [members addObject:@{@"id":[@(model.id) stringValue]}];
+        [members addObject:@{@"id":[@(model.userId) stringValue]}];
     }
     params[@"members"] = [Tools convertToJsonData:members];
     params[@"collector_id"] = collector_id;

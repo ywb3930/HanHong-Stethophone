@@ -45,10 +45,10 @@
     self.localReordFilterType = 0;
     
     self.view.backgroundColor = HEXCOLOR(0xE2E8F0, 1);
-    if (self.idx == 0) {
+    if (self.numberOfPage == 0) {
         //录音成功事件广播，用于刷新本地数据
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(initLocalData) name:AddLocalRecordSuccess object:nil];
-    } else if (self.idx == 2) {
+    } else if (self.numberOfPage == 2) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecordFavoriteShare:) name:record_favorite_share object:nil];
     }
 }
@@ -255,7 +255,9 @@
 }
 
 - (void)actionDeviceHelperPlayBegin{
-    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
+    RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
+    cell.bPlayButtonSelected = YES;;
 }
 
 - (void)actionDeviceHelperPlayingTime:(float)value{
@@ -265,7 +267,6 @@
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
     RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
     cell.playProgess = value;
-    NSLog(@"播放进度：%f", value);
 }
 
 - (void)actionDeviceHelperPlayEnd{
@@ -274,7 +275,7 @@
     }
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0];
     RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:indexPath];
-    cell.bStop = NO;;
+    cell.bPlayButtonSelected = NO;;
     cell.playProgess = 0;
 }
 
@@ -287,10 +288,10 @@
     }
     self.textField.text = @"";
     self.selectMode = row;
-    if (self.idx == 0) {
+    if (self.numberOfPage == 0) {
         [self loadLocalDBData];
         [self stopPlayRecord];
-    } else if (self.idx == 1) {
+    } else if (self.numberOfPage == 1) {
         if (row == 0) {
             self.localReordFilterType  = All_filtrate_type;
             [self getAllRecordFiltrate:@""];
@@ -313,7 +314,7 @@
             self.localReordFilterType = Shared_filtrate_type;
             [self getShareRecordFiltrate:@""];
         }
-    }  else if (self.idx == 2) {
+    }  else if (self.numberOfPage == 2) {
         if (row == 0) {
             self.localReordFilterType  = All_filtrate_type;
             [self getAllRecordFiltrate:@""];
@@ -333,10 +334,42 @@
     }
     [self actionHiddenNoDataView];
 }
+- (void)actionPlayNextItem:(NSArray *)array{
+    
+    NSString *filePath = (NSString *)array[0];
+    if (self.numberOfPage == 0) {
+        //本地录音播放事件处理
+        [self startPlayRecordVoice:filePath];
+    } else if(self.numberOfPage == 1) {
+        //云标本库播放事件处理
+        RecordModel *model = (RecordModel *)array[1];
+        [self playCloudRecordVoice:filePath model:model];
+    }
+}
 
 //点击播放按钮事件处理
-- (Boolean)actionRecordListCellItemClick:(RecordModel *)model bSelected:(Boolean)bSelected idx:(NSInteger)idx{
-    //self.currentPlayingIdx = idx;
+- (Boolean)actionRecordListCellItemClick:(RecordModel *)model bSelected:(Boolean)bSelected numberOfPage:(NSInteger)numberOfPage{
+//    NSInteger modelIndex = [self.arrayData indexOfObject:model];
+//    //正在播放时点击其它行
+//    //Boolean returnValue = YES;
+//    if (self.bPlaying) {
+//        //[self.view makeToast:@"当前正在播放中，不可播放其它录音" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+//        [[HHBlueToothManager shareManager] stop];
+//        RecordListCell *cell = (RecordListCell *)[self.recordTableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentPlayingRow inSection:0]];
+//        cell.bPlayButtonSelected = NO;
+//        cell.playProgess = 0;
+//    }
+//    self.currentPlayingRow = modelIndex;
+//   // self.curren
+//    NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", self.path,model.tag];
+//    [self performSelector:@selector(actionPlayNextItem:) withObject:@[filePath, model] afterDelay:0.5f];
+//
+//
+//    return YES;
+//
+//
+    
+    
     NSInteger modelIndex = [self.arrayData indexOfObject:model];
     //正在播放时点击其它行
     if (self.bPlaying && modelIndex != self.currentPlayingRow) {
@@ -344,7 +377,7 @@
         return NO;
     }
     self.currentPlayingRow = modelIndex;
-    
+
     NSString *filePath = [NSString stringWithFormat:@"%@audio/%@", self.path,model.tag];
     //正在播放中暂停播放
     if(bSelected) {
@@ -354,16 +387,16 @@
         cell.playProgess = 0;
     } else {
         //没播放的开始播放
-        if (self.idx == 0) {
+        if (self.numberOfPage == 0) {
             //本地录音播放事件处理
             NSLog(@"filePath = %@", filePath);
             [self startPlayRecordVoice:filePath];
-        } else if(self.idx == 1) {
+        } else if(self.numberOfPage == 1) {
             //云标本库播放事件处理
             [self playCloudRecordVoice:filePath model:model];
         }
     }
-    
+
     return !bSelected;
 }
 //处理云标本库播放事件
@@ -662,9 +695,15 @@
 //点击列表进入标注界面
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (self.bPlaying && self.currentPlayingRow == indexPath.row) {
+        [[HHBlueToothManager shareManager] stop];
+        RecordListCell *cell = [self.recordTableView cellForRowAtIndexPath:indexPath];
+        cell.playProgess = 0;
+        cell.bPlayButtonSelected = NO;
+    }
     AnnotationVC *annotationVC = [[AnnotationVC alloc] init];
     annotationVC.recordModel = self.arrayData[indexPath.row];
-    annotationVC.saveLocation = self.idx;
+    annotationVC.saveLocation = self.numberOfPage;
     self.currentPlayingRow = -1;
     annotationVC.resultBlock = ^(RecordModel * _Nullable record) {
         NSInteger row = [self.arrayData indexOfObject:record];
@@ -790,7 +829,7 @@
     RecordListCell *cell = (RecordListCell *)[tableView dequeueReusableCellWithIdentifier:NSStringFromClass([RecordListCell class])];
     //NSLog(@"self.arrayData = %@", [Tools convertToJsonData:self.arrayData]);
     cell.recordModel = self.arrayData[indexPath.row];
-    cell.idx = self.idx;
+    cell.numberOfPage = self.numberOfPage;
     cell.delegate = self;
     return cell;
 }
@@ -903,18 +942,18 @@
         self.currentSelectIndexPath = indexPath;
         RecordModel *model = [self.arrayData objectAtIndex:indexPath.row];
         NSArray *arrayTitle = @[@"加入云标本库", @"删除"];
-        if (self.idx == 1) {
+        if (self.numberOfPage == 1) {
             if(model.shared) {
                 arrayTitle = @[@"分享", @"取消分享", @"删除"];
             } else {
                 arrayTitle = @[@"分享", @"删除"];
             }
-        } else if (self.idx == 2){
+        } else if (self.numberOfPage == 2){
             arrayTitle = @[@"删除"];
         }
         TTActionSheet *actionSheet = [TTActionSheet showActionSheet:arrayTitle cancelTitle:@"取消" andItemColor:MainBlack andItemBackgroundColor:WHITECOLOR andCancelTitleColor:MainNormal andViewBackgroundColor:WHITECOLOR];
         actionSheet.delegate = self;
-        actionSheet.tag = self.idx;
+        actionSheet.tag = self.numberOfPage;
         [actionSheet showInView:kAppWindow];
         
     }

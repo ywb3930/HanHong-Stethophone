@@ -6,7 +6,11 @@
 //
 
 #import "FriendModel.h"
-
 @implementation FriendModel
+
++ (NSDictionary *)modelCustomPropertyMapper{
+    return @{@"userId": @"id", @"classs": @"class"};
+}
+
 
 @end

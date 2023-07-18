@@ -258,7 +258,8 @@
 }
 
 - (void)checkNetConnect{
-    [[AFNetRequestManager shareManager] getRequestTest:@"https://www.baidu.com"];
+    //[[AFNetRequestManager shareManager] getRequestTest:@"https://www.baidu.com"];
+    [[Constant shareManager] getNetwordStatus];
 }
 
 - (UIInterfaceOrientationMask)application:(UIApplication *)application

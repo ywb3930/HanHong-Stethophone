@@ -50,7 +50,7 @@
 - (void)actionAddFriendCallback:(FriendModel *)model{
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
-    params[@"friend_id"] = [@(model.id) stringValue];
+    params[@"friend_id"] = [@(model.userId) stringValue];
     params[@"friend_phone"] = model.phone;
     [Tools showWithStatus:@"正在发送添加请求"];
     __weak typeof(self) wself = self;
@@ -77,7 +77,7 @@
 - (void)actionFriendDeneyCallback:(FriendModel *)model{
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
-    params[@"friend_id"] = [@(model.id) stringValue];
+    params[@"friend_id"] = [@(model.userId) stringValue];
     [Tools showWithStatus:@"正在取消添加好友"];
     __weak typeof(self) wself = self;
     [TTRequestManager friendDeney:params success:^(id  _Nonnull responseObject) {
@@ -103,7 +103,7 @@
 - (void)actionFriendApproveCallback:(FriendModel *)model{
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
-    params[@"friend_id"] = [@(model.id) stringValue];
+    params[@"friend_id"] = [@(model.userId) stringValue];
     [Tools showWithStatus:@"正在添加好友"];
     __weak typeof(self) wself = self;
     [TTRequestManager friendApprove:params success:^(id  _Nonnull responseObject) {

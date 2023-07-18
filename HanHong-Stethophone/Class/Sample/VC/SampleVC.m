@@ -118,19 +118,19 @@
 - (NSArray *)childVCs{
     if (!_childVCs) {
         self.localListVC = [[RecordListVC alloc] init];
-        self.localListVC.idx = 0;
+        self.localListVC.numberOfPage = 0;
         self.localListVC.string = @"本地录音";
         self.localListVC.delegate = self;
         [self.localListVC initView];
         [self.localListVC initLocalData];
         
         self.cloundListVC = [[RecordListVC alloc] init];
-        self.cloundListVC.idx = 1;
+        self.cloundListVC.numberOfPage = 1;
         self.cloundListVC.delegate = self;
         self.cloundListVC.string = @"云标本库";
         
         self.collectListVC = [[RecordListVC alloc] init];
-        self.collectListVC.idx = 2;
+        self.collectListVC.numberOfPage = 2;
         self.collectListVC.delegate = self;
         self.collectListVC.string = @"我的收藏";
         _childVCs = @[self.localListVC, self.cloundListVC, self.collectListVC];

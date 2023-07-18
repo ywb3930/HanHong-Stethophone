@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) NSMutableArray            *arraySelectItem;
 
 @property (assign, nonatomic) Boolean                   bActionFromAuto;//事件来自自动事件
+@property (assign, nonatomic) NSInteger                positionIndex;//0 心音  1 肺音前面  2 肺音侧面 3 肺音背面
 
 - (void)recordingStart;
 - (void)recordingStop;

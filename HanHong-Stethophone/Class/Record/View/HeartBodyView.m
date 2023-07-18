@@ -33,6 +33,7 @@
     self = [super initWithFrame:frame];
     if(self) {
         self.backgroundColor = WHITECOLOR;
+        self.positionIndex = 0;
         [self initData];
         [self initView];
     }

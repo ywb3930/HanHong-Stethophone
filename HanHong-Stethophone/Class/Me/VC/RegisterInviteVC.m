@@ -7,6 +7,7 @@
 
 #import "RegisterInviteVC.h"
 #import "OrgModel.h"
+#import "WXApi.h"
 
 @interface RegisterInviteVC ()
 
@@ -146,6 +147,7 @@
         _buttonShare.titleLabel.font = Font15;
         _buttonShare.layer.cornerRadius = Ratio22;
         _buttonShare.clipsToBounds = YES;
+        [_buttonShare addTarget:self action:@selector(actionShare:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonShare;
 }
@@ -156,5 +158,43 @@
 }
 
 
+- (UIImage *)captureScreenshot:(CGRect)frame{
+    UIGraphicsBeginImageContextWithOptions(frame.size, NO, 0.0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextTranslateCTM(context, -frame.origin.x, -frame.origin.y);
+
+    for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
+        [window drawViewHierarchyInRect:window.bounds afterScreenUpdates:YES];
+    }
+
+    UIImage *screenshot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return screenshot;
+}
+
+- (void)actionShare:(UIButton *)button{
+    [Tools showWithStatus:@"正在分享"];
+    
+    CGFloat maxY = CGRectGetMinY(self.buttonShare.frame);
+    UIImage *screenshot = [self captureScreenshot:CGRectMake(0, kNavBarAndStatusBarHeight, screenW, maxY - Ratio11 - kNavBarAndStatusBarHeight)];;
+
+    // 将截屏图片分享至微信
+    NSData *imageData = UIImagePNGRepresentation(screenshot);
+    WXMediaMessage *message = [WXMediaMessage message];
+    [message setThumbImage:screenshot]; // 设置缩略图
+    WXImageObject *imageObject = [WXImageObject object];
+    imageObject.imageData = imageData;
+    message.mediaObject = imageObject;
+
+    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+    req.bText = NO;
+    req.message = message;
+    req.scene = WXSceneSession; // 分享至微信好友
+
+    [WXApi sendReq:req completion:^(BOOL success) {
+        [SVProgressHUD dismiss];
+    }];
+}
 
 @end

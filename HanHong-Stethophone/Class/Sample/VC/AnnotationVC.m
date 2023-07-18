@@ -125,24 +125,40 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     params[@"tag"] = self.recordModel.tag;
-
-    params[@"patient_id"] = self.itemPatientId.textFieldInfo.text;
-    params[@"patient_area"] = self.itemPatientArea.textFieldInfo.text;/////
+    NSString *patient_id = self.itemPatientId.textFieldInfo.text;
+    NSString *patient_area = self.itemPatientArea.textFieldInfo.text;
+    NSString *patient_symptom = self.itemPatientSymptom.textFieldInfo.text;
+    NSString *patient_diagnosis = self.itemPatientDiagnosis.textFieldInfo.text;
+    NSString *patient_birthday = [self getUserBirthday];
+    NSString *patient_height = self.itemPatientHeight.textFieldInfo.text;
+    NSString *patient_weight = self.itemPatientWeight.textFieldInfo.text;
+    
+    
+    params[@"patient_id"] = patient_id;
+    params[@"patient_area"] = patient_area;/////
     params[@"patient_tag"] = self.recordModel.position_tag;
-    params[@"patient_symptom"] = self.itemPatientSymptom.textFieldInfo.text;
-    params[@"patient_diagnosis"] = self.itemPatientDiagnosis.textFieldInfo.text;
+    params[@"patient_symptom"] = patient_symptom;
+    params[@"patient_diagnosis"] = patient_diagnosis;
     NSInteger sex = [self.itemPatientSex.labelInfo.text isEqualToString:@"男"] ? man : woman;
     params[@"patient_sex"] = [@(sex) stringValue];
-    params[@"patient_birthday"] = [self getUserBirthday];
-    params[@"patient_height"] = self.itemPatientHeight.textFieldInfo.text;
-    params[@"patient_weight"] = self.itemPatientWeight.textFieldInfo.text;
+    params[@"patient_birthday"] = patient_birthday;
+    params[@"patient_height"] = patient_height;
+    params[@"patient_weight"] = patient_weight;
     params[@"characteristics"] = characteristics;
     [Tools showWithStatus:@"正在保存"];
     __weak typeof(self) wself = self;
     [TTRequestManager recordModify:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
-            wself.recordModel.characteristics = characteristics;
+           
             if (wself.resultBlock) {
+                wself.recordModel.characteristics = characteristics;
+                wself.recordModel.patient_id = patient_id;
+                wself.recordModel.patient_area = patient_area;
+                wself.recordModel.patient_symptom = patient_symptom;
+                wself.recordModel.patient_diagnosis = patient_diagnosis;
+                wself.recordModel.patient_birthday = patient_birthday;
+                wself.recordModel.patient_height = patient_height;
+                wself.recordModel.patient_weight = patient_weight;
                 wself.resultBlock(wself.recordModel);
             }
             [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
@@ -173,10 +189,18 @@
     Boolean changeValue = NO;
     if (tag == 1 && ![self.recordModel.patient_symptom isEqualToString:text]) {
         changeValue = YES;
-        self.recordModel.patient_symptom = text;
+        if(self.saveLocation == 0) {
+            self.recordModel.patient_symptom = text;
+            [self modifyDataLocal];
+        }
+        
     } else if (tag == 2  && ![self.recordModel.patient_diagnosis isEqualToString:text]) {
         changeValue = YES;
-        self.recordModel.patient_diagnosis = text;
+        if(self.saveLocation == 0) {
+            self.recordModel.patient_diagnosis = text;
+            [self modifyDataLocal];
+        }
+        
     } else if (tag == 3 || tag == 4) {
         NSString *age = self.itemPatientAge.textFieldAge.text;
         NSString *mouth = self.itemPatientAge.textFieldMonth.text;
@@ -184,25 +208,36 @@
         NSString *age1 = data[@"age"];
         NSString *mouth1 = data[@"month"];
         if(![age isEqualToString:age1] || ![mouth isEqualToString:mouth1]) {
-            self.recordModel.patient_birthday = [self getUserBirthday];
             changeValue = YES;
+            if(self.saveLocation == 0) {
+                self.recordModel.patient_birthday = [self getUserBirthday];
+                [self modifyDataLocal];
+            }
         }
         
     } else if (tag == 5 && ![self.recordModel.patient_height isEqualToString:text]) {
-        self.recordModel.patient_height = text;
+        //self.recordModel.patient_height = text;
         changeValue = YES;
+        if(self.saveLocation == 0) {
+            self.recordModel.patient_height = text;
+            [self modifyDataLocal];
+        }
     } else if (tag == 6 && ![self.recordModel.patient_weight isEqualToString:text]) {
-        self.recordModel.patient_weight = text;
         changeValue = YES;
+        if(self.saveLocation == 0) {
+            self.recordModel.patient_weight = text;
+            [self modifyDataLocal];
+        }
     } else if (tag == 111 && ![self.recordModel.patient_id isEqualToString:text]) {
-        self.recordModel.patient_id = text;
+        
         changeValue = YES;
+        if(self.saveLocation == 0) {
+            self.recordModel.patient_id = text;
+            [self modifyDataLocal];
+        }
     }
     
-    if(self.saveLocation == 0 && changeValue) {
-        
-        [self modifyDataLocal];
-    }
+    
     if (changeValue) {
         self.bChangeData = YES;
     }
@@ -259,6 +294,7 @@
     if (result) {
         NSLog(@"保存数据库成功");
         if (self.resultBlock) {
+            
             self.resultBlock(self.recordModel);
         }
     } else {
@@ -644,20 +680,19 @@
 
 - (void)actionToAnnotationFull:(UIButton *)button{
     AnnotationFullVC *annotationFull = [[AnnotationFullVC alloc] init];
-    NSArray *array = [Tools jsonData2Array:self.recordModel.characteristics];
-    self.arrayCharacteristic = [NSMutableArray arrayWithArray:array];
+    //NSArray *array = [Tools jsonData2Array:self.recordModel.characteristics];
+    //self.arrayCharacteristic = [NSMutableArray arrayWithArray:array];
     annotationFull.recordModel = self.recordModel;
     annotationFull.saveLocation = self.saveLocation;
     annotationFull.arrayCharacteristic = self.arrayCharacteristic;
     __weak typeof(self) wself = self;
-    annotationFull.resultBlock = ^(Boolean bChangeValue) {
-        wself.bChangeData = bChangeValue;
+    annotationFull.resultBlock = ^(Boolean bArrayEqual) {
+        wself.bChangeData = !bArrayEqual;
         [wself reloadAnnotationView];
     };
     [self.navigationController pushViewController:annotationFull animated:NO];
 }
-//https://www.hedelongcloud.com/api/record/share_brief/IX93fzFS3Ilo2Tey5aq3SQ==
-//https://www.hedelongcloud.com/api/record/share_brief/oUcU3NzUdxipYKXOSlR6hg==
+
 - (UIButton *)buttonSave{
     if (!_buttonSave) {
         _buttonSave = [[UIButton alloc] init];

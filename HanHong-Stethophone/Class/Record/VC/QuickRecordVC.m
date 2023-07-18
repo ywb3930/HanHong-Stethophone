@@ -20,6 +20,7 @@
 @property (retain, nonatomic) ReadyRecordView       *readyRecordView;
 @property (retain, nonatomic) UILabel               *labelMessage;
 @property (retain, nonatomic) HeartFilterLungView   *heartFilterLungView;
+@property (retain, nonatomic) NSOperationQueue      *mainQueue;
 
 @end
 
@@ -29,6 +30,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor = ViewBackGroundColor;
+    self.mainQueue = [NSOperationQueue mainQueue];
     self.title = @"便捷录音";
     self.recordType = QuickRecord;
     self.recordmodel = RecordingUntilRecordDuration;
@@ -38,6 +40,8 @@
     [self initView];
     [self reloadView];
     [self loadRecordTypeData];
+    
+    [self actionConfigRecordDuration];
     [self actionStartRecord];
 }
 
@@ -54,62 +58,108 @@
     self.recordingState = recordingState_prepare;
 }
 
+- (void)actionConfigRecordDuration {
+    [super actionConfigRecordDuration];
+    self.readyRecordView.duration = self.recordDurationAll;//录音总时长
+}
+
 
 //显示录音进度
 - (void)actionDeviceHelperRecordingTime:(float)number{
-    self.labelStartRecord.text = @"";
-    self.readyRecordView.recordTime = number;
-    self.readyRecordView.progress = number / self.recordDurationAll;
+    //self.labelStartRecord.text = @"";
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.readyRecordView.recordTime = number;
+        wself.readyRecordView.progress = number / self.recordDurationAll;
+    }];
+    
 }
 
 - (void)actionDeviceHelperRecordPause{
-    self.readyRecordView.stop = YES;
-    self.labelStartRecord.text = @"按听诊器录音键开始录音";
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.readyRecordView.stop = YES;
+        [wself showLabelStartRecordMessage:@"按听诊器录音键开始录音"];
+    }];
+    
 }
 
 - (void)actionDeviceHelperRecordBegin{
-    self.readyRecordView.recordCode = self.recordCode;
+    [self showLabelStartRecordMessage:@""];
+    __weak typeof(self) wself = self;
+    [self.mainQueue addOperationWithBlock:^{
+        wself.readyRecordView.recordCode = self.recordCode;
+    }];
+    
 }
 
 - (void)actionDeviceHelperRecordEnd{
+    [self showLabelStartRecordMessage:@""];
+    
+    if ([NSThread isMainThread]) {
+        [self showViewInMainDeviceHelperRecordEnd];
+    } else {
+        __weak typeof(self) wself = self;
+        [self.mainQueue addOperationWithBlock:^{
+            [wself showViewInMainDeviceHelperRecordEnd];
+        }];
+    }
+}
+
+- (void)showViewInMainDeviceHelperRecordEnd {
     self.readyRecordView.labelReadyRecord.text = @"保存成功，准备下一个录音";
     self.readyRecordView.recordCode = @"--";
     self.readyRecordView.startTime = @"00:00";
-    self.labelStartRecord.text = @"";
     [self reloadViewRecordView];
 }
 
+- (void)showLabelStartRecordMessage:(NSString *)message{
+    if ([NSThread isMainThread]) {
+        self.labelStartRecord.text = message;
+    } else {
+        __weak typeof(self) wself = self;
+        [self.mainQueue addOperationWithBlock:^{
+            wself.labelStartRecord.text = message;
+        }];
+    }
+}
+
 - (void)actionDeviceHelperRecordReady{
-    self.labelStartRecord.text = @"按听诊器录音键开始录音";
+    [self showLabelStartRecordMessage:@"按听诊器录音键开始录音"];
 }
 
 - (void)actionDeviceHelperRecordResume{
-    self.labelStartRecord.text = @"";
+    [self showLabelStartRecordMessage:@""];
 }
 
 - (void)actionDeviceConnecting{
-    self.labelStartRecord.text = @"设备正在连接";
+    [self showLabelStartRecordMessage:@"设备正在连接"];
 }
 
 - (void)actionDeviceConnectFailed{
-    self.labelStartRecord.text = @"设备连接失败";
+    [self showLabelStartRecordMessage:@"设备连接失败"];
+}
+
+- (void)actionDeviceRecordPlayInstable{
+    [self showLabelStartRecordMessage:@"无限数据传输不稳定"];
+}
+
+- (void)actionDeviceRecordLostEvent{
+    [self showLabelStartRecordMessage:@"无线信号弱，音频数据丢失"];
 }
 
 - (void)actionDeviceConnected{
     if ([[HHBlueToothManager shareManager] getDeviceType] != STETHOSCOPE) {
-        self.labelStartRecord.text = @"连接的设备不是听诊器，无录音功能";
+        [self showLabelStartRecordMessage:@"连接的设备不是听诊器，无录音功能"];
     }
 }
 
 - (void)actionDeviceDisconnected{
-    self.labelStartRecord.text = @"设备已断开";
+    [self showLabelStartRecordMessage:@"设备已断开"] ;
 }
 
 - (void)actionCancelClickBluetooth{
-    self.labelStartRecord.text = @"";
-    [self reloadViewRecordView];
-    self.readyRecordView.labelReadyRecord.text = @"准备录音";
-    self.readyRecordView.recordCode = @"--";
+
 }
 
 //点击心音肺音按钮事件
@@ -161,7 +211,6 @@
 }
 
 - (void)reloadView{
-    [super reloadView];
     if (self.soundsType == heart_sounds) {//显示心音
         self.heartFilterLungView.buttonHeartVoice .selected = YES;
         self.heartFilterLungView.buttonLungVoice .selected = NO;
@@ -175,7 +224,7 @@
     }
     //判断滤波状态
     //[self realodFilerView];
-    self.readyRecordView.duration = self.recordDurationAll;//录音总时长
+    
     
 }
 
@@ -202,7 +251,7 @@
         _labelStartRecord.textAlignment = NSTextAlignmentCenter;
         _labelStartRecord.font = Font15;
         _labelStartRecord.textColor = UIColor.redColor;
-        _labelStartRecord.text = @"按听诊器录音键可开始录音";
+        _labelStartRecord.text = @"";
     }
     return _labelStartRecord;
 }
@@ -213,7 +262,7 @@
         _labelMessage.textAlignment = NSTextAlignmentCenter;
         _labelMessage.font = Font15;
         _labelMessage.textColor = UIColor.redColor;
-        _labelMessage.text = @"无线信号弱，音频数据丢失";
+        _labelMessage.text = @"";
         _labelMessage.hidden = YES;
     }
     return _labelMessage;
@@ -239,12 +288,12 @@
     [super viewWillAppear:animated];
     [self actionStartRecord];
 }
-
-- (void)viewWillDisappear:(BOOL)animated{
-    [super viewWillDisappear:animated];
-    [[HHBlueToothManager shareManager] stop];
-    self.recordingState = recordingState_pause;
-}
+//
+//- (void)viewWillDisappear:(BOOL)animated{
+//    [super viewWillDisappear:animated];
+//    [[HHBlueToothManager shareManager] stop];
+//    self.recordingState = recordingState_pause;
+//}
 
 
 - (BOOL)shouldHoldBackButtonEvent {
@@ -253,8 +302,9 @@
 
 - (BOOL)canPopViewController {
     // 这里不要做一些费时的操作，否则可能会卡顿。
+    __weak typeof(self) wself = self;
     [Tools showAlertView:nil andMessage:@"确定退出吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
-        [self.navigationController popViewControllerAnimated:YES];
+        [wself.navigationController popViewControllerAnimated:YES];
     } cancel:^{
         
     }];

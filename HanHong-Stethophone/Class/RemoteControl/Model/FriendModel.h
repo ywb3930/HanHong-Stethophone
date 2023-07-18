@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FriendModel : NSObject
@@ -18,7 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) NSString              *company;
 @property (retain, nonatomic) NSString              *department;
 @property (retain, nonatomic) NSString              *email;
-@property (assign, nonatomic) long                  id;
+//@property (assign, nonatomic) long                  id;
+@property (assign, nonatomic) long                  userId;
 @property (retain, nonatomic) NSString              *name;
 @property (retain, nonatomic) NSString              *phone;
 @property (assign, nonatomic) NSInteger             role;
@@ -27,7 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) NSInteger             type;
 @property (retain, nonatomic) NSString              *title;
 @property (retain, nonatomic) NSString              *academy;
-@property (retain, nonatomic) NSString              *class;
+@property (retain, nonatomic) NSString              *classs;
+//@property (retain, nonatomic) NSString              *class;
 @property (assign, nonatomic) Boolean               bSelected;//是否选中
 @property (assign, nonatomic) Boolean               bOnLine;//是否在线
 @property (assign, nonatomic) Boolean               bCollect;//是否是采集人
