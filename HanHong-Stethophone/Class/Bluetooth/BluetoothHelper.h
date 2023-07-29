@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
-extern NSArray const *default_name_filter;
+//extern NSArray const *default_name_filter;
 
 @protocol SearchDelegate <NSObject>
 

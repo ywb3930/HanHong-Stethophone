@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HeartBodyView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @protocol HeartVoiceViewDelegate <NSObject>
@@ -20,10 +21,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) NSInteger    recordingState;
 @property (retain, nonatomic) NSDictionary     *positionValue;
 @property (assign, nonatomic) Boolean      autoAction;
-- (void)recordingStart;
-- (void)recordingStop;
+@property (retain, nonatomic) HeartBodyView             *heartBodyView;
+
+- (void)recordingStart;//开始录音
+- (void)recordingReload;//停止录音关闭计时器时调用
+- (void)recordingStop;//停止录音时调用
 - (void)recordingPause;
-- (void)recordingRestar;
+- (void)recordingResume;
 - (void)actionClearSelectButton;
 
 @end

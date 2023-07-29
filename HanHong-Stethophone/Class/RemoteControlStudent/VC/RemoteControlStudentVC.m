@@ -14,10 +14,10 @@
 
 @interface RemoteControlStudentVC ()<ScanTeachCodeVCDelegate, UITableViewDelegate, UITableViewDataSource, NewProgramVCDelgate>
 
-@property (retain, nonatomic) UIView                *viewNavi;
-@property (retain, nonatomic) UIButton              *buttonLearnProgram;
-@property (retain, nonatomic) UIButton              *buttonClinic;
-@property (retain, nonatomic) StudentProgramView    *studentProgramView;
+@property (retain, nonatomic) UIView                *viewNavi;//头部导航界面
+@property (retain, nonatomic) UIButton              *buttonLearnProgram;//学习计划按钮
+@property (retain, nonatomic) UIButton              *buttonClinic;//进入学习界面按钮
+@property (retain, nonatomic) StudentProgramView    *studentProgramView;//学习计划日历
 @property (retain, nonatomic) UITableView           *tableView;
 @property (retain, nonatomic) NSMutableArray        *arrayData;
 
@@ -34,7 +34,7 @@
     [self setupView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCalender:) name:add_program_broadcast object:nil];
 }
-
+//修改计划，刷新列表
 - (void)actionEditProgramCallback:(ProgramModel *)model{
     NSInteger row = [self.arrayData indexOfObject:model];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
@@ -42,9 +42,16 @@
 }
 
 - (void)actionDeleteProgramCallback:(ProgramModel *)model{
-    NSInteger row = [self.arrayData indexOfObject:model];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-    [self.arrayData removeObjectAtIndex:row];
+    NSInteger idx = 0;
+    for (ProgramModel *mm in self.arrayData) {
+        if (mm.program_id == model.program_id) {
+            idx = [self.arrayData indexOfObject:mm];
+            break;
+        }
+        
+    }
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+    [self.arrayData removeObjectAtIndex:idx];
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
@@ -58,6 +65,7 @@
             urlValid = YES;
         }
     }
+    
     if (urlValid) {
         [self performSelector:@selector(delayedMethodWithParameter:) withObject:urlArray afterDelay:1.0];
     } else {

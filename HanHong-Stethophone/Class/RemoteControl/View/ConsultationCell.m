@@ -43,7 +43,7 @@
 //
 //
     NSMutableAttributedString *attributeMember = [[NSMutableAttributedString alloc] initWithString:name];
-    attributeMember.yy_font = Font15;
+    attributeMember.yy_font = Font13;
     attributeMember.yy_color = MainBlack;
     attributeMember.yy_lineSpacing = Ratio2;
     
@@ -63,14 +63,14 @@
     [self.contentView addSubview:self.labelMemberTitle];
     [self.contentView addSubview:self.labelMember];
     [self.contentView addSubview:self.viewLine];
-    self.labelTitle.sd_layout.leftSpaceToView(self.contentView, Ratio11).topSpaceToView(self.contentView, Ratio8).heightIs(Ratio15).rightSpaceToView(self.contentView, Ratio11);
-    self.labelStartTime.sd_layout.leftEqualToView(self.labelTitle).rightEqualToView(self.labelTitle).topSpaceToView(self.labelTitle, Ratio5).heightIs(Ratio15);
-    self.labelDuration.sd_layout.leftEqualToView(self.labelTitle).rightEqualToView(self.labelTitle).topSpaceToView(self.labelStartTime, Ratio5).heightIs(Ratio15);
+    self.labelTitle.sd_layout.leftSpaceToView(self.contentView, Ratio11).topSpaceToView(self.contentView, Ratio11).heightIs(Ratio15).rightSpaceToView(self.contentView, Ratio11);
+    self.labelStartTime.sd_layout.leftEqualToView(self.labelTitle).rightEqualToView(self.labelTitle).topSpaceToView(self.labelTitle, Ratio6).heightIs(Ratio15);
+    self.labelDuration.sd_layout.leftEqualToView(self.labelTitle).rightEqualToView(self.labelTitle).topSpaceToView(self.labelStartTime, Ratio6).heightIs(Ratio15);
     
     self.width = [Tools widthForString:@"专家组成员：" fontSize:Ratio13 andHeight:Ratio15];
-    self.labelMemberTitle.sd_layout.leftEqualToView(self.labelTitle).heightIs(Ratio15).topSpaceToView(self.labelDuration, Ratio5).widthIs(self.width+Ratio3);
-    self.labelMember.sd_layout.leftSpaceToView(self.labelMemberTitle, 0).heightIs(Ratio15).topSpaceToView(self.labelDuration, Ratio3).rightSpaceToView(self.contentView, Ratio11);
-    self.viewLine.sd_layout.leftEqualToView(self.labelTitle).rightEqualToView(self.labelTitle).topSpaceToView(self.labelMember, Ratio8).heightIs(Ratio1);
+    self.labelMemberTitle.sd_layout.leftEqualToView(self.labelTitle).heightIs(Ratio15).topSpaceToView(self.labelDuration, Ratio6).widthIs(self.width+Ratio3);
+    self.labelMember.sd_layout.leftSpaceToView(self.labelMemberTitle, 0).heightIs(Ratio15).topSpaceToView(self.labelDuration, Ratio6).rightSpaceToView(self.contentView, Ratio11);
+    self.viewLine.sd_layout.leftEqualToView(self.labelTitle).rightEqualToView(self.labelTitle).topSpaceToView(self.labelMember, Ratio11).heightIs(Ratio1);
     [self setupAutoHeightWithBottomView:self.viewLine bottomMargin:0];
     
     

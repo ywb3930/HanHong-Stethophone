@@ -464,7 +464,13 @@ static id _instance;
 }
 
 +(void)showWithStatus:(NSString *)string{
-    [SVProgressHUD showWithStatus:string];
+    //[SVProgressHUD showWithStatus:string];
+    MBProgressHUD *hub = [MBProgressHUD showHUDAddedTo:kAppWindow animated:YES];
+    hub.label.text = string;
+}
+
++(void)hiddenWithStatus{
+    [MBProgressHUD hideHUDForView:kAppWindow animated:YES];
 }
 
 
@@ -1020,12 +1026,13 @@ static id _instance;
 }
 
 +(void)logout:(NSString *)message{
-    [SVProgressHUD dismiss];
+    [Tools hiddenWithStatus];
     LoginData = nil;
     [[HHLoginManager sharedManager] setCurrentHHLoginData:nil];
     if ([[HHBlueToothManager shareManager] getConnectState] == DeviceConnected) {
         [[HHBlueToothManager shareManager] disconnect];
     }
+    [[HHBlueToothManager shareManager] stop];
     [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type": @"0"}];
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"auto_login"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -1319,6 +1326,15 @@ static id _instance;
     return [resultStr evaluateWithObject:string];
 }
 
++ (NSInteger)calculationThisMonthDays:(NSDate *)days
+{
+    NSCalendar * calendar = [NSCalendar currentCalendar];
+
+    NSRange range = [calendar rangeOfUnit:NSCalendarUnitDay inUnit:NSCalendarUnitMonth forDate:days];
+    return range.length;
+}
+
+
 
 + (NSInteger)compareDate:(NSDate *)date{
    NSTimeInterval secondsPerDay = 24 * 60 * 60;
@@ -1339,4 +1355,13 @@ static id _instance;
    return 0;
 }
 
++ (BOOL)isLocationEnabled {
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+ 
 @end

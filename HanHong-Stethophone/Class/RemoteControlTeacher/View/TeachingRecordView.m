@@ -69,7 +69,6 @@
     
     [self addSubview:self.tableView];
     self.tableView.sd_layout.leftSpaceToView(self, 0).topSpaceToView(self.viewTop, 0).rightSpaceToView(self, 0).bottomSpaceToView(self, 0);
-    
     [self initData];
 }
 
@@ -77,14 +76,15 @@
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     [Tools showWithStatus:nil];
+    __weak typeof(self) wself = self;
     [TTRequestManager teachingGetHistory:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
-            self.arrayData = [NSArray yy_modelArrayWithClass:[TeachingHistoryModel class] json:responseObject[@"data"]];
-            [self.tableView reloadData];
+            wself.arrayData = [NSArray yy_modelArrayWithClass:[TeachingHistoryModel class] json:responseObject[@"data"]];
+            [wself.tableView reloadData];
         }
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 

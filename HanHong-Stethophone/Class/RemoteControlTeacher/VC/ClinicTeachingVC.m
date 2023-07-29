@@ -13,8 +13,9 @@
 #import "ClassRoom.h"
 #import "MemberItemModel.h"
 #import "UIButton+WXD.h"
+#import "DeviceManagerVC.h"
 
-@interface ClinicTeachingVC ()<UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UINavigationControllerBackButtonHandlerProtocol, ClassRoomDelegate, ClinicTeachingHeaderDelegate>
+@interface ClinicTeachingVC ()<UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UINavigationControllerBackButtonHandlerProtocol, ClassRoomDelegate, ClinicTeachingHeaderDelegate, HHBluetoothButtonDelegate>
 
 @property (retain, nonatomic) TeachingHistoryModel          *historyModel;
 @property (retain, nonatomic) UICollectionView              *collectionView;
@@ -29,6 +30,18 @@
 @property (retain, nonatomic) ClassRoomInfo                 *classRoomInfo;
 @property (retain, nonatomic) NSOperationQueue              *mainQueue;
 
+@property (assign, nonatomic) Boolean               bAutoSaveRecord;//是否自动保存录音
+@property (assign, nonatomic) NSInteger             recordingState;//录音状态
+@property (assign, nonatomic) NSInteger             soundsType;//快速录音类型
+@property (assign, nonatomic) NSInteger             isFiltrationRecord;//滤波状态
+@property (retain, nonatomic) HHBluetoothButton     *buttonBluetooth;
+@property (assign, nonatomic) NSInteger             RECORD_TYPE;//判断滤波状态
+@property (assign, nonatomic) NSInteger             recordDurationAll;// 录音总时长
+@property (retain, nonatomic) NSString              *recordCode;//录音编号
+@property (assign, nonatomic) NSInteger             recordDuration;//记录已经录制录音时长
+@property (retain, nonatomic) NSString              *relativePath;
+@property (retain, nonatomic) RecordModel            *recordDataModel;
+
 @end
 
 @implementation ClinicTeachingVC
@@ -39,11 +52,11 @@
     self.title = @"临床教学";
     self.mainQueue = [NSOperationQueue mainQueue];
     self.arrayData = [NSMutableArray array];
-    self.recordmodel = RecordingWithRecordDurationMaximum;
-    self.recordType = RemoteRecord;
+    //self.recordmodel = RecordingWithRecordDurationMaximum;
+    //self.recordType = RemoteRecord;
     self.bAutoSaveRecord = NO;
     self.itemWidth = (screenW-Ratio66)/5;
-    [self initNavi:1];
+    [self initNavi];
     [self setupView];
     self.view.backgroundColor = WHITECOLOR;
     [self loadPlistData:YES];
@@ -52,13 +65,204 @@
     [self getTeachingClassroom];
     [self initClassRoom];
     [self actionConfigRecordDuration];
-//    if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_NOT_CONNECT) {
-//        [self actionDeviceHelperRecordReady];
-//    }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
+}
+
+
+//接收蓝牙广播通知
+- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+    NSDictionary *userInfo = notification.userInfo;
+    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
+    NSObject *args1 = userInfo[@"args1"];
+    NSObject *args2 = userInfo[@"args2"];
+    if (event!=12) {
+        DLog(@"DEVICE_HELPER_EVENT = %li", event);
+    }
+    if (event == DeviceConnecting) {
+        [self actionDeviceConnecting];
+    } else if (event == DeviceConnected) {
+        [self actionDeviceConnected];
+    } else if (event == DeviceConnectFailed) {
+        [self actionDeviceConnectFailed];
+    } else if (event == DeviceDisconnected) {
+        [self actionDeviceDisconnected];
+    }
+    
+    
+    if (event == DeviceHelperRecordReady) {
+        self.recordingState = recordingState_prepare;
+        DLog(@"录音就绪");
+        [self actionDeviceHelperRecordReady];
+    } else if (event == DeviceHelperRecordBegin) {
+        self.recordingState = recordingState_ing;
+        self.recordCode = [NSString stringWithFormat:@"%@%@",[Tools getCurrentTimes], [Tools getRamdomString]];
+        DLog(@"录音开始: %@", self.recordCode);
+        [self actionDeviceHelperRecordBegin];
+    } else if (event == DeviceHelperRecordingTime) {
+        //显示录音进度
+        self.recordingState = recordingState_ing;
+        NSNumber *result = (NSNumber *)args1;
+        float number = [result floatValue];
+        self.recordDuration = (int)number;
+        [self actionDeviceHelperRecordingTime:number];
+        DLog(@"录音进度: %f",number);
+
+    } else if (event == DeviceHelperRecordingData) {
+        [self actionDeviceHelperRecordingData:(NSData *)args1];
+    } else if (event == DeviceHelperRecordPause) {
+        self.recordingState = recordingState_pause;
+        DLog(@"录音暂停");
+        [self actionDeviceHelperRecordPause];
+    } else if (event == DeviceHelperRecordResume) {
+        DLog(@"录音恢复");
+        self.recordingState = recordingState_ing;
+        //[self actionDeviceHelperRecordResume];
+    } else if (event == DeviceHelperRecordEnd) {
+        DLog(@"录音结束");
+        self.recordingState = recordingState_stop;
+        [self actionEndRecord];
+    }  else if (event == DeviceRecordPlayInstable) {
+        [self actionDeviceRecordPlayInstable];
+    } else if (event == DeviceRecordLostEvent) {
+        [self actionDeviceRecordLostEvent];
+    }
+}
+
+//录音结束事件处理
+- (void)actionEndRecord{
+    //获取录音二进制文件
+    NSArray *array = [[HHBlueToothManager shareManager] getRecordFile];
+   
+    if (array) {
+        NSInteger recordTimeLength = [array[0] integerValue];
+        DLog(@"recordTimeLength = %li", recordTimeLength);
+        if(!self.bAutoSaveRecord || recordTimeLength < record_time_minimum || recordTimeLength > record_time_maximum) {
+           // [self actionStartRecord];
+            [self actionDeviceHelperRecordEnd];
+            return;
+        }
+        
+        //获取录音文件保存路径
+        NSData *data = (NSData *)array[1];
+        NSString *path = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
+        self.relativePath = [NSString stringWithFormat:@"audio/%@.wav", self.recordCode];
+        NSString *filePath = [NSString stringWithFormat:@"%@%@", path, self.relativePath];
+        //DLog(@"filepath = %@", filePath);
+        //将二进制文件写入目录
+        Boolean success = [data writeToFile:filePath atomically:YES];
+        if (success) {
+            __weak typeof(self) wself = self;
+            NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+            [mainQueue addOperationWithBlock:^{
+                [wself.view makeToast:@"保存成功" duration:showToastViewWarmingTime position:CSToastPositionBottom];
+            }];
+            
+            //保存成功回调
+            [self saveSuccess:recordTimeLength];
+        } else {
+            DLog(@"保存失败");
+        }
+    }
+    
+    
+}
+
+//保存成功后写入数据库
+- (void)saveSuccess:(NSInteger)recordTimeLength{
+    [[HHBlueToothManager shareManager] stop];
+   // RecordModel *recordModel = [[RecordModel alloc] init];
+    if(!self.recordDataModel) {
+        self.recordDataModel = [[RecordModel alloc] init];
+    }
+    self.recordDataModel.user_id = [@(LoginData.userID) stringValue];
+    self.recordDataModel.record_mode = RemoteRecord;
+    self.recordDataModel.type_id = self.soundsType;
+    self.recordDataModel.record_filter = self.isFiltrationRecord;
+    self.recordDataModel.record_time = [Tools dateToTimeStringYMDHMS:[NSDate now]];
+    self.recordDataModel.record_length = recordTimeLength;
+    
+    self.recordDataModel.file_path = self.relativePath;
+
+    self.recordDataModel.tag = [NSString stringWithFormat:@"%@.wav", self.recordCode];
+    self.recordDataModel.modify_time = self.recordDataModel.record_time;
+    Boolean result = [[HHDBHelper shareInstance] addRecordItem:self.recordDataModel];
+    if (result) {
+        DLog(@"保存数据库成功");
+    } else {
+        DLog(@"保存数据库失败");
+    }
+   
+    [self actionDeviceHelperRecordEnd];
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:AddLocalRecordSuccess object:nil];
+}
+
+- (void)loadRecordTypeData{
+    if (self.isFiltrationRecord == open_filtration) {
+        //判断音类型
+        if (self.soundsType == heart_sounds) {//---------
+            self.RECORD_TYPE = RECORD_HEART_WITH_BUTTON;
+        } else {
+            self.RECORD_TYPE = RECORD_LUNG_WITH_BUTTON;
+        }
+    } else if (self.isFiltrationRecord == close_filtration) {
+        self.RECORD_TYPE = RECORD_FULL_WITH_BUTTON;
+    }
+}
+
+//读取本地配置文件
+- (void)loadPlistData:(Boolean)firstLoadData{
+    NSString *path = [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
+    NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:path];
+    self.recordDurationAll = [data[@"remote_record_duration"] integerValue];// 录音总时长
+    
+    
+    if (firstLoadData) {
+        self.soundsType = [data[@"quick_record_default_type"] integerValue];//快速录音类型
+        self.isFiltrationRecord = [data[@"is_filtration_record"] integerValue];//滤波状态
+    }
+}
+
+//点击蓝牙按钮到蓝牙配置界面
+- (void)actionClickBlueToothCallBack:(UIButton *)button{
+    if(self.recordingState == recordingState_ing || self.recordingState == recordingState_pause) {
+        __weak typeof(self) wself = self;
+        [Tools showAlertView:nil andMessage:@"正在录音，确认要进入蓝牙设置吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+            [wself actionToDeviceManagerVC];
+        } cancel:^{
+            
+        }];
+    } else {
+        [self actionToDeviceManagerVC];
+    }
+}
+
+
+- (void)actionToDeviceManagerVC{
+    DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
+    deviceManager.recordingState = self.recordingState;
+    deviceManager.bStandart = NO;
+    [self.navigationController pushViewController:deviceManager animated:YES];
+}
+
+- (void)initNavi{
+    UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithCustomView:self.buttonBluetooth];
+    item1.width = Ratio22;
+    self.navigationItem.rightBarButtonItems = @[item1];
+}
+
+- (void)realodFilerView{
+    if (self.isFiltrationRecord == open_filtration) {
+        [self.headerView.heartFilterLungView filterGrayString:@"关闭滤波" blueString:@"打开滤波/"];
+    } else if (self.isFiltrationRecord == close_filtration) {
+        [self.headerView.heartFilterLungView filterGrayString:@"打开滤波" blueString:@"/关闭滤波"];
+    }
 }
 
 - (void)actionConfigRecordDuration{
-    [super actionConfigRecordDuration];
+    [[HHBlueToothManager shareManager] setRecordDuration:(int)self.recordDurationAll];//设置录音时长
 }
 
 - (void)actionButtonClickCallback:(Boolean)start{
@@ -71,10 +275,13 @@
         }
     } else {
         if (self.classroomState == 1) {
+            __weak typeof(self) wself = self;
             [Tools showAlertView:nil andMessage:@"是否确定结束本次临床教学？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
-                [self.classRoom ClassEnd];
-                if (self.historyListBlock) {
-                    self.historyListBlock();
+                [wself.classRoom ClassEnd];
+                wself.bDataServiceReady = NO;
+               // self.
+                if (wself.historyListBlock) {
+                    wself.historyListBlock();
                 }
             } cancel:^{
                 
@@ -95,7 +302,11 @@
 - (void)actionClassExited{
     if (self.bClassroomEnter) {
         [self actionShowRoomMessage:@"教室已断开，正在重连"];
-        [self performSelector:@selector(actionRoomReconnect) withObject:nil afterDelay:1.f];
+        __weak typeof(self) wself = self;
+        [self.mainQueue addOperationWithBlock:^{
+            [wself performSelector:@selector(actionRoomReconnect) withObject:nil afterDelay:1.f];
+        }];
+        
         
     } else {
         [self actionShowRoomMessage:@"教室已断开"];
@@ -109,7 +320,7 @@
 
 - (void)actionClassInfoUpdate:(NSObject *)args1{
     self.classRoomInfo = (ClassRoomInfo *)args1;
-    NSLog(@"self.historyModel.class_state = %li, self.classroomState = %li", (long)self.historyModel.class_state, (long)self.classroomState);
+    DLog(@"self.historyModel.class_state = %li, self.classroomState = %li", (long)self.historyModel.class_state, (long)self.classroomState);
     if (self.classroomState != self.classRoomInfo.class_state) {
         self.classroomState = self.classRoomInfo.class_state;
         if (self.classroomState == 1) {
@@ -138,7 +349,7 @@
 
 - (void)actionClassMemberUpdate:(NSObject *)args3{
     MemberList *memberList = (MemberList *)args3;
-    NSLog(@"教室状态:当前教室在线人数：%i", memberList.count);
+    DLog(@"教室状态:当前教室在线人数：%i", memberList.count);
     for (Member *member in memberList.members) {
         int user_id = member.user_id;
         if (user_id == LoginData.userID) {
@@ -184,7 +395,7 @@
 - (void)actionClassStartAuscultationControlResult:(NSObject *)args1{
     NSString *sarg1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sarg1 boolValue];
-    NSLog(@"录音开始：%@", success ? @"成功" : @"失败");
+    DLog(@"录音开始：%@", success ? @"成功" : @"失败");
     if (success) {
         [self actionShowRoomMessage:@"临床教学开始"];
     } else {
@@ -195,7 +406,7 @@
 - (void)actionClassStopAuscultationControlResult:(NSObject *)args1{
     NSString *sarg1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sarg1 boolValue];
-    NSLog(@"录音结束：%@", success ? @"成功" : @"失败");
+    DLog(@"录音结束：%@", success ? @"成功" : @"失败");
     if (success) {
         [self actionShowRoomMessage:@"临床教学已暂停"];
     } else {
@@ -206,7 +417,7 @@
 - (void)actionClassBeginControlResult:(NSObject *)args1{
     NSString *sarg1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sarg1 boolValue];
-    NSLog(@"课堂开始：%@", success ? @"成功" : @"失败");
+    DLog(@"课堂开始：%@", success ? @"成功" : @"失败");
     if (!success) {
         __weak typeof(self) wself = self;
         [self.mainQueue addOperationWithBlock:^{
@@ -219,7 +430,7 @@
 - (void)actionClassEndControlResult:(NSObject *)args1{
     NSString *sarg1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sarg1 boolValue];
-    NSLog(@"课堂结束：%@", success ? @"成功" : @"失败");
+    DLog(@"课堂结束：%@", success ? @"成功" : @"失败");
     if (!success) {
         __weak typeof(self) wself = self;
         [self.mainQueue addOperationWithBlock:^{
@@ -244,9 +455,16 @@
     
 }
 
+//开始录音
+- (void)actionStartRecord{
+    if (self.recordingState != recordingState_ing) {
+        [[HHBlueToothManager shareManager] startRecord:self.RECORD_TYPE record_mode:RecordingWithRecordDurationMaximum];
+    }
+}
+
 - (void)actionClassDataServiceClientInfoReceived:(NSObject *)args3{
     Clients *clients = (Clients *)args3;
-    NSLog(@"当前教室联通人数：%i", clients.count);
+    DLog(@"当前教室联通人数：%i", clients.count);
     for (MemberItemModel *itemModel in self.arrayData) {
         for (NSNumber *number in clients.members) {
             if (itemModel.member.user_id == [number intValue]) {
@@ -259,7 +477,7 @@
     }
     __weak typeof(self) wself = self;
     [self.mainQueue addOperationWithBlock:^{
-        [self.collectionView reloadData];
+        [wself.collectionView reloadData];
     }];
     
 }
@@ -278,6 +496,10 @@
             [self actionShowRecordMessage:@""];
         }
     }
+}
+
+- (void)actionStop {
+    [[HHBlueToothManager shareManager] stop];
 }
 
 - (void)actionDeviceDisconnected{
@@ -300,7 +522,11 @@
 - (void)actionDeviceHelperRecordEnd{
     
     //self.headerView.recordMessage = @"录音完成,按听诊器键重新开始录音";
+    //if(self.bDataServiceReady) {
     [self.classRoom SendCommand:0 data:NULL];
+    [self actionStartRecord];
+    ///}
+
     [self.classRoom TeachingCount];
     __weak typeof(self) wself = self;
     [self.mainQueue addOperationWithBlock:^{
@@ -365,9 +591,9 @@
 
 
 - (void)on_classroom_event:(CLASSROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
-    NSLog(@"event = %@, args1 = %@ , args2 = %@, args3 = %@", [@(event) stringValue], args1, args2, args3);
+    //DLog(@"event = %@, args1 = %@ , args2 = %@, args3 = %@", [@(event) stringValue], args1, args2, args3);
     if (event == ClassEntering) {
-        NSLog(@"正在进入教室");
+        DLog(@"正在进入教室");
     } else if (event == ClassEnterSuccess) {
         [self actionShowRoomMessage:@"进入教室成功"];
         if (self.historyModel.class_state == 1) {
@@ -380,7 +606,7 @@
         [self actionClassExited];
     } else if (event == ClassInfoUpdate) {
         [self actionClassInfoUpdate:args1];
-        NSLog(@"教室状态:%i", self.classRoomInfo.class_state);
+        DLog(@"教室状态:%i", self.classRoomInfo.class_state);
     } else if (event == ClassMemberUpdate) {
         [self actionClassMemberUpdate:args3];
     } else if (event == ClassStartAuscultationControlResult) {
@@ -394,17 +620,17 @@
     }
     
     else if (event == ClassStartAuscultation) {
-        NSLog(@"听诊开始");//学生收到这个信号
+        DLog(@"听诊开始");//学生收到这个信号
         [self actionShowRoomMessage:@"临床教学开始"];
     } else if (event == ClassStopAuscultation) {
-        NSLog(@"听诊结束");//学生收到这个信号
+        DLog(@"听诊结束");//学生收到这个信号
         if (self.classroomState == 2) {
             [self actionShowRoomMessage:@"临床教学已结束"];
         } else {
             [self actionShowRoomMessage:@"临床教学已暂停"];
         }
     } else if (event == ClassDataServiceConnecting) {
-        NSLog(@"远程听诊连接中");
+        DLog(@"远程听诊连接中");
         [self actionShowRoomMessage:@"临床教学服务器连接中"];
     } else if (event == ClassDataServiceDisconnected) {
         [self actionClassDataServiceDisconnected];
@@ -412,14 +638,14 @@
        
         [self actionShowRoomMessage:@"临床教学服务器连接失败"];
     } else if (event == ClassDataServiceConnectSuccess) {
-        NSLog(@"远程听诊连接成功");
+        DLog(@"远程听诊连接成功");
         [self actionClassDataServiceConnectSuccess];
     } else if (event == ClassDataServiceClientInfoReceived) {
         [self actionClassDataServiceClientInfoReceived:args3];
     } else if (event == ClassDataServiceWavFrameReceived) {
-        NSLog(@"远程听诊 ClassDataServiceWavFrameReceived--");
+        DLog(@"远程听诊 ClassDataServiceWavFrameReceived--");
     } else if (event == ClassDataServiceCmdReceived) {
-        NSLog(@"远程听诊 ClassDataServiceCmdReceived");
+        DLog(@"远程听诊 ClassDataServiceCmdReceived");
     }
 }
 
@@ -434,7 +660,7 @@
 }
 
 - (void)actionDeviceHelperRecordPause{
-    self.headerView.recordMessage = @"录音暂停,按听诊器键重新开始录音";
+    [self actionShowRecordMessage:@"录音暂停,按听诊器键重新开始录音"];
 }
 
 
@@ -468,7 +694,7 @@
     [TTRequestManager teachingGetStudents:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] integerValue] == 0) {
             NSArray *data = responseObject[@"data"];
-            NSLog(@"data = %li", data.count);
+            DLog(@"data = %li", data.count);
             //[self loadUserView:data];
             for (NSDictionary *dictionary in data) {
                 Member *member = [[Member alloc] init];
@@ -571,6 +797,7 @@
 //        self.headerView.userModel = self.collectorModel;
 //        self.headerView.delegate = self;
         reusableview = self.headerView;
+        [self realodFilerView];
     }
     return reusableview;
 }
@@ -612,6 +839,19 @@
     return _collectionView;
 }
 
+- (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel{
+    if (self.recordingState == recordingState_ing || self.recordingState == recordingState_pause) {
+        [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return NO;
+    }
+    self.isFiltrationRecord = filterModel;
+    [self loadRecordTypeData];
+    if (self.bDataServiceReady) {
+        [self actionStartRecord];
+    }
+    
+    return YES;
+}
 
 - (Boolean)actionHeartLungButtonClickCallback:(NSInteger)idx {
     if (self.recordingState == recordingState_ing) {
@@ -625,14 +865,22 @@
         self.soundsType = lung_sounds;
     }
     [self loadRecordTypeData];
-    if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED == [[HHBlueToothManager shareManager] getDeviceType] == STETHOSCOPE) {
-        [self.classRoom SendCommand:1 data:NULL];
+    if (self.bDataServiceReady) {
+        //[self.classRoom SendCommand:1 data:NULL];
         [self actionStartRecord];
         
     } else {
     }
     
     return YES;
+}
+
+- (HHBluetoothButton *)buttonBluetooth{
+    if(!_buttonBluetooth) {
+        _buttonBluetooth  = [[HHBluetoothButton alloc] init];
+        _buttonBluetooth.bluetoothButtonDelegate = self;
+    }
+    return _buttonBluetooth;
 }
 
 

@@ -117,7 +117,7 @@ static int meetingroom_enter_state = 0;
         @try {
             [_delegate on_meetingroom_event:event args1:args1 args2:args2 args3:args3];
         } @catch (NSException *exception) {
-            NSLog(@"MeetingRoom event callback error");
+            DLog(@"MeetingRoom event callback error");
         }
     }
 }
@@ -145,7 +145,7 @@ static int meetingroom_enter_state = 0;
             host = [meetingroom_url substringToIndex:range.location];
 
         } else {
-            NSLog(@"MeetingRoom url error");
+            DLog(@"MeetingRoom url error");
             [self Event:MeetingEnterFailed args1:NULL args2:NULL args3:NULL];
             return false;
         }
@@ -156,11 +156,11 @@ static int meetingroom_enter_state = 0;
         mSocket = [mSocketManager socketForNamespace:teaching_namespace];
 
 //        [mSocket onAny:^(SocketAnyEvent *event) {
-//            NSLog(@"Received event: %@, with items: %@", event.event, event.items);
+//            DLog(@"Received event: %@, with items: %@", event.event, event.items);
 //        }];
 
         [mSocket on:@"connect" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"SocketIO connect");
+            DLog(@"SocketIO connect");
         }];
 
         [mSocket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -170,18 +170,18 @@ static int meetingroom_enter_state = 0;
             //if (self->meetingroom_entered) {
             if (meetingroom_enter_state == 2) {
                 meetingroom_enter_state = 0;
-                NSLog(@"MeetingRoom exit");
+                DLog(@"MeetingRoom exit");
                 [self Event:MeetingExited args1:NULL args2:NULL args3:NULL];
             } else {
                 meetingroom_enter_state = 0;
-                NSLog(@"MeetingRoom enter failed");
+                DLog(@"MeetingRoom enter failed");
                 [self Event:MeetingEnterFailed args1:NULL args2:NULL args3:NULL];
             }
             //self->meetingroom_entered = false;
         }];
 
         [mSocket on:@"meetingroom" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket meetingroom");
+            DLog(@"Socket meetingroom");
             
             @try {
                 
@@ -243,18 +243,18 @@ static int meetingroom_enter_state = 0;
                     
                     meetingroom_enter_state = 2;
                     
-                    NSLog(@"MeetingRoom enter room sucess");
+                    DLog(@"MeetingRoom enter room sucess");
                     
                     [self Event:MeetingEnterSuccess args1:NULL args2:NULL args3:NULL];
                     [self Event:MeetingInfoUpdate args1:self.meetingroom_info args2:NULL args3:NULL];
                 } else {
-                    NSLog(@"MeetingRoom room info update");
+                    DLog(@"MeetingRoom room info update");
                     [self Event:MeetingInfoUpdate args1:self.meetingroom_info args2:NULL args3:NULL];
                 }
                 
             } @catch (NSException *exception) {
                 
-                NSLog(@"MeetingRoom error %@ %@", exception.name, exception.reason);
+                DLog(@"MeetingRoom error %@ %@", exception.name, exception.reason);
                 
             } @finally {
                 
@@ -262,7 +262,7 @@ static int meetingroom_enter_state = 0;
         }];
 
         [mSocket on:@"room_users" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket auscultation_state");
+            DLog(@"Socket auscultation_state");
             
             @try {
                 NSArray *clients = [data lastObject][@"data"];
@@ -287,12 +287,12 @@ static int meetingroom_enter_state = 0;
                 [self Event:MeetingMemberUpdate args1:@(0) args2:NULL args3:self.online_member_list];
             }
             @catch (NSException *e) {
-                NSLog(@"MeetingRoom room_user error %@ %@", e.name, e.reason);
+                DLog(@"MeetingRoom room_user error %@ %@", e.name, e.reason);
             }
         }];
 
         [mSocket on:@"join_room" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket join_room");
+            DLog(@"Socket join_room");
             
             @try {
                  
@@ -311,13 +311,13 @@ static int meetingroom_enter_state = 0;
                 [self Event:MeetingMemberUpdate args1:@(1) args2:member args3:self.online_member_list];
             }
             @catch (NSException *e) {
-                NSLog(@"MeetingRoom join_room error %@ %@", e.name, e.reason);
+                DLog(@"MeetingRoom join_room error %@ %@", e.name, e.reason);
             }
             
         }];
 
         [mSocket on:@"leave_room" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket leave_room");
+            DLog(@"Socket leave_room");
             
             @try {
                  
@@ -336,13 +336,13 @@ static int meetingroom_enter_state = 0;
                 [self Event:MeetingMemberUpdate args1:@(-1) args2:member args3:self.online_member_list];
             }
             @catch (NSException *e) {
-                NSLog(@"MeetingRoom leave_room error %@ %@", e.name, e.reason);
+                DLog(@"MeetingRoom leave_room error %@ %@", e.name, e.reason);
             }
             
         }];
 
         [mSocket on:@"auscultation_state" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket auscultation_state");
+            DLog(@"Socket auscultation_state");
             
             @try {
                  
@@ -359,37 +359,37 @@ static int meetingroom_enter_state = 0;
                 }
             }
             @catch (NSException *e) {
-                NSLog(@"MeetingRoom auscultation_state error %@ %@", e.name, e.reason);
+                DLog(@"MeetingRoom auscultation_state error %@ %@", e.name, e.reason);
             }
         }];
 
         [mSocket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket error");
+            DLog(@"Socket error");
             [self->mSocket disconnect];
         }];
         
         [mSocket on:@"connecting" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket connecting");
+            DLog(@"Socket connecting");
             [self Event:MeetingEntering args1:NULL args2:NULL args3:NULL];
         }];
 
         [mSocket on:@"connect_failed" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket error");
+            DLog(@"Socket error");
             [self Event:MeetingEnterFailed args1:NULL args2:NULL args3:NULL];
         }];
         
 
         [mSocket on:@"reconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket reconnecting");
+            DLog(@"Socket reconnecting");
         }];
         
         [mSocket on:@"reconnecting" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket reconnecting");
+            DLog(@"Socket reconnecting");
             [self Event:MeetingEntering args1:NULL args2:NULL args3:NULL];
         }];
 
         [mSocket on:@"reconnect_failed" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket reconnect failed");
+            DLog(@"Socket reconnect failed");
             [self Event:MeetingEnterFailed args1:NULL args2:NULL args3:NULL];
         }];
   
@@ -401,7 +401,7 @@ static int meetingroom_enter_state = 0;
     }
     @catch (NSException *e)
     {
-        NSLog(@"MeetingRoom enter error %@ %@", e.name, e.reason);
+        DLog(@"MeetingRoom enter error %@ %@", e.name, e.reason);
         meetingroom_enter_state = 0;
     }
     
@@ -440,7 +440,7 @@ static int meetingroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"MeetingRoom set_collector control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"MeetingRoom set_collector control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -448,7 +448,7 @@ static int meetingroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"MeetingRoom set_collector error %@ %@", e.name, e.reason);
+        DLog(@"MeetingRoom set_collector error %@ %@", e.name, e.reason);
     }
 }
 
@@ -497,7 +497,7 @@ static int meetingroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"MeetingRoom modify_meeting control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"MeetingRoom modify_meeting control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -505,7 +505,7 @@ static int meetingroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"MeetingRoom modify_meeting error %@ %@", e.name, e.reason);
+        DLog(@"MeetingRoom modify_meeting error %@ %@", e.name, e.reason);
     }
 }
 
@@ -533,18 +533,18 @@ static int meetingroom_enter_state = 0;
     if (event == ServiceConnectionBeginEvent) {
         data_service_connected = false;
     } else if (event == ServiceConnectingEvent) {
-        NSLog(@"data service 正在连接远程服务器");
+        DLog(@"data service 正在连接远程服务器");
         [self Event:MeetingDataServiceConnecting args1:NULL args2:NULL args3:NULL];
     } else if (event == ServiceConnectedEvent) {
-        NSLog(@"data service 服务器连接成功");
+        DLog(@"data service 服务器连接成功");
     } else if (event == ServiceAuthEvent) {
         if ([(NSNumber *)args1 boolValue]) {
-            NSLog(@"data service 远程服务器登陆成功");
+            DLog(@"data service 远程服务器登陆成功");
             data_service_connected = true;
             [self Event:MeetingDataServiceConnectSuccess args1:NULL args2:NULL args3:NULL];
         } else {
             NSString *error = (NSString *)args2;
-            NSLog(@"data service 远程服务器登陆失败 %@" , error);  // 这个可以提示用户，包含服务器满载时的错误信息
+            DLog(@"data service 远程服务器登陆失败 %@" , error);  // 这个可以提示用户，包含服务器满载时的错误信息
             [self Event:MeetingDataServiceConnectFailed args1:error args2: NULL args3: NULL];
         }
     } else if (event == ServiceReceiveForwardDataEvent) {
@@ -569,7 +569,7 @@ static int meetingroom_enter_state = 0;
             }
         }
 
-        //NSLog(@"data service 收到服务器数据包：" + data.length);
+        //DLog(@"data service 收到服务器数据包：" + data.length);
     } else if (event == ServiceReceiveClientInfoEvent) {
 
         NSData *data = (NSData *)args1;
@@ -578,24 +578,24 @@ static int meetingroom_enter_state = 0;
 
         if (type == 0) {
             [self Event:MeetingDataServiceClientInfoReceived args1:@(0) args2:NULL args3:clients];
-            NSLog(@"data service 在线客户：%d", (int)[clients count]);
+            DLog(@"data service 在线客户：%d", (int)[clients count]);
         } else if (type == 1) {
             [self Event:MeetingDataServiceClientInfoReceived args1:@(1) args2:@(clients.member) args3:clients];
-            NSLog(@"data service 新上线 %d", clients.member);
+            DLog(@"data service 新上线 %d", clients.member);
         } else if (type == 2) {
             [self Event:MeetingDataServiceClientInfoReceived args1:@(-1) args2:@(clients.member) args3:clients];
-            NSLog(@"data service 下线 %d", clients.member);
+            DLog(@"data service 下线 %d", clients.member);
         }
 
-        //NSLog(@"data service 收到服务器数据包：" + data.length);
+        //DLog(@"data service 收到服务器数据包：" + data.length);
 
     } else if (event == ServiceConnectFailEvent) {
-        NSLog(@"data service 远程服务器连接失败");
+        DLog(@"data service 远程服务器连接失败");
         [self Event:MeetingDataServiceConnectFailed args1:@"" args2:NULL args3:NULL];
     } else if (event == ServiceDisconnectEvent) {
         data_service_connected = false;
         [self Event:MeetingDataServiceDisconnected args1:NULL args2:NULL args3:NULL];
-        NSLog(@"data service 远程服务器断开了");
+        DLog(@"data service 远程服务器断开了");
     } else if (event == ServiceConnectionEndEvent) {
 
     }
@@ -625,7 +625,7 @@ static int meetingroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"MeetingRoom start_auscultation control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"MeetingRoom start_auscultation control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -633,7 +633,7 @@ static int meetingroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"MeetingRoom start_auscultation error %@ %@", e.name, e.reason);
+        DLog(@"MeetingRoom start_auscultation error %@ %@", e.name, e.reason);
     }
 }
 
@@ -661,7 +661,7 @@ static int meetingroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"MeetingRoom stop_auscultation control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"MeetingRoom stop_auscultation control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -669,7 +669,7 @@ static int meetingroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"MeetingRoom stop_auscultation error %@ %@", e.name, e.reason);
+        DLog(@"MeetingRoom stop_auscultation error %@ %@", e.name, e.reason);
     }
 }
 

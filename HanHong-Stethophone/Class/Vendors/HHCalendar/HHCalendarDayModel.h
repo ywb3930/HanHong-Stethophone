@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (assign, nonatomic) NSInteger             dayValue;//当天日期
 @property (assign, nonatomic) Boolean               bCurrentDay;//是否时当天
+@property (assign, nonatomic) Boolean               bLessThanToday;//是否时当天
 @property (assign, nonatomic) Boolean               bTeachingProgramme;//当天是否有教学计划
 @property (retain, nonatomic) NSMutableArray<ProgramModel *>   *modelList;
 

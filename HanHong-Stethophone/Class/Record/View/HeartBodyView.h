@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface HeartBodyView : HHBodyView
 
+@property (strong, nonatomic) NSArray                   *arrayReordSequence;
+
 @end
 
 NS_ASSUME_NONNULL_END

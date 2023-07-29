@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (retain, nonatomic) UILabel                   *labelStartRecord;
 @property (retain, nonatomic) NSString                  *positionName;
 @property (retain, nonatomic) NSString                  *recordMessage;
+@property (retain, nonatomic) NSString                  *deviceConnectMessage;
 
 - (void)filterGrayString:(NSString *)grayString blueString:(NSString *)blueString;
 

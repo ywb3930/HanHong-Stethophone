@@ -54,9 +54,9 @@
             NSArray *data = [NSArray yy_modelArrayWithClass:[FriendModel class] json:responseObject[@"data"]];
             [wself actionToNewFriendVC:data];
         }
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 //

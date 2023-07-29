@@ -45,15 +45,19 @@
     params[@"password"] = md5OldPass;
     params[@"new_password"] = md5NewPass;
     [Tools showWithStatus:@"正在修改密码"];
+    __weak typeof(self) wself = self;
     [TTRequestManager userModifyPassword:params success:^(id  _Nonnull responseObject) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
         if([responseObject[@"errorCode"] integerValue] == 0) {
-            [self actionChangeSuccess];
-            [self.navigationController popViewControllerAnimated:YES];
+            [wself actionChangeSuccess];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [wself.navigationController popViewControllerAnimated:YES];
+            });
+            
         }
-        [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
+        [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 

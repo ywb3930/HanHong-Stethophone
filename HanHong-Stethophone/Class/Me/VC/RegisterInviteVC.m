@@ -174,27 +174,32 @@
 }
 
 - (void)actionShare:(UIButton *)button{
-    [Tools showWithStatus:@"正在分享"];
+    //[Tools showWithStatus:@"正在分享"];
     
     CGFloat maxY = CGRectGetMinY(self.buttonShare.frame);
-    UIImage *screenshot = [self captureScreenshot:CGRectMake(0, kNavBarAndStatusBarHeight, screenW, maxY - Ratio11 - kNavBarAndStatusBarHeight)];;
+    UIImage *screenshot = [self captureScreenshot:CGRectMake(0, kNavBarAndStatusBarHeight, screenW, maxY - Ratio11 - kNavBarAndStatusBarHeight)];
+    
+    //UIImage *image = [UIImage imageNamed:@"yourImage"]; // 要分享的图片
+
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[screenshot] applicationActivities:nil];
+    [self presentViewController:activityViewController animated:YES completion:nil];
 
     // 将截屏图片分享至微信
-    NSData *imageData = UIImagePNGRepresentation(screenshot);
-    WXMediaMessage *message = [WXMediaMessage message];
-    [message setThumbImage:screenshot]; // 设置缩略图
-    WXImageObject *imageObject = [WXImageObject object];
-    imageObject.imageData = imageData;
-    message.mediaObject = imageObject;
-
-    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
-    req.bText = NO;
-    req.message = message;
-    req.scene = WXSceneSession; // 分享至微信好友
-
-    [WXApi sendReq:req completion:^(BOOL success) {
-        [SVProgressHUD dismiss];
-    }];
+//    NSData *imageData = UIImagePNGRepresentation(screenshot);
+//    WXMediaMessage *message = [WXMediaMessage message];
+//    [message setThumbImage:screenshot]; // 设置缩略图
+//    WXImageObject *imageObject = [WXImageObject object];
+//    imageObject.imageData = imageData;
+//    message.mediaObject = imageObject;
+//
+//    SendMessageToWXReq *req = [[SendMessageToWXReq alloc] init];
+//    req.bText = NO;
+//    req.message = message;
+//    req.scene = WXSceneSession; // 分享至微信好友
+//
+//    [WXApi sendReq:req completion:^(BOOL success) {
+//        [Tools hiddenWithStatus];
+//    }];
 }
 
 @end

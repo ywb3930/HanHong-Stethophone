@@ -7,16 +7,12 @@
 
 #import "LungVoiceView.h"
 #import "AusultaionView.h"
-#import "LungBodyFrontView.h"
-#import "LungBodySideView.h"
-#import "LungBodyBackView.h"
+
 
 @interface LungVoiceView ()<HHBodyViewDelegate>
 
 @property (retain, nonatomic) AusultaionView            *ausultaionView;
-@property (retain, nonatomic) LungBodyFrontView         *lungBodyFrontView;
-@property (retain, nonatomic) LungBodySideView          *lungBodySideView;
-@property (retain, nonatomic) LungBodyBackView          *lungBodyBackView;
+
 
 @property (retain, nonatomic) UIView                    *viewButtons;
 @property (retain, nonatomic) UIButton                  *buttonFront;
@@ -48,7 +44,8 @@
     self.lungBodyBackView.autoAction = autoAction;
 }
 
-- (void)setrecordingState:(NSInteger)recordingState{
+
+- (void)setRecordingState:(NSInteger)recordingState{
     _recordingState = recordingState;
     if (self.lungSelectPositionIndex == Lung_front_bodyType) {
         self.lungBodyFrontView.recordingState = recordingState;
@@ -58,7 +55,7 @@
         self.lungBodyBackView.recordingState = recordingState;
     }
 }
-
+//开始录音
 - (void)recordingStart{
     if (self.lungSelectPositionIndex == Lung_front_bodyType) {
         [self.lungBodyFrontView recordingStart];
@@ -68,7 +65,7 @@
         [self.lungBodyBackView  recordingStart];
     }
 }
-
+//停止录音时调用
 - (void)recordingStop{
     if (self.lungSelectPositionIndex == Lung_front_bodyType) {
         [self.lungBodyFrontView recordingStop];
@@ -76,6 +73,16 @@
         [self.lungBodySideView recordingStop];
     } else if (self.lungSelectPositionIndex == Lung_back_bodyType) {
         [self.lungBodyBackView recordingStop];
+    }
+}
+//停止录音关闭计时器时调用
+- (void)recordingReload{
+    if (self.lungSelectPositionIndex == Lung_front_bodyType) {
+        [self.lungBodyFrontView recordingReload];
+    } else if (self.lungSelectPositionIndex == Lung_side_bodyType) {
+        [self.lungBodySideView recordingReload];
+    } else if (self.lungSelectPositionIndex == Lung_back_bodyType) {
+        [self.lungBodyBackView recordingReload];
     }
 }
 
@@ -88,13 +95,13 @@
         [self.lungBodyBackView recordingPause];
     }
 }
-- (void)recordingRestar{
+- (void)recordingResume{
     if (self.lungSelectPositionIndex == Lung_front_bodyType) {
-        [self.lungBodyFrontView recordingRestar];
+        [self.lungBodyFrontView recordingResume];
     } else if (self.lungSelectPositionIndex == Lung_side_bodyType) {
-        [self.lungBodySideView recordingRestar];
+        [self.lungBodySideView recordingResume];
     } else if (self.lungSelectPositionIndex == Lung_back_bodyType) {
-        [self.lungBodyBackView recordingRestar];
+        [self.lungBodyBackView recordingResume];
     }
 }
 

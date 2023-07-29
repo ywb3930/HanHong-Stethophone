@@ -32,19 +32,25 @@
     self.view.backgroundColor = WHITECOLOR;
     self.loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
     self.infoModifiable = LoginData.info_modifiable;
+    NSString *sex = @"";
+    if (LoginData.sex == man) {
+        sex = @"男";
+    } else {
+        sex = @"女";
+    }
     if (self.loginType == login_type_personal || self.loginType == login_type_union) {
         self.arrayTitle = @[@"头像", @"姓名", @"性别", @"生日", @"地区", @"企业(医院)",@"部门(科室)", @"职称", @"邮箱", @"手机"];
         
-        self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man  ? @"男" : @"女", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
+        self.arrayInfo = @[LoginData.avatar, LoginData.name, sex, LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
     } else if(self.loginType == login_type_teaching) {
         if (LoginData.role == Teacher_role) {
             self.arrayTitle = @[@"头像", @"姓名", @"性别", @"企业(医院)",@"部门(科室)", @"职称", @"院校", @"邮箱", @"手机"];
             
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"男" : @"女", LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, sex, LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
         } else if (LoginData.role == Student_role) {
             self.arrayTitle = @[@"头像", @"姓名", @"性别", @"院校", @"专业",@"班级", @"学号",  @"邮箱", @"手机"];
             
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ?  @"男" : @"女", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, sex, LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
         }
     }
     //[[HHBlueToothManager shareManager] disconnect];
@@ -70,7 +76,11 @@
 }
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag {
-    [self actionNetCommitName:[@(index) stringValue] infoName:@"sex"];
+    NSString *sex = @"1";
+    if (index == 1) {
+        sex = @"0";
+    }
+    [self actionNetCommitName:sex infoName:@"sex"];
 }
 
 
@@ -104,10 +114,10 @@
             
         }
         [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
         [self.tableView reloadData];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 
@@ -314,9 +324,9 @@
             });
         }
         [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
     
 }
@@ -371,16 +381,22 @@
     if(![Tools isBlankString:loginData.org]){
         LoginData.org = loginData.org;
     }
+    NSString *sex = @"";
+    if (LoginData.sex == man) {
+        sex = @"男";
+    } else {
+        sex = @"女";
+    }
     if (self.loginType == login_type_personal || self.loginType == login_type_union) {
 
         
-        self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man  ? @"女" : @"男", LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
+        self.arrayInfo = @[LoginData.avatar, LoginData.name, sex, LoginData.birthday, LoginData.area, LoginData.company, LoginData.department, LoginData.title, LoginData.email, LoginData.phone];
     } else if(self.loginType == login_type_teaching) {
         if (LoginData.role == Teacher_role) {
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"男" : @"女", LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, sex, LoginData.company, LoginData.department, LoginData.title, LoginData.academy, LoginData.email, LoginData.phone];
         } else if (LoginData.role == Student_role) {
             
-            self.arrayInfo = @[LoginData.avatar, LoginData.name, LoginData.sex == man ? @"男" : @"女", LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
+            self.arrayInfo = @[LoginData.avatar, LoginData.name, sex, LoginData.academy, LoginData.major, LoginData.class_, LoginData.number, LoginData.email, LoginData.phone];
         }
     }
     [[HHLoginManager sharedManager] setCurrentHHLoginData:LoginData];

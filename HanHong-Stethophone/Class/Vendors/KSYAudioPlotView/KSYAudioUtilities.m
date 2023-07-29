@@ -577,7 +577,7 @@ BOOL __ksyshouldExitOnCheckResultFail = YES;
     if(*scrollHistory == NULL)
     {
         // Create the history buffer
-        *scrollHistory = (float *)calloc(8192*2, floatByteSize);
+        *scrollHistory = (float *)calloc(1024 * 16, floatByteSize);
     }
     
     //

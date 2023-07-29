@@ -146,9 +146,9 @@
             }
         }
         [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 

@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ConsultationModel.h"
+#import "HeartFilterLungView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,10 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^RemoteControlDetailHeaderSyncSaveBlock)(Boolean bSyncSave);
 
-@interface RemoteControlDetailHeaderView : UICollectionReusableView
+@interface RemoteControlDetailHeaderView : UICollectionReusableView<HeartFilterLungViewDelegate>
 
 @property (weak, nonatomic) id<RemoteControlDetailHeaderViewDelegate>  delegate;
 @property (nonatomic, copy) RemoteControlDetailHeaderSyncSaveBlock syncSaveBlock;
+@property (retain, nonatomic) HeartFilterLungView   *heartFilterLungView;
 @property (retain, nonatomic) ConsultationModel         *consultationModel;
 @property (retain, nonatomic) FriendModel           *userModel;
 @property (assign, nonatomic) Boolean               bCollector;//是否是采集者

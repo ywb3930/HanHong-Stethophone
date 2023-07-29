@@ -61,7 +61,7 @@
             
         case NSStreamEventHasSpaceAvailable:
             if (aStream == outputStream) {
-                //NSLog(@"NSStream Has Space Event");
+                //DLog(@"NSStream Has Space Event");
             }
             break;
         case NSStreamEventHasBytesAvailable:
@@ -86,13 +86,13 @@
             }
             break;
         case NSStreamEventErrorOccurred:
-            NSLog(@"NSStream Error Event");
+            DLog(@"NSStream Error Event");
             //连接失败
             connect_error = true;
             connection_enabled = false;
             break;
         case NSStreamEventEndEncountered:
-            NSLog(@"NSStream End Event");
+            DLog(@"NSStream End Event");
             connected = false;
             connection_enabled = false;
             break;
@@ -225,7 +225,7 @@
         }
     }
     @catch(NSException *e) {
-        NSLog(@"Tcp Write Bytes Exception %@ %@", e.name, e.reason);
+        DLog(@"Tcp Write Bytes Exception %@ %@", e.name, e.reason);
         @throw e;
     }
 }
@@ -296,7 +296,7 @@
                   
                 [tcp_rx_mutex unlock];
 
-                NSLog(@"tcp_readbytes error1, %@ %@", exception.name, exception.reason);
+                DLog(@"tcp_readbytes error1, %@ %@", exception.name, exception.reason);
               
                 @throw [NSException exceptionWithName:@"tcp_readbytes" reason:@"" userInfo:nil];
                 
@@ -304,7 +304,7 @@
             
         } else {
             
-            //NSLog(@"tcp_readbytes timeout");
+            //DLog(@"tcp_readbytes timeout");
             
             @throw [NSException exceptionWithName:@"tcp_readbytes" reason:@"" userInfo:nil];
              
@@ -312,7 +312,7 @@
         
 //    } @catch (NSException *exception) {
 //
-//        //NSLog(@"tcp_readbytes error2, %@ %@", exception.name, exception.reason);
+//        //DLog(@"tcp_readbytes error2, %@ %@", exception.name, exception.reason);
 //
 //        @throw [NSException exceptionWithName:@"tcp_readbytes" reason:@"" userInfo:nil];
 //

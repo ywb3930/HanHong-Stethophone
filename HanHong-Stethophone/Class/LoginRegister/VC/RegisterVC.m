@@ -145,14 +145,17 @@
             [wself.itemViewCode showTimer];
         }
         [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 
 - (void)actionRegister:(UIButton *)button {
-    
+    if(!self.btnAgree.selected) {
+        [self.view makeToast:@"请先阅读并同意用户协议" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
     NSString *invite = self.itemViewInvite.textFieldInfo.text;//邀请码
     if(self.loginType != login_type_personal) {
         if([Tools isBlankString:invite]) {
@@ -271,16 +274,16 @@
         } else {
             [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
         }
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
     
 }
 
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
-    self.itemViewSex.textFieldInfo.text = (index == man) ? @"女" : @"男";
+    self.itemViewSex.textFieldInfo.text = (index == 1) ? @"女" : @"男";
 }
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{

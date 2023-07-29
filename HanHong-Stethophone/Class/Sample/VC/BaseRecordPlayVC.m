@@ -126,7 +126,7 @@
         _audioPlotView.waveformLayer.shadowRadius = 0;
         _audioPlotView.waveformLayer.shadowColor = MainColor.CGColor;
         _audioPlotView.waveformLayer.shadowOpacity = 0;
-        _audioPlotView.waveformLayer.lineWidth = 0.01f*screenRatio;
+        _audioPlotView.waveformLayer.lineWidth = 0.1f*screenRatio;
         
     }
     return _audioPlotView;
@@ -167,7 +167,7 @@
     [Tools showWithStatus:@"正在加载音频数据"];
     [self.audioFile getWaveformDataWithCompletionBlock:^(float **waveformData, int length) {
         [weakSelf.audioPlotView updateBuffer:waveformData[0] withBufferSize:length];
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 
 }
@@ -207,15 +207,16 @@
 //    if(!self.bPlaying) {
 //        
 //        [[HHBlueToothManager shareManager] st];
-//    }
+//    }®
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    self.bCurrentView = NO;
+    
     [self.buttonBluetooth stop];
     
     [self stopPlayRecord];
+    self.bCurrentView = NO;
 }
 
 
@@ -229,9 +230,6 @@
     return _buttonBluetooth;
 }
 
-//- (void)actionClickBlueToothCallBack:(nonnull UIButton *)button {
-//    
-//}
 
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];

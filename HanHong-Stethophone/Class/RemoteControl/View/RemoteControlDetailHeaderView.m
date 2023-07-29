@@ -7,7 +7,6 @@
 
 #import "RemoteControlDetailHeaderView.h"
 #import "LabelTextFieldItemView.h"
-#import "HeartFilterLungView.h"
 
 @interface RemoteControlDetailHeaderView()<HeartFilterLungViewDelegate, UITextFieldDelegate>
 
@@ -27,7 +26,7 @@
 @property (retain, nonatomic) UIImageView           *imageViewTag;
 @property (retain, nonatomic) UIImageView           *imageViewOnLine;
 @property (retain, nonatomic) UIView                *viewRecord;
-@property (retain, nonatomic) HeartFilterLungView   *heartFilterLungView;
+
 @property (retain, nonatomic) UIButton              *buttonSaveRecord;
 @property (retain, nonatomic) UILabel               *labelSaveRecord;
 @property (retain, nonatomic) UILabel               *labelMembers;

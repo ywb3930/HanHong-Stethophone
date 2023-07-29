@@ -45,6 +45,13 @@
 }
 
 - (void)categoryView:(JXCategoryBaseView *)categoryView didSelectedItemAtIndex:(NSInteger)index{
+    if(self.selectIndex == 0) {
+        [self.localListVC stopPlayRecord];
+    } else if (self.selectIndex == 1) {
+        [self.cloundListVC stopPlayRecord];
+    } else if (self.selectIndex == 2) {
+        [self.collectListVC stopPlayRecord];
+    }
     if (index == 1 && !self.cloundListVC.bLoadData) {
         [self.cloundListVC initView];
         [self.cloundListVC initCouldData];
@@ -52,6 +59,7 @@
         [self.collectListVC initView];
         [self.collectListVC initCollectData];
     }
+    self.selectIndex = index;
 }
 
 //- (void)viewWillAppear:(BOOL)animated{

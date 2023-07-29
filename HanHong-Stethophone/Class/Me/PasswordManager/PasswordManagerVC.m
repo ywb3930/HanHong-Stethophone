@@ -22,6 +22,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
     self.title = @"密码管理";
     self.view.backgroundColor = WHITECOLOR;
     self.arrayTitle = @[@"修改密码", @"更换注册手机", @"修改注册邮箱"];

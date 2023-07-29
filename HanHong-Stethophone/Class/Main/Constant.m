@@ -7,10 +7,17 @@
 
 #import "Constant.h"
 #import "UpdateDeviceVC.h"
-
+#import "OrgModel.h"
+#import "PrivacyPermission.h"
 
 NSString *const EarPhone_btName = @"EARPHONE_ER001";
 NSString *const DS88_btName = @"DS88";
+
+#define Not_activate  0
+/**已激活*/
+#define Already_activate  1
+/**无法激活*/
+#define Unable_to_activate  2
 
 @implementation Constant
 
@@ -243,7 +250,130 @@ NSString *const DS88_btName = @"DS88";
     
 }
 
+- (void)getProductActivateState:(NSString *)uniqueId serialNumber:(NSString *)serialNumber{
+    self.bActivate = NO;
+    NSInteger login_type = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
+    NSString *org = @"hanhong";
+    if (login_type != login_type_personal) {
+        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"orgModelLogin"];
+        OrgModel *orgModel = (OrgModel *)[NSKeyedUnarchiver unarchiveObjectWithData:data];
+        org = orgModel.code;
+    }
+    NSDictionary *data = [LoginData yy_modelToJSONObject];
+    self.activateData = [NSMutableDictionary dictionaryWithDictionary:data];
+    [self.activateData removeObjectForKey:@"avatar"];
+    [self.activateData removeObjectForKey:@"userID"];
+    [self.activateData removeObjectForKey:@"info_modifiable"];
+    [self.activateData removeObjectForKey:@"token"];
+    self.activateData[@"org_code"] = org;
+    self.activateData[@"model"] = [[HHBlueToothManager shareManager] getModelName];
+    self.activateData[@"unique_id"] = uniqueId;
+    self.activateData[@"serial_number"] = serialNumber;
+    self.activateData[@"production_date"] = [[HHBlueToothManager shareManager] getProductionDate];
+    self.activateData[@"mac"] = [[HHBlueToothManager shareManager] getMac];
+    
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"token"] = LoginData.token;
+    params[@"unique_id"] = uniqueId;
+    params[@"serial_number"] = serialNumber;
+    
+    [TTRequestManager productActivateState:params success:^(id  _Nonnull responseObject) {
+        if ([responseObject[@"errorCode"] integerValue] == 0) {
+            NSDictionary *data = responseObject[@"data"];
+            [self actionAfterGetActiveState:data];
+            
+        }
+    } failure:^(NSError * _Nonnull error) {
+        
+    }];
+}
+
+- (void)actionAfterGetActiveState:(NSDictionary *)data{
+    NSInteger activate_state = [data[@"activate_state"] integerValue];
+    if (activate_state == Not_activate) {
+        if ([Tools isLocationEnabled]) {
+            [self actionToLocation];
+        } else {
+            [[PrivacyPermission sharedInstance]accessPrivacyPermissionWithType:PrivacyPermissionTypeLocation completion:^(BOOL response, PrivacyPermissionAuthorizationStatus status) {
+                DLog(@"response:%d \n status:%ld",response,status);
+                [self actionToLocation];
+            }];
+        }
+    } else if (activate_state == Already_activate) {
+        self.warrantyDate = data[@"warranty_date"];
+    }
+}
+
+- (void)actionToLocation{
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    [self.locationManager requestWhenInUseAuthorization]; // 请求定位权限
+    
+    // 开始定位
+    [self.locationManager startUpdatingLocation];
+}
+//2 Linker command failed with exit code 1 (use -v to see invocation)
 
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
+    [self.locationManager stopUpdatingLocation];
+    // 在这里获取到经纬度数据之后，可以进行进一步的操作
+    CLLocation *location = [locations lastObject];
+    __weak typeof(self) wself = self;
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    [geocoder reverseGeocodeLocation:location completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+        if (error == nil && placemarks.count > 0) {
+                // 获取到位置信息
+            double latitude = location.coordinate.latitude;
+            double longitude = location.coordinate.longitude;
+            CLPlacemark *placemark = [placemarks objectAtIndex:0];
+            
+            // 解析位置信息
+            NSString *address = [NSString stringWithFormat:@"%@%@%@%@",
+                                 placemark.country, placemark.administrativeArea, placemark.locality, placemark.thoroughfare];
+            
+            DLog(@"当前地址：%@", address);
+            [wself productActivate:address gps_lng:longitude gps_lat:latitude];
+        } else {
+            DLog(@"地理编码失败，错误信息：%@", error.localizedDescription);
+        }
+    }];
+    
+    
+
+   
+}
+
+- (void)productActivate:(NSString *)address gps_lng:(double)gps_lng gps_lat:(double)gps_lat{
+    if(self.bActivate)return;
+    self.bActivate = YES;
+    NSData *addressData = [address dataUsingEncoding:NSUTF8StringEncoding];
+    if (addressData.length > 256) {
+        address = [address substringToIndex:address.length - 1];
+    }
+    self.activateData[@"address"] = address;
+    self.activateData[@"gps_lng"] = [@(gps_lng) stringValue];
+    self.activateData[@"gps_lat"] = [@(gps_lat) stringValue];
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    params[@"token"] = LoginData.token;
+    params[@"unique_id"] = [self.activateData objectForKey:@"unique_id"];
+    params[@"serial_number"] = [self.activateData objectForKey:@"serial_number"];
+    params[@"activate_code"] = [Tools convertToJsonData:self.activateData];
+    [TTRequestManager productActivate:params success:^(id  _Nonnull responseObject) {
+        if ([responseObject[@"errorCode"] integerValue] == 0) {
+            NSDictionary *data = responseObject[@"data"];
+            [self actionAfterGetProductActivateData:data];
+        }
+    } failure:^(NSError * _Nonnull error) {
+        
+    }];
+}
+
+- (void)actionAfterGetProductActivateData:(NSDictionary *)data{
+    NSInteger activate_state = [data[@"activate_state"] integerValue];
+    if (activate_state == Already_activate) {
+        self.warrantyDate = data[@"warranty_date"];
+    }
+}
 
 @end

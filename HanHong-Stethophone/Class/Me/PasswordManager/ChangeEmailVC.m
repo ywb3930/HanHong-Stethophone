@@ -46,16 +46,18 @@
     params[@"password"] = md5Pass;
     params[@"email"] = email;
     [Tools showWithStatus:@"正在修改邮箱"];
+    __weak typeof(self) wself = self;
     [TTRequestManager userModifyEmail:params success:^(id  _Nonnull responseObject) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
+        
         if([responseObject[@"errorCode"] integerValue] == 0) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.navigationController popViewControllerAnimated:YES];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [wself.navigationController popViewControllerAnimated:YES];
             });
         }
-        [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
+        [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 

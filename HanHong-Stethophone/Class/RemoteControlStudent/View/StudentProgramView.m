@@ -82,14 +82,17 @@
     [self.labelProgramCount updateLayout];
     [self.labelProgramTime updateLayout];
     
-    if(self.programTTListData.count > 0 && self.dataBlock) {
+    if(self.programTTListData.count > 0) {
         [self performSelector:@selector(actionReloadView) withObject:nil afterDelay:0.2f];
     }
 }
 
 - (void)actionReloadView{
-    CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
-    self.dataBlock(self.programTTListData, maxY);
+    if (self.dataBlock) {
+        CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
+        self.dataBlock(self.programTTListData, maxY);
+    }
+    
 }
 
 
@@ -137,8 +140,9 @@
         [self.buttonTime setTitle:string forState:UIControlStateNormal];
         
         NSDate *date = [Tools stringToDateHM:selectValue];
-        [self.calendarView.calendarManager checkThisMonthRecordFromToday:date];
-        [self.calendarView reloadCollectView];
+        [self initData:date];
+//        [self.calendarView.calendarManager checkThisMonthRecordFromToday:date];
+//        [self.calendarView reloadCollectView];
         
     } cancelBlock:^{
         

@@ -10,7 +10,7 @@
 #import "KSYAudioUtilities.h"
 #include <pthread.h>
 // constants
-static UInt32 KSYAudioFileWaveformDefaultResolution = 8192*2;
+static UInt32 KSYAudioFileWaveformDefaultResolution = 1024 * 16;
 static NSString *KSYAudioFileWaveformDataQueueIdentifier = @"com.KSYaudio.waveformQueue";
 
 //------------------------------------------------------------------------------
@@ -547,7 +547,7 @@ typedef struct
     UInt32 propSize = sizeof(maxPacketSize);
     [KSYAudioUtilities checkResult:ExtAudioFileGetProperty(self.info->extAudioFileRef, kExtAudioFileProperty_ClientMaxPacketSize, &propSize,  &maxPacketSize) operation:"Failed to get max packet size"];
     
-    self.floatData = [KSYAudioUtilities floatBuffersWithNumberOfFrames:8192*2 numberOfChannels:self.clientFormat.mChannelsPerFrame];
+    self.floatData = [KSYAudioUtilities floatBuffersWithNumberOfFrames:1024 * 16 numberOfChannels:self.clientFormat.mChannelsPerFrame];
 }
 
 //------------------------------------------------------------------------------

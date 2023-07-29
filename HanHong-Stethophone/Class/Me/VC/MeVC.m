@@ -31,6 +31,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    
     self.view.backgroundColor = WHITECOLOR;
     self.loginType = [[NSUserDefaults standardUserDefaults] integerForKey:@"login_type"];
     if(self.loginType == login_type_personal) {
@@ -162,23 +164,19 @@
 }
 
 - (void)actionLogout{
-    
     [Tools showAlertView:nil andMessage:@"您确定要退出当前账号吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainBlack, MainColor] sure:^{
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
         params[@"token"] = LoginData.token;
         [Tools showWithStatus:@"正在退出登录"];
+        __weak typeof(self) wself = self;
         [TTRequestManager userLogout:params success:^(id  _Nonnull responseObject) {
-            if([responseObject[@"errorCode"] intValue] == 0 ) {
-                //[[NSUserDefaults standardUserDefaults] removeObjectForKey:@"user"];
-                [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
-                    [Tools logout:@""];
-                }];
-            } else {
-                [self.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-            }
-            [SVProgressHUD dismiss];
+            [Tools hiddenWithStatus];
+            [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
+                [Tools logout:@""];
+            }];
+            
         } failure:^(NSError * _Nonnull error) {
-            [SVProgressHUD dismiss];
+            [Tools hiddenWithStatus];
         }];
     } cancel:^{
         

@@ -65,7 +65,7 @@
     [self addSubview:self.labelDeviceName];
     [self addSubview:self.labelDeviceMac];
     [self addSubview:self.buttonBluetooth];
-    self.buttonBluetooth.sd_layout.centerYEqualToView(self).rightSpaceToView(self, Ratio18).heightIs(Ratio22).widthIs(Ratio22);
+    self.buttonBluetooth.sd_layout.centerYEqualToView(self).rightSpaceToView(self, Ratio8).heightIs(Ratio33).widthIs(Ratio33);
     self.labelTitle.sd_layout.leftSpaceToView(self, Ratio11).topSpaceToView(self, Ratio11).heightIs(Ratio22).rightSpaceToView(self.buttonBluetooth, Ratio18);
     self.labelDeviceName.sd_layout.leftEqualToView(self.labelTitle).topSpaceToView(self.labelTitle, 0).heightIs(Ratio22).rightEqualToView(self.labelTitle);
     self.labelDeviceMac.sd_layout.leftEqualToView(self.labelTitle).topSpaceToView(self.labelDeviceName, 0).heightIs(Ratio22).rightEqualToView(self.labelTitle);
@@ -102,6 +102,7 @@
 - (HHBluetoothButton *)buttonBluetooth{
     if (!_buttonBluetooth) {
         _buttonBluetooth = [[HHBluetoothButton alloc] init];
+        _buttonBluetooth.imageEdgeInsets = UIEdgeInsetsMake(Ratio5, Ratio5, Ratio5, Ratio5);
     }
     return _buttonBluetooth;
 }

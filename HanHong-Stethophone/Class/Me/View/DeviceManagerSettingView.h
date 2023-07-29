@@ -9,14 +9,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DeviceManagerSettingView : UITableView
+@interface DeviceManagerSettingView : UIScrollView
 
-@property (retain, nonatomic) NSArray               *arrayTitle;
-@property (retain, nonatomic) NSArray               *arrayType;
-@property (retain, nonatomic) NSMutableArray         *arrayValue;
+//@property (retain, nonatomic) NSArray               *arrayTitle;
+//@property (retain, nonatomic) NSArray               *arrayType;
+//@property (retain, nonatomic) NSMutableArray         *arrayValue;
 @property (retain, nonatomic) NSMutableDictionary    *settingData;
 @property (assign, nonatomic) NSInteger             recordingState;
 @property (assign, nonatomic) Boolean               bStandart;
+- (void)reloadView;
 
 @end
 

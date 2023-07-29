@@ -40,7 +40,6 @@
 }
 
 
-
 - (void)actionToProgramListVC:(UITapGestureRecognizer *)tap{
     if (self.programListData.count == 0) {
         return;
@@ -98,14 +97,17 @@
 
     [self.labelProgramCount updateLayout];
     [self.labelProgramTime updateLayout];
-    if(self.programTTListData.count > 0 && self.dataBlock) {
+    if(self.programTTListData.count > 0) {
         [self performSelector:@selector(actionReloadView) withObject:nil afterDelay:0.2f];
     }
 }
 
 - (void)actionReloadView{
-    CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
-    self.dataBlock(self.programTTListData, maxY);
+    if (self.dataBlock) {
+        CGFloat maxY = CGRectGetMaxY(self.labelProgramTime.frame);
+        self.dataBlock(self.programTTListData, maxY);
+    }
+    
 }
 
 - (void)actionClickCalendarItemCallback:(HHCalendarDayModel *)model{
@@ -128,7 +130,6 @@
 
     [BRDatePickerView showDatePickerWithTitle:@"请选时间" dateType:BRDatePickerModeYM defaultSelValue:showDate minDate:minDate maxDate:maxDate isAutoSelect:NO themeColor:MainColor resultBlock:^(NSString *selectValue) {
         self.currentTime = selectValue;
-        //wself.itemViewBirthDay.textFieldInfo.text = selectValue;
         NSMutableString *string = [NSMutableString stringWithString:selectValue];
         [string replaceCharactersInRange:NSMakeRange(4, 1) withString:@"年"];
         [string appendString:@"月"];
@@ -136,8 +137,6 @@
         
         NSDate *date = [Tools stringToDateHM:selectValue];
         [self initData:date];
-        //[self.calendarView.calendarManager checkThisMonthRecordFromToday:date];
-        //[self.calendarView reloadCollectView];
         
     } cancelBlock:^{
         

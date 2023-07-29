@@ -6,12 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HHBaseRecordVC.h"
 #import "ConsultationModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RemoteControlDetailVC : HHBaseRecordVC
+@interface RemoteControlDetailVC : UIViewController
 
 @property (retain, nonatomic) ConsultationModel    *consultationModel;
 

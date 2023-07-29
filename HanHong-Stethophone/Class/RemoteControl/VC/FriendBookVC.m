@@ -79,9 +79,9 @@
             [wself reloadTableView:indexPath];
         }
         [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 
@@ -154,10 +154,10 @@
                 [wself.arrayData addObject:item];
             }
             if ([NSThread isMainThread]) {
-                [self actionRefreshView];
+                [wself actionRefreshView];
             } else {
                 dispatch_sync(dispatch_get_main_queue(), ^{
-                    [self actionRefreshView];
+                    [wself actionRefreshView];
                 });
             }
             

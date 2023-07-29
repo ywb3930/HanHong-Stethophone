@@ -13,7 +13,7 @@
 @property (retain, nonatomic) UIView                    *viewBottom;
 @property (retain, nonatomic) UILabel                   *labelCollectLocation;
 @property (retain, nonatomic) YYLabel                   *labelFiler;
-@property (retain, nonatomic) UILabel                   *labelMessage;
+@property (retain, nonatomic) UILabel                   *labelDeviceConnectMessage;
 @property (retain, nonatomic) UIView                    *viewLine;
 
 @end
@@ -30,16 +30,20 @@
 }
 
 - (void)setIndex:(NSInteger)index{
-    if (index == 0) {
-        //self.
-        self.labelStartRecord.hidden = NO;
-    } else {
-        self.labelStartRecord.hidden = YES;
-    }
+//    if (index == 0) {
+//        //self.
+//        self.labelStartRecord.hidden = NO;
+//    } else {
+//        self.labelStartRecord.hidden = YES;
+//    }
 }
 
 - (void)setRecordMessage:(NSString *)recordMessage{
     self.labelStartRecord.text = recordMessage;
+}
+
+- (void)setDeviceConnectMessage:(NSString *)deviceConnectMessage{
+    self.labelDeviceConnectMessage.text = deviceConnectMessage;
 }
 
 - (void)setupView{
@@ -61,8 +65,8 @@
     
     [self filterGrayString:@"关闭滤波" blueString:@"打开滤波"];
     
-    [self addSubview:self.labelMessage];
-    self.labelMessage.sd_layout.leftSpaceToView(self, 0).rightSpaceToView(self, 0).topSpaceToView(self.labelFiler, Ratio10).heightIs(Ratio18);
+    [self addSubview:self.labelDeviceConnectMessage];
+    self.labelDeviceConnectMessage.sd_layout.leftSpaceToView(self, 0).rightSpaceToView(self, 0).topSpaceToView(self.labelFiler, Ratio10).heightIs(Ratio18);
 }
 
 - (UIView *)viewLine{
@@ -83,7 +87,7 @@
         _labelCollectLocation = [[UILabel alloc] init];
         _labelCollectLocation.text = @"准备选择采集的位置";
         _labelCollectLocation.textColor = UIColor.redColor;
-        _labelCollectLocation.font = [UIFont systemFontOfSize:Ratio16];
+        _labelCollectLocation.font = Font15;
     }
     return _labelCollectLocation;
 }
@@ -93,7 +97,7 @@
         _labelStartRecord = [[UILabel alloc] init];
         _labelStartRecord.text = @"按听诊器录音键可以开始录音";
         _labelStartRecord.textColor = UIColor.redColor;
-        _labelStartRecord.font = [UIFont systemFontOfSize:Ratio16];
+        _labelStartRecord.font = Font15;
         _labelStartRecord.textAlignment = NSTextAlignmentCenter;
     }
     return _labelStartRecord;
@@ -118,7 +122,7 @@
     NSMutableAttributedString* atext=[[NSMutableAttributedString alloc]initWithString:title];
     NSRange grayRange=[[atext string] rangeOfString:grayString];
     NSRange blueRange=[[atext string] rangeOfString:blueString];
-    atext.yy_font = Font15;
+    atext.yy_font = Font13;
     atext.yy_color = MainColor;
     atext.yy_alignment = NSTextAlignmentCenter;
     [atext yy_setTextHighlightRange:grayRange color:MainNormal backgroundColor:nil tapAction:^(UIView * _Nonnull containerView, NSAttributedString * _Nonnull text, NSRange range, CGRect rect) {
@@ -147,16 +151,16 @@
     
 }
 
-- (UILabel *)labelMessage{
-    if(!_labelMessage) {
-        _labelMessage = [[UILabel alloc] init];
-        _labelMessage.text = @"无线信号弱，音频数据丢失";
-        _labelMessage.textColor = UIColor.redColor;
-        _labelMessage.textAlignment = NSTextAlignmentCenter;
-        _labelMessage.font = Font18;
-        _labelMessage.hidden = YES;
+- (UILabel *)labelDeviceConnectMessage{
+    if(!_labelDeviceConnectMessage) {
+        _labelDeviceConnectMessage = [[UILabel alloc] init];
+        _labelDeviceConnectMessage.text = @"";
+        _labelDeviceConnectMessage.textColor = UIColor.redColor;
+        _labelDeviceConnectMessage.textAlignment = NSTextAlignmentCenter;
+        _labelDeviceConnectMessage.font = Font15;;
+       // _labelDeviceConnectMessage.hidden = YES;
     }
-    return _labelMessage;
+    return _labelDeviceConnectMessage;
 }
 
 

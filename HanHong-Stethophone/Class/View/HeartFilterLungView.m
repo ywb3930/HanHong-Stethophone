@@ -32,7 +32,7 @@
     self.labelFilter.sd_layout.centerXEqualToView(self).heightIs(Ratio18).widthIs(widhtSelect).topSpaceToView(self, 0);
     self.buttonHeartVoice.sd_layout.rightSpaceToView(self.labelFilter, Ratio11).heightIs(Ratio33).widthIs(Ratio66).centerYEqualToView(self.labelFilter);
     self.buttonLungVoice.sd_layout.leftSpaceToView(self.labelFilter, Ratio11).heightIs(Ratio33).widthIs(Ratio66).centerYEqualToView(self.labelFilter);
-    [self filterGrayString:@"关闭滤波" blueString:@"打开滤波"];
+    //[self filterGrayString:@"关闭滤波" blueString:@"打开滤波"];
 }
 
 - (void)actionClickButton:(UIButton *)button{
@@ -69,7 +69,7 @@
     NSMutableAttributedString* atext=[[NSMutableAttributedString alloc]initWithString:title];
     NSRange grayRange=[[atext string] rangeOfString:grayString];
     NSRange blueRange=[[atext string] rangeOfString:blueString];
-    atext.yy_font = Font15;
+    atext.yy_font = Font13;
     atext.yy_color = MainColor;
     atext.yy_alignment = NSTextAlignmentCenter;
     [atext yy_setTextHighlightRange:grayRange color:MainNormal backgroundColor:nil tapAction:^(UIView * _Nonnull containerView, NSAttributedString * _Nonnull text, NSRange range, CGRect rect) {

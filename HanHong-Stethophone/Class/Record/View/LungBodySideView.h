@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LungBodySideView : HHBodyView
 
+@property (strong, nonatomic) NSArray                   *arrayReordSequence;
+
 @end
 
 NS_ASSUME_NONNULL_END

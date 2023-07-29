@@ -7,6 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TeachingHistoryModel.h"
+#import "HeartFilterLungView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,14 +21,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^ClinicTeachingHeaderSyncSaveBlock)(Boolean bSyncSave);
 
-@interface ClinicTeachingHeaderView : UICollectionReusableView
+@interface ClinicTeachingHeaderView : UICollectionReusableView<HeartFilterLungViewDelegate>
 
 @property (weak, nonatomic) id<ClinicTeachingHeaderDelegate>        delegate;
 @property (nonatomic, copy) ClinicTeachingHeaderSyncSaveBlock           syncSaveBlock;
 @property (retain, nonatomic) TeachingHistoryModel              *historyModel;
 @property (retain, nonatomic) NSString                          *recordMessage;
 @property (retain, nonatomic) NSString                          *roomMessage;
-
+@property (retain, nonatomic) HeartFilterLungView   *heartFilterLungView;
 @property (assign, nonatomic) NSInteger                         classroomState;
 
 @end

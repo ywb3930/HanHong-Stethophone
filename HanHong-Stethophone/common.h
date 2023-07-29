@@ -13,7 +13,6 @@
 #import <SDAutoLayout.h>
 #import <SDWebImage.h>
 #import <AFNetworking.h>
-#import <SVProgressHUD.h>
 //#import "MJRefresh.h"
 #import <YYModel.h>
 #import <Toast.h>
@@ -40,7 +39,7 @@
 #import "HHDBHelper.h"
 #import "NoDataView.h"
 #import "MeetingRoom.h"
-
+#import "MBProgressHUD.h"
 #ifdef DEBUG
 static DDLogLevel ddLogLevel = DDLogLevelVerbose;
 #else
@@ -48,7 +47,7 @@ static DDLogLevel ddLogLevel = DDLogLevelOff;
 #endif
 
 #ifdef DEBUG
-#define DLog(format, ...) DDLogError((@"[文件名:%s]" "[函数名:%s]" "[行号:%d]" format), __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__);
+#define DLog(format, ...) DDLogError((@"[函数名:%s]" "[行号:%d]-------" format), __FUNCTION__, __LINE__, ##__VA_ARGS__);
 #else
 #define DLog(...);
 #endif

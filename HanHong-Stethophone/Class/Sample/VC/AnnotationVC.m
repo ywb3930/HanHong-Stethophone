@@ -94,6 +94,15 @@
     return YES;
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    [self performSelector:@selector(placeCursorAtEnd:) withObject:textField afterDelay:0.01];
+}
+- (void)placeCursorAtEnd:(UITextField *)textField
+{
+    UITextPosition *posotion = [textField endOfDocument];
+    textField.selectedTextRange = [textField textRangeFromPosition:posotion toPosition:posotion];
+}
+
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     if (textField.tag == 7) {
         [self actionSelectArea];
@@ -101,8 +110,7 @@
         return NO;
     }
     //将光标自动移动到最后
-    UITextPosition *posotion = [textField endOfDocument];
-    textField.selectedTextRange = [textField textRangeFromPosition:posotion toPosition:posotion];
+
     return YES;
 }
 
@@ -121,7 +129,10 @@
 }
 
 - (void)actionClickSaveAnnotation:(UIButton *)button{
-    NSString *characteristics = [Tools convertToJsonData:self.arrayCharacteristic];
+    NSString *characteristics = @"";
+    if (self.arrayCharacteristic.count > 0) {
+        characteristics = [Tools convertToJsonData:self.arrayCharacteristic];
+    }
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"token"] = LoginData.token;
     params[@"tag"] = self.recordModel.tag;
@@ -169,9 +180,9 @@
             [wself.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
         }
        
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
 }
 
@@ -304,7 +315,7 @@
 
 - (void)actionSelectItem:(NSInteger)index tag:(NSInteger)tag{
     [self.view endEditing:YES];
-    self.itemPatientSex.labelInfo.text = index == man ? @"女" : @"男";
+    self.itemPatientSex.labelInfo.text = (index == 1) ? @"女" : @"男";
     self.itemPatientSex.labelInfo.textColor = MainBlack;
     
     if(self.saveLocation == 0) {
@@ -495,7 +506,12 @@
 - (RightDirectionView *)itemPatientSex{
     if (!_itemPatientSex) {
         _itemPatientSex = [[RightDirectionView alloc] initWithTitle:@"性别"];
-        _itemPatientSex.labelInfo.text = self.recordModel.patient_sex == man ? @"男" : @"女";
+        if (self.recordModel.patient_sex == man) {
+            _itemPatientSex.labelInfo.text = @"男";
+        } else if (self.recordModel.patient_sex == woman) {
+            _itemPatientSex.labelInfo.text = @"女";
+        }
+       
         __weak typeof(self) wself = self;
         _itemPatientSex.tapBlock = ^{
             wself.bChangeData = YES;

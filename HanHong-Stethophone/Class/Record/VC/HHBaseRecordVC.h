@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (assign, nonatomic) Boolean               bAutoSaveRecord;//是否自动保存录音
 @property (assign, nonatomic) RECORD_MODE           recordmodel;
 @property (assign, nonatomic) Boolean               bStandart;
+@property (retain, nonatomic) RecordModel            *recordDataModel;
 
 - (void)initNavi:(NSInteger)number;
 - (void)actionDeviceHelperRecordReady;
@@ -42,10 +43,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)actionDeviceDisconnected;
 - (void)actionDeviceRecordPlayInstable;
 - (void)actionDeviceHelperRecordingData:(NSData *)data;
-- (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel;
+//- (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel;
 - (void)loadRecordTypeData;
 - (void)actionClickBlueToothCallBack:(UIButton *)button;
-- (void)actionCancelClickBluetooth;
+- (void)actionClickBlueToothToDeviceManager;
 - (void)actionDeviceHelperPlayBegin;
 - (void)actionDeviceHelperPlayEnd;
 - (void)actionRecordFinish;

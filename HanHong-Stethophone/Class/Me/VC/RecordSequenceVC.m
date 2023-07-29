@@ -49,8 +49,8 @@
         }
     }
     NSString *filePath =  [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
-    [self.settingData setObject:arrayHeartSequence forKey:@"heartReorcSequence"];//录音顺序 心音顺序
-    [self.settingData setObject:arrayLungSequence forKey:@"lungReorcSequence"];//录音顺序 肺音顺序
+    [self.settingData setObject:arrayHeartSequence forKey:@"heartReordSequence"];//录音顺序 心音顺序
+    [self.settingData setObject:arrayLungSequence forKey:@"lungReordSequence"];//录音顺序 肺音顺序
     [self.settingData writeToFile:filePath atomically:YES];
    
     [self.navigationController popViewControllerAnimated:YES];

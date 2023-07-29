@@ -33,9 +33,11 @@
 - (void)recordingPause{
     self.timer.fireDate = [NSDate distantFuture];
 }
-- (void)recordingRestar{
+- (void)recordingResume{
     self.timer.fireDate = [NSDate distantPast];
 }
+
+
 
 - (void)setPositionValue:(NSDictionary *)positionValue{
     NSInteger index = [[positionValue objectForKey:@"id"] integerValue];
@@ -52,7 +54,7 @@
     }
     
 }
-
+//开始录音
 - (void)recordingStart{
     if (!self.timer) {
         self.timer = [NSTimer timerWithTimeInterval:0.5f target:self selector:@selector(reloadButton) userInfo:nil repeats:YES];
@@ -61,6 +63,9 @@
         self.timer.fireDate = [NSDate distantPast];
     }
     NSInteger idx = self.buttonSelectIndex;
+    if (self.buttonSelectIndex == -1) {
+        return;
+    }
     [[NSRunLoop currentRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes];
     UIButton *button = self.arrayButtonDot[idx];
     UIImageView *imageView = self.arrayImageViews[idx];
@@ -69,13 +74,24 @@
     label.textColor = MainColor;
     button.selected = YES;
 }
+//停止录音关闭计时器时调用
+- (void)recordingReload{
+    [self.timer invalidate];
+    self.timer = nil;
+}
 
 - (void)reloadButton{
+    if (self.buttonSelectIndex == -1) {
+        return;
+    }
     UIButton *button = self.arrayButtonDot[self.buttonSelectIndex];
     button.selected = !button.selected;
 }
-
+//停止录音时调用
 - (void)recordingStop{
+    if (self.buttonSelectIndex == -1) {
+        return;
+    }
     NSInteger idx = self.buttonSelectIndex;
     UIButton *buttonDot = self.arrayButtonDot[idx];
     buttonDot.selected = NO;
@@ -85,7 +101,6 @@
     UILabel *label = self.arrayLabelPlace[idx];
     label.textColor = AlreadyColor;
     self.timer.fireDate = [NSDate distantFuture];
-    
     UIButton *buttonTag = self.arrayButtonsTpye[idx];
     buttonTag.selected = YES;
     [buttonTag setTitleColor:AlreadyColor forState:UIControlStateSelected];
@@ -97,6 +112,9 @@
     }
 }
 
+- (void)setRecordingState:(NSInteger)recordingState{
+    _recordingState = recordingState;
+}
 
 - (void)actionButtonClick:(UIButton *)button {
     if (!self.bActionFromAuto) {
@@ -111,6 +129,11 @@
         [kAppWindow makeToast:@"正在录音中，不可改变位置" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
+    if ([[HHBlueToothManager shareManager] getConnectState] != DEVICE_CONNECTED) {
+        [kAppWindow makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
+    
     NSString *string = [@(button.tag-100) stringValue];
     
     if (button.selected && [self.arraySelectItem containsObject:string]) {

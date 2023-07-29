@@ -40,6 +40,17 @@
     }
 }
 
+- (void)setArrayReordSequence:(NSArray *)arrayReordSequence{
+    for (NSDictionary *data in arrayReordSequence) {
+        NSInteger index = [data[@"id"] integerValue];
+        if (index == 8 || index == 9) {
+            UIButton *buttonType = self.arrayButtonsTpye[index - 8];
+            buttonType.layer.borderWidth = Ratio1;
+            buttonType.layer.borderColor = MainColor.CGColor;
+        }
+    }
+}
+
 
 - (void)initData {
     self.arrayButtonsCollected = [NSMutableArray array];

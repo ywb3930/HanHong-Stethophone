@@ -139,19 +139,19 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
         
         if (self->realtime_cmd_enabled) {
             
-            if (([self->hanhongDevice ConnectState] == DEVICE_CONNECTED)  && ([self->hanhongDevice GetType] == STETHOSCOPE)) {
+            //if (([self->hanhongDevice ConnectState] == DEVICE_CONNECTED)  && ([self->hanhongDevice GetType] == STETHOSCOPE)) {
                 self->recordType = self->configRecordType;
                 self->recordMode = self->configRecordMode;
                 
                 if (![self->hanhongDevice RealtimeStartRecord:self->recordType]) {
                     [self DelayExcuteRealtimeCmd];
-                    NSLog(@"RealtimeStartRecod failed, busy delay retry");
+                    DLog(@"RealtimeStartRecod failed, busy delay retry");
                 } else {
-                    NSLog(@"RealtimeStartRecod success");
+                    DLog(@"RealtimeStartRecod success");
                 }
-            } else {
-                NSLog(@"RealtimeStartRecod failed, device not ready or not stethoscope");
-            }
+//            } else {
+//                DLog(@"RealtimeStartRecod failed, device not ready or not stethoscope");
+//            }
         }
         [self->cmd_lock unlock];
     });
@@ -337,11 +337,11 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
         
         if (self->realtime_cmd_enabled) {
             
-            if ([self->hanhongDevice ConnectState] == DEVICE_CONNECTED) {
+            //if ([self->hanhongDevice ConnectState] == DEVICE_CONNECTED) {
                 self->playMode = self->configPlayMode;
                 if (![self->hanhongDevice RealtimeStartPlay:(self->playMode == PlayingWithSettingData) ? false : true]) {
                     [self DelayExcuteRealtimeCmd];
-                    NSLog(@"RealtimeStartPlay failed, busy delay retry");
+                    DLog(@"RealtimeStartPlay failed, busy delay retry");
                 } else {
                       
                     if (self->playMode == PlayingWithSettingData) {
@@ -351,8 +351,8 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
                         self->playEndTime = self->configPlayEndTime;
                         self->playRepeat = self->configPlayRepeat;
                         
-                        int start = (int) (self->playStartTime * audiosize_per_second);
-                        int count = (int) ((self->playEndTime - self->playStartTime) * audiosize_per_second);
+                        int start = (int) (self->playStartTime * audiosize_per_second) & ~0x1;
+                        int count = (int) ((self->playEndTime - self->playStartTime) * audiosize_per_second) & ~0x1;
                         
                         if (start + count > self->play_data.length) {
                             count = (int)self->play_data.length - start;
@@ -372,11 +372,11 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
                         self->playStartTime = 0; //从0计时
                     }
                         
-                    NSLog(@"RealtimeStartPlay success");
+                    DLog(@"RealtimeStartPlay success");
                 }
-            } else {
-                NSLog(@"RealtimeStartPlay failed, device not ready");
-            }
+//            } else {
+//                DLog(@"RealtimeStartPlay failed, device not ready");
+//            }
                 
         }
         [self->cmd_lock unlock];
@@ -764,7 +764,7 @@ typedef NS_ENUM(NSInteger, PLAY_STATE)
 }
 
 -(NSString *)GetSerialNumber{
-    return [hanhongDevice GetSerialNumber];
+    return [[hanhongDevice GetSerialNumber] uppercaseString];
 }
 
 -(NSString *)GetProductionDate{

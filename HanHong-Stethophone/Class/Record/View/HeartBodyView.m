@@ -51,6 +51,15 @@
     self.arrayAlreadyImageName = @[@"heart_already_m", @"heart_already_p", @"heart_already_a", @"heart_already_e", @"heart_already_t"];
 }
 
+- (void)setArrayReordSequence:(NSArray *)arrayReordSequence{
+    for (NSDictionary *data in arrayReordSequence) {
+        NSInteger index = [data[@"id"] integerValue];
+        UIButton *buttonType = self.arrayButtonsTpye[index];
+        buttonType.layer.borderWidth = Ratio1;
+        buttonType.layer.borderColor = MainColor.CGColor;
+    }
+}
+
 - (void)actionRecordNextpositionCallBack:(NSInteger)index{
     if (self.delegate && [self.delegate respondsToSelector:@selector(actionClickButtonBodyPositionCallBack:tag:position:)]) {
         NSString *title = self.arrayButtonInfo[index];
@@ -68,7 +77,7 @@
         UIButton *buttonType = [[UIButton alloc] init];
         buttonType.tag = 100 + i;
         [buttonType setTitle:self.arrayButtonInfo[i] forState:UIControlStateNormal];
-        [buttonType setBackgroundImage:[UIImage imageNamed:@"circle_false"] forState:UIControlStateNormal];
+        
         [buttonType setBackgroundImage:imageMainColor forState:UIControlStateSelected];
         [buttonType setBackgroundImage:imageMainColor forState:UIControlStateDisabled];
         [buttonType setTitleColor:MainNormal forState:UIControlStateNormal];
@@ -80,7 +89,10 @@
         [buttonType addTarget:self action:@selector(actionButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:buttonType];
         buttonType.sd_layout.leftSpaceToView(self, Ratio18 +  (imageWidth + width) * i).widthIs(imageWidth).heightIs(imageWidth).topSpaceToView(self, Ratio22);
+        [buttonType setBackgroundImage:[UIImage imageNamed:@"circle_false"] forState:UIControlStateNormal];
         [self.arrayButtonsTpye addObject:buttonType];
+        
+        
         
         
         UIButton *buttonCollected = [[UIButton alloc] init];

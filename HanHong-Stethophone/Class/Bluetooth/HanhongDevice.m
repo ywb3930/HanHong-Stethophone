@@ -598,7 +598,7 @@ NSString *const POP3_btName = @"POP-3";
             }
             
         } @catch (NSException * ex) {
-            NSLog(@"Match Version f Error");
+            DLog(@"Match Version f Error");
             @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"Match Version f Error" userInfo:nil];
         }
         
@@ -612,12 +612,12 @@ NSString *const POP3_btName = @"POP-3";
             }
             
         } @catch (NSException * ex) {
-            NSLog(@"Match Version b Error");
+            DLog(@"Match Version b Error");
             @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"Match Version b Error" userInfo:nil];
         }
         
     } else {
-        NSLog(@"Match Version Error");
+        DLog(@"Match Version Error");
         @throw [NSException exceptionWithName:@"HanhongDevice" reason:@"" userInfo:nil];
     }
     
@@ -630,7 +630,7 @@ NSString *const POP3_btName = @"POP-3";
             [self.deviceEventDelegate on_device_event:event args1:args1 args2:args2];
         }
     } @catch (NSException *exception) {
-        NSLog(@"event_callback error %@ %@", exception.name, exception.reason);
+        DLog(@"event_callback error %@ %@", exception.name, exception.reason);
     }
 }
 
@@ -1517,7 +1517,7 @@ NSString *const POP3_btName = @"POP-3";
                                     } else {
                                         
                                         [self Callback:LogEvent args1:@"pcm_sync error" args2:NULL];
-                                        NSLog(@"pcm sync error");
+                                        DLog(@"pcm sync error");
                                         
                                         //不是PCM_SYNC 说明数据异常，重新同步，8字节环形缓存，收一个字节放到最后，第一个字节去掉
                                         while (thread_enable && connect_enabled && realtimerecord_enabled) {

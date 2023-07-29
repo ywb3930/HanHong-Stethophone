@@ -6,9 +6,9 @@
 //
 
 #import "ClinicTeachingHeaderView.h"
-#import "HeartFilterLungView.h"
 
-@interface ClinicTeachingHeaderView()<HeartFilterLungViewDelegate>
+
+@interface ClinicTeachingHeaderView()
 
 @property (retain, nonatomic) UILabel               *labelRoomCode;
 @property (retain, nonatomic) UIImageView           *imageViewRoomCode;
@@ -18,7 +18,7 @@
 @property (retain, nonatomic) UIView                *viewLine1;
 @property (retain, nonatomic) UIView                *viewLine2;
 @property (retain, nonatomic) UILabel               *labelRecordMessage;
-@property (retain, nonatomic) HeartFilterLungView   *heartFilterLungView;
+
 
 @property (retain, nonatomic) UIButton              *buttonSaveRecord;
 @property (retain, nonatomic) UILabel               *labelSaveRecord;

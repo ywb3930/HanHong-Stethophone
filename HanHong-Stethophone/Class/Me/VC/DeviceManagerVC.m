@@ -10,16 +10,12 @@
 #import "BluetoothDeviceModel.h"
 #import "DeviceManagerItemCell.h"
 #import "DeviceManagerSettingView.h"
-//#import "BluetoothHelper.h"
-//#import "HanhongDevice.h"
 #import "ScanTeachCodeVC.h"
 #import "Constant.h"
 #import "DeviceMessageVC.h"
 #import "GuideVC.h"
 
-#define Heart_filter_mode  1//心音过滤开关
-#define Lung_filter_mode  2//肺音过滤开关
-#define Heart_Lung_filter_mode  3//心肺音过滤开关
+
 
 
 @interface DeviceManagerVC ()<UITableViewDelegate, UITableViewDataSource, ScanTeachCodeVCDelegate>
@@ -72,11 +68,9 @@
         return;
     }
     
-
-    
     NSString *macStr = [scanCodeResult substringFromIndex:2];
     NSString *mac = [Tools converDataToMacStr:macStr];
-    if ([[HHBlueToothManager shareManager] getConnectState] == DeviceConnected && [mac isEqualToString:self.deviceModel.bluetoothDeviceMac]) {
+    if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED && [mac isEqualToString:self.deviceModel.bluetoothDeviceMac]) {
         [self.view makeToast:@"该设备已连接" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
@@ -123,9 +117,13 @@
         NSString *firmwareVersion = [[HHBlueToothManager shareManager] getFirmwareVersion];
         NSArray *stringUrlOne = [firmwareVersion componentsSeparatedByString:@"."];
         NSString *string4 = [stringUrlOne objectAtIndex:0];
-        NSString *string5 = [NSString stringWithFormat:@"%@", [[HHBlueToothManager shareManager] getBootloaderVersion]];
+        NSString *string5 = [NSString stringWithFormat:@"%@", [[HHBlueToothManager shareManager] getFirmwareVersion]];
+        NSRange range = [string5 rangeOfString:@"."];
+        string5 = [string5 substringFromIndex:range.location + 1];
+        string5 = [NSString stringWithFormat:@"V%@", string5];
+        
         NSString *pd = [[HHBlueToothManager shareManager] getProductionDate];
-        NSLog(@"ProductionDate = %@", pd);
+        DLog(@"ProductionDate = %@", pd);
         NSString *pd1 = [pd substringWithRange:NSMakeRange(0, 4)];
         NSString *pd2 = [pd substringWithRange:NSMakeRange(4, 2)];
         NSString *pd3 = [pd substringWithRange:NSMakeRange(6, 2)];
@@ -140,36 +138,11 @@
         [self.navigationController pushViewController:deviceMessage animated:YES];
     } else {
         //[self.deviceDefaultView startTimer];
-        NSLog(@"bluetoothDeviceUUID 1 = %@", self.deviceModel.bluetoothDeviceUUID);
+        DLog(@"bluetoothDeviceUUID 1 = %@", self.deviceModel.bluetoothDeviceUUID);
         [[HHBlueToothManager shareManager] connent:self.deviceModel.bluetoothDeviceUUID];
     }
     
 }
-
-- (void)actionEventBluetoothMessageMain:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2{
-    if (event == SearchStart) {
-        self.searchState = SearchStart;
-        [self.indicatorView startAnimating];
-        self.viewSearch.hidden = NO;
-    } else if (event == SearchFound) {
-        self.labelTableViewTitle.text = @"已发现的设备：";
-        [self onSearchFound:(NSString *)args1 device_mac:(NSString *)args2];
-    } else if (event == DeviceConnected) {
-        self.tableView.hidden = YES;
-
-        [self reloadView];
-       // [[HHBlueToothManager shareManager] disconnect];
-        
-    } else if (event == DeviceDisconnected) {
-        self.deviceManagerSettingView.hidden = YES;
-    } else if (event == SearchEnd) {
-        self.searchState = SearchEnd;
-        self.labelTableViewTitle.text = @"搜索已完成：";
-        [self.indicatorView stopAnimating];
-        self.viewSearch.hidden = YES;
-    }
-}
-
 
 
 - (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
@@ -177,14 +150,34 @@
     DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
     NSObject *args1 = userInfo[@"args1"];
     NSObject *args2 = userInfo[@"args2"];
-    if ([NSThread isMainThread]) {
-        [self actionEventBluetoothMessageMain:event args1:args1 args2:args2];
-    } else {
-        __weak typeof(self) wself = self;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [wself actionEventBluetoothMessageMain:event args1:args1 args2:args2];
-        });
+    if (event == SearchStart) {
+        self.searchState = SearchStart;
+    }  else if (event == SearchEnd) {
+        self.searchState = SearchEnd;
     }
+    __weak typeof(self) wself = self;
+    
+    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+    [mainQueue addOperationWithBlock:^{
+        if (event == SearchStart) {
+            //wself.searchState = SearchStart;
+            [wself.indicatorView startAnimating];
+            wself.viewSearch.hidden = NO;
+        } else if (event == SearchFound) {
+            wself.labelTableViewTitle.text = @"已发现的设备：";
+            [wself actionEventSearchFound:(NSString *)args1 device_mac:(NSString *)args2];
+        } else if (event == DeviceConnected) {
+            wself.tableView.hidden = YES;
+            [wself reloadView];
+        } else if (event == DeviceDisconnected) {
+            wself.deviceManagerSettingView.hidden = YES;
+        } else if (event == SearchEnd) {
+            //wself.searchState = SearchEnd;
+            wself.labelTableViewTitle.text = @"搜索已完成";
+            [wself.indicatorView stopAnimating];
+            wself.viewSearch.hidden = YES;
+        }
+    }];
 }
 
 - (void)actionEventSearchFound:(NSString *)device_name device_mac:(NSString *)device_mac{
@@ -195,7 +188,7 @@
             return;
         }
     }
-    NSLog(@"device_mac = %@, mac = %@", device_mac, mac);
+    DLog(@"device_mac = %@, mac = %@", device_mac, mac);
     BluetoothDeviceModel *model = [[BluetoothDeviceModel alloc] init];
     model.bluetoothDeviceName = device_name;
     model.bluetoothDeviceMac = mac;
@@ -205,121 +198,41 @@
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void)onSearchFound:(NSString *)device_name device_mac:(NSString *)device_mac{
-    if ([NSThread isMainThread]) {
-        [self actionEventSearchFound:device_name device_mac:device_mac];
-    } else {
-        __weak typeof(self) wself = self;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [wself actionEventSearchFound:device_name device_mac:device_mac];
-        });
-    }
-}
 
-//ResponsibilityChain
 - (void)actionToSearch:(UIBarButtonItem *)item{
     if(self.searchState == SearchStart) {
         [self.view makeToast:@"正在搜索设备中，请勿重复点击" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
-   
-    if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED) {
-        self.deviceManagerSettingView.hidden = YES;
-        self.tableView.hidden = NO;
-        self.deviceDefaultView.buttonBluetooth.selected = NO;
+    __weak typeof(self) wself = self;
+    NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+    [mainQueue addOperationWithBlock:^{
+        CONNECT_STATE state = [[HHBlueToothManager shareManager] getConnectState];
+        wself.deviceManagerSettingView.hidden = YES;
+        wself.tableView.hidden = NO;
+        wself.deviceDefaultView.buttonBluetooth.selected = NO;
         [[HHBlueToothManager shareManager] disconnect];
-    }
+        wself.labelTableViewTitle.text = @"搜索设备中......";
+        if (state == DEVICE_NOT_CONNECT) {
+            [[HHBlueToothManager shareManager] search];
+
+        } else {
+            [wself performSelector:@selector(searchBluetooth) withObject:nil afterDelay:1.0f];
+        }
+    }];
     
-    self.labelTableViewTitle.text = @"搜索设备中......";
-    [[HHBlueToothManager shareManager] actionSearchBluetoothList];
+    
+}
+
+- (void)searchBluetooth{
+     [[HHBlueToothManager shareManager] search];
 }
 
 - (void)reloadView{
-    NSString *filePath =  [[Constant shareManager] getPlistFilepathByName:@"deviceManager.plist"];
-    NSDictionary *data = [NSDictionary dictionaryWithContentsOfFile:filePath];
-    [self.settingData addEntriesFromDictionary:data];
-    
-//    if (!data) {
-//        [self.settingData setObject:[@(NO) stringValue] forKey:@"auto_connect_echometer"];//自动连接
-//        [self.settingData setObject:[@(NO) stringValue] forKey:@"auscultation_sequence"];//录音顺序开关
-//        [self.settingData setObject:@"15" forKey:@"record_duration"];//录音时长
-//        [self.settingData setObject:@"60" forKey:@"remote_record_duration"];//远程录音时长
-//        [self.settingData setObject:@"1" forKey:@"battery_version"];//电池信号
-//        [self.settingData setObject:[@(open_filtration) stringValue] forKey:@"is_filtration_record"];//滤波
-//        [self.settingData setObject:[@(heart_sounds) stringValue] forKey:@"quick_record_default_type"];//快速录音类型
-//        [self.settingData writeToFile:filePath atomically:YES];
-//    } else {
-//        [self.settingData addEntriesFromDictionary:data];
-//    }
-    //[self.deviceDefaultView stopTimer];
-    NSString *deviceMode = [[HHBlueToothManager shareManager] getDeviceMessage];//获取设备信息
-    NSInteger powerOnDefaultMode = [[HHBlueToothManager shareManager] getModeSeq];//开机默认模式
-    NSInteger powerOnDefaultVolume = [[HHBlueToothManager shareManager] getDefaultVolume];//开机默认音量
-    NSString *powerOnDefaultVolumeString = [[Constant shareManager] positionVolumesString:powerOnDefaultVolume - 1];
-    NSInteger getAutoOffTime = [[HHBlueToothManager shareManager] getAutoOffTime];//自动关机时间
-    NSString *getAutoOffTimeString = [NSString stringWithFormat:@"%li分钟", getAutoOffTime/60];
-    NSString  *autoConnectString = self.settingData[@"auto_connect_echometer"];//自动连接
-    NSString *recordDurationString = [NSString stringWithFormat:@"%@秒", self.settingData[@"record_duration"]];//录音时长
-    NSString *remoteRecordDuration = [NSString stringWithFormat:@"%@秒", self.settingData[@"remote_record_duration"]];//远程录音时长
-    NSString *auscultationSequenceString = self.settingData[@"auscultation_sequence"];//录音顺序开关
-    NSInteger batteryVersion = [self.settingData[@"battery_version"] integerValue];//电池型号
-    NSString *batteryVersionString = @"";
-    if (batteryVersion == dry_battery) {
-        batteryVersionString = @"干电池";
-    } if (batteryVersion == charge_battery) {
-        batteryVersionString = @"充电电池";
-    }
-    Boolean stehoscopeBtState = [[HHBlueToothManager shareManager] getAdvStartState];//听诊器蓝牙默认状态
-    NSString *stehoscopeBtStateString = stehoscopeBtState ? @"开" : @"关";
-    NSInteger filtration = [self.settingData[@"is_filtration_record"] integerValue];//滤波状态
-    Boolean bOpenFiltration = filtration == open_filtration ? YES : NO;
-    NSString *openFiltrationString = [@(bOpenFiltration) stringValue];
-    NSInteger quickRecordDefaultType = [self.settingData[@"quick_record_default_type"] integerValue];//快速录音默认类型
-    NSString *quickRecordDefaultTypeString = @"";
-    if (quickRecordDefaultType == heart_sounds) {
-        quickRecordDefaultTypeString = @"心音";
-    } else if (quickRecordDefaultType == lung_sounds) {
-        quickRecordDefaultTypeString = @"肺音";
-    }
-   
-    NSString *powerOnDefaultModelString = @"";
-    if (powerOnDefaultMode == Heart_filter_mode) {
-        powerOnDefaultModelString = @"心音过滤模式";
-    } else if(powerOnDefaultMode == Lung_filter_mode) {
-        powerOnDefaultModelString = @"肺音过滤模式";
-    } else if(powerOnDefaultMode == Heart_Lung_filter_mode) {
-        powerOnDefaultModelString = @"心肺音过滤模式";
-    }
-    if ([deviceMode isEqualToString:POPULAR3_btName]) {
-        NSArray *arrayTitle = @[@"APP自动连接听诊器", @"听诊器蓝牙默认状态", @"听诊器开机默认模式", @"听诊器开机默认音量", @"听诊器自动关机", @"电池型号设置", @"默认录音类型", @"默认滤波",@"录音时长", @"录音顺序开关", @"录音顺序设置", @"远程会诊录音最大时长"];
-        NSArray *arrayType = @[@"0", @"1", @"1", @"1", @"1", @"1", @"1", @"0", @"1", @"0", @"1", @"1"];
-        NSArray *arrayDefault = @[autoConnectString, stehoscopeBtStateString, powerOnDefaultModelString, powerOnDefaultVolumeString, getAutoOffTimeString, batteryVersionString, quickRecordDefaultTypeString, openFiltrationString, recordDurationString,auscultationSequenceString, @"", remoteRecordDuration];
-        self.deviceManagerSettingView.arrayType = arrayType;
-        self.deviceManagerSettingView.arrayTitle = arrayTitle;
-        self.deviceManagerSettingView.arrayValue = [NSMutableArray arrayWithArray:arrayDefault];
-        self.deviceManagerSettingView.settingData = self.settingData;
-        [self.deviceManagerSettingView reloadData];
-    } else if ([deviceMode isEqualToString:POP3_btName]) {
-        NSArray *arrayTitle = [NSArray array];
-        if (self.loginType == login_type_teaching) {
-            arrayTitle = @[@"APP自动连接听诊器", @"听诊器自动关机", @"远程教学录音最大时长"];
-        } else {
-            arrayTitle = @[@"APP自动连接听诊器", @"听诊器自动关机", @"远程会诊录音最大时长"];
-        }
-        NSArray *arrayType = @[@"0", @"1", @"1"];
-        NSArray *arrayDefault = @[autoConnectString, getAutoOffTimeString, remoteRecordDuration];
-        self.deviceManagerSettingView.arrayType = arrayType;
-        self.deviceManagerSettingView.arrayTitle = arrayTitle;
-        self.deviceManagerSettingView.arrayValue = [NSMutableArray arrayWithArray:arrayDefault];
-        self.deviceManagerSettingView.settingData = self.settingData;
-        [self.deviceManagerSettingView reloadData];
-    }
-    
+    [self.deviceManagerSettingView reloadView];
     self.deviceManagerSettingView.hidden  = NO;
     self.deviceDefaultView.buttonBluetooth.selected = YES;
 }
-
-
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -329,18 +242,12 @@
         return;
     }
     
-    
-    
     [[HHBlueToothManager shareManager] connent:model.bluetoothDeviceUUID];
     self.deviceModel = model;
     
-    
-
     self.deviceDefaultView.hidden = NO;
     self.labelConnectRemind.hidden = YES;
     self.deviceDefaultView.deviceModel = model;
-    //[self.deviceDefaultView startTimer];
-    //[Tools showWithStatus:[NSString stringWithFormat:@"正在连接设备%@", model.bluetoothDeviceName]];
     [self actionSaveBlueToothData];
 }
 
@@ -495,14 +402,7 @@
     [[HHBlueToothManager shareManager] abortSearch];
 }
 
-//- (void)viewWillDisappear:(BOOL)animated{
-//    [super viewWillDisappear:animated];
-//    
-//}
-
 - (void)initNaviView{
-    UIBarButtonItem *item0 = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    item0.width = Ratio11;
     UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"histroy_search"] style:UIBarButtonItemStylePlain target:self action:nil];
     item1.action = @selector(actionToSearch:);
     item1.imageInsets = UIEdgeInsetsMake(0, Ratio5, 0, Ratio5);
@@ -510,7 +410,7 @@
     
     UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"peopleScanicon"] style:UIBarButtonItemStylePlain target:self action:nil];
     item2.action = @selector(actionToScanView:);
-    self.navigationItem.rightBarButtonItems = @[item0,item1,item2];
+    self.navigationItem.rightBarButtonItems = @[item1,item2];
 }
 
 - (UILabel *)labelConnectRemind{
@@ -545,9 +445,5 @@
     scanTeachCode.message = @"将二维码放置在框架中";
     [self.navigationController pushViewController:scanTeachCode animated:YES];
 }
-
-//- (void)dealloc{
-//    [self.deviceDefaultView removerTimer];
-//}
 
 @end

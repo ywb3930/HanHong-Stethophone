@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shareManager;
 
 
-- (NSString *)getDeviceMessage;//获取设备信息
+- (NSString *)getModelName;//获取设备信息
 - (NSInteger)getModeSeq;//开机默认模式
 - (NSInteger)getDefaultVolume;//开机默认音量
 - (NSInteger)getAutoOffTime;//自动关机时间
@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray *)getRecordData;
 - (NSString *)getSerialNumber;
 - (NSString *)getFirmwareVersion;
+- (NSString *)getMac;
 - (NSString *)getBootloaderVersion;
 - (NSString *)getProductionDate;
 - (double)getBatteryState;
@@ -50,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPlayTimeRange:(float)start_time end_time:(float)end_time;
 - (void)writePlayBuffer:(NSData *)data;
 
-- (void)actionSearchBluetoothList;//查找蓝牙列表
+- (void)search;//查找蓝牙列表
 - (void)connent:(NSString *)macAddress;//根据Mac地址连接蓝牙
 -(CBCentralManager *)getCentralManager;
 -(CBPeripheral *)currentPeripheral;

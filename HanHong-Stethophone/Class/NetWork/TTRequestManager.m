@@ -509,12 +509,6 @@
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         failure(error);
     }];
-    
-//    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
-//        completion(responseObject);
-//    } failure:^(NSError * _Nonnull error) {
-//        failure(error);
-//    }];
 }
 /**
  修改录音标本
@@ -605,6 +599,30 @@
  */
 + (void)recordShareFavorite:(NSString *)share_code params:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
     NSString *requestUrl = [NSString stringWithFormat:@"%@record/share_favorite/%@", REQUEST_URL, share_code];
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
+        completion(responseObject);
+    } failure:^(NSError * _Nonnull error) {
+        failure(error);
+    }];
+}
+
+/**
+ 查询是否已激活
+ */
++ (void)productActivateState:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
+    NSString *requestUrl = [NSString stringWithFormat:@"%@product/activate_state", REQUEST_URL];
+    [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
+        completion(responseObject);
+    } failure:^(NSError * _Nonnull error) {
+        failure(error);
+    }];
+}
+
+/**
+产品激活
+ */
++ (void)productActivate:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure{
+    NSString *requestUrl = [NSString stringWithFormat:@"%@product/activate", REQUEST_URL];
     [AFNetRequestManager request:requestUrl method:METHOD_POST jsonParameters:params success:^(id _Nonnull responseObject) {
         completion(responseObject);
     } failure:^(NSError * _Nonnull error) {

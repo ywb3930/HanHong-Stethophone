@@ -71,7 +71,7 @@
     NSDateComponents * theComps = [[NSDateComponents alloc] init];
     NSInteger unitFlags = NSCalendarUnitDay | NSCalendarUnitWeekday | NSCalendarUnitMonth | NSCalendarUnitYear;
     comps = [calendar components:unitFlags fromDate:date];
-    theComps = [calendar components:unitFlags fromDate:[NSDate date]];
+    theComps = [calendar components:unitFlags fromDate:date];
     self.theMonth = [theComps month];// 本月的月份
     NSUInteger day = [comps day];// 是本月第几天
     self.todayInMonth = day;
@@ -82,7 +82,7 @@
         NSInteger hours = (day - 1) * -24;
         date = [NSDate dateWithTimeInterval:hours * 60 * 60 sinceDate:date];
     }
-    NSString *stringYM = [Tools dateToStringYM:[NSDate date]];
+    NSString *stringYM = [Tools dateToStringYM:date];
     NSString *firstString = [NSString stringWithFormat:@"%@-01 00:00:00",stringYM];
     NSDate *firstDate = [Tools stringToDateYMDHMS:firstString];
     NSString *firstStringSub8 = [Tools dateAddMinuteYMDHMS:firstDate minute:-8*60];
@@ -116,6 +116,12 @@
             model.dayValue = (i - self.dayInWeek + 1);
             if (i - 1 == self.todayInMonth) {
                 model.bCurrentDay = YES;
+            }
+            
+            NSDate *dateI = [date dateByAddingTimeInterval:60 * 60 * 24 * model.dayValue];
+            NSComparisonResult result = [dateI compare:[NSDate now]];
+            if (result == NSOrderedAscending) {
+                model.bLessThanToday = YES;
             }
             [self.calendarDate replaceObjectAtIndex:i - 1 withObject:model];
         }

@@ -7,16 +7,12 @@
 
 #import "HeartVoiceView.h"
 #import "AusultaionView.h"
-#import "HeartBodyView.h"
+
 
 
 @interface HeartVoiceView ()<HHBodyViewDelegate>
 
 @property (retain, nonatomic) AusultaionView            *ausultaionView;
-@property (retain, nonatomic) HeartBodyView             *heartBodyView;
-
-
-
 
 @end
 
@@ -34,18 +30,24 @@
     self.heartBodyView.positionValue = positionValue;
 }
 
-- (void)setrecordingState:(NSInteger)recordingState{
+- (void)setRecordingState:(NSInteger)recordingState{
     self.heartBodyView.recordingState = recordingState;
 }
 
+
+//开始录音
 - (void)recordingStart{
     [self.heartBodyView recordingStart];
+}
+//停止录音关闭计时器时调用
+- (void)recordingReload{
+    [self.heartBodyView recordingReload];
 }
 
 - (void)setAutoAction:(Boolean)autoAction{
     self.heartBodyView.autoAction = autoAction;
 }
-
+//停止录音时调用
 - (void)recordingStop{
     [self.heartBodyView recordingStop];
 }
@@ -53,8 +55,8 @@
 - (void)recordingPause{
     [self.heartBodyView recordingPause];
 }
-- (void)recordingRestar{
-    [self.heartBodyView recordingRestar];
+- (void)recordingResume{
+    [self.heartBodyView recordingResume];
 }
 
 - (void)actionClearSelectButton{
@@ -67,11 +69,7 @@
     }
 }
 
-//- (void)actionClickButtonHeartBodyPositionCallBack:(NSString *)string tag:(NSInteger)tag{
-//    if (self.delegate && [self.delegate respondsToSelector:@selector(actionClickHeartButtonBodyPositionCallBack:tag:)]) {
-//        [self.delegate actionClickHeartButtonBodyPositionCallBack:string tag:tag];
-//    }
-//}
+
 
 - (void)setupView{
     [self addSubview:self.ausultaionView];

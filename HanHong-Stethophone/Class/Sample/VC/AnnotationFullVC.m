@@ -75,15 +75,18 @@
     self.secondCellCount = 5;
     self.view.backgroundColor = MainBlack;
     self.statusBarHeight = kStatusBarHeight;
-    NSLog(@"self.statusBarHeight = %@", self.recordModel.url);
     self.startTime = 0;
-    self.endTime = 0;
-    self.allTime = [NSString stringWithFormat:@"0:000-%li:000 全部", self.recordModel.record_length];
+    self.endTime = self.recordModel.record_length;
+    self.allTime = [NSString stringWithFormat:@"0.000-%li.000 全部", self.recordModel.record_length];
     self.viewHeight = screenW - 2 *  kNavBarHeight - Ratio22;
     
     [self initView];
     [self reloadAnnotationAreaView];
     [self initData];
+}
+
+- (void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
 }
 
 - (void)initData{
@@ -101,39 +104,90 @@
 
 - (void)actionDeviceHelperPlayBegin{
     self.viewLine.frame = CGRectMake(self.statusBarHeight, kNavBarHeight, Ratio1, self.viewHeight);
-    self.viewLine.hidden = NO;
-    self.bFirstPlay = YES;
-}
-
-- (void)actionDeviceHelperPlayingTime:(float)value{
-    NSLog(@"self.statusBarHeight = %f", self.statusBarHeight);
-    CGFloat width = value / self.recordModel.record_length * self.viewWidth;
-
+//    self.viewLine.hidden = NO;
+   // self.bFirstPlay = YES;
+    
+    
     CGFloat x = self.statusBarHeight;
     CGFloat startPointX = self.startTime/self.recordModel.record_length * self.viewWidth;
     CGFloat endPointX = self.endTime/self.recordModel.record_length * self.viewWidth;
     CGFloat scrollViewX = self.scrollView.contentOffset.x;
     CGFloat scrollViewWidth = self.scrollView.frame.size.width;
-    if (startPointX > scrollViewX && endPointX < scrollViewX + scrollViewWidth) {//整个图在屏幕上
+    if (startPointX >= scrollViewX && endPointX <= scrollViewX + scrollViewWidth) {//整个图在屏幕上
+        self.viewLine.hidden = NO;
+    } else if (startPointX == 0 && endPointX >= scrollViewWidth) {
+        self.viewLine.hidden = NO;
+        CGPoint offset = CGPointMake(x, 0);
+        [self.scrollView setContentOffset:offset animated:NO];
+
+        
+    }
+    else if (startPointX >= scrollViewX  && startPointX <= scrollViewWidth + scrollViewX) {//起始点在屏幕上
+        self.viewLine.frame = CGRectMake(startPointX - scrollViewX + x, kNavBarHeight, Ratio1, self.viewHeight);
+    } else {
+        self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
+        
+    }
+    self.bFirstPlay = NO;
+}
+
+- (void)actionDeviceHelperPlayingTime:(float)value{
+    CGFloat width = value / self.recordModel.record_length * self.viewWidth;
+    
+    CGFloat x = self.statusBarHeight;
+    CGFloat startPointX = self.startTime/self.recordModel.record_length * self.viewWidth;
+    CGFloat endPointX = self.endTime/self.recordModel.record_length * self.viewWidth;
+    CGFloat scrollViewX = self.scrollView.contentOffset.x;
+    CGFloat scrollViewWidth = self.scrollView.frame.size.width;
+    if (startPointX >= scrollViewX && endPointX <= scrollViewX + scrollViewWidth) {//整个图在屏幕上
         self.viewLine.frame = CGRectMake(x + width - scrollViewX, kNavBarHeight, Ratio1, self.viewHeight);
-    } else if (startPointX > scrollViewX  && startPointX < scrollViewWidth + scrollViewX) {//起始点在屏幕上
-        if (self.bFirstPlay) {
-            
+        self.viewLine.hidden = NO;
+    } else if (startPointX == 0 && endPointX >= scrollViewWidth) {
+        self.viewLine.hidden = NO;
+        if (width <= screenW/2 - x) {
+            self.viewLine.frame = CGRectMake(x + width, kNavBarHeight, Ratio1, self.viewHeight);
+        } else if (width >= self.viewWidth - screenW/2 + x){
+            self.viewLine.frame = CGRectMake(screenW - x-(self.viewWidth - width), kNavBarHeight, Ratio1, self.viewHeight);
+        } else  {
+            self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
+            if (self.bFirstPlay) {
+                CGPoint offset = CGPointMake(width - screenW/2 + x, 0);
+                [self.scrollView setContentOffset:offset animated:YES];
+            }
+            self.bFirstPlay = YES;
+        }
+
+        
+    }
+    else if (startPointX >= scrollViewX  && startPointX <= scrollViewWidth + scrollViewX) {//起始点在屏幕上
+        if (!self.bFirstPlay) {
             self.viewLine.frame = CGRectMake(startPointX - scrollViewX + x, kNavBarHeight, Ratio1, self.viewHeight);
         } else {
             CGPoint offset = CGPointMake(scrollViewX + (width - startPointX), 0);
             [self.scrollView setContentOffset:offset animated:YES];
+            self.viewLine.hidden = NO;
         }
+        self.bFirstPlay = YES;
+//        if (self.bFirstPlay) {
+//
+//
+//        } else {
+//
+//        }
         
     } else {
-        if (self.bFirstPlay) {
-            self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
-        }
         CGPoint offset = CGPointMake(width - screenW/2 + x, 0);
-        [self.scrollView setContentOffset:offset animated:YES];
+        if (!self.bFirstPlay) {
+            self.viewLine.frame = CGRectMake(screenW/2, kNavBarHeight, Ratio1, self.viewHeight);
+            [self.scrollView setContentOffset:offset animated:NO];
+        } else {
+            self.viewLine.hidden = NO;
+            [self.scrollView setContentOffset:offset animated:YES];
+        }
+        self.bFirstPlay = YES;
         
     }
-    self.bFirstPlay = NO;
+    //self.bFirstPlay = NO;
     
 //    if (width <= screenW/2 - x) {
 //        self.viewLine.frame = CGRectMake(x + width, kNavBarHeight, Ratio1, self.viewHeight);
@@ -218,13 +272,15 @@
     CGFloat startX = centerTime / self.recordModel.record_length * self.viewWidth;
     if (startX <= (screenW - 2*self.statusBarHeight)/2) {
         startX = 0;
+    } else if (startX - (self.endTime - self.startTime) / 2 > self.viewWidth - (screenW-self.statusBarHeight)/2) {
+        startX = self.viewWidth - (screenW - 2*self.statusBarHeight);
     } else {
         startX = startX - (screenW - 2*self.statusBarHeight)/2;
     }
     CGPoint point = CGPointMake(startX, 0);
-    [self.scrollView setContentOffset:point animated:YES];
-    NSString *stringAnnotation = [NSString stringWithFormat:@"%@ %@", info[@"time"], info[@"characteristic"]];
-    self.labelAnnotation.text = [stringAnnotation stringByReplacingOccurrencesOfString:@"." withString:@":"];
+    [self.scrollView setContentOffset:point animated:NO];
+    //NSString *stringAnnotation = [NSString stringWithFormat:@"%@ %@", info[@"time"], info[@"characteristic"]];
+    self.labelAnnotation.text = [NSString stringWithFormat:@"%@ %@", info[@"time"], info[@"characteristic"]];//[stringAnnotation stringByReplacingOccurrencesOfString:@"." withString:@":"];
     
     [self reloadAnnotationAreaView];
     UIView *view = [self.viewAnnotationArea viewWithTag:row+1];
@@ -257,8 +313,9 @@
 
 - (void)actionTapHeader:(UITapGestureRecognizer *)tap{
     self.labelAnnotation.text = self.allTime;
+    self.tableView.hidden = YES;
     self.startTime = 0;
-    self.endTime = 0;
+    self.endTime = self.recordModel.record_length;
     [self reloadAnnotationAreaView];
 }
 
@@ -450,6 +507,13 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     self.tableView.hidden = YES;
+//    self.clipView.hidden = YES;
+//    self.labelAnnotation.text = self.allTime;
+//    self.startTime = 0;
+//    self.endTime = self.recordModel.record_length;
+//    self.buttonAnnotation.hidden = YES;
+//    self.startPoint = CGPointMake(self.statusBarHeight, 0);
+    //
 }
 
 - (UIView *)viewNavi{
@@ -549,6 +613,8 @@
     self.clipView.hidden = YES;
     self.buttonAnnotation.hidden = YES;
     self.labelAnnotation.text = self.allTime;
+    self.startTime = 0;
+    self.endTime = self.recordModel.record_length;
     self.tableView.hidden = YES;
 }
 
@@ -582,6 +648,7 @@
         self.endTimeDecimalNumber = [self changeNumber3Point:endX / self.viewWidth * self.recordModel.record_length];
         self.startTime= [self.startTimeDecimalNumber floatValue];
         self.endTime = [self.endTimeDecimalNumber floatValue];
+        self.labelAnnotation.text = [NSString stringWithFormat:@"%@-%@ 新选区", self.startTimeDecimalNumber, self.endTimeDecimalNumber];
     }
 }
 //标注时间
@@ -601,7 +668,7 @@
         end = [endMinute integerValue] < 10 ? [NSString stringWithFormat:@"0%@", end] : end;
         
         NSString *timeStr = [NSString stringWithFormat:@"%@-%@", start, end];
-        NSString *showString = [NSString stringWithFormat:@"%@ %@", [timeStr stringByReplacingOccurrencesOfString:@"." withString:@":"], selectValue];
+        NSString *showString = [NSString stringWithFormat:@"%@ %@", timeStr, selectValue];
         self.labelAnnotation.text = showString;
         
         self.buttonAnnotation.hidden = YES;
@@ -618,7 +685,7 @@
 
 - (void)addCharacteristicView:(NSDictionary *)dic tag:(NSInteger)tag bAdd:(Boolean)bAdd{
     NSString *timeStr = dic[@"time"];
-    timeStr = [timeStr stringByReplacingOccurrencesOfString:@":" withString:@"."];
+    //timeStr = [timeStr stringByReplacingOccurrencesOfString:@":" withString:@"."];
     NSArray *timeArray = [timeStr componentsSeparatedByString:@"-"];
     CGFloat startTime = [timeArray[0] floatValue];
     CGFloat endTime = [timeArray[1] floatValue];

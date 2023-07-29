@@ -15,6 +15,7 @@
 #import "OrgModel.h"
 #import "ForgetPasswordVC.h"
 #import "RightDirectionView.h"
+#import "TTWebVC.h"
 //#import "ShareDataModel.h"
 
 @interface LoginVC ()<CodeItemViewDelegate, SelectOrgVCDelegate, UITextFieldDelegate>
@@ -56,6 +57,9 @@
 @property (assign, nonatomic) NSInteger         delay;
 @property (assign, nonatomic) Boolean          canBAutoLogin;//判断是否满足自动登录条件
 
+@property (retain, nonatomic) UIButton                         *btnAgree;
+@property (retain, nonatomic) YYLabel                          *yyLabel;
+
 //@property (retain, nonatomic) ShareDataModel    *shareDataModel;
 
 @end
@@ -65,7 +69,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.delay = 0;
+    self.delay = 1.5f;
     self.canBAutoLogin = NO;//判断是否可以自动登录
     
     self.view.backgroundColor = WHITECOLOR;
@@ -85,23 +89,16 @@
         self.org_type = [[NSUserDefaults standardUserDefaults] integerForKey:@"org_type"];
     }
 
-
     self.autoLogin = [[NSUserDefaults standardUserDefaults] boolForKey:@"auto_login"];
-    //self.autoLogin = YES;
     [self initView];
     [self reloadView:YES];
-    
+    [self initYYLabel];
 
 //    self.itemUser.textFieldInfo.text = @"18902400417";
 //    self.itemPass.textFieldPass.text = @"123456";
     
 
 }
-
-//- (void)actionRecordShareBeforeLogin:(NSNotification *)notification{
-//    NSDictionary *data = notification.userInfo;
-//    self.shareDataModel = (ShareDataModel *)data[@"model"];
-//}
 
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
@@ -248,6 +245,8 @@
         self.viewUnionType.labelInfo.text = self.orgModel.name;
     }
     
+   
+    
     
     NSDictionary *dic = [[NSUserDefaults standardUserDefaults] objectForKey:@"user"];
     if(dic) {
@@ -260,7 +259,6 @@
             //self.itemPass.textFieldPass.text = password;
             if(self.autoLogin && bLogin && ![Tools isBlankString:number] && ![Tools isBlankString:password]) {
                 self.canBAutoLogin = YES;
-                self.delay = 0;
                 [self actionLogin:self.buttonLoginPass];
             } else {
                 self.canBAutoLogin = NO;
@@ -271,7 +269,7 @@
         }
     }
     
-   
+//   /ITSAppUsesNonExemptEncryption
     
 }
 
@@ -307,7 +305,7 @@
         });
     }
 
-    
+  //
 }
 
 - (void)actionToLoginType:(UIButton *)button {
@@ -316,6 +314,10 @@
 }
 
 - (void)actionLogin:(UIButton *)button{
+    if(!self.btnAgree.selected) {
+        [self.view makeToast:@"请先阅读并同意用户协议" duration:showToastViewWarmingTime position:CSToastPositionCenter];
+        return;
+    }
     [self.view endEditing:YES];
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     NSString *user = @"";
@@ -356,7 +358,6 @@
         NSString *passwordString = [NSString stringWithFormat:@"%@%@%@", saltnum1, pass, saltnum2];
         NSString *password = [Tools md5:passwordString];
         params[@"password"] = password;
-       NSLog(@"phone = %@, pas = %@", user, pass);
         
     } else {
         NSString *code= self.codeItemView.textFieldCode.text;
@@ -382,30 +383,36 @@
     params[@"force"] = @"1";
     params[@"role"] = [@(self.teachRole) stringValue];
     [Tools showWithStatus:@"正在登录"];
+//    MBProgressHUD *hub = [MBProgressHUD showHUDAddedTo:kAppWindow animated:YES];
+//    hub.label.text = @"正在登录";
     __weak typeof(self) wself = self;
     [TTRequestManager userLogin:params success:^(id  _Nonnull responseObject) {
         if ([responseObject[@"errorCode"] intValue] == 0 ) {
             NSDictionary *data = [responseObject objectForKey:@"data"];
             HHLoginData *loginData = [HHLoginData yy_modelWithDictionary:data];
             [[HHLoginManager sharedManager] setCurrentHHLoginData:loginData];
-            
+
             if (wself.loginType == login_type_personal) {
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
-                    [SVProgressHUD dismiss];
-                });
+                [wself performSelector:@selector(actionLoginAfterLoginSuccess) withObject:wself afterDelay:wself.delay];
                 [wself createUserDocument:@"hanhong"];
             } else {
                 [wself getOrgList];
             }
+            [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionBottom];
         } else {
-            [SVProgressHUD dismiss];
+            [Tools hiddenWithStatus];
+            [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
         }
-        [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
+
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
     
+}
+
+- (void)actionLoginAfterLoginSuccess{
+    [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
+    [Tools hiddenWithStatus];;
 }
 
 - (void)getOrgList{
@@ -423,19 +430,19 @@
                     NSData * data = [NSKeyedArchiver archivedDataWithRootObject:model];
                     [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"orgModelLogin"];
                     [[NSUserDefaults standardUserDefaults] synchronize];
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
-                        [SVProgressHUD dismiss];
-                    });
-                    
+//                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                        [[NSNotificationCenter defaultCenter] postNotificationName:login_broadcast object:nil userInfo:@{@"type":@"1"}];
+//                        [Tools hiddenWithStatus];;
+//                    });
+                    [wself performSelector:@selector(actionLoginAfterLoginSuccess) withObject:wself afterDelay:wself.delay];
                     [wself createUserDocument:model.code];
                     return;
                 }
             }
         }
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];;
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];;
     }];
 }
 
@@ -488,7 +495,8 @@
         
         params[@"login-type"] = [@(self.loginType) stringValue];
         params[@"teach-type"] = [@(self.teachRole) stringValue];
-        
+        [[NSUserDefaults standardUserDefaults] setBool:self.buttonAutoLogin.selected forKey:@"auto_login"];
+        //self.autoLogin
     }
     [[NSUserDefaults standardUserDefaults] setObject:params forKey:@"user"];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -527,9 +535,7 @@
             [wself.codeItemView showTimer];
         }
         [wself.view makeToast:responseObject[@"message"] duration:showToastViewSuccessTime position:CSToastPositionCenter];
-        [SVProgressHUD dismiss];
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
     }];
 }
 
@@ -563,6 +569,15 @@
     self.buttonAutoLoginText.hidden = YES;
     self.buttonForgetPass.hidden = YES;
     self.loginTypePassword = NO;
+    
+    NSString *phone = self.itemCodeUser.textFieldInfo.text;
+    if ([Tools isBlankString:phone]) {
+        NSString *string = self.itemUser.textFieldInfo.text;
+        if (![Tools isBlankString:string])
+        {
+            self.itemCodeUser.textFieldInfo.text = string;
+        }
+    }
 }
 
 
@@ -609,9 +624,17 @@
     
     [self.view addSubview:self.buttonAutoLogin];
     [self.view addSubview:self.buttonAutoLoginText];
-    self.buttonAutoLogin.sd_layout.leftSpaceToView(self.view, Ratio20).heightIs(Ratio22).widthIs(Ratio22).topSpaceToView(self.buttonLogin, Ratio13);
+    self.buttonAutoLogin.sd_layout.leftSpaceToView(self.view, Ratio20).heightIs(Ratio22).widthIs(Ratio22).topSpaceToView(self.buttonLogin, Ratio33);
     self.buttonAutoLoginText.sd_layout.leftSpaceToView(self.buttonAutoLogin, 0).heightIs(Ratio22).widthIs(Ratio99).centerYEqualToView(self.buttonAutoLogin);
     self.buttonAutoLogin.imageEdgeInsets = UIEdgeInsetsMake(Ratio4, Ratio4, Ratio4, Ratio4);
+    
+    
+    
+    
+//    self.btnAgree.sd_layout.leftSpaceToView(self.view, Ratio22).topSpaceToView(self.buttonLogin, Ratio5).heightIs(Ratio22).widthIs(Ratio22);
+//    self.btnAgree.imageEdgeInsets = UIEdgeInsetsMake(Ratio4, Ratio4, Ratio4, Ratio4);
+    
+    
     
     [self.view addSubview:self.buttonForgetPass];
     self.buttonForgetPass.sd_layout.rightSpaceToView(self.view, Ratio22).heightIs(Ratio22).centerYEqualToView(self.buttonAutoLoginText).widthIs(Ratio50);
@@ -664,7 +687,7 @@
         _buttonAutoLogin = [[UIButton alloc] init];
         [_buttonAutoLogin setImage:[UIImage imageNamed:@"check_true"] forState:UIControlStateSelected];
         [_buttonAutoLogin setImage:[UIImage imageNamed:@"check_false"] forState:UIControlStateNormal];
-        _buttonAutoLogin.selected = self.autoLogin;
+        _buttonAutoLogin.selected = YES;
         [_buttonAutoLogin addTarget:self action:@selector(actionAutoLogin:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _buttonAutoLogin;
@@ -833,6 +856,62 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES];
+}
+
+-(void)initYYLabel{
+    [self.view addSubview:self.btnAgree];
+    self.btnAgree.sd_layout.leftSpaceToView(self.view, Ratio20).topSpaceToView(self.buttonLogin, Ratio5).heightIs(Ratio22).widthIs(Ratio22);
+    self.btnAgree.imageEdgeInsets = UIEdgeInsetsMake(Ratio4, Ratio4, Ratio4, Ratio4);
+    
+    [self.view addSubview:self.yyLabel];
+    NSString *string = @"我已阅读并同意《用户协议》与《隐私政策》";
+//    CGFloat width = [Tools widthForString:string fontSize:Ratio13 andHeight:Ratio15];
+    self.yyLabel.sd_layout.centerYEqualToView(self.btnAgree).leftSpaceToView(self.btnAgree, 0).heightIs(Ratio15).rightSpaceToView(self.view, Ratio20);
+
+    NSMutableAttributedString* atext=[[NSMutableAttributedString alloc]initWithString:string];
+    atext.yy_font = Font12;
+    [atext yy_setColor:MainBlack range:NSMakeRange(0, string.length)];
+    NSRange range=[[atext string]rangeOfString:@"《用户协议》与《隐私政策》"];
+    [atext yy_setTextHighlightRange:range color:MainColor backgroundColor:nil tapAction:^(UIView * _Nonnull containerView, NSAttributedString * _Nonnull text, NSRange range, CGRect rect) {
+        TTWebVC *ttWebView = [[TTWebVC alloc] init];
+        ttWebView.webUrl = [NSString stringWithFormat:@"%@/protocol_privacy", hanhongServer];//[[NSBundle mainBundle] pathForResource:@"user_agreement" ofType:@"html"];
+        ttWebView.webTitle = @"用户协议隐私政策";
+        [self.navigationController pushViewController:ttWebView animated:YES];
+    }];
+    self.yyLabel.attributedText = atext;
+   
+}
+
+
+- (UIButton *)btnAgree{
+    if (!_btnAgree) {
+        _btnAgree = [[UIButton alloc] init];
+        [_btnAgree addTarget:self action:@selector(actionToSelectAgree:) forControlEvents:UIControlEventTouchUpInside];
+        [_btnAgree setImage:[UIImage imageNamed:@"check_false"] forState:UIControlStateNormal];
+        [_btnAgree setImage:[UIImage imageNamed:@"check_true"] forState:UIControlStateSelected];
+       // _btnAgree.imageEdgeInsets = UIEdgeInsetsMake(Ratio3, Ratio3, Ratio3, Ratio3);
+        Boolean bAgreement = [[NSUserDefaults standardUserDefaults] boolForKey:@"agreement"];
+        _btnAgree.selected = bAgreement;
+    }
+    return _btnAgree;
+}
+
+- (YYLabel *)yyLabel{
+    if (!_yyLabel) {
+        _yyLabel = [[YYLabel alloc] init];
+        _yyLabel.numberOfLines=0;
+        _yyLabel.font = Font13;
+        _yyLabel.textAlignment = NSTextAlignmentLeft;
+    }
+    return _yyLabel;
+}
+
+
+- (void)actionToSelectAgree:(UIButton *)btn{
+    btn.selected = !btn.selected;
+    //[[NSUserDefaults standardUserDefaults] setBo];
+    [[NSUserDefaults standardUserDefaults] setBool:btn.selected forKey:@"agreement"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

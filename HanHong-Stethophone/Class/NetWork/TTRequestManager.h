@@ -255,6 +255,16 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (void)recordShareFavorite:(NSString *)share_code params:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
 
+/**
+ 查询是否已激活
+ */
++ (void)productActivateState:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
+
+
+/**
+产品激活
+ */
++ (void)productActivate:(NSMutableDictionary *)params success:(void (^)(id responseObject))completion failure:(void (^)(NSError *error))failure;
 
 @end
 

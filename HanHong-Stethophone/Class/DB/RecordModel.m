@@ -30,6 +30,8 @@
         _create_time = @"";//上传时间
         _url = @"";//
         _share_code = @"";
+        _favorite_id = @"";
+        _patient_sex = -1;
     }
     return self;
 }

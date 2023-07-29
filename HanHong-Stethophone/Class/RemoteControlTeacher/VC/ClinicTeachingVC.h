@@ -6,13 +6,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HHBaseRecordVC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^ClinicTeachingHistoryListBlock)(void);
 
-@interface ClinicTeachingVC : HHBaseRecordVC
+@interface ClinicTeachingVC : UIViewController
 
 @property (nonatomic, copy) ClinicTeachingHistoryListBlock           historyListBlock;
 

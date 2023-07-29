@@ -6,12 +6,13 @@
 //
 
 #import "ProgramPlanListVC.h"
-
+#import "NoDataView.h"
 #import "NewProgramVC.h"
 
 @interface ProgramPlanListVC ()<UITableViewDelegate, UITableViewDataSource, NewProgramVCDelgate>
 
 @property (retain, nonatomic) UITableView           *tableView;
+@property (retain, nonatomic) NoDataView            *noDataView;
 
 @end
 
@@ -23,6 +24,7 @@
     self.view.backgroundColor = ViewBackGroundColor;
     self.title = @"本月计划课程";
     [self.view addSubview:self.tableView];
+    [self.view addSubview:self.noDataView];
 }
 
 
@@ -43,6 +45,15 @@
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
     if (self.itemChangeBlock) {
         self.itemChangeBlock(model, 0);
+    }
+    [self showNoDataView];
+}
+
+- (void)showNoDataView {
+    if (self.programListData.count == 0) {
+        self.noDataView.hidden = NO;
+    } else {
+        self.noDataView.hidden = YES;
     }
 }
 
@@ -84,6 +95,14 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
+- (NoDataView *)noDataView{
+    if (!_noDataView) {
+        _noDataView = [[NoDataView alloc] initWithFrame:CGRectMake(0, kNavBarAndStatusBarHeight + Ratio35, screenW, screenH)];
+        _noDataView.hidden = YES;
+    }
+    return _noDataView;
 }
 
 @end

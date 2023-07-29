@@ -24,8 +24,6 @@
 @property (retain, nonatomic) BeInviteConsultationView      *beInviteConsultationView;
 @property (retain, nonatomic) UIButton                      *buttonAdd;
 
-
-
 @end
 
 @implementation RemoteControlVC

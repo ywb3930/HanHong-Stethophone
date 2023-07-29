@@ -41,7 +41,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    [SVProgressHUD dismiss];
+    [Tools hiddenWithStatus];
 }
 
 -(void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation{
@@ -68,7 +68,7 @@
         if (_webView.estimatedProgress >= 1.0f) {
 //            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 self.progressView.progress = 0;
-//                [SVProgressHUD dismiss];
+//                [Tools hiddenWithStatus];
 //            });
         }
     } else if([keyPath isEqualToString:canGoBackKeyPath] && object == _webView){

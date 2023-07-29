@@ -16,9 +16,9 @@ static FMDatabase *_db;
 - (void)addProgramItem:(ProgramModel *)model{
     NSString *sql = [NSString stringWithFormat:@"insert into program(program_title,startTime,endTime,duration,system_calender_reminder) values('%@',%ld,%ld,%ld,'%@')",model.program_title, model.startTime, model.endTime, model.duration, model.system_calender_reminder];
     if([_db executeUpdate:sql]) {
-        NSLog(@"%@ success", sql);
+        DLog(@"%@ success", sql);
     } else {
-        NSLog(@"%@ failure", sql);
+        DLog(@"%@ failure", sql);
     }
 }
 
@@ -52,7 +52,7 @@ static FMDatabase *_db;
 
 - (Boolean)addRecordItem:(RecordModel *)model{
     NSString *sql = [NSString stringWithFormat:@"insert into local_record(user_id, patient_id, patient_area, record_mode, type_id, record_filter, position_tag, patient_posture, patient_symptom, patient_diagnosis, patient_sex, patient_birthday, patient_height, patient_weight, characteristics, record_time, record_length, file_path, oss_name, tag, modify_time, shared, create_time) values('%@','%@','%@',%ld,%ld,%ld,'%@',%ld,'%@','%@',%ld,'%@','%@','%@','%@','%@',%ld,'%@','%@','%@','%@',%ld,'%@')", model.user_id, model.patient_id, model.patient_area, model.record_mode, model.type_id,model.record_filter, model.position_tag, model.patient_posture, model.patient_symptom, model.patient_diagnosis, model.patient_sex, model.patient_birthday, model.patient_height, model.patient_weight, model.characteristics, model.record_time, model.record_length, model.file_path, model.oss_name, model.tag, model.modify_time, model.shared, model.create_time];
-    NSLog(@"sql = %@", sql);
+    DLog(@"sql = %@", sql);
     return [_db executeUpdate:sql];
 }
 
@@ -131,7 +131,7 @@ static FMDatabase *_db;
 - (void)deletePatientItemData:(NSString *)patient_id{
     NSString *sql = [NSString stringWithFormat:@"delete from patientHistory where patient_id = '%@'", patient_id];
     BOOL success =  [_db executeUpdate:sql];
-    NSLog(@"%@", [@(success) stringValue]);
+    DLog(@"%@", [@(success) stringValue]);
 }
 /**
  删除数据
@@ -139,6 +139,18 @@ static FMDatabase *_db;
 - (void)deleteAllPatientData{
     NSString *sql = [NSString stringWithFormat:@"delete from patientHistory"];
     [_db executeUpdate:sql];
+}
+
+- (PatientModel *)selectPatientItem:(NSString *)patient_id{
+    NSMutableArray *data = [NSMutableArray array];
+    NSString *sql = [NSString stringWithFormat:@"select * from patientHistory where patient_id = '%@'", patient_id];
+    FMResultSet *set = [_db executeQuery:sql];
+    while (set.next) {
+        NSDictionary *dictionary = [set resultDictionary];
+        PatientModel *model = (PatientModel *)[PatientModel yy_modelWithDictionary:dictionary];
+        return model;
+    }
+    return nil;
 }
 
 
@@ -169,7 +181,7 @@ static FMDatabase *_db;
     });
     NSString *pathDB = [HHFileLocationHelper getAppDocumentPath:[Constant shareManager].userInfoPath];
     NSString *path = [NSString stringWithFormat:@"%@db/%@_%li.db", pathDB, LoginData.phone,LoginData.userID];//[
-    NSLog(@"db_path:%@",path);
+    DLog(@"db_path:%@",path);
     _db = [FMDatabase databaseWithPath:path];
     [_db open];
     /**

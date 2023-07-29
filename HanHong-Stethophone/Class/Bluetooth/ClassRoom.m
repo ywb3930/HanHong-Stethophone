@@ -117,7 +117,7 @@ static int classroom_enter_state = 0;
         @try {
             [_delegate on_classroom_event:event args1:args1 args2:args2 args3:args3];
         } @catch (NSException *exception) {
-            NSLog(@"ClassRoom event callback error");
+            DLog(@"ClassRoom event callback error");
         }
     }
 }
@@ -148,7 +148,7 @@ static int classroom_enter_state = 0;
             host = [classroom_url substringToIndex:range.location];
 
         } else {
-            NSLog(@"ClassRoom url error");
+            DLog(@"ClassRoom url error");
             [self Event:ClassEnterFailed args1:NULL args2:NULL args3:NULL];
             return false;
         }
@@ -159,11 +159,11 @@ static int classroom_enter_state = 0;
         mSocket = [mSocketManager socketForNamespace:teaching_namespace];
 
 //        [mSocket onAny:^(SocketAnyEvent *event) {
-//            NSLog(@"Received event: %@, with items: %@", event.event, event.items);
+//            DLog(@"Received event: %@, with items: %@", event.event, event.items);
 //        }];
 
         [mSocket on:@"connect" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"SocketIO connect");
+            DLog(@"SocketIO connect");
         }];
 
         [mSocket on:@"disconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
@@ -173,18 +173,18 @@ static int classroom_enter_state = 0;
             // if (self->classroom_entered) {
             if (classroom_enter_state == 2) {
                 classroom_enter_state = 0;
-                NSLog(@"ClassRoom exit");
+                DLog(@"ClassRoom exit");
                 [self Event:ClassExited args1:NULL args2:NULL args3:NULL];
             } else {
                 classroom_enter_state = 0;
-                NSLog(@"ClassRoom enter failed");
+                DLog(@"ClassRoom enter failed");
                 [self Event:ClassEnterFailed args1:NULL args2:NULL args3:NULL];
             }
             //self->classroom_entered = false;
         }];
 
         [mSocket on:@"classroom" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket classroom");
+            DLog(@"Socket classroom");
             
             @try {
                 
@@ -254,18 +254,18 @@ static int classroom_enter_state = 0;
                 if (classroom_enter_state < 2) {
                     classroom_enter_state = 2;
                     
-                    NSLog(@"ClassRoom enter room sucess");
+                    DLog(@"ClassRoom enter room sucess");
                     
                     [self Event:ClassEnterSuccess args1:NULL args2:NULL args3:NULL];
                     [self Event:ClassInfoUpdate args1:self.classroom_info args2:NULL args3:NULL];
                 } else {
-                    NSLog(@"ClassRoom room info update");
+                    DLog(@"ClassRoom room info update");
                     [self Event:ClassInfoUpdate args1:self.classroom_info args2:NULL args3:NULL];
                 }
                 
             } @catch (NSException *exception) {
                 
-                NSLog(@"ClassRoom error %@ %@", exception.name, exception.reason);
+                DLog(@"ClassRoom error %@ %@", exception.name, exception.reason);
                 
             } @finally {
                 
@@ -273,7 +273,7 @@ static int classroom_enter_state = 0;
         }];
 
         [mSocket on:@"room_users" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket auscultation_state");
+            DLog(@"Socket auscultation_state");
             
             @try {
                 NSArray *clients = [data lastObject][@"data"];
@@ -298,12 +298,12 @@ static int classroom_enter_state = 0;
                 [self Event:ClassMemberUpdate args1:@(0) args2:NULL args3:self.online_member_list];
             }
             @catch (NSException *e) {
-                NSLog(@"ClassRoom room_user error %@ %@", e.name, e.reason);
+                DLog(@"ClassRoom room_user error %@ %@", e.name, e.reason);
             }
         }];
 
         [mSocket on:@"join_room" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket join_room");
+            DLog(@"Socket join_room");
             
             @try {
                  
@@ -322,13 +322,13 @@ static int classroom_enter_state = 0;
                 [self Event:ClassMemberUpdate args1:@(1) args2:member args3:self.online_member_list];
             }
             @catch (NSException *e) {
-                NSLog(@"ClassRoom join_room error %@ %@", e.name, e.reason);
+                DLog(@"ClassRoom join_room error %@ %@", e.name, e.reason);
             }
             
         }];
 
         [mSocket on:@"leave_room" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket leave_room");
+            DLog(@"Socket leave_room");
             
             @try {
                  
@@ -347,13 +347,13 @@ static int classroom_enter_state = 0;
                 [self Event:ClassMemberUpdate args1:@(-1) args2:member args3:self.online_member_list];
             }
             @catch (NSException *e) {
-                NSLog(@"ClassRoom leave_room error %@ %@", e.name, e.reason);
+                DLog(@"ClassRoom leave_room error %@ %@", e.name, e.reason);
             }
             
         }];
 
         [mSocket on:@"auscultation_state" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket auscultation_state");
+            DLog(@"Socket auscultation_state");
             
             @try {
                  
@@ -370,37 +370,37 @@ static int classroom_enter_state = 0;
                 }
             }
             @catch (NSException *e) {
-                NSLog(@"ClassRoom auscultation_state error %@ %@", e.name, e.reason);
+                DLog(@"ClassRoom auscultation_state error %@ %@", e.name, e.reason);
             }
         }];
 
         [mSocket on:@"error" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket error");
+            DLog(@"Socket error");
             [self->mSocket disconnect];
         }];
         
         [mSocket on:@"connecting" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket connecting");
+            DLog(@"Socket connecting");
             [self Event:ClassEntering args1:NULL args2:NULL args3:NULL];
         }];
 
         [mSocket on:@"connect_failed" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket error");
+            DLog(@"Socket error");
             [self Event:ClassEnterFailed args1:NULL args2:NULL args3:NULL];
         }];
         
 
         [mSocket on:@"reconnect" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket reconnecting");
+            DLog(@"Socket reconnecting");
         }];
         
         [mSocket on:@"reconnecting" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket reconnecting");
+            DLog(@"Socket reconnecting");
             [self Event:ClassEntering args1:NULL args2:NULL args3:NULL];
         }];
 
         [mSocket on:@"reconnect_failed" callback:^(NSArray * data, SocketAckEmitter * ack) {
-            NSLog(@"Socket reconnect failed");
+            DLog(@"Socket reconnect failed");
             [self Event:ClassEnterFailed args1:NULL args2:NULL args3:NULL];
         }];
   
@@ -410,7 +410,7 @@ static int classroom_enter_state = 0;
     }
     @catch (NSException *e)
     {
-        NSLog(@"ClassRoom enter error %@ %@", e.name, e.reason);
+        DLog(@"ClassRoom enter error %@ %@", e.name, e.reason);
         classroom_enter_state = 0;
     }
     return false;
@@ -447,7 +447,7 @@ static int classroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"ClassRoom class_begin control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"ClassRoom class_begin control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -455,7 +455,7 @@ static int classroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"ClassRoom class_begin error %@ %@", e.name, e.reason);
+        DLog(@"ClassRoom class_begin error %@ %@", e.name, e.reason);
     }
 }
 
@@ -484,7 +484,7 @@ static int classroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"ClassRoom class_end control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"ClassRoom class_end control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -492,7 +492,7 @@ static int classroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"ClassRoom class_end error %@ %@", e.name, e.reason);
+        DLog(@"ClassRoom class_end error %@ %@", e.name, e.reason);
     }
 }
 
@@ -520,7 +520,7 @@ static int classroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"ClassRoom teaching_count control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"ClassRoom teaching_count control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -528,7 +528,7 @@ static int classroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"ClassRoom teaching_count error %@ %@", e.name, e.reason);
+        DLog(@"ClassRoom teaching_count error %@ %@", e.name, e.reason);
     }
 }
 
@@ -556,18 +556,18 @@ static int classroom_enter_state = 0;
     if (event == ServiceConnectionBeginEvent) {
         data_service_connected = false;
     } else if (event == ServiceConnectingEvent) {
-        NSLog(@"data service 正在连接远程服务器");
+        DLog(@"data service 正在连接远程服务器");
         [self Event:ClassDataServiceConnecting args1:NULL args2:NULL args3:NULL];
     } else if (event == ServiceConnectedEvent) {
-        NSLog(@"data service 服务器连接成功");
+        DLog(@"data service 服务器连接成功");
     } else if (event == ServiceAuthEvent) {
         if ([(NSNumber *)args1 boolValue]) {
-            NSLog(@"data service 远程服务器登陆成功");
+            DLog(@"data service 远程服务器登陆成功");
             data_service_connected = true;
             [self Event:ClassDataServiceConnectSuccess args1:NULL args2:NULL args3:NULL];
         } else {
             NSString *error = (NSString *)args2;
-            NSLog(@"data service 远程服务器登陆失败 %@" , error);  // 这个可以提示用户，包含服务器满载时的错误信息
+            DLog(@"data service 远程服务器登陆失败 %@" , error);  // 这个可以提示用户，包含服务器满载时的错误信息
             [self Event:ClassDataServiceConnectFailed args1:error args2: NULL args3: NULL];
         }
     } else if (event == ServiceReceiveForwardDataEvent) {
@@ -592,7 +592,7 @@ static int classroom_enter_state = 0;
             }
         }
 
-        //NSLog(@"data service 收到服务器数据包：" + data.length);
+        //DLog(@"data service 收到服务器数据包：" + data.length);
     } else if (event == ServiceReceiveClientInfoEvent) {
 
         NSData *data = (NSData *)args1;
@@ -601,24 +601,24 @@ static int classroom_enter_state = 0;
 
         if (type == 0) {
             [self Event:ClassDataServiceClientInfoReceived args1:@(0) args2:NULL args3:clients];
-            NSLog(@"data service 在线客户：%d", (int)[clients count]);
+            DLog(@"data service 在线客户：%d", (int)[clients count]);
         } else if (type == 1) {
             [self Event:ClassDataServiceClientInfoReceived args1:@(1) args2:@(clients.member) args3:clients];
-            NSLog(@"data service 新上线 %d", clients.member);
+            DLog(@"data service 新上线 %d", clients.member);
         } else if (type == 2) {
             [self Event:ClassDataServiceClientInfoReceived args1:@(-1) args2:@(clients.member) args3:clients];
-            NSLog(@"data service 下线 %d", clients.member);
+            DLog(@"data service 下线 %d", clients.member);
         }
 
-        //NSLog(@"data service 收到服务器数据包：" + data.length);
+        //DLog(@"data service 收到服务器数据包：" + data.length);
 
     } else if (event == ServiceConnectFailEvent) {
-        NSLog(@"data service 远程服务器连接失败");
+        DLog(@"data service 远程服务器连接失败");
         [self Event:ClassDataServiceConnectFailed args1:@"" args2:NULL args3:NULL];
     } else if (event == ServiceDisconnectEvent) {
         data_service_connected = false;
         [self Event:ClassDataServiceDisconnected args1:NULL args2:NULL args3:NULL];
-        NSLog(@"data service 远程服务器断开了");
+        DLog(@"data service 远程服务器断开了");
     } else if (event == ServiceConnectionEndEvent) {
 
     }
@@ -648,7 +648,7 @@ static int classroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"ClassRoom start_auscultation control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"ClassRoom start_auscultation control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -656,7 +656,7 @@ static int classroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"ClassRoom start_auscultation error %@ %@", e.name, e.reason);
+        DLog(@"ClassRoom start_auscultation error %@ %@", e.name, e.reason);
     }
 }
 
@@ -684,7 +684,7 @@ static int classroom_enter_state = 0;
                         }
                     }
                     @catch (NSException *e) {
-                        NSLog(@"ClassRoom stop_auscultation control_ack error %@ %@", e.name, e.reason);
+                        DLog(@"ClassRoom stop_auscultation control_ack error %@ %@", e.name, e.reason);
                     }
                 }];
             } else {
@@ -692,7 +692,7 @@ static int classroom_enter_state = 0;
             }
         }
     } @catch (NSException *e) {
-        NSLog(@"ClassRoom stop_auscultation error %@ %@", e.name, e.reason);
+        DLog(@"ClassRoom stop_auscultation error %@ %@", e.name, e.reason);
     }
 }
 

@@ -74,12 +74,12 @@
             }
             [wself reloadData];
         }
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     } failure:^(NSError * _Nonnull error) {
         if(error.code == -1009 || error.code == -1008){
-            [self actionNoNetWork];
+            [wself actionNoNetWork];
         }
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
     
 }

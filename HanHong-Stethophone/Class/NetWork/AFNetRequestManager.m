@@ -42,7 +42,7 @@
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [self setRequestWithManager:manager];
     [manager GET:url parameters:parameters headers:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        if([self actionLogOut:responseObject])return;
+        //if([self actionLogOut:responseObject])return;
         success(responseObject);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         failure(error);
@@ -86,7 +86,7 @@
             failure(error);
             [wself disposeErrorAdd:error];
         }else{
-            if([self actionLogOut:responseObject])return;
+            //if([self actionLogOut:responseObject])return;
             success(responseObject);
         }
     }];
@@ -110,10 +110,10 @@
 + (BOOL)actionLogOut:(id)responseObject{
     NSInteger errorCode = [responseObject[@"errorCode"] integerValue];
     if (errorCode == 63004 || errorCode == 63003) {
-        [kAppWindow makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
+        [kAppWindow makeToast:responseObject[@"message"] duration:2.0f position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
             [Tools logout:@""];
         }];
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
         return YES;
     }
     return NO;
@@ -121,7 +121,7 @@
 
 
 - (void)disposeError:(NSError *)error{
-    [SVProgressHUD dismiss];
+    [Tools hiddenWithStatus];
     if(error.code == -1009 || error.code == -1008){
         [kAppWindow makeToast:@"😰 网络好像有点问题" duration:showToastViewErrorTime position:CSToastPositionCenter];
         return;
@@ -138,16 +138,16 @@
     //再解析
     NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:jsondata options:NSJSONReadingMutableLeaves error:nil];
     NSString *message = [jsonDict objectForKey:@"message"];
-    
-    if (error.code == -1011 || error.code == 1007 ||  error.code == 1008 || error.code == 1009 || [message isEqualToString:@"登录无效或已在别处登录过"] || [message isEqualToString:@"TOKEN无效"] || [message isEqualToString:@"账号不存在"] || [message isEqualToString:@"未登录"]) {
-        [Tools logout:message];
-    } else if(![Tools isBlankString:message]){
-        [kAppWindow makeToast:message duration:showToastViewErrorTime position:CSToastPositionCenter];
-    }
+    [kAppWindow makeToast:message duration:showToastViewErrorTime position:CSToastPositionCenter];
+//    if (error.code == -1011 || error.code == 1007 ||  error.code == 1008 || error.code == 1009 || [message isEqualToString:@"登录无效或已在别处登录过"] || [message isEqualToString:@"TOKEN无效"] || [message isEqualToString:@"账号不存在"] || [message isEqualToString:@"未登录"]) {
+//        [Tools logout:message];
+//    } else if(![Tools isBlankString:message]){
+//        [kAppWindow makeToast:message duration:showToastViewErrorTime position:CSToastPositionCenter];
+//    }
 }
 
 + (void)disposeErrorAdd:(NSError *)error{
-    [SVProgressHUD dismiss];
+    [Tools hiddenWithStatus];
     if(error.code == -1009 || error.code == -1008){
         [kAppWindow makeToast:@"😰 网络好像有点问题" duration:showToastViewErrorTime position:CSToastPositionCenter];
         return;
@@ -165,11 +165,12 @@
     NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:jsondata options:NSJSONReadingMutableLeaves error:nil];
     NSString *message = [jsonDict objectForKey:@"message"];
     
-    if (error.code == -1011 || error.code == 1007 ||  error.code == 1008 || error.code == 1009 || [message isEqualToString:@"登录无效或已在别处登录过"] || [message isEqualToString:@"TOKEN无效"] || [message isEqualToString:@"账号不存在"] || [message isEqualToString:@"未登录"]) {
-        [Tools logout:message];
-    } else  if(![Tools isBlankString:message]){
-        [kAppWindow makeToast:message duration:showToastViewErrorTime position:CSToastPositionCenter];
-    }
+//    if (error.code == -1011 || error.code == 1007 ||  error.code == 1008 || error.code == 1009 || [message isEqualToString:@"登录无效或已在别处登录过"] || [message isEqualToString:@"TOKEN无效"] || [message isEqualToString:@"账号不存在"] || [message isEqualToString:@"未登录"]) {
+//        [Tools logout:message];
+//    } else  if(![Tools isBlankString:message]){
+//        [kAppWindow makeToast:message duration:showToastViewErrorTime position:CSToastPositionCenter];
+//    }
+    [kAppWindow makeToast:message duration:showToastViewErrorTime position:CSToastPositionCenter];
 }
 
 + (void)downLoadFileWithUrl:(NSString *)url path:(NSString*)path  downloadProgress:(void (^)(NSProgress *downloadProgress))progress successBlock:(void (^)(NSURL *url))success fileDownloadFail:(void (^)(NSError * error))failure{

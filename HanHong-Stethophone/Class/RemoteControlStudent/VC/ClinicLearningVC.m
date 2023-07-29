@@ -11,12 +11,13 @@
 #import "UINavigationController+QMUI.h"
 #import "UIViewController+HBD.h"
 #import "ClassRoom.h"
+#import "DeviceManagerVC.h"
 
 #define BtDevice_ununited_state 0
 #define BtDevice_connected_state 1
 #define BtDevice_connecting_state 2
 
-@interface ClinicLearningVC ()<ClassRoomDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, ClinicLearningHeaderViewDelegate>
+@interface ClinicLearningVC ()<ClassRoomDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, ClinicLearningHeaderViewDelegate, HHBluetoothButtonDelegate>
 
 @property (retain, nonatomic) UICollectionView              *collectionView;
 @property (retain, nonatomic) NSMutableArray                *arrayData;
@@ -26,10 +27,11 @@
 
 @property (assign, nonatomic) Boolean                       bClassroomEnter;
 @property (assign, nonatomic) Boolean                       bDataServiceReady;
-@property (assign, nonatomic) Boolean                       bDataServiceRecording;
+@property (assign, nonatomic) Boolean                       bDataServicePlay;
 @property (assign, nonatomic) int                           classroomState;
 @property (retain, nonatomic) ClassRoomInfo                 *classRoomInfo;
 @property (retain, nonatomic) NSOperationQueue              *mainQueue;
+@property (retain, nonatomic) HHBluetoothButton             *buttonBluetooth;
 
 @end
 
@@ -41,20 +43,86 @@
     self.title = @"临床学习";
     self.mainQueue = [NSOperationQueue mainQueue];
     self.view.backgroundColor = WHITECOLOR;
-    self.recordmodel = RecordingWithRecordDurationMaximum;
-    self.recordType = RemoteRecord;
+    self.classroomState = -1;
+    //self.recordmodel = RecordingWithRecordDurationMaximum;
+    //self.recordType = RemoteRecord;
     self.arrayData = [NSMutableArray array];
     self.itemWidth = (screenW-Ratio66)/5;
-    [self initNavi:1];
+    [self initNavi];
     [self setupView];
     
     [self enterClassroom];
+    [self initNetwork];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
+
 }
+
+//接收蓝牙广播通知
+- (void)actionRecieveBluetoothMessage:(NSNotification *)notification{
+    NSDictionary *userInfo = notification.userInfo;
+    DEVICE_HELPER_EVENT event = [userInfo[@"event"] integerValue];
+    NSObject *args1 = userInfo[@"args1"];
+    NSObject *args2 = userInfo[@"args2"];
+    if (event!=12) {
+        DLog(@"DEVICE_HELPER_EVENT = %li", event);
+    }
+    if (event == DeviceConnecting) {
+        [self actionDeviceConnecting];
+    } else if (event == DeviceConnected) {
+        [self actionDeviceConnected];
+    } else if (event == DeviceConnectFailed) {
+        [self actionDeviceConnectFailed];
+    } else if (event == DeviceDisconnected) {
+        [self actionDeviceDisconnected];
+    } else if (event == DeviceHelperPlayBegin) {
+        DLog(@"播放开始");
+        [self actionDeviceHelperPlayBegin];
+    } else if (event == DeviceHelperPlayingTime) {
+//        NSNumber *number = (NSNumber *)args1;
+//        float value = [number floatValue];
+       // [wself actionDeviceHelperPlayingTime:value];
+        //DLog(@"startTime 播放进度：%f", value);
+        
+    } else if (event == DeviceHelperPlayEnd) {
+        DLog(@"播放结束");
+        [self actionDeviceHelperPlayEnd];
+        
+    } else if (event == DeviceRecordPlayInstable) {
+        [self actionDeviceRecordPlayInstable];
+    } else if (event == DeviceRecordLostEvent) {
+        
+    }
+}
+
+- (void)initNavi{
+    UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithCustomView:self.buttonBluetooth];
+    item1.width = Ratio11;
+    self.navigationItem.rightBarButtonItems = @[item1];
+}
+
+- (void)initNetwork{
+    __weak typeof(self) wself = self;
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    reachability.reachableBlock = ^(Reachability *reachability) {
+        DLog(@"reachableBlock");
+        [wself actionEnterRoom];
+    };
+    reachability.unreachableBlock = ^(Reachability *reachability) {
+        DLog(@"unreachableBlock");
+        [wself actionShowRoomMessage:@"教室已断开"];
+    };
+    [reachability startNotifier];
+}
+
 
 - (void)actionClassExited{
     if (self.bClassroomEnter) {
         [self actionShowRoomMessage:@"教室已断开，正在重连"];
-        [self performSelector:@selector(actionEnterRoom) withObject:nil afterDelay:1.0f];
+        __weak typeof(self) wself = self;
+        [self.mainQueue addOperationWithBlock:^{
+            [wself performSelector:@selector(actionEnterRoom) withObject:nil afterDelay:1.0f];
+        }];
+        
     } else {
         [self actionShowRoomMessage:@"教室已断开"];
     }
@@ -69,7 +137,7 @@
     //self.arrayData = [NSMutableArray array];
     self.classRoomInfo = (ClassRoomInfo *)args1;
     self.classroomState = self.classRoomInfo.class_state;
-    NSLog(@"教室状态：%i", self.classroomState);
+    DLog(@"教室状态：%i", self.classroomState);
     NSString *stateStr = (self.classroomState == 1) ? @"进行中" : (self.classroomState == 2) ? @"已结束" : @"未开始";
     Boolean bStart = self.classroomState >= 1;
     NSString *teachingTimes = bStart ? [@(self.classRoomInfo.teaching_times) stringValue] : @"--";
@@ -97,7 +165,7 @@
         wself.headerView.startTime = bStart ? wself.classRoomInfo.class_begin_time : @"--";
         wself.headerView.learnCount = teachingTimes;
         wself.headerView.learnMember = numbersOfStudents;
-        NSLog(@"teacher_avatar = %@", wself.classRoomInfo.teacher_avatar);
+        DLog(@"teacher_avatar = %@", wself.classRoomInfo.teacher_avatar);
         wself.headerView.teachAvatar = wself.classRoomInfo.teacher_avatar;
         wself.headerView.teachName = wself.classRoomInfo.teacher_name;
         if (bChange) {
@@ -155,7 +223,7 @@
 - (void)actionClassBeginControlResult:(NSObject *)args1{
     NSString *sargs1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sargs1 boolValue];
-    NSLog(@"课堂开始:%@", success ? @"成功" : @"失败");
+    DLog(@"课堂开始:%@", success ? @"成功" : @"失败");
     if (!success) {
         __weak typeof(self) wself = self;
         [self.mainQueue addOperationWithBlock:^{
@@ -168,7 +236,7 @@
 - (void)actionClassEndControlResult:(NSObject *)args1{
     NSString *sargs1 = [NSString stringWithFormat:@"%@", args1];
     Boolean success = [sargs1 boolValue];
-    NSLog(@"课堂结束:%@", success ? @"成功" : @"失败");
+    DLog(@"课堂结束:%@", success ? @"成功" : @"失败");
     if (!success) {
         __weak typeof(self) wself = self;
         [self.mainQueue addOperationWithBlock:^{
@@ -180,58 +248,65 @@
 - (void)actionClassDataServiceWavFrameReceived:(NSObject *)args1 args2:(NSObject *)args2{
     NSString *flag = [NSString stringWithFormat:@"%@", args1];
     NSData *wav_frame = (NSData *)args2;
-    [[HHBlueToothManager shareManager] writePlayBuffer:wav_frame];
-    if (!self.bDataServiceRecording) {
-        self.bDataServiceRecording = YES;
-        NSLog(@"播放中 ---");
-        [[HHBlueToothManager shareManager] startPlay:PlayingWithRealtimeData];
+    if ([[HHBlueToothManager shareManager] isPlaying]) {
+        [[HHBlueToothManager shareManager] writePlayBuffer:wav_frame];
+    }
+    
+    if (!self.bDataServicePlay) {
+        self.bDataServicePlay = YES;
+        DLog(@"播放中 ---");
+        [self actionStartPlay];
     }
 }
 
+- (void)actionStartPlay{
+    [[HHBlueToothManager shareManager] startPlay:PlayingWithRealtimeData];
+}
 
 - (void)actionClassDataServiceCmdReceived:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
     NSString *sargs1 = [NSString stringWithFormat:@"%@", args1];
     int cmd = [sargs1 intValue];
     if (cmd == 1) {
-        if (!self.bDataServiceRecording) {
-            self.bDataServiceRecording = YES;
-            [[HHBlueToothManager shareManager] startPlay:PlayingWithRealtimeData];
+        if (!self.bDataServicePlay) {
+            self.bDataServicePlay = YES;
+            [self actionStartPlay];
         }
     } else {
-        if (self.bDataServiceRecording) {
-            self.bDataServiceRecording = NO;
-            [[HHBlueToothManager shareManager] stop];
+        if (self.bDataServicePlay) {
+            self.bDataServicePlay = NO;
+            //[[HHBlueToothManager shareManager] stop];
+            [self actionStop];
         }
     }
 }
 
 - (void)actionDeviceConnecting{
-    [self actionShowRecordMessage:@"设备正在连接"];
+    [self actionShowPlayMessage:@"设备正在连接"];
 }
 
 - (void)actionDeviceConnected{
-    if (self.bDataServiceRecording) {
-        [self actionStartRecord];
+    if (self.bDataServicePlay) {
+        [self actionStartPlay];
     } else {
-        [self actionShowRecordMessage:@""];
+        [self actionShowPlayMessage:@""];
     }
 }
 
 - (void)actionDeviceDisconnected{
-    [self actionShowRecordMessage:@"设备已断开"];
+    [self actionShowPlayMessage:@"设备已断开"];
     [self actionStop];
 }
 
 - (void)actionDeviceConnectFailed{
-    [self actionShowRecordMessage:@"设备连接失败"];
+    [self actionShowPlayMessage:@"设备连接失败"];
 }
 
 - (void)actionDeviceHelperPlayBegin {
-    [self actionShowRecordMessage:@"正在听诊"];
+    [self actionShowPlayMessage:@"正在听诊"];
 }
 
 - (void)actionDeviceHelperPlayEnd{
-    [self actionShowRecordMessage:@""];
+    [self actionShowPlayMessage:@""];
 }
 
 - (void)actionDeviceRecordPlayInstable{
@@ -277,58 +352,83 @@
     }];
 }
 
-- (void)actionShowRecordMessage:(NSString *)messaage{
+- (void)actionShowPlayMessage:(NSString *)messaage{
     __weak typeof(self) wself = self;
     [self.mainQueue addOperationWithBlock:^{
         wself.headerView.recordMessage = messaage;
     }];
 }
 
+
 - (void)on_classroom_event:(CLASSROOM_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 args3:(NSObject *)args3{
-    NSLog(@"event = %@, args1 = %@ , args2 = %@, args3 = %@", [@(event) stringValue], args1, args2, args3);
+    //DLog(@"event = %@, args1 = %@ , args2 = %@, args3 = %@", [@(event) stringValue], args1, args2, args3);
     if (event == ClassEntering) {
-        NSLog(@"正在进入教室");
-    } else if (event == ClassEnterSuccess) {
-        NSLog(@"进入教室成功");
+        DLog(@"正在进入教室");
+    }
+    else if (event == ClassEnterSuccess) {
+        DLog(@"进入教室成功");
         [self actionShowRoomMessage:@"进入教室成功"];
+        //self.bClassroomEnter = NO;
+    }
+    else if (event == ClassEnterFailed) {
+        DLog(@"进入教室失败");
+        [self actionShowRoomMessage:@"进入教室失败"];
         self.bClassroomEnter = NO;
-    } else if (event == ClassExited) {
-        NSLog(@"退出教室");
+    }
+    else if (event == ClassExited) {
+        DLog(@"退出教室");
         [self actionClassExited];
-    } else if (event == ClassInfoUpdate) {
+    }
+    else if (event == ClassInfoUpdate) {
         [self actionClassInfoUpdate:args1];
-    } else if (event == ClassMemberUpdate) {
+    }
+    else if (event == ClassMemberUpdate) {
         [self actionClassMemberUpdate:args3];
-    } else if (event == ClassStartAuscultationControlResult) {
+    }
+    else if (event == ClassStartAuscultationControlResult) {
         [self actionClassStartAuscultationControlResult:args1];
-    } else if (event == ClassStopAuscultationControlResult) {
+    }
+    else if (event == ClassStopAuscultationControlResult) {
         [self actionClassStopAuscultationControlResult:args1];
-    } else if (event == ClassBeginControlResult) {
+    }
+    else if (event == ClassBeginControlResult) {
         [self actionClassBeginControlResult:args1];
-    } else if (event == ClassEndControlResult) {
+    }
+    else if (event == ClassEndControlResult) {
         [self actionClassEndControlResult:args1];
-    } else if (event == ClassStartAuscultation) {
+    }
+    else if (event == ClassStartAuscultation) {
         [self actionShowRoomMessage:@"临床教学开始"];
-    } else if (event == ClassStopAuscultation) {
+    }
+    else if (event == ClassStopAuscultation) {
         [self actionShowRoomMessage:(self.classroomState == 2) ? @"临床教学已结束" : @"临床教学已暂停"];
-    } else if (event == ClassDataServiceConnecting) {
+    }
+    else if (event == ClassDataServiceConnecting) {
         [self actionShowRoomMessage:@"临床教学服务器连接中"];
-    } else if (event == ClassDataServiceConnectSuccess) {
+    }
+    else if (event == ClassDataServiceConnectSuccess) {
         [self actionShowRoomMessage:@"临床教学进行中"];
         self.bDataServiceReady = YES;
-    } else if (event == ClassDataServiceConnectFailed) {
+    }
+    else if (event == ClassDataServiceConnectFailed) {
         NSString *message = [NSString stringWithFormat:@"临床教学服务器连接失败: %@", args1];
         [self actionShowRoomMessage:message];
-    } else if (event == ClassDataServiceDisconnected) {
+    }
+    else if (event == ClassDataServiceDisconnected) {
         self.bDataServiceReady = NO;
-        self.bDataServiceRecording = NO;
+        self.bDataServicePlay = NO;
         [self actionClearConnectState];
         [self actionShowRoomMessage:@"临床教学服务器连接断开"];
-    } else if (event == ClassDataServiceWavFrameReceived) {
+        [self actionStop];
+        [self actionShowPlayMessage:@""];
+    }
+    else if (event == ClassDataServiceWavFrameReceived) {
         [self actionClassDataServiceWavFrameReceived:args1 args2:args2];
-    } else if (event == ClassDataServiceCmdReceived) {
+    }
+    else if (event == ClassDataServiceCmdReceived) {
         [self actionClassDataServiceCmdReceived:args1 args2:args2 args3:args3];
-    } else if (event == ClassDataServiceClientInfoReceived) {
+    }
+    else if (event == ClassDataServiceClientInfoReceived) {
         Clients *clients = (Clients *)args3;
         [self actionClassDataServiceClientInfoReceived:clients];
     }
@@ -351,6 +451,10 @@
     if (![self.classRoom isEntered]) {
         [self.classRoom Enter:LoginData.token classroom_url:self.classroomUrl classroom_id:[self.classroomId intValue]];
     }
+}
+
+- (void)actionStop {
+    [[HHBlueToothManager shareManager] stop];
 }
 
 
@@ -414,14 +518,11 @@
     return _collectionView;
 }
 
-
-
 - (void)dealloc{
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    if (self.recordingState == recordingState_prepare || self.recordingState == recordingState_ing) {
+    if (self.classroomState == 1) {
         [[HHBlueToothManager shareManager] stop];
     }
-    self.recordingState = recordingState_stop;
     self.bClassroomEnter = NO;
     [self.classRoom Exit];
 }
@@ -431,14 +532,13 @@
     [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
-
 - (BOOL)shouldHoldBackButtonEvent {
     return YES;
 }
 
 - (BOOL)canPopViewController {
     // 这里不要做一些费时的操作，否则可能会卡顿。
-    [Tools showAlertView:nil andMessage:@"确定退出吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+    [Tools showAlertView:nil andMessage:@"是否退出临床学习？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
         [self.navigationController popViewControllerAnimated:YES];
     } cancel:^{
         
@@ -446,29 +546,42 @@
     return NO;
 }
 
+- (HHBluetoothButton *)buttonBluetooth{
+    if(!_buttonBluetooth) {
+        _buttonBluetooth  = [[HHBluetoothButton alloc] init];
+        _buttonBluetooth.bluetoothButtonDelegate = self;
+    }
+    return _buttonBluetooth;
+}
 
 - (Boolean)actionHeartLungButtonClickCallback:(NSInteger)idx {
-    if (self.recordingState == recordingState_ing) {
-        [self.view makeToast:@"录音过程中，不可以改变录音模式" duration:showToastViewWarmingTime position:CSToastPositionCenter];
-        return NO;
-    }
-    
-    if (idx == 1) {
-        self.soundsType = heart_sounds;
-    } else if (idx == 2) {
-        self.soundsType = lung_sounds;
-    }
-    [self loadRecordTypeData];
-    if ([[HHBlueToothManager shareManager] getConnectState] == DEVICE_CONNECTED == [[HHBlueToothManager shareManager] getDeviceType] == STETHOSCOPE) {
-        [self.classRoom SendCommand:1 data:NULL];
-        [self actionStartRecord];
-        
-    } else {
-    }
-    
     return YES;
 }
 
+- (Boolean)actionHeartLungFilterChange:(NSInteger)filterModel {
+    return YES;
+}
+
+
+//点击蓝牙按钮到蓝牙配置界面
+- (void)actionClickBlueToothCallBack:(UIButton *)button{
+    if([[HHBlueToothManager shareManager] isPlaying]) {
+        __weak typeof(self) wself = self;
+        [Tools showAlertView:nil andMessage:@"正在听诊，确认要进入蓝牙设置吗？" andTitles:@[@"取消", @"确定"] andColors:@[MainGray, MainColor] sure:^{
+            [wself actionToDeviceManagerVC];
+        } cancel:^{
+            
+        }];
+    } else {
+        [self actionToDeviceManagerVC];
+    }
+}
+
+- (void)actionToDeviceManagerVC{
+    DeviceManagerVC *deviceManager = [[DeviceManagerVC alloc] init];
+    deviceManager.bStandart = NO;
+    [self.navigationController pushViewController:deviceManager animated:YES];
+}
 
 
 @end

@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)deletePatientItemData:(NSString *)patient_id;
 
+- (PatientModel *)selectPatientItem:(NSString *)patient_id;
+
 /**
  删除数据
  */

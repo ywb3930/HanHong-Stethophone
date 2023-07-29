@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSData *)zipNSDataWithImage:(UIImage *)sourceImage;
 // 显示提示
 + (void)showWithStatus:(nullable NSString *)string;
++ (void)hiddenWithStatus;
 // 缩放图片
 + (UIImage*)scaleImage:(UIImage *)image scaleToSize:(CGSize)size;
 // 图片高斯模糊
@@ -111,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSDate *)stringToDateHM:(NSString *)string;
 + (NSDate *)stringToDateYMDHM:(NSString *)string;
 + (NSDate *)stringToDateYMD:(NSString *)string;
-
++ (NSInteger)calculationThisMonthDays:(NSDate *)days;
 // 生日时间是否小于最小时间
 + (BOOL)comparisonTimeMinAndBirthDay:(NSDate *)dateMin andDay:(NSString *)birthDay;
 // 当前时间转yyyy年MM月
@@ -186,6 +187,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSInteger)insertStarTimeo:(NSString *)time1 andInsertEndTime:(NSString *)time2;
 + (BOOL)validateStr:(NSString *)string withRegex:(NSString *)regex;
 + (NSInteger)compareDate:(NSDate *)date;
++ (BOOL)isLocationEnabled;
 
 @end
 

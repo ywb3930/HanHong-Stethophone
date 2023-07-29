@@ -33,6 +33,18 @@
     return self;
 }
 
+- (void)setArrayReordSequence:(NSArray *)arrayReordSequence{
+    for (NSDictionary *data in arrayReordSequence) {
+        NSInteger index = [data[@"id"] integerValue];
+        if (index == 10 || index == 11) {
+            UIButton *buttonType = self.arrayButtonsTpye[index - 10];
+            buttonType.layer.borderWidth = Ratio1;
+            buttonType.layer.borderColor = MainColor.CGColor;
+        }
+        
+    }
+}
+
 
 - (void)actionRecordNextpositionCallBack:(NSInteger)index{
     if (self.delegate && [self.delegate respondsToSelector:@selector(actionClickButtonBodyPositionCallBack:tag:position:)]) {
@@ -43,6 +55,7 @@
 }
 
 - (void)initData {
+    self.arrayButtonsCollected = [NSMutableArray array];
     self.arraySelectItem = [NSMutableArray array];
     self.arrayButtonsTpye = [NSMutableArray array];
     self.arrayImageViews = [NSMutableArray array];

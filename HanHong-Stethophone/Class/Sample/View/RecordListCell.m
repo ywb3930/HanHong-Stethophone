@@ -43,6 +43,10 @@
         [kAppWindow makeToast:@"请先连接设备" duration:showToastViewWarmingTime position:CSToastPositionCenter];
         return;
     }
+//    button.enabled = NO;
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        button.enabled = YES;
+//    });
     if (self.delegate && [self.delegate respondsToSelector:@selector(actionRecordListCellItemClick:bSelected:numberOfPage:)]) {
         
         Boolean bPlaying = [self.delegate actionRecordListCellItemClick:self.recordModel bSelected:button.selected numberOfPage:self.numberOfPage];
@@ -56,6 +60,7 @@
 
 
 - (void)setPlayProgess:(float)playProgess{
+    NSLog(@"playProgess = %f", playProgess);
     self.slider.value = playProgess / self.recordModel.record_length;
 }
 

@@ -83,15 +83,10 @@
     [self checkNetConnect];
     LoginData = nil;
     [[ToolsCheckUpdate getInstance] actionToCheckUpdate:NO];
-    
+    [DDLog addLogger:[DDTTYLogger sharedInstance]];
     //设置预定义DidFinishLaunchingEnd时间
     //[UMLaunch setPredefineLaunchType:UMPredefineLaunchType_DidFinishLaunchingEnd];
      
-    [SVProgressHUD setDefaultMaskType:SVProgressHUDMaskTypeBlack];// 禁止触摸
-    [SVProgressHUD setForegroundColor:MainColor];
-    [SVProgressHUD setBorderWidth:Ratio1];
-    [SVProgressHUD setBorderColor:ViewBackGroundColor];
-    [SVProgressHUD setBackgroundColor:WHITECOLOR];
     
     [UINavigationBar appearance].backgroundColor = ViewBackGroundColor;
     [UINavigationBar appearance].tintColor = MainBlack;
@@ -111,7 +106,7 @@
     [WXApi registerApp:WXAppID universalLink:UniversalLink];
  
     
-    [NSThread sleepForTimeInterval:1.0];//设置启动页面时间
+    [NSThread sleepForTimeInterval:2.0];//设置启动页面时间
 
     return YES;
 }
@@ -122,6 +117,10 @@
     if (needUpdateApp) {
         [[ToolsCheckUpdate getInstance] actionToCheckUpdate:NO];
     }
+}
+
+-(void)applicationWillTerminate:(UIApplication *)application{
+    [[HHBlueToothManager shareManager] disconnect];
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application{
@@ -155,7 +154,8 @@
     NSDictionary *deviceManage = [NSDictionary dictionaryWithContentsOfFile:deviceManagerPath];
     Boolean autoConnect = [deviceManage[@"auto_connect_echometer"] boolValue];
     if (dataBluetooth && autoConnect) {
-        NSString *bluetoothDeviceUUID = [dataBluetooth objectForKey:@"bluetoothDeviceUUID"];        [[HHBlueToothManager shareManager] connent:bluetoothDeviceUUID];
+        NSString *bluetoothDeviceUUID = [dataBluetooth objectForKey:@"bluetoothDeviceUUID"];
+        [[HHBlueToothManager shareManager] connent:bluetoothDeviceUUID];
         NSLog(@"bluetoothDeviceUUID 4 = %@", bluetoothDeviceUUID);
     }
 }
@@ -235,7 +235,7 @@
             
         }
         
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
         DDLogDebug(@"code = %@",code);
     }  else if([resp isKindOfClass:[SendMessageToWXResp class]]){
         SendMessageToWXResp *sendMessageToWXResp = (SendMessageToWXResp *)resp;

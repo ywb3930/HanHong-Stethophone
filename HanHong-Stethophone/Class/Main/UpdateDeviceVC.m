@@ -6,6 +6,7 @@
 //
 
 #import "UpdateDeviceVC.h"
+
 @import iOSDFULibrary;
 
 @interface UpdateDeviceVC ()<DFUServiceDelegate, DFUProgressDelegate, DFUPeripheralSelectorDelegate, LoggerDelegate, CBCentralManagerDelegate>
@@ -17,6 +18,7 @@
 @property (retain, nonatomic) DFUServiceController      *controller;
 @property (retain, nonatomic) DFUServiceInitiator       *dfuInitiator;
 @property (assign, nonatomic) Boolean                   bUpdate;
+@property (retain, nonatomic) MBProgressHUD             *hud;
 
 @end
 
@@ -30,10 +32,11 @@
     self.bUpdate = NO;
     
     [self.view addSubview:self.labelMessage];
-    self.labelMessage.sd_layout.topSpaceToView(self.view, screenH/2).leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).heightIs(Ratio44);
-    self.labelMessage.text = [NSString stringWithFormat:@"听诊器固件版本低，正在更新固件，请勿关闭听诊器\r\n最新版本%@", self.version];
+    self.labelMessage.sd_layout.topSpaceToView(self.view, screenH/3).leftSpaceToView(self.view, 0).rightSpaceToView(self.view, 0).heightIs(Ratio44);
+    self.labelMessage.text = [NSString stringWithFormat:@"听诊器固件版本低，正在更新固件，请勿关闭听诊器\r\n最新版本%@", @"V1.3"];
     self.centralManager = [[HHBlueToothManager shareManager] getCentralManager];
     self.currentPeripheral = [[HHBlueToothManager shareManager] currentPeripheral];
+    [self initData];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(actionRecieveBluetoothMessage:) name:HHBluetoothMessage object:nil];
     [[HHBlueToothManager shareManager] disconnect];
 }
@@ -48,20 +51,20 @@
 
 - (void)actionDeviceHelperEvent:(DEVICE_HELPER_EVENT)event args1:(NSObject *)args1 args2:(NSObject *)args2 {
     if (event == DeviceDisconnected && !self.bUpdate) {
-        NSLog(@"Device didDisconnectPeripheral 1");
+        DLog(@"Device didDisconnectPeripheral 1");
         self.bUpdate = YES;
         NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
         [mainQueue addOperationWithBlock:^{
-            [SVProgressHUD showProgress:0 status:@"当前进度：0%"];
+            self.hud = [MBProgressHUD showHUDAddedTo:kAppWindow animated:YES];
+            //[SVProgressHUD showWithStatus:@"正在断开设备"];
+            //[SVProgressHUD showProgress:0 status:@"升级中当前进度：0%"];
+            //[self performSelector:@selector(delayedMethod) withObject:nil afterDelay:1.0];
+            [self performSelector:@selector(delayedMethod) withObject:nil afterDelay:2.0];
         }];
-        [self performSelector:@selector(delayedMethod) withObject:nil afterDelay:1.0];
-        
-        
     }
 }
 
 - (void)delayedMethod{
-    [self initData];
     self.controller = [self.dfuInitiator start];
 }
 
@@ -90,36 +93,44 @@
 
 -(void)dfuProgressDidChangeFor:(NSInteger)part outOf:(NSInteger)totalParts to:(NSInteger)progress currentSpeedBytesPerSecond:(double)currentSpeedBytesPerSecond avgSpeedBytesPerSecond:(double)avgSpeedBytesPerSecond{
     float currentPro = ((float)progress / (float)totalParts)/100;
-//    NSLog(@"currentPro===%f",currentPro);
+//    DLog(@"currentPro===%f",currentPro);
     int cprogress = currentPro*100;
-    NSLog(@"dfuProgressDidChangeFor: cprogress = %i", cprogress);
-    [SVProgressHUD showProgress:currentPro status:[NSString stringWithFormat:@"当前进度：%i%%", cprogress]];
+    DLog(@"dfuProgressDidChangeFor: cprogress = %i", cprogress);
+    self.hud.mode = MBProgressHUDModeDeterminate;
+    [MBProgressHUD HUDForView:kAppWindow].progress = currentPro;
+    self.hud.label.text = [NSString stringWithFormat:@"升级中当前进度：%i%%", cprogress];
+   // [SVProgressHUD showProgress:currentPro status:[NSString stringWithFormat:@"升级中当前进度：%i%%", cprogress]];
     //[SVProgressHUD showProgress:currentPro];
 }
 -(void)logWith:(enum LogLevel)level message:(NSString *)message{
-    NSLog(@"log===%ld:%@",level,message);
+    DLog(@"log===%ld:%@",level,message);
 }
 -(void)dfuStateDidChangeTo:(enum DFUState)state{
-    NSLog(@"dfuStateDidChangeTo");
+    DLog(@"dfuStateDidChangeTo");
     
-    NSLog(@"升级状态==%ld",state);
+    DLog(@"升级状态==%ld",state);
    if (state == DFUStateStarting){
-       NSLog(@"开始DFUStateStarting");
+       DLog(@"开始DFUStateStarting");
        
    }else if(state == DFUStateUploading){
-       NSLog(@"上传中DFUStateUploading");
+       DLog(@"上传中DFUStateUploading");
    }else if(state == DFUStateConnecting){
-       NSLog(@"连接中DFUStateConnectingg");
+       DLog(@"连接中DFUStateConnectingg");
    }else if(state == DFUStateDisconnecting){
-       NSLog(@"断开DFUStateDisconnecting");
+       DLog(@"断开DFUStateDisconnecting");
    }else if(state == DFUStateCompleted){
-       self.labelMessage.text = @"升级完成";
-       self.labelMessage.sd_layout.centerYIs(0.4*screenH);
-       [self.labelMessage updateLayout];
-       self.labelMessage.font = Font20;
-       [SVProgressHUD dismiss];
-       //重新连接蓝牙
-       [self performSelector:@selector(delayedMethodReconnect) withObject:nil afterDelay:1.0];
+       __weak typeof(self) wself = self;
+       NSOperationQueue *mainQueue = [NSOperationQueue mainQueue];
+       [mainQueue addOperationWithBlock:^{
+           wself.labelMessage.text = @"升级完成";
+           wself.labelMessage.sd_layout.centerYIs(0.4*screenH);
+           [wself.labelMessage updateLayout];
+           wself.labelMessage.font = Font20;
+           [Tools hiddenWithStatus];
+           //重新连接蓝牙
+           [wself performSelector:@selector(delayedMethodReconnect) withObject:nil afterDelay:1.0];
+       }];
+       
    }
 }
 
@@ -129,7 +140,7 @@
 }
 
 -(void)dfuError:(enum DFUError)error didOccurWithMessage:(NSString *)message{
-    NSLog(@"dfuError: message = %@", message);
+    DLog(@"dfuError: message = %@", message);
     self.labelMessage.text = @"升级失败，请重新连接设备升级";
     self.bUpdate = NO;
 

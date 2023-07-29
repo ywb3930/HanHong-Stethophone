@@ -37,7 +37,7 @@
     params[@"password"] = md5Pass;
     [Tools showWithStatus:@"正在注销用户"];
     [TTRequestManager userLogoff:params success:^(id  _Nonnull responseObject) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
         if([responseObject[@"errorCode"] integerValue]  == 0) {
             [self.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter title:nil image:nil style:nil completion:^(BOOL didTap) {
                 [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"phone"];
@@ -51,7 +51,7 @@
             [self.view makeToast:responseObject[@"message"] duration:showToastViewWarmingTime position:CSToastPositionCenter];
         }
     } failure:^(NSError * _Nonnull error) {
-        [SVProgressHUD dismiss];
+        [Tools hiddenWithStatus];
     }];
     
 }

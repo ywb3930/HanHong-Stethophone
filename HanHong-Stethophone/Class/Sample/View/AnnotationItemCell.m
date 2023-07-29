@@ -42,8 +42,8 @@
 }
 
 - (void)setInfo:(NSDictionary *)info{
-    NSString *string = [NSString stringWithFormat:@"%@ %@", info[@"time"], info[@"characteristic"]];
-    self.labelInfo.text = [string stringByReplacingOccurrencesOfString:@"." withString:@":"];
+    //NSString *string = [NSString stringWithFormat:@"%@ %@", info[@"time"], info[@"characteristic"]];
+    self.labelInfo.text = [NSString stringWithFormat:@"%@ %@", info[@"time"], info[@"characteristic"]];;//[string stringByReplacingOccurrencesOfString:@"." withString:@":"];
 }
 
 - (void)setupView{

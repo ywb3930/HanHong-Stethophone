@@ -8,7 +8,7 @@
 #import "BluetoothHelper.h"
 #import <mach/mach_time.h>
 
-NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
+#define default_name_filter  @[@"POPULAR-3", @"POP-3"]
 
 @implementation BluetoothHelper {
     
@@ -117,7 +117,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
 {
     
     if ([centralManager state] != CBManagerStatePoweredOn) {
-        NSLog(@"Search Failed, bluetooth not turn on");
+        DLog(@"Search Failed, bluetooth not turn on");
         return NO;
     }
     
@@ -127,10 +127,10 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
     do {
         
         if (scanMode == 1) {
-            NSLog(@"Searching is already running");
+            DLog(@"Searching is already running");
             break;
         } else if (scanMode == 2) {
-            NSLog(@"Connecting with scan, not allow to search");
+            DLog(@"Connecting with scan, not allow to search");
             break;
         }
         
@@ -140,7 +140,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
             [self.searchDelegate onSearchStart];
         }
         
-        NSLog(@"Search start");
+        DLog(@"Search start");
         
         if (name_filter != NULL) {
             search_filter = [name_filter copy];
@@ -185,7 +185,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
         [self.searchDelegate  onSearchFinished];
     }
     
-    NSLog(@"Search End");
+    DLog(@"Search End");
     
     [lock unlock];
     
@@ -213,7 +213,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
                 if (AdvData.length > 0) {
                     macStr = [BluetoothHelper convertDataToHexStr:advertisementData[@"kCBAdvDataManufacturerData"]];
                     
-                    NSLog(@"Search found %@ %@", peripheral.name, macStr);
+                    DLog(@"Search found %@ %@", peripheral.name, macStr);
                     
                     if (self.searchDelegate && [self.searchDelegate  respondsToSelector:@selector(onSearchFound:device_mac:)]) {
                         [self.searchDelegate  onSearchFound:peripheral.name device_mac:macStr];
@@ -232,15 +232,15 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
                 if (AdvData.length > 0) {
                     macStr = [BluetoothHelper convertDataToHexStr:advertisementData[@"kCBAdvDataManufacturerData"]];
                     
-                    NSLog(@"Connect Search found %@ %@", peripheral.name, macStr);
-                    NSLog(@"macStr = %@, deviceMacAddr = %@", macStr, deviceMacAddr);
+                    DLog(@"Connect Search found %@ %@", peripheral.name, macStr);
+                    DLog(@"macStr = %@, deviceMacAddr = %@", macStr, deviceMacAddr);
                     if ([macStr isEqualToString:deviceMacAddr]) {
                         
                         device = peripheral;
                         deviceScanSuccess = true;
                         deviceScanEnd = true;
                         
-                        NSLog(@"Connect Target found");
+                        DLog(@"Connect Target found");
                     }
                     
                     
@@ -292,7 +292,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
     
     deviceMacAddr = [macAddr copy];
     
-    NSLog(@"Connect Search Start");
+    DLog(@"Connect Search Start");
     
     [centralManager scanForPeripheralsWithServices:nil options:nil];
     
@@ -315,7 +315,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
     
     [centralManager stopScan];
     
-    NSLog(@"Connect Search End");
+    DLog(@"Connect Search End");
     
     if (abort_connect || !deviceScanSuccess) {
         
@@ -385,7 +385,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
 
 -(void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
     
-    NSLog(@"Device didDisconnectPeripheral");
+    DLog(@"Device didDisconnectPeripheral");
     
     if (readCharacteristic) {
         [peripheral setNotifyValue:NO forCharacteristic:readCharacteristic];
@@ -401,14 +401,14 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
 
 -(void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
     
-    NSLog(@"Device didConnectPeripheral");
+    DLog(@"Device didConnectPeripheral");
     
     [peripheral discoverServices:nil]; //查找服务
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error{
     
-    NSLog(@"Device didDiscoverServices");
+    DLog(@"Device didDiscoverServices");
     
     if (error) {
         device_connect_error = true;
@@ -435,7 +435,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
 
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
     
-    NSLog(@"Device didDiscoverCharacteristicsForService");
+    DLog(@"Device didDiscoverCharacteristicsForService");
     
     if (error) {
         device_connect_error = true;
@@ -554,7 +554,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
         
         [ble_tx_mutex unlock];
 
-        NSLog(@"ble_send error, %@ %@", exception.name, exception.reason);
+        DLog(@"ble_send error, %@ %@", exception.name, exception.reason);
       
     }
 }
@@ -585,7 +585,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
         
         [ble_tx_mutex unlock];
 
-        NSLog(@"ble_write error, %@ %@", exception.name, exception.reason);
+        DLog(@"ble_write error, %@ %@", exception.name, exception.reason);
         
         @throw [NSException exceptionWithName:@"ble_write" reason:@"" userInfo:nil];
         
@@ -661,7 +661,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
                   
                 [ble_rx_mutex unlock];
 
-                NSLog(@"ble_readbyte error, %@ %@", exception.name, exception.reason);
+                DLog(@"ble_readbyte error, %@ %@", exception.name, exception.reason);
               
                 @throw [NSException exceptionWithName:@"ble_readbyte" reason:@"" userInfo:nil];
                 
@@ -669,7 +669,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
             
         } else {
             
-            NSLog(@"ble_readbyte timeout");
+            DLog(@"ble_readbyte timeout");
             
             @throw [NSException exceptionWithName:@"ble_readbyte" reason:@"" userInfo:nil];
              
@@ -677,7 +677,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
         
     } @catch (NSException *exception) {
         
-        NSLog(@"ble_readbyte error, %@ %@", exception.name, exception.reason);
+        DLog(@"ble_readbyte error, %@ %@", exception.name, exception.reason);
       
         @throw [NSException exceptionWithName:@"ble_readbyte" reason:@"" userInfo:nil];
         
@@ -751,7 +751,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
                   
                 [ble_rx_mutex unlock];
 
-                NSLog(@"ble_readbytes error, %@ %@", exception.name, exception.reason);
+                DLog(@"ble_readbytes error, %@ %@", exception.name, exception.reason);
               
                 @throw [NSException exceptionWithName:@"ble_readbytes" reason:@"" userInfo:nil];
                 
@@ -759,7 +759,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
             
         } else {
             
-            NSLog(@"ble_readbytes timeout");
+            DLog(@"ble_readbytes timeout");
             
             @throw [NSException exceptionWithName:@"ble_readbytes" reason:@"" userInfo:nil];
              
@@ -767,7 +767,7 @@ NSArray const *default_name_filter = @[@"POPULAR-3", @"POP-3"];
         
     } @catch (NSException *exception) {
         
-        NSLog(@"ble_readbytes error, %@ %@", exception.name, exception.reason);
+        DLog(@"ble_readbytes error, %@ %@", exception.name, exception.reason);
       
         @throw [NSException exceptionWithName:@"ble_readbytes" reason:@"" userInfo:nil];
         

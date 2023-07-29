@@ -48,11 +48,21 @@
             self.viewBg.hidden = YES;
         }
         if (calendarDayModel.modelList.count > 0) {
-            self.viewBg.backgroundColor = ColorDAECFD;
+            if (calendarDayModel.bLessThanToday) {
+                self.viewBg.backgroundColor = ColorDAECFD;
+            } else {
+                self.viewBg.backgroundColor = MainColor;
+            }
+            
             self.viewBg.hidden = NO;
             self.labelDay.textColor = WHITECOLOR;
         } else {
             self.viewBg.backgroundColor = UIColor.clearColor;
+            if (calendarDayModel.bLessThanToday) {
+                self.labelDay.textColor = MainNormal;
+            } else {
+                self.labelDay.textColor = MainBlack;
+            }
         }
     }
 }

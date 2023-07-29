@@ -43,7 +43,8 @@ static HanhongDeviceHelper             *_hanhongDevice;
     }
     if (event == DeviceConnected) {
 
-        
+        //激活产品
+        [[Constant shareManager] getProductActivateState:[_hanhongDevice GetUniqueId] serialNumber:[_hanhongDevice GetSerialNumber]];
         if ([_hanhongDevice GetModel] == POPULAR3) {
             NSString *deviceFirmwareVersion = [_hanhongDevice GetFirmwareVersion];
             NSRange range = [deviceFirmwareVersion rangeOfString:@"."];
@@ -57,7 +58,7 @@ static HanhongDeviceHelper             *_hanhongDevice;
                     //[self upUpdateFirmware:firstStr];
                     
                     [[Constant shareManager] upUpdateFirmware:firstStr imgMac:self.imgMac version:deviceFirmwareVersion];
-          
+                    return;
                    
                 }
             }
@@ -84,12 +85,16 @@ static HanhongDeviceHelper             *_hanhongDevice;
     return [_hanhongDevice GetFirmwareVersion];
 }
 
-- (NSString *)getDeviceMessage{
+- (NSString *)getModelName{
     return  [_hanhongDevice GetModelName];
 }
 
 - (NSInteger)getModeSeq{
     return [_hanhongDevice GetModeSeq];;
+}
+
+- (NSString *)getMac{
+    return [_hanhongDevice GetMac];
 }
 
 - (Boolean)isPlaying{
@@ -157,7 +162,7 @@ static HanhongDeviceHelper             *_hanhongDevice;
     _hanhongDevice.deviceHelperEventDelegate = self;
 }
 
-- (void)actionSearchBluetoothList{
+- (void)search{
     [_hanhongDevice Search:ALL_MODEL];
 }
 

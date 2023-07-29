@@ -74,10 +74,10 @@
     self.arraySelectButtons = [NSMutableArray array];
     if (self.idx == 0) {
         self.arrayData = heart_positions;
-        self.arraySelect = [self.settingData objectForKey:@"heartReorcSequence"];//录音顺序 心音顺序
+        self.arraySelect = [self.settingData objectForKey:@"heartReordSequence"];//录音顺序 心音顺序
     } else if (self.idx == 1){
         self.arrayData = lung_positions;
-        self.arraySelect = [self.settingData objectForKey:@"lungReorcSequence"];//录音顺序 肺音顺序
+        self.arraySelect = [self.settingData objectForKey:@"lungReordSequence"];//录音顺序 肺音顺序
     }
     NSLog(@"self.arraySelect = %@", self.arraySelect);
 }

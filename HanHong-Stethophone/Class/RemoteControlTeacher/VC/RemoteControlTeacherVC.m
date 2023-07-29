@@ -44,9 +44,16 @@
 }
 
 - (void)actionDeleteProgramCallback:(ProgramModel *)model{
-    NSInteger row = [self.arrayData indexOfObject:model];
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-    [self.arrayData removeObjectAtIndex:row];
+    NSInteger idx = 0;
+    for (ProgramModel *mm in self.arrayData) {
+        if (mm.program_id == model.program_id) {
+            idx = [self.arrayData indexOfObject:mm];
+            break;
+        }
+        
+    }
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:idx inSection:0];
+    [self.arrayData removeObjectAtIndex:idx];
     [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
@@ -67,6 +74,7 @@
     button.selected = !button.selected;
     self.buttonTeachingRecord.selected = NO;
     self.teachingProgramView.hidden = NO;
+    self.tableView.hidden = NO;
     self.teachingRecordView.hidden = YES;
 }
 
@@ -76,6 +84,7 @@
     self.buttonTeachingProgram.selected = NO;
     self.teachingProgramView.hidden = YES;
     self.teachingRecordView.hidden = NO;
+    self.tableView.hidden = YES;
     if (!self.bLoadRecordView) {
         self.bLoadRecordView = YES;
         [self.teachingRecordView setupView];

@@ -7,15 +7,21 @@
 
 #import <Foundation/Foundation.h>
 #import "Reachability.h"
+#import <CoreLocation/CoreLocation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Constant : NSObject
+@interface Constant : NSObject<CLLocationManagerDelegate>
 
 +(instancetype)shareManager;
 
 @property (retain, nonatomic) NSString      *userInfoPath;//个人信息保存路径
-@property (assign, nonatomic) Boolean       bNetworkConnected;//个人信息保存路径
+@property (assign, nonatomic) Boolean       bNetworkConnected;
+@property (assign, nonatomic) Boolean       bActivate;
+@property (retain, nonatomic) NSMutableDictionary   *activateData;
+@property (retain, nonatomic) NSString      *warrantyDate;
+@property (nonatomic, strong) CLLocationManager *locationManager;
+
 
 - (NSString *)getPlistFilepathByName:(NSString *)plistName;
 - (NSArray *)positionModeSeqArray;
@@ -50,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (Boolean)checkDeviceIsUpdate:(NSString *)nowVersions;
 - (void)upUpdateFirmware:(NSString *)firmwareVersionFirstStr imgMac:(NSString *)mac version:(NSString *)version;
+- (void)getProductActivateState:(NSString *)uniqueId serialNumber:(NSString *)serialNumber;
 
 @end
 
