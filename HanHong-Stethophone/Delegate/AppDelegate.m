@@ -29,6 +29,7 @@
 3.第一次画新选区时不会出现标注按钮
  iOS问题
 1.远程会诊时，暂停会诊卡死
+ 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
  */
 
 @interface AppDelegate ()
